@@ -1,0 +1,31 @@
+sku,nombre_display,temporada,categoria,calidad,precio_menudeo_mxn,piezas_aprox,disponible,apartado,vendido_hist,activo
+PV-MUJ-BOU,MUJER VERANO BOUTIQUE,Verano,Mujer,Boutique,,,0,0,0,SI
+PV-MUJ-PRE,MUJER VERANO PREMIUM,Verano,Mujer,Premium,,,0,0,0,SI
+PV-MUJ-ESP,MUJER VERANO ESPECIAL,Verano,Mujer,Especial,,,0,0,0,SI
+PV-HOM-BOU,HOMBRE VERANO BOUTIQUE,Verano,Hombre,Boutique,,,0,0,0,SI
+PV-HOM-PRE,HOMBRE VERANO PREMIUM,Verano,Hombre,Premium,,,0,0,0,SI
+PV-HOM-ESP,HOMBRE VERANO ESPECIAL,Verano,Hombre,Especial,,,0,0,0,SI
+PV-NIN-BOU,NIÑO VERANO BOUTIQUE,Verano,Niño,Boutique,,,0,0,0,SI
+PV-NIN-PRE,NIÑO VERANO PREMIUM,Verano,Niño,Premium,,,0,0,0,SI
+PV-NIN-ESP,NIÑO VERANO ESPECIAL,Verano,Niño,Especial,,,0,0,0,SI
+PV-COR-BOU,CORSE VERANO BOUTIQUE,Verano,Corsé,Boutique,,,0,0,0,SI
+PV-COR-PRE,CORSE VERANO PREMIUM,Verano,Corsé,Premium,,,0,0,0,SI
+PV-PLA-EST,PLAYERA COMERCIAL,Verano,Playera,Estándar,,,0,0,0,SI
+PV-VES-EST,VESTIDO DE FIESTA,Verano,Vestido de fiesta,Estándar,,,0,0,0,SI
+PV-HOS-EST,ROPA DE HOSPITAL,Verano,Ropa de hospital,Estándar,,,0,0,0,SI
+PV-CAS-EST,ROPA DE CASA,Verano,Ropa de casa,Estándar,,,0,0,0,SI
+PV-MIX-PLU,MIXTA VERANO PLUS,Verano,Mixta Plus,Estándar,,,0,0,0,SI
+PV-DIS-EST,DISFRAZ,Verano,Disfraz,Estándar,,,0,0,0,SI
+PI-MUJ-BOU,MUJER INVIERNO BOUTIQUE,Invierno,Mujer,Boutique,,,0,0,0,SI
+PI-MUJ-PRE,MUJER INVIERNO PREMIUM,Invierno,Mujer,Premium,,,0,0,0,SI
+PI-MUJ-ESP,MUJER INVIERNO ESPECIAL,Invierno,Mujer,Especial,,,0,0,0,SI
+PI-HOM-BOU,HOMBRE INVIERNO BOUTIQUE,Invierno,Hombre,Boutique,,,0,0,0,SI
+PI-HOM-PRE,HOMBRE INVIERNO PREMIUM,Invierno,Hombre,Premium,,,0,0,0,SI
+PI-HOM-ESP,HOMBRE INVIERNO ESPECIAL,Invierno,Hombre,Especial,,,0,0,0,SI
+PI-NIN-BOU,NIÑO INVIERNO BOUTIQUE,Invierno,Niño,Boutique,,,0,0,0,SI
+PI-NIN-PRE,NIÑO INVIERNO PREMIUM,Invierno,Niño,Premium,,,0,0,0,SI
+PI-NIN-ESP,NIÑO INVIERNO ESPECIAL,Invierno,Niño,Especial,,,0,0,0,SI
+PI-CHA-BOU,CHAMARRA BOUTIQUE,Invierno,Chamarra,Boutique,,,0,0,0,SI
+PI-CHA-PRE,CHAMARRA PREMIUM,Invierno,Chamarra,Premium,,,0,0,0,SI
+PI-MIX-PLU,MIXTA INVIERNO PLUS,Invierno,Mixta Plus,Estándar,,,0,0,0,SI
+PI-SUE-NAV,SUÉTER NAVIDEÑO,Invierno,Suéter navideño,Estándar,,,0,0,0,SI

@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pre-propuesta — Automatización de Menudeo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ──────────────────────────────────────────────────────────────
+   Omnia · Pre-propuesta — Cliente: Paca (ropa americana)
+   Fecha: 2026-09-14 · Reconstruida desde el sistema de marca
+   documentado en generador-presupuestos/SKILL.md
+   NO reintroducir: emojis · transition:all · colores fuera de
+   :root · texto degradado fuera del logo · quitar estados o
+   reduced-motion.
+   ────────────────────────────────────────────────────────────── */
+
+:root{
+  /* Marca */
+  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+  --green-gradient: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --green-gradient-deep: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --red-gradient: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+
+  /* Índigo / violeta / rosa */
+  --indigo-50:#eef2ff; --indigo-100:#e0e7ff; --indigo-500:#6366f1;
+  --indigo-600:#4f46e5; --indigo-700:#4338ca;
+  --violet-100:#ede9fe; --violet-500:#8b5cf6; --violet-600:#7c3aed;
+  --pink-100:#fce7f3; --pink-600:#db2777;
+
+  /* Verde / rojo / ámbar */
+  --green-50:#ecfdf5; --green-200:#a7f3d0; --green-600:#059669; --green-700:#047857;
+  --red-50:#fef2f2; --red-200:#fecaca; --red-600:#dc2626; --red-700:#b91c1c;
+  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-700:#b45309;
+
+  /* Slate */
+  --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0;
+  --slate-300:#cbd5e1; --slate-400:#94a3b8; --slate-500:#64748b;
+  --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
+
+  /* Alphas */
+  --white-a80: rgba(255,255,255,.80);
+  --white-a10: rgba(255,255,255,.10);
+  --white-a18: rgba(255,255,255,.18);
+  --white-a60: rgba(255,255,255,.60);
+  --indigo-a12: rgba(79,70,229,.12);
+  --indigo-a24: rgba(79,70,229,.24);
+  --violet-a18: rgba(124,58,237,.18);
+  --violet-a30: rgba(124,58,237,.30);
+  --pink-a10: rgba(219,39,119,.10);
+  --mask-solid: #000;
+  --shadow-sm: 0 2px 8px rgba(79,70,229,.06);
+  --shadow-md: 0 8px 24px rgba(79,70,229,.10);
+  --shadow-lg: 0 18px 48px rgba(79,70,229,.16);
+
+  /* Semánticos */
+  --bg-color: var(--slate-50);
+  --surface: #ffffff;
+  --text-dark: var(--slate-900);
+  --text-gray: var(--slate-500);
+  --text-light: #ffffff;
+  --border: var(--slate-200);
+
+  --r-sm: 8px; --r-md: 16px; --r-lg: 32px;
+  --font-title: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg-color); color:var(--text-dark);
+  font-family:var(--font-body); font-size:16px; line-height:1.65;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--font-title); line-height:1.2; margin:0 0 .5em}
+h1{font-size:clamp(1.9rem,5vw,3.1rem); font-weight:800; letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3.4vw,2.2rem); font-weight:700; letter-spacing:-.015em}
+h3{font-size:clamp(1.1rem,2.2vw,1.35rem); font-weight:700}
+p{margin:0 0 1em}
+img{max-width:100%}
+[hidden]{display:none !important}
+
+.wrap{max-width:1140px; margin:0 auto; padding-left:20px; padding-right:20px}
+section{padding-block:clamp(40px,7vw,80px)}
+.eyebrow{
+  font-family:var(--font-title); font-size:.78rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--indigo-600);
+  margin:0 0 .6em;
+}
+.lead{font-size:clamp(1rem,1.7vw,1.15rem); color:var(--text-gray); max-width:66ch}
+
+/* ── Glifos CSS de marca (nunca emojis) ───────────────────── */
+.gl{
+  display:inline-block; width:1em; height:1em; flex:0 0 auto;
+  position:relative; vertical-align:-.125em;
+}
+.gl::before{content:""; position:absolute; inset:0; background:currentColor}
+.gl-check::before{
+  clip-path:polygon(43% 73%, 88% 19%, 97% 29%, 45% 92%, 4% 55%, 13% 44%);
+}
+.gl-cross::before{
+  clip-path:polygon(18% 6%, 50% 38%, 82% 6%, 94% 18%, 62% 50%, 94% 82%, 82% 94%, 50% 62%, 18% 94%, 6% 82%, 38% 50%, 6% 18%);
+}
+.gl-bolt::before{
+  clip-path:polygon(60% 2%, 20% 55%, 45% 55%, 36% 98%, 82% 42%, 55% 42%);
+}
+.gl-alert::before{
+  clip-path:polygon(50% 4%, 98% 92%, 2% 92%);
+}
+.gl-alert::after{
+  content:""; position:absolute; left:46%; top:38%; width:8%; height:34%;
+  background:var(--surface); border-radius:2px;
+}
+.gl-clock::before{
+  border-radius:50%;
+  clip-path:polygon(50% 0,100% 0,100% 100%,0 100%,0 0);
+  -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+          mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+}
+.gl-clock::after{
+  content:""; position:absolute; left:47%; top:24%; width:6%; height:30%;
+  background:currentColor; border-radius:2px;
+  box-shadow:.22em .26em 0 -.005em currentColor;
+}
+.gl-chart::before{
+  clip-path:polygon(4% 62%, 28% 62%, 28% 96%, 4% 96%, 4% 62%);
+}
+.gl-chart::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(38% 32%, 62% 32%, 62% 96%, 38% 96%, 38% 32%, 72% 8%, 96% 8%, 96% 96%, 72% 96%, 72% 8%);
+}
+.gl-spark::before{
+  clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%);
+}
+.gl-gift::before{
+  clip-path:polygon(4% 34%, 96% 34%, 96% 50%, 4% 50%, 4% 34%, 12% 50%, 88% 50%, 88% 98%, 12% 98%);
+}
+.gl-gift::after{
+  content:""; position:absolute; left:44%; top:10%; width:12%; height:88%;
+  background:var(--surface);
+}
+
+/* ── Header glass ─────────────────────────────────────────── */
+header{
+  position:sticky; top:0; z-index:40;
+  background:var(--white-a80);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+          backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--border);
+  padding-top:env(safe-area-inset-top, 0px);
+}
+.header-in{
+  max-width:1140px; margin:0 auto; padding:14px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.logo{font-family:var(--font-title); line-height:1.05}
+.logo .omnia{
+  display:block; font-size:1.5rem; font-weight:800; letter-spacing:-.03em;
+  background:var(--primary-gradient);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.logo .sub{
+  display:block; font-size:.62rem; font-weight:600; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--text-gray);
+}
+.header-tag{
+  font-family:var(--font-title); font-size:.72rem; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--indigo-700); background:var(--indigo-50);
+  border:1px solid var(--indigo-100); border-radius:999px; padding:6px 14px;
+  text-align:center;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.hero{
+  background:
+    radial-gradient(1000px 420px at 12% -10%, var(--indigo-a12), transparent 60%),
+    radial-gradient(800px 400px at 92% 0%, var(--pink-a10), transparent 62%);
+  padding-block:clamp(44px,8vw,86px) clamp(28px,4vw,44px);
+}
+.hero h1{max-width:20ch}
+.hero .client{
+  font-family:var(--font-title); font-weight:700; color:var(--violet-600);
+  font-size:clamp(1rem,2vw,1.2rem); margin-bottom:.4em;
+}
+.metrics-bar{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+  margin-top:clamp(28px,4vw,40px);
+}
+.metric{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-md); padding:18px 16px; box-shadow:var(--shadow-sm);
+}
+.metric .v{
+  font-family:var(--font-title); font-size:clamp(1.15rem,2.4vw,1.7rem);
+  font-weight:800; color:var(--indigo-600); line-height:1.15;
+}
+.metric .l{font-size:.8rem; color:var(--text-gray); margin-top:4px}
+
+/* ── Diagnóstico ──────────────────────────────────────────── */
+.diagnostico-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:32px;
+}
+.diag-card{
+  border-radius:var(--r-md); padding:24px; border:1px solid var(--border);
+  background:var(--surface); box-shadow:var(--shadow-sm);
+}
+.diag-card h3{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+.diag-card.problem{background:var(--red-50); border-color:var(--red-200)}
+.diag-card.problem h3{color:var(--red-700)}
+.diag-card.solution{background:var(--green-50); border-color:var(--green-200)}
+.diag-card.solution h3{color:var(--green-700)}
+.diag-card ul{list-style:none; margin:0; padding:0; display:grid; gap:12px}
+.diag-card li{display:flex; gap:11px; align-items:flex-start; font-size:.95rem}
+.diag-card.problem li .gl{color:var(--red-600); margin-top:.3em}
+.diag-card.solution li .gl{color:var(--green-600); margin-top:.3em}
+.quote{
+  font-style:italic; color:var(--slate-700); border-left:3px solid var(--slate-300);
+  padding-left:14px; margin:16px 0 0; font-size:.9rem;
+}
+
+/* ── Sistemas ─────────────────────────────────────────────── */
+.systems-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:32px}
+.system-card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:clamp(22px,3vw,32px);
+  box-shadow:var(--shadow-md); display:flex; flex-direction:column;
+}
+.system-card.featured{border-color:var(--indigo-a24); box-shadow:var(--shadow-lg)}
+.sys-badge{
+  align-self:flex-start; font-family:var(--font-title); font-size:.7rem;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--text-light); background:var(--primary-gradient);
+  border-radius:999px; padding:6px 14px; margin-bottom:14px;
+}
+.sys-badge.later{background:var(--slate-700)}
+.sys-price{
+  font-family:var(--font-title); font-weight:800; color:var(--text-dark);
+  font-size:clamp(1.5rem,3vw,2rem); line-height:1.1; margin:6px 0 2px;
+}
+.sys-price .cur{font-size:.55em; color:var(--text-gray); font-weight:700}
+.sys-monthly{color:var(--text-gray); font-size:.92rem; margin-bottom:18px}
+.feature-list-two-col{
+  list-style:none; margin:0 0 4px; padding:0;
+  display:grid; grid-template-columns:1fr 1fr; gap:10px 18px;
+}
+.feature-list-two-col li{display:flex; gap:9px; align-items:flex-start; font-size:.9rem}
+.feature-list-two-col li .gl{color:var(--indigo-600); margin-top:.3em}
+
+/* ── Workflow box ─────────────────────────────────────────── */
+.workflow-box{
+  margin-top:34px; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:clamp(22px,3vw,34px); box-shadow:var(--shadow-sm);
+}
+.steps{
+  display:flex; flex-wrap:wrap; gap:12px; align-items:stretch;
+  margin-top:20px; list-style:none; padding:0;
+}
+.step-card{
+  flex:1 1 150px; min-width:0; position:relative;
+  background:var(--indigo-50); border:1px solid var(--indigo-100);
+  border-radius:var(--r-md); padding:16px 14px;
+}
+.step-card .n{
+  font-family:var(--font-title); font-size:.7rem; font-weight:800;
+  letter-spacing:.1em; color:var(--violet-600); display:block; margin-bottom:6px;
+}
+.step-card .t{display:block; font-family:var(--font-title); font-weight:700; font-size:.95rem}
+.step-card .d{display:block; font-size:.82rem; color:var(--text-gray); margin-top:4px}
+.step-card::after{
+  content:""; position:absolute; right:-12px; top:50%; width:12px; height:2px;
+  background:var(--indigo-100); transform:translateY(-50%);
+}
+.step-card:last-child::after{display:none}
+.step-card .who{
+  display:inline-block; margin-top:8px; font-size:.7rem; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; border-radius:999px;
+  padding:3px 9px; background:var(--violet-100); color:var(--violet-600);
+}
+.step-card .who.manual{background:var(--amber-50); color:var(--amber-700)}
+
+/* ── Compliance ───────────────────────────────────────────── */
+.compliance-box{
+  margin-top:30px; background:var(--amber-50); border:1px solid var(--amber-200);
+  border-radius:var(--r-md); padding:22px 24px;
+}
+.compliance-box h3{
+  display:flex; align-items:center; gap:10px; color:var(--amber-700); margin-bottom:12px;
+}
+.compliance-box ul{margin:0; padding-left:20px; display:grid; gap:9px}
+.compliance-box li{font-size:.92rem; color:var(--slate-700)}
+
+/* ── Pendientes ───────────────────────────────────────────── */
+.pending-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:28px}
+.pending-card{
+  background:var(--surface); border:1px solid var(--border);
+  border-left:4px solid var(--indigo-500);
+  border-radius:var(--r-sm); padding:18px 20px;
+}
+.pending-card h4{font-size:1rem; margin-bottom:6px; display:flex; gap:9px; align-items:center}
+.pending-card h4 .gl{color:var(--indigo-600)}
+.pending-card p{font-size:.88rem; color:var(--text-gray); margin:0}
+
+/* ── Calculadora ──────────────────────────────────────────── */
+.calculator-section{background:var(--slate-900); color:var(--text-light)}
+.calculator-section h2,.calculator-section h3{color:var(--text-light)}
+.calculator-section .eyebrow{color:var(--violet-500)}
+.calculator-section .lead{color:var(--slate-300)}
+.calc-grid{display:grid; grid-template-columns:1.25fr .95fr; gap:26px; margin-top:32px}
+.calc-cards{display:grid; gap:14px}
+.calc-card{
+  display:flex; gap:16px; align-items:flex-start; cursor:pointer;
+  background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-md); padding:18px 20px;
+  transition:background .18s ease, border-color .18s ease;
+}
+.calc-card:hover{background:var(--white-a18)}
+.calc-card[aria-checked="true"]{border-color:var(--violet-500); background:var(--violet-a18)}
+.calc-card:focus-visible{outline:3px solid var(--violet-500); outline-offset:3px}
+.calc-card:active{background:var(--violet-a30)}
+.switch{
+  flex:0 0 auto; width:46px; height:26px; border-radius:999px;
+  background:var(--slate-700); position:relative; margin-top:2px;
+  transition:background .18s ease;
+}
+.switch::after{
+  content:""; position:absolute; top:3px; left:3px; width:20px; height:20px;
+  border-radius:50%; background:var(--text-light);
+  transition:transform .18s ease;
+}
+.calc-card[aria-checked="true"] .switch{background:var(--violet-600)}
+.calc-card[aria-checked="true"] .switch::after{transform:translateX(20px)}
+.calc-card .ct{display:block; font-family:var(--font-title); font-weight:700; font-size:1.02rem}
+.calc-card .cd{display:block; font-size:.85rem; color:var(--slate-300); margin-top:3px}
+.calc-card .cp{
+  display:block; font-family:var(--font-title); font-weight:700; font-size:.9rem;
+  color:var(--violet-500); margin-top:7px;
+}
+.calc-result{
+  background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-lg); padding:26px; align-self:start;
+}
+.calc-row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  padding:11px 0; border-bottom:1px solid var(--white-a18); font-size:.92rem;
+}
+.calc-row:last-of-type{border-bottom:0}
+.calc-row .k{color:var(--slate-300)}
+.calc-row .v{font-family:var(--font-title); font-weight:700}
+.calc-total{
+  margin-top:16px; padding-top:18px; border-top:2px solid var(--violet-600);
+}
+.calc-total .big{
+  font-family:var(--font-title); font-size:clamp(1.8rem,4vw,2.5rem);
+  font-weight:800; line-height:1.1;
+}
+.calc-total .mo{color:var(--slate-300); font-size:.95rem; margin-top:4px}
+.savings{
+  margin-top:14px; border-radius:var(--r-sm); padding:10px 14px;
+  background:var(--green-gradient-deep); color:var(--text-light);
+  font-size:.86rem; font-weight:600;
+  display:flex; align-items:center; gap:9px;
+}
+.split{
+  margin-top:16px; font-size:.84rem; color:var(--slate-300);
+  border-top:1px solid var(--white-a18); padding-top:14px;
+}
+.note-calc{margin-top:18px; font-size:.8rem; color:var(--slate-400)}
+
+/* ── Timeline ─────────────────────────────────────────────── */
+.timeline{list-style:none; margin:32px 0 0; padding:0; position:relative}
+.timeline::before{
+  content:""; position:absolute; left:15px; top:8px; bottom:8px; width:2px;
+  background:var(--indigo-100);
+}
+.timeline li{position:relative; padding:0 0 26px 48px}
+.timeline li:last-child{padding-bottom:0}
+.timeline .dot{
+  position:absolute; left:8px; top:4px; width:16px; height:16px;
+  border-radius:50%; background:var(--primary-gradient);
+  border:3px solid var(--bg-color);
+}
+.timeline h4{margin-bottom:3px; font-size:1.05rem}
+.timeline p{font-size:.9rem; color:var(--text-gray); margin:0}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer-info{
+  background:var(--slate-900); color:var(--slate-300);
+  padding-block:40px; padding-bottom:calc(40px + env(safe-area-inset-bottom, 0px));
+  text-align:center;
+}
+.footer-info .brand{
+  font-family:var(--font-title); font-weight:700; color:var(--text-light);
+  font-size:1.05rem; margin-bottom:6px;
+}
+.footer-info a{color:var(--violet-500); text-decoration:none; word-break:break-word}
+.footer-info a:hover{text-decoration:underline}
+.footer-info a:focus-visible{outline:3px solid var(--violet-500); outline-offset:3px; border-radius:4px}
+.footer-info .small{font-size:.8rem; color:var(--slate-400); margin-top:14px}
+
+/* ── Estados globales (fusión Hallmark — no borrar) ───────── */
+a:focus-visible, button:focus-visible, [role="switch"]:focus-visible{
+  outline:3px solid var(--indigo-500); outline-offset:3px;
+}
+button:active{transform:translateY(1px)}
+button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+}
+
+/* ── Responsivo ───────────────────────────────────────────── */
+@media (max-width:992px){
+  .calc-grid{grid-template-columns:1fr}
+  .systems-grid{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  .diagnostico-grid{grid-template-columns:1fr}
+  .metrics-bar{grid-template-columns:1fr 1fr}
+  .pending-grid{grid-template-columns:1fr}
+  .step-card::after{display:none}
+  .header-in{flex-direction:column; align-items:flex-start; gap:10px}
+}
+@media (max-width:500px){
+  .feature-list-two-col{grid-template-columns:1fr}
+  .wrap{padding-left:16px; padding-right:16px}
+}
+@media (max-width:400px){
+  .metrics-bar{grid-template-columns:1fr}
+  .calc-card{flex-direction:column; gap:12px}
+}
+
+@media print{
+  header{position:static}
+  .calculator-section{background:var(--surface); color:var(--text-dark)}
+  .calculator-section h2,.calculator-section h3{color:var(--text-dark)}
+  .calc-card,.calc-result{border-color:var(--border); background:var(--surface)}
+  .calc-card .cd,.calc-row .k,.calc-total .mo{color:var(--text-gray)}
+  .footer-info{background:var(--surface); color:var(--text-dark)}
+  section{padding-block:22px}
+  .system-card,.workflow-box{box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-in">
+    <div class="logo">
+      <span class="omnia">omnia</span>
+      <span class="sub">in business</span>
+    </div>
+    <span class="header-tag">Pre-propuesta · 14 sep 2026</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="client">Pacas de ropa americana &middot; McAllen, TX &mdash; Nuevo Laredo, Tamps.</p>
+    <h1>Reactivar el menudeo, esta vez sin que los desborde</h1>
+    <p class="lead">
+      Un sistema que atiende, cotiza, aparta, cobra y despacha solo. El mayoreo
+      sigue trabajándose aparte, como ustedes lo pidieron. Este documento define
+      con precisión qué se puede construir antes de cerrar un número.
+    </p>
+
+    <div class="metrics-bar">
+      <div class="metric"><div class="v">30</div><div class="l">artículos en catálogo</div></div>
+      <div class="metric"><div class="v">24 h</div><div class="l">de apartado por pedido</div></div>
+      <div class="metric"><div class="v">100 lb</div><div class="l">por paca &mdash; 45 kg</div></div>
+      <div class="metric"><div class="v">Toda la República</div><div class="l">cobertura de envío</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Diagnóstico</p>
+    <h2>El menudeo no falló por falta de demanda</h2>
+    <p class="lead">Falló por operación. Esto es lo que nos contaron y lo que el sistema resuelve de cada cosa.</p>
+
+    <div class="diagnostico-grid">
+      <div class="diag-card problem">
+        <h3><span class="gl gl-cross"></span> Lo que los hizo apagarlo</h3>
+        <ul>
+          <li><span class="gl gl-cross"></span><span><strong>Desorden y falta de control.</strong> Las direcciones, el seguimiento, todo a mano y sin registro.</span></li>
+          <li><span class="gl gl-cross"></span><span><strong>Pedidos que nunca cerraban.</strong> El clásico "te pago al rato" que se volvía mañana, y luego nunca.</span></li>
+          <li><span class="gl gl-cross"></span><span><strong>Riesgo de sobrevender.</strong> El inventario es muy específico: hay tantas de cada una y no hay más.</span></li>
+          <li><span class="gl gl-cross"></span><span><strong>Todo dependía de personas.</strong> Cuatro vendedoras atendiendo mensajes uno por uno.</span></li>
+        </ul>
+        <p class="quote">"Llegamos a un punto en el que era mucho desorden, en el sentido de que cuando eran las direcciones y no había control."</p>
+      </div>
+
+      <div class="diag-card solution">
+        <h3><span class="gl gl-check"></span> Cómo lo resuelve el sistema</h3>
+        <ul>
+          <li><span class="gl gl-check"></span><span><strong>Cada venta en un tablero de 8 etapas.</strong> Siempre se sabe dónde está cada pedido y quién falta por pagar.</span></li>
+          <li><span class="gl gl-check"></span><span><strong>Apartado con reloj.</strong> 24 horas, con recordatorios automáticos y liberación de la pieza si no paga.</span></li>
+          <li><span class="gl gl-check"></span><span><strong>Inventario que descuenta solo.</strong> El bot nunca ofrece lo que ya está comprometido.</span></li>
+          <li><span class="gl gl-check"></span><span><strong>Atiende 24/7 sin vendedoras.</strong> Ustedes sólo entran cuando el bot escala un caso.</span></li>
+        </ul>
+        <p class="quote">Su Excel compartido con el almacén sigue siendo la fuente de verdad. No cambian de herramienta, la conectamos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-block:1px solid var(--border)">
+  <div class="wrap">
+    <p class="eyebrow">Cómo funciona</p>
+    <h2>Del primer mensaje a la guía, sin que ustedes toquen nada</h2>
+
+    <div class="workflow-box">
+      <h3>Recorrido completo de una venta</h3>
+      <p style="color:var(--text-gray); font-size:.92rem; margin-bottom:0">
+        Un solo paso queda manual, y es inevitable: escribir el número de guía.
+        Paquete Express no tiene forma de entregarlo automáticamente.
+      </p>
+      <ol class="steps">
+        <li class="step-card">
+          <span class="n">01</span>
+          <span class="t">Llega el lead</span>
+          <span class="d">WhatsApp, Instagram, Facebook o TikTok, todo en una bandeja.</span>
+          <span class="who">Automático</span>
+        </li>
+        <li class="step-card">
+          <span class="n">02</span>
+          <span class="t">El bot vende</span>
+          <span class="d">Explica calidades, tallas y contenido. Consulta el stock real.</span>
+          <span class="who">Automático</span>
+        </li>
+        <li class="step-card">
+          <span class="n">03</span>
+          <span class="t">Aparta 24 h</span>
+          <span class="d">Reserva la paca, avisa las condiciones y arranca el reloj.</span>
+          <span class="who">Automático</span>
+        </li>
+        <li class="step-card">
+          <span class="n">04</span>
+          <span class="t">Cobra</span>
+          <span class="d">Liga de Mercado Pago. Al acreditarse, el sistema se entera solo.</span>
+          <span class="who">Automático</span>
+        </li>
+        <li class="step-card">
+          <span class="n">05</span>
+          <span class="t">Avisa al almacén</span>
+          <span class="d">WhatsApp simple al almacén y correo con el detalle a ustedes.</span>
+          <span class="who">Automático</span>
+        </li>
+        <li class="step-card">
+          <span class="n">06</span>
+          <span class="t">Manda la guía</span>
+          <span class="d">El almacén captura el número y el cliente lo recibe al instante.</span>
+          <span class="who manual">1 paso manual</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="compliance-box">
+      <h3><span class="gl gl-alert"></span> Dos cosas que hay que arrancar desde el día uno</h3>
+      <ul>
+        <li><strong>Plantillas de WhatsApp.</strong> Meta exige aprobar previamente todo mensaje que salga más de 24 horas después de que el cliente escribió. El recordatorio de apartado, la confirmación de pago y el aviso de guía caen en ese caso. La aprobación tarda de 24 a 48 horas, así que se solicita al inicio del proyecto, no al final.</li>
+        <li><strong>Cuenta de Mercado Pago verificada.</strong> Sin las verificaciones de identidad y fiscales, Mercado Pago retiene los fondos según el volumen que reciban. Les hacemos llegar los requisitos para que lo dejen listo antes del arranque.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Alcance</p>
+    <h2>Qué se construye, en dos fases</h2>
+    <p class="lead">
+      La Fase 1 es el sistema que pidieron y funciona sola. La Fase 2 es crecimiento:
+      tiene sentido cuando el menudeo ya esté corriendo.
+    </p>
+
+    <div class="systems-grid">
+      <article class="system-card featured">
+        <span class="sys-badge">Fase 1 &middot; Núcleo</span>
+        <h3>Venta de menudeo automatizada</h3>
+        <div class="sys-price"><span class="cur">USD</span> 3,575</div>
+        <p class="sys-monthly">pago único de implementación &middot; más USD 330 al mes</p>
+        <ul class="feature-list-two-col">
+          <li><span class="gl gl-check"></span><span>Bot de ventas con IA</span></li>
+          <li><span class="gl gl-check"></span><span>Catálogo de los 30 artículos</span></li>
+          <li><span class="gl gl-check"></span><span>Inventario que no sobrevende</span></li>
+          <li><span class="gl gl-check"></span><span>Apartado de 24 h con reloj</span></li>
+          <li><span class="gl gl-check"></span><span>Cobro por Mercado Pago</span></li>
+          <li><span class="gl gl-check"></span><span>Orden automática al almacén</span></li>
+          <li><span class="gl gl-check"></span><span>Guía al cliente por WhatsApp</span></li>
+          <li><span class="gl gl-check"></span><span>Escalamiento a persona</span></li>
+          <li><span class="gl gl-check"></span><span>Tablero de 8 etapas</span></li>
+          <li><span class="gl gl-check"></span><span>2 sesiones de capacitación</span></li>
+        </ul>
+      </article>
+
+      <article class="system-card">
+        <span class="sys-badge later">Fase 2 &middot; Crecimiento</span>
+        <h3>Escalar y medir</h3>
+        <div class="sys-price"><span class="cur">USD</span> 1,179</div>
+        <p class="sys-monthly">sumado a la Fase 1 &middot; más USD 60 al mes</p>
+        <ul class="feature-list-two-col">
+          <li><span class="gl gl-chart"></span><span>Tablero de ventas y stock</span></li>
+          <li><span class="gl gl-chart"></span><span>Alerta de apartados vencidos</span></li>
+          <li><span class="gl gl-spark"></span><span>Landing de catálogo</span></li>
+          <li><span class="gl gl-spark"></span><span>Campañas Meta y TikTok</span></li>
+          <li><span class="gl gl-gift"></span><span>Post-venta y reseñas</span></li>
+          <li><span class="gl gl-gift"></span><span>Recompra a 30 días</span></li>
+          <li><span class="gl gl-check"></span><span>Tablero de post-venta</span></li>
+          <li><span class="gl gl-check"></span><span>1 sesión más de capacitación</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="calculator-section">
+  <div class="wrap">
+    <p class="eyebrow">Inversión</p>
+    <h2>Arme su alcance</h2>
+    <p class="lead">Active las fases para ver el total. Precios en dólares.</p>
+
+    <div class="calc-grid">
+      <div class="calc-cards">
+        <div class="calc-card" role="switch" aria-checked="true" tabindex="0" data-key="sys1">
+          <span class="switch" aria-hidden="true"></span>
+          <span>
+            <span class="ct">Fase 1 &mdash; Núcleo de menudeo</span>
+            <span class="cd">Bot de ventas, inventario, apartado, cobro, despacho y guía.</span>
+            <span class="cp">USD 3,575 + 330 / mes</span>
+          </span>
+        </div>
+        <div class="calc-card" role="switch" aria-checked="false" tabindex="0" data-key="sys2">
+          <span class="switch" aria-hidden="true"></span>
+          <span>
+            <span class="ct">Fase 2 &mdash; Crecimiento</span>
+            <span class="cd">Tableros, landing de catálogo, campañas, post-venta y recompra.</span>
+            <span class="cp">USD 1,179 + 60 / mes</span>
+          </span>
+        </div>
+        <p class="note-calc">
+          Contratando las dos fases juntas se aplica un 5% sobre la implementación.
+          Los costos de terceros &mdash; WhatsApp API, comisiones de Mercado Pago y
+          Google Workspace &mdash; corren por cuenta de ustedes y no pasan por Omnia.
+        </p>
+      </div>
+
+      <div class="calc-result">
+        <h3 style="margin-bottom:14px">Su inversión</h3>
+        <div class="calc-row"><span class="k">Fase 1 &mdash; Núcleo</span><span class="v" id="r-sys1">USD 3,575</span></div>
+        <div class="calc-row"><span class="k">Fase 2 &mdash; Crecimiento</span><span class="v" id="r-sys2">&mdash;</span></div>
+        <div class="calc-total">
+          <div class="k" style="color:var(--slate-300); font-size:.85rem">Implementación, pago único</div>
+          <div class="big" id="r-total">USD 3,575</div>
+          <div class="mo" id="r-monthly">más USD 330 al mes</div>
+          <div class="savings" id="r-savings" hidden>
+            <span class="gl gl-bolt"></span><span id="r-savings-text"></span>
+          </div>
+          <div class="split" id="r-split">Se puede dividir en dos pagos de USD 1,787.50: mitad al arrancar y mitad a la entrega.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Antes de cerrar</p>
+    <h2>Lo que falta para volver esto una propuesta en firme</h2>
+    <p class="lead">
+      Preferimos decirlo de frente: hay cuatro datos que todavía no tenemos y sin
+      ellos no se puede construir el bot. En cuanto lleguen, cerramos el número.
+    </p>
+
+    <div class="pending-grid">
+      <div class="pending-card">
+        <h4><span class="gl gl-alert"></span> Precios de venta</h4>
+        <p>El precio de cada artículo en menudeo. Es el dato más importante: sin él no hay cotización del bot ni liga de pago.</p>
+      </div>
+      <div class="pending-card">
+        <h4><span class="gl gl-alert"></span> Costo de envío</h4>
+        <p>¿Se cobra aparte, va incluido, cuánto es? Cambia el total que calcula el bot y lo que dice el mensaje.</p>
+      </div>
+      <div class="pending-card">
+        <h4><span class="gl gl-clock"></span> Piezas por paca</h4>
+        <p>Ya se ofrecieron a sacar los estándares. Es de lo que más preguntan los clientes y el bot necesita responderlo bien.</p>
+      </div>
+      <div class="pending-card">
+        <h4><span class="gl gl-clock"></span> Stock inicial</h4>
+        <p>Cuántas pacas de cada artículo se destinan al menudeo. Les dejamos la plantilla lista para llenar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-top:1px solid var(--border)">
+  <div class="wrap">
+    <p class="eyebrow">Cómo trabajamos</p>
+    <h2>Las etapas del proyecto</h2>
+    <p class="lead">
+      Nuestro método dedica la mayor parte del esfuerzo a mapear antes de construir.
+      Las fechas se fijan cuando lleguen los datos pendientes.
+    </p>
+
+    <ol class="timeline">
+      <li>
+        <span class="dot" aria-hidden="true"></span>
+        <h4>Mapeo y definición</h4>
+        <p>Sesión de trabajo para cerrar precios, envío, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y se verifica la cuenta de Mercado Pago.</p>
+      </li>
+      <li>
+        <span class="dot" aria-hidden="true"></span>
+        <h4>Montaje de la base</h4>
+        <p>Subcuenta, WhatsApp API, catálogo de los 30 artículos, tablero de venta e inventario conectado a su hoja compartida.</p>
+      </li>
+      <li>
+        <span class="dot" aria-hidden="true"></span>
+        <h4>Construcción de las automatizaciones</h4>
+        <p>El bot de ventas, el apartado con reloj, el cobro por Mercado Pago, la orden al almacén y el envío de la guía.</p>
+      </li>
+      <li>
+        <span class="dot" aria-hidden="true"></span>
+        <h4>Pruebas y arranque</h4>
+        <p>Se prueba cada flujo de punta a punta con ventas reales controladas, se capacita al equipo y al almacén, y se abre al público.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<footer class="footer-info">
+  <div class="wrap">
+    <div class="brand">Omnia in Business</div>
+    <div><a href="mailto:hola@omnia.business">hola@omnia.business</a></div>
+    <p class="small">
+      Documento preliminar con fines de alcance. No constituye una cotización en
+      firme: las cifras pueden ajustarse al cerrar los puntos pendientes.
+      Validez de referencia: 30 días.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var prices = {
+    sys1: { setup: 3575, monthly: 330 },
+    sys2: { setup: 1179, monthly:  60 }
+  };
+  var PACK_DISCOUNT = 0.05;
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.calc-card'));
+  var state = { sys1: true, sys2: false };
+
+  function money(n){
+    return 'USD ' + n.toLocaleString('en-US', {
+      minimumFractionDigits: (n % 1 === 0 ? 0 : 2),
+      maximumFractionDigits: 2
+    });
+  }
+
+  function render(){
+    var setup = 0, monthly = 0;
+    Object.keys(state).forEach(function(k){
+      if (state[k]) { setup += prices[k].setup; monthly += prices[k].monthly; }
+    });
+
+    var both = state.sys1 && state.sys2;
+    var saved = 0;
+    if (both) {
+      saved = Math.round(setup * PACK_DISCOUNT);
+      setup = setup - saved;
+    }
+
+    document.getElementById('r-sys1').textContent = state.sys1 ? money(prices.sys1.setup) : '—';
+    document.getElementById('r-sys2').textContent = state.sys2 ? money(prices.sys2.setup) : '—';
+    document.getElementById('r-total').textContent = setup === 0 ? '—' : money(setup);
+    document.getElementById('r-monthly').textContent =
+      monthly === 0 ? 'Seleccione al menos una fase' : 'más ' + money(monthly) + ' al mes';
+
+    var sav = document.getElementById('r-savings');
+    if (saved > 0) {
+      document.getElementById('r-savings-text').textContent =
+        'Ahorra ' + money(saved) + ' al contratar ambas fases juntas';
+      sav.hidden = false;
+    } else {
+      sav.hidden = true;
+    }
+
+    var split = document.getElementById('r-split');
+    if (setup > 0) {
+      split.hidden = false;
+      split.textContent = 'Se puede dividir en dos pagos de ' + money(setup / 2) +
+        ': mitad al arrancar y mitad a la entrega.';
+    } else {
+      split.hidden = true;
+    }
+  }
+
+  function toggle(card){
+    var key = card.getAttribute('data-key');
+    state[key] = !state[key];
+    card.setAttribute('aria-checked', state[key] ? 'true' : 'false');
+    render();
+  }
+
+  cards.forEach(function(card){
+    card.addEventListener('click', function(){ toggle(card); });
+    card.addEventListener('keydown', function(e){
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') {
+        e.preventDefault();
+        toggle(card);
+      }
+    });
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+parametro,valor,notas
+horas_apartado,24,"Confirmado por el cliente en llamada 1 (Omnia había propuesto 2-3 h)"
+costo_envio_mxn,PENDIENTE,"No se habló en ninguna llamada — pregunta bloqueante #2"
+envio_incluido_en_precio,PENDIENTE,"Pregunta bloqueante #2"
+minimo_compra_pacas,PENDIENTE,"Pregunta #5"
+paqueteria,Paquete Express,"Único proveedor — sólo servicio a ocurre (cliente recoge en sucursal)"
+moneda,MXN,
+whatsapp_almacen,PENDIENTE,"Número que recibe la orden simple de despacho"
+email_duenos,PENDIENTE,"Correo que recibe el detalle completo de la orden"
