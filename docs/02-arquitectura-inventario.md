@@ -163,7 +163,7 @@ enviarles los requisitos.
         │
         └──► Email a los DUEÑOS:   orden completa · cliente · monto · SKU · destino
                 │
-        el almacén prepara y lleva a Paquete Express
+        el almacén prepara y lleva a la paquetería
                 │
         abre el formulario GHL (con orden_id precargado) y escribe la guía
                 │
@@ -176,4 +176,4 @@ Este reparto sale textual de la llamada:
 > número de orden y la pieza, o sea qué pieza es y ya, y la dirección."
 
 **El único paso manual de todo el sistema es escribir el número de guía.** Es
-inevitable: Paquete Express no tiene API pública.
+inevitable: las paqueterías no tienen API pública práctica.

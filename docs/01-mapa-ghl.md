@@ -1,13 +1,15 @@
 # Mapa de implementación GHL
 
-Nomenclatura estándar de Omnia: **LS** lead sources · **SP** sales pipeline ·
-**AP** active projects · **PS** post-venta.
+Nomenclatura estándar: **LS** lead sources · **SP** sales pipeline ·
+**AP** active projects.
+
+Entrega única — todo lo de este documento va en el mismo alcance.
 
 ---
 
 ## 1. Pipelines
 
-### `SP · Menudeo` — 8 etapas (Fase 1)
+### `SP · Menudeo` — 8 etapas
 
 | # | Etapa | Entra cuando |
 |---|---|---|
@@ -20,13 +22,11 @@ Nomenclatura estándar de Omnia: **LS** lead sources · **SP** sales pipeline ·
 | 7 | Enviado — Guía Generada | El almacén capturó el número de guía |
 | 8 | Entregado / Cerrado | Cierre |
 
-### `AP · Post-Venta y Recompra` — 5 etapas (Fase 2)
-
-Entregado → Encuesta/Reseña → Recompra 30 d → Reactivación → Cerrado
+Un solo pipeline. El de post-venta y recompra se retiró del alcance.
 
 ---
 
-## 2. Workflows — Fase 1
+## 2. Workflows
 
 | Código | Nombre | Trigger | Nodos |
 |---|---|---|---:|
@@ -60,16 +60,15 @@ etapa 7 → envía al cliente su número de guía (template) → notifica a los 
 El `orden_id` precargado es lo que garantiza que *"esa liga no se le envíe a nadie
 más"*, la preocupación que Miguel planteó en la llamada.
 
-## 3. Workflows — Fase 2
+### Retirados del alcance
 
-| Código | Nombre | Trigger | Nodos |
-|---|---|---|---:|
-| `LS02` | Campañas Meta / TikTok → lead | Form Submitted / Contact Created | 7 |
-| `PS01` | Post-venta + reseña + recompra 30 d | Opportunity Stage Changed → Entregado | 10 |
+`LS02` (campañas Meta/TikTok) y `PS01` (post-venta, reseña y recompra a 30 días)
+estaban contemplados y **se sacaron**. Si más adelante reactivan las redes o
+quieren trabajar la recompra, se cotizan aparte.
 
 ---
 
-## 4. Agente de Agent Studio — `Agente Ventas Menudeo`
+## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
 
 17 nodos, con IA generativa avanzada.
 
@@ -87,7 +86,7 @@ más"*, la preocupación que Miguel planteó en la llamada.
 | 10 | Router Condicional | ¿Hay stock suficiente? |
 | 11 | AI Agent | Ofrece alternativas si no hay |
 | 12 | Capture | Nombre y teléfono |
-| 13 | Text Input | Ciudad, estado y sucursal de Paquete Express |
+| 13 | Text Input | Ciudad, estado y sucursal de la paquetería |
 | 14 | API Call → n8n `N2` | Crea apartado, reserva stock, genera `orden_id` |
 | 15 | Text Gen | Resumen del pedido + T&C del apartado de 24 h |
 | 16 | API Call → n8n `N3` | Genera la liga de Mercado Pago |
@@ -114,7 +113,7 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 
 ---
 
-## 5. Custom fields
+## 4. Custom fields
 
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
 `cantidad_apartada` (número) · `monto_apartado` (número) · `estado_apartado`
@@ -132,21 +131,21 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > Los UTM **no se capturan solos** en GHL (`ghl-limitations.md`). `LS01` los lee de
 > la URL del widget y los escribe en estos campos.
 
-## 6. Custom values
+## 5. Custom values
 
 `url_n8n_consultar_stock` · `url_n8n_crear_apartado` · `url_n8n_liga_pago` ·
 `whatsapp_almacen` · `email_duenos` · `horas_apartado` · `form_captura_guia_link`
 
 > Las URLs de n8n van en custom values, nunca hardcodeadas en los workflows.
 
-## 7. Formularios
+## 6. Formularios
 
 | Formulario | Quién lo usa | Campos |
 |---|---|---|
 | `Captura de Guía — Almacén` | El almacén | `orden_id` (precargado, oculto), `numero_guia`, `fecha_envio` |
 | `Ajuste Manual de Stock` | Los dueños (opcional) | `sku`, `nuevo_disponible`, `motivo` |
 
-## 8. Plantillas de mensaje
+## 7. Plantillas de mensaje
 
 | # | Canal | Cuándo | ¿Template de Meta? |
 |---|---|---|:--:|
@@ -161,7 +160,29 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > enviarlos a aprobación en la semana 1 del proyecto, no al final. Es el ítem que
 > más fácilmente atora el go-live.
 
+## 8. Landing de catálogo
+
+Página pública con los 30 artículos, montada en GHL. **6 secciones:**
+
+| # | Sección | Contenido |
+|---|---|---|
+| 1 | Portada | Propuesta de valor + CTA a WhatsApp |
+| 2 | Cómo funciona | Los 3 pasos de compra, en versión corta |
+| 3 | Catálogo verano | Los 17 artículos con foto, calidad y contenido |
+| 4 | Catálogo invierno | Los 13 artículos, mismo formato |
+| 5 | Preguntas frecuentes | Peso, piezas, tallas, calidades, envío |
+| 6 | Cierre | CTA final a WhatsApp + datos del negocio |
+
+Cada tarjeta de artículo arranca la conversación en WhatsApp con el SKU
+precargado, de modo que el agente ya sabe de qué paca le están preguntando y se
+salta los nodos 5 a 7 (temporada, categoría, calidad).
+
+> ⚠️ **Bloqueada por contenido.** La landing no se puede montar sin **fotos** y
+> **descripciones** de cada artículo, y ninguna de las dos cosas existe hoy. No
+> están cotizadas: las entrega el cliente. Preguntas #2 y #3 de
+> `05-preguntas-cliente.md`.
+
 ## 9. Calendarios
 
-**No se necesitan en Fase 1.** El menudeo no agenda citas. Si más adelante quieren
+**No se necesitan.** El menudeo no agenda citas. Si más adelante quieren
 consultoría de mayoreo con cita, se agrega como módulo aparte.

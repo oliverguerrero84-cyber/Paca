@@ -1,9 +1,9 @@
 # Alcance técnico — qué podemos construir y qué no
 
-Documento interno para Omnia y Yera. Define la frontera del proyecto **antes** de
+Documento interno de 786 Marketing. Define la frontera del proyecto **antes** de
 comprometer un número cerrado con el cliente.
 
-Regla de la metodología (`ghl-onboarding-mapper`): *"el mapeo define los límites —
+Regla de la metodología: *"el mapeo define los límites —
 todo lo que queda fuera del mapa es alcance adicional y se cotiza aparte"*.
 Este documento es ese mapa.
 
@@ -29,9 +29,14 @@ Y sobre las direcciones mexicanas:
 > 'no, yo estoy en el kilómetro 3 pasando el rancho Fulanito', o sea, no lo puedes
 > decir así a la paquetería, entonces era un show."
 
-Por eso hoy manejan **únicamente Paquete Express** y **sólo servicio a ocurre** — el
-cliente recoge en sucursal. Esto **simplifica el alcance**: no hay que validar
-direcciones domiciliarias, sólo capturar ciudad y sucursal.
+Por eso históricamente manejaron **únicamente Paquete Express** y **sólo servicio a
+ocurre** — el cliente recoge en sucursal. Esto **simplifica el alcance**: no hay que
+validar direcciones domiciliarias, sólo capturar ciudad y sucursal.
+
+> ⚠️ **El proveedor de envíos para este sistema está por confirmar.** El cliente lo
+> puso como punto pendiente. De él dependen las tarifas, las coberturas y qué datos
+> tiene que pedirle el bot. El diseño asume modalidad a ocurre; si cambian a entrega
+> a domicilio, hay que rehacer la captura de dirección. Pregunta bloqueante #1.
 
 ## 3. Lo que piden
 
@@ -78,7 +83,7 @@ Es el requisito central del cliente:
 > la venta en sí, porque la tenemos muy específica. O sea, tengo tantas de esta y no
 > tengo más."
 
-Pero la referencia interna de Omnia (`ghl-limitations.md`) es categórica:
+Pero la referencia de limitaciones de GHL (`ghl-limitations.md`) es categórica:
 
 > ❌ **No hay aritmética nativa en campos numéricos.** GHL no puede sumar, restar,
 > multiplicar ni dividir valores de campos number.
@@ -91,8 +96,8 @@ Detalle completo en `02-arquitectura-inventario.md`.
 ### 5.2 · Mercado Pago — **no es pasarela nativa de GHL**
 
 GHL trae Stripe, PayPal, NMI, Authorize.net y Razorpay. **Mercado Pago no está.**
-El cliente lo pidió explícitamente y Omnia se lo recomendó en la llamada, así que
-se queda — pero vía integración.
+El cliente lo pidió explícitamente y nosotros se lo recomendamos en la llamada, así
+que se queda — pero vía integración.
 
 **Solución:** n8n genera la preferencia de pago con la API de Checkout Pro y
 devuelve la liga; el webhook IPN de Mercado Pago avisa cuando se acredita.
@@ -120,10 +125,10 @@ Los mensajes que **caen fuera de la ventana** en este flujo:
 Hay que crearlos y mandarlos a aprobación **al inicio del proyecto**, no al final.
 Es el ítem que más fácilmente atora un go-live.
 
-### 5.4 · Paquete Express no tiene API pública
+### 5.4 · Las paqueterías no tienen API pública práctica
 
-No hay forma de generar la guía ni leer el tracking automáticamente. Omnia ya se lo
-adelantó al cliente en la llamada:
+No hay forma de generar la guía ni leer el tracking automáticamente. Ya se lo
+adelantamos al cliente en la llamada:
 
 > "Claramente sí tiene que ser híbrido, o sea ustedes tendrían que meter esa liga en
 > donde nosotros le indiquemos para que el sistema dispare automáticamente ese
@@ -152,22 +157,27 @@ es escribir un número — nada más.
 | Unidad de venta | Paca completa cerrada de 100 lb, de 1 en 1 | Definido con el usuario. No se venden piezas sueltas — obligaría a un inventario por prenda/talla/foto y multiplicaría el proyecto |
 | Motor externo | n8n + Google Sheets | El cliente ya comparte un Excel con el almacén → cero curva de aprendizaje |
 | Mayoreo | **Fuera de alcance**, sigue manual | Textual del cliente |
-| Duración del apartado | 24 h | El cliente pidió 24; Omnia había propuesto 2–3 h |
-| Paquetería | Paquete Express, sólo a ocurre | Único proveedor que usan |
-| Pasarela | Mercado Pago | Pedido por el cliente, recomendado por Omnia en la llamada |
+| Duración del apartado | 24 h | El cliente pidió 24; nosotros habíamos propuesto 2–3 h |
+| Paquetería | **Por confirmar**, modalidad a ocurre | Históricamente Paquete Express; el proveedor definitivo es punto pendiente |
+| Pasarela | Mercado Pago | Pedido por el cliente y recomendado por nosotros en la llamada |
 
 ---
 
-## 7. Fases
+## 7. Alcance de la entrega
 
-**Fase 1 — Núcleo de venta menudeo.** Es el sistema que el cliente pidió: bot que
-vende, inventario que no sobrevende, apartado de 24 h, cobro por Mercado Pago, orden
-al almacén, guía al cliente y escalamiento a humano. 8 workflows + 1 agente + 2
-integraciones + 1 pipeline.
+**Entrega única.** No hay fases posteriores: al terminar, el menudeo opera completo.
 
-**Fase 2 — Crecimiento.** Landing de catálogo, dashboard de ventas y stock,
-post-venta con reseñas y recompra a 30 días, workflow de campañas de Meta y TikTok
-para cuando reactiven las redes. 2 workflows más + 1 pipeline + landing + reportes.
+Bot que vende, inventario que no sobrevende, apartado de 24 h, cobro por Mercado
+Pago, orden al almacén, guía al cliente, escalamiento a humano y **landing de
+catálogo**. En números: 1 pipeline de 8 etapas · 8 workflows · 1 agente de 17 nodos ·
+2 integraciones · 5 plantillas · 1 landing de 6 secciones · 2 capacitaciones · soporte.
+
+**Retirado del alcance:** reportes y dashboards, post-venta con reseñas y recompra a
+30 días, workflow de campañas de Meta y TikTok (`LS02`) y el segundo pipeline. Si
+más adelante los quieren, se cotizan aparte.
+
+Cronograma: **entre 3 y 4 semanas**, con las fechas exactas fijadas una vez validada
+y entregada la propuesta final con el mapeo.
 
 Números en `04-precotizacion.md`.
 
@@ -183,3 +193,5 @@ Números en `04-precotizacion.md`.
 | 4 | El cliente edita el Sheet a mano y rompe una fórmula | Pestañas protegidas; sólo `disponible` y `precio` editables |
 | 5 | Cuenta de Mercado Pago sin verificar → retención de fondos | Ya salió en la llamada; enviarles los requisitos |
 | 6 | 5 de los 30 SKUs no están descritos en ningún transcript (corsé, playera comercial, chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
+| 7 | **No hay fotos de producto.** La landing y las fichas del bot no se pueden montar sin ellas | Pregunta bloqueante #2. **No están cotizadas**: las produce el cliente |
+| 8 | **Proveedor de envíos sin definir.** De él salen tarifas, coberturas y qué datos pide el bot | Pregunta bloqueante #1. Bloquea el cálculo del total a cobrar |

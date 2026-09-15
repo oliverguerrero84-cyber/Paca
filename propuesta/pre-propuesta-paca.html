@@ -9,51 +9,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ──────────────────────────────────────────────────────────────
-   Omnia · Pre-propuesta — Cliente: Paca (ropa americana)
-   Fecha: 2026-09-14 · Reconstruida desde el sistema de marca
-   documentado en generador-presupuestos/SKILL.md
+   786 Marketing · Pre-propuesta — Cliente: Paca (ropa americana)
+   Fecha: 2026-09-15 · Revisión 2 — fase única, marca 786
    NO reintroducir: emojis · transition:all · colores fuera de
-   :root · texto degradado fuera del logo · quitar estados o
-   reduced-motion.
+   :root · quitar estados de foco o reduced-motion.
    ────────────────────────────────────────────────────────────── */
 
 :root{
-  /* Marca */
-  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
-  --green-gradient: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  --green-gradient-deep: linear-gradient(135deg, #059669 0%, #047857 100%);
-  --red-gradient: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+  /* Verde de marca 786 */
+  --brand-50:#ecfdf5;  --brand-100:#d3f3e4; --brand-200:#a7e7c9;
+  --brand-300:#6dd4a8; --brand-400:#34c48a; --brand-500:#1aa46d;
+  --brand-600:#15855a; --brand-700:#116343; --brand-800:#0d5138;
+  --brand-900:#08301f;
 
-  /* Índigo / violeta / rosa */
-  --indigo-50:#eef2ff; --indigo-100:#e0e7ff; --indigo-500:#6366f1;
-  --indigo-600:#4f46e5; --indigo-700:#4338ca;
-  --violet-100:#ede9fe; --violet-500:#8b5cf6; --violet-600:#7c3aed;
-  --pink-100:#fce7f3; --pink-600:#db2777;
+  --primary-gradient: linear-gradient(135deg, #0d5138 0%, #15855a 50%, #34c48a 100%);
+  --deep-gradient:    linear-gradient(135deg, #0d5138 0%, #116343 100%);
+  --red-gradient:     linear-gradient(135deg, #f87171 0%, #dc2626 100%);
 
-  /* Verde / rojo / ámbar */
-  --green-50:#ecfdf5; --green-200:#a7f3d0; --green-600:#059669; --green-700:#047857;
+  /* Señales — no son marca */
   --red-50:#fef2f2; --red-200:#fecaca; --red-600:#dc2626; --red-700:#b91c1c;
-  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-700:#b45309;
+  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-600:#d97706; --amber-700:#b45309;
 
   /* Slate */
-  --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0;
+  --slate-50:#f8fafc;  --slate-100:#f1f5f9; --slate-200:#e2e8f0;
   --slate-300:#cbd5e1; --slate-400:#94a3b8; --slate-500:#64748b;
   --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
 
+  /* Fondo oscuro con tinte verde */
+  --ink:#07231a; --ink-soft:#0e3728;
+
   /* Alphas */
-  --white-a80: rgba(255,255,255,.80);
+  --white-a80: rgba(255,255,255,.82);
   --white-a10: rgba(255,255,255,.10);
   --white-a18: rgba(255,255,255,.18);
-  --white-a60: rgba(255,255,255,.60);
-  --indigo-a12: rgba(79,70,229,.12);
-  --indigo-a24: rgba(79,70,229,.24);
-  --violet-a18: rgba(124,58,237,.18);
-  --violet-a30: rgba(124,58,237,.30);
-  --pink-a10: rgba(219,39,119,.10);
+  --brand-a08: rgba(17,99,67,.08);
+  --brand-a14: rgba(17,99,67,.14);
+  --brand-a24: rgba(17,99,67,.24);
+  --brand-a30: rgba(52,196,138,.30);
+  --shadow-sm: 0 2px 8px rgba(17,99,67,.07);
+  --shadow-md: 0 8px 24px rgba(17,99,67,.10);
+  --shadow-lg: 0 18px 48px rgba(17,99,67,.16);
   --mask-solid: #000;
-  --shadow-sm: 0 2px 8px rgba(79,70,229,.06);
-  --shadow-md: 0 8px 24px rgba(79,70,229,.10);
-  --shadow-lg: 0 18px 48px rgba(79,70,229,.16);
 
   /* Semánticos */
   --bg-color: var(--slate-50);
@@ -87,7 +83,7 @@ img{max-width:100%}
 section{padding-block:clamp(40px,7vw,80px)}
 .eyebrow{
   font-family:var(--font-title); font-size:.78rem; font-weight:700;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--indigo-600);
+  letter-spacing:.14em; text-transform:uppercase; color:var(--brand-600);
   margin:0 0 .6em;
 }
 .lead{font-size:clamp(1rem,1.7vw,1.15rem); color:var(--text-gray); max-width:66ch}
@@ -116,7 +112,6 @@ section{padding-block:clamp(40px,7vw,80px)}
 }
 .gl-clock::before{
   border-radius:50%;
-  clip-path:polygon(50% 0,100% 0,100% 100%,0 100%,0 0);
   -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
           mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
 }
@@ -135,12 +130,22 @@ section{padding-block:clamp(40px,7vw,80px)}
 .gl-spark::before{
   clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%);
 }
-.gl-gift::before{
-  clip-path:polygon(4% 34%, 96% 34%, 96% 50%, 4% 50%, 4% 34%, 12% 50%, 88% 50%, 88% 98%, 12% 98%);
+.gl-image::before{
+  clip-path:polygon(3% 12%, 97% 12%, 97% 88%, 3% 88%, 3% 12%, 11% 20%, 11% 80%, 89% 80%, 89% 20%);
 }
-.gl-gift::after{
-  content:""; position:absolute; left:44%; top:10%; width:12%; height:88%;
-  background:var(--surface);
+.gl-image::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(16% 72%, 40% 40%, 56% 60%, 68% 48%, 84% 72%);
+}
+.gl-truck::before{
+  clip-path:polygon(4% 26%, 58% 26%, 58% 66%, 4% 66%, 4% 26%, 62% 38%, 80% 38%, 94% 52%, 94% 66%, 62% 66%);
+}
+.gl-truck::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(16% 66%, 32% 66%, 32% 84%, 16% 84%, 70% 66%, 86% 66%, 86% 84%, 70% 84%);
+}
+.gl-text::before{
+  clip-path:polygon(6% 14%, 94% 14%, 94% 26%, 6% 26%, 6% 40%, 94% 40%, 94% 52%, 6% 52%, 6% 66%, 66% 66%, 66% 78%, 6% 78%);
 }
 
 /* ── Header glass ─────────────────────────────────────────── */
@@ -156,34 +161,39 @@ header{
   max-width:1140px; margin:0 auto; padding:14px 20px;
   display:flex; align-items:center; justify-content:space-between; gap:16px;
 }
-.logo{font-family:var(--font-title); line-height:1.05}
-.logo .omnia{
-  display:block; font-size:1.5rem; font-weight:800; letter-spacing:-.03em;
-  background:var(--primary-gradient);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
+
+/* LOGO 786 MARKETING
+   PROVISIONAL: wordmark reconstruido en CSS mientras llega el archivo.
+   Para poner el logo real, sustituir el <span class="wordmark">…</span>
+   del header por:   <img class="logo-img" src="…" alt="786 Marketing">
+   y borrar la regla .wordmark. La clase .logo-img ya está lista. */
+.logo{font-family:var(--font-title); line-height:1}
+.logo-img{display:block; height:42px; width:auto}
+.wordmark{
+  display:block; font-size:1.7rem; font-weight:800; letter-spacing:-.035em;
+  color:transparent;
+  -webkit-text-stroke:1.6px var(--brand-700);
+  paint-order:stroke fill;
 }
-.logo .sub{
-  display:block; font-size:.62rem; font-weight:600; letter-spacing:.3em;
-  text-transform:uppercase; color:var(--text-gray);
-}
+.wordmark .dot{-webkit-text-stroke:1.6px var(--brand-500)}
 .header-tag{
   font-family:var(--font-title); font-size:.72rem; font-weight:700;
   letter-spacing:.1em; text-transform:uppercase;
-  color:var(--indigo-700); background:var(--indigo-50);
-  border:1px solid var(--indigo-100); border-radius:999px; padding:6px 14px;
+  color:var(--brand-700); background:var(--brand-50);
+  border:1px solid var(--brand-100); border-radius:999px; padding:6px 14px;
   text-align:center;
 }
 
 /* ── Hero ─────────────────────────────────────────────────── */
 .hero{
   background:
-    radial-gradient(1000px 420px at 12% -10%, var(--indigo-a12), transparent 60%),
-    radial-gradient(800px 400px at 92% 0%, var(--pink-a10), transparent 62%);
+    radial-gradient(1000px 420px at 12% -10%, var(--brand-a14), transparent 60%),
+    radial-gradient(800px 400px at 92% 0%, var(--brand-a08), transparent 62%);
   padding-block:clamp(44px,8vw,86px) clamp(28px,4vw,44px);
 }
 .hero h1{max-width:20ch}
 .hero .client{
-  font-family:var(--font-title); font-weight:700; color:var(--violet-600);
+  font-family:var(--font-title); font-weight:700; color:var(--brand-600);
   font-size:clamp(1rem,2vw,1.2rem); margin-bottom:.4em;
 }
 .metrics-bar{
@@ -196,7 +206,7 @@ header{
 }
 .metric .v{
   font-family:var(--font-title); font-size:clamp(1.15rem,2.4vw,1.7rem);
-  font-weight:800; color:var(--indigo-600); line-height:1.15;
+  font-weight:800; color:var(--brand-700); line-height:1.15;
 }
 .metric .l{font-size:.8rem; color:var(--text-gray); margin-top:4px}
 
@@ -211,44 +221,46 @@ header{
 .diag-card h3{display:flex; align-items:center; gap:10px; margin-bottom:14px}
 .diag-card.problem{background:var(--red-50); border-color:var(--red-200)}
 .diag-card.problem h3{color:var(--red-700)}
-.diag-card.solution{background:var(--green-50); border-color:var(--green-200)}
-.diag-card.solution h3{color:var(--green-700)}
+.diag-card.solution{background:var(--brand-50); border-color:var(--brand-200)}
+.diag-card.solution h3{color:var(--brand-700)}
 .diag-card ul{list-style:none; margin:0; padding:0; display:grid; gap:12px}
 .diag-card li{display:flex; gap:11px; align-items:flex-start; font-size:.95rem}
 .diag-card.problem li .gl{color:var(--red-600); margin-top:.3em}
-.diag-card.solution li .gl{color:var(--green-600); margin-top:.3em}
+.diag-card.solution li .gl{color:var(--brand-600); margin-top:.3em}
 .quote{
   font-style:italic; color:var(--slate-700); border-left:3px solid var(--slate-300);
   padding-left:14px; margin:16px 0 0; font-size:.9rem;
 }
 
-/* ── Sistemas ─────────────────────────────────────────────── */
-.systems-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:32px}
+/* ── Sistema ──────────────────────────────────────────────── */
 .system-card{
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-lg); padding:clamp(22px,3vw,32px);
-  box-shadow:var(--shadow-md); display:flex; flex-direction:column;
+  background:var(--surface); border:1px solid var(--brand-a24);
+  border-radius:var(--r-lg); padding:clamp(24px,3.4vw,38px);
+  box-shadow:var(--shadow-lg); margin-top:32px;
 }
-.system-card.featured{border-color:var(--indigo-a24); box-shadow:var(--shadow-lg)}
+.sys-head{
+  display:flex; flex-wrap:wrap; align-items:flex-end; gap:18px 32px;
+  padding-bottom:22px; margin-bottom:24px; border-bottom:1px solid var(--border);
+}
+.sys-head > div:first-child{flex:1 1 280px; min-width:0}
 .sys-badge{
-  align-self:flex-start; font-family:var(--font-title); font-size:.7rem;
+  display:inline-block; font-family:var(--font-title); font-size:.7rem;
   font-weight:700; letter-spacing:.12em; text-transform:uppercase;
   color:var(--text-light); background:var(--primary-gradient);
-  border-radius:999px; padding:6px 14px; margin-bottom:14px;
+  border-radius:999px; padding:6px 14px; margin-bottom:12px;
 }
-.sys-badge.later{background:var(--slate-700)}
 .sys-price{
   font-family:var(--font-title); font-weight:800; color:var(--text-dark);
-  font-size:clamp(1.5rem,3vw,2rem); line-height:1.1; margin:6px 0 2px;
+  font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.1;
 }
-.sys-price .cur{font-size:.55em; color:var(--text-gray); font-weight:700}
-.sys-monthly{color:var(--text-gray); font-size:.92rem; margin-bottom:18px}
-.feature-list-two-col{
-  list-style:none; margin:0 0 4px; padding:0;
-  display:grid; grid-template-columns:1fr 1fr; gap:10px 18px;
+.sys-price .cur{font-size:.5em; color:var(--text-gray); font-weight:700}
+.sys-monthly{color:var(--text-gray); font-size:.92rem; margin:2px 0 0}
+.feature-list{
+  list-style:none; margin:0; padding:0;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px 24px;
 }
-.feature-list-two-col li{display:flex; gap:9px; align-items:flex-start; font-size:.9rem}
-.feature-list-two-col li .gl{color:var(--indigo-600); margin-top:.3em}
+.feature-list li{display:flex; gap:9px; align-items:flex-start; font-size:.92rem}
+.feature-list li .gl{color:var(--brand-600); margin-top:.3em}
 
 /* ── Workflow box ─────────────────────────────────────────── */
 .workflow-box{
@@ -261,24 +273,24 @@ header{
 }
 .step-card{
   flex:1 1 150px; min-width:0; position:relative;
-  background:var(--indigo-50); border:1px solid var(--indigo-100);
+  background:var(--brand-50); border:1px solid var(--brand-100);
   border-radius:var(--r-md); padding:16px 14px;
 }
 .step-card .n{
   font-family:var(--font-title); font-size:.7rem; font-weight:800;
-  letter-spacing:.1em; color:var(--violet-600); display:block; margin-bottom:6px;
+  letter-spacing:.1em; color:var(--brand-600); display:block; margin-bottom:6px;
 }
 .step-card .t{display:block; font-family:var(--font-title); font-weight:700; font-size:.95rem}
 .step-card .d{display:block; font-size:.82rem; color:var(--text-gray); margin-top:4px}
 .step-card::after{
   content:""; position:absolute; right:-12px; top:50%; width:12px; height:2px;
-  background:var(--indigo-100); transform:translateY(-50%);
+  background:var(--brand-200); transform:translateY(-50%);
 }
 .step-card:last-child::after{display:none}
 .step-card .who{
   display:inline-block; margin-top:8px; font-size:.7rem; font-weight:700;
   letter-spacing:.06em; text-transform:uppercase; border-radius:999px;
-  padding:3px 9px; background:var(--violet-100); color:var(--violet-600);
+  padding:3px 9px; background:var(--brand-100); color:var(--brand-700);
 }
 .step-card .who.manual{background:var(--amber-50); color:var(--amber-700)}
 
@@ -293,119 +305,100 @@ header{
 .compliance-box ul{margin:0; padding-left:20px; display:grid; gap:9px}
 .compliance-box li{font-size:.92rem; color:var(--slate-700)}
 
+/* ── Inversión ────────────────────────────────────────────── */
+.invest-section{background:var(--ink); color:var(--text-light)}
+.invest-section h2,.invest-section h3{color:var(--text-light)}
+.invest-section .eyebrow{color:var(--brand-400)}
+.invest-section .lead{color:var(--brand-200)}
+.invest-grid{display:grid; grid-template-columns:1fr .92fr; gap:26px; margin-top:32px}
+.invest-panel{
+  background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-lg); padding:clamp(24px,3vw,32px);
+}
+.invest-figure{
+  font-family:var(--font-title); font-size:clamp(2.2rem,5.4vw,3.4rem);
+  font-weight:800; line-height:1.05;
+}
+.invest-figure .cur{font-size:.42em; color:var(--brand-300); font-weight:700}
+.invest-label{
+  font-size:.82rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--brand-300); font-weight:700; font-family:var(--font-title);
+}
+.invest-sep{height:1px; background:var(--white-a18); margin:22px 0}
+.invest-note{color:var(--brand-200); font-size:.9rem; margin:6px 0 0}
+.split-box{
+  margin-top:22px; border-radius:var(--r-sm); padding:14px 16px;
+  background:var(--deep-gradient); border:1px solid var(--white-a18);
+  display:flex; gap:11px; align-items:flex-start; font-size:.88rem;
+}
+.split-box .gl{color:var(--brand-300); margin-top:.2em}
+.includes{list-style:none; margin:0; padding:0; display:grid; gap:11px}
+.includes li{display:flex; gap:10px; align-items:flex-start; font-size:.92rem}
+.includes li .gl{color:var(--brand-400); margin-top:.3em}
+.third-party{
+  margin-top:22px; padding-top:18px; border-top:1px solid var(--white-a18);
+  font-size:.83rem; color:var(--brand-200);
+}
+
 /* ── Pendientes ───────────────────────────────────────────── */
 .pending-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:28px}
 .pending-card{
   background:var(--surface); border:1px solid var(--border);
-  border-left:4px solid var(--indigo-500);
+  border-left:4px solid var(--brand-500);
   border-radius:var(--r-sm); padding:18px 20px;
 }
 .pending-card h4{font-size:1rem; margin-bottom:6px; display:flex; gap:9px; align-items:center}
-.pending-card h4 .gl{color:var(--indigo-600)}
+.pending-card h4 .gl{color:var(--brand-600)}
 .pending-card p{font-size:.88rem; color:var(--text-gray); margin:0}
-
-/* ── Calculadora ──────────────────────────────────────────── */
-.calculator-section{background:var(--slate-900); color:var(--text-light)}
-.calculator-section h2,.calculator-section h3{color:var(--text-light)}
-.calculator-section .eyebrow{color:var(--violet-500)}
-.calculator-section .lead{color:var(--slate-300)}
-.calc-grid{display:grid; grid-template-columns:1.25fr .95fr; gap:26px; margin-top:32px}
-.calc-cards{display:grid; gap:14px}
-.calc-card{
-  display:flex; gap:16px; align-items:flex-start; cursor:pointer;
-  background:var(--white-a10); border:1px solid var(--white-a18);
-  border-radius:var(--r-md); padding:18px 20px;
-  transition:background .18s ease, border-color .18s ease;
+.pending-note{
+  margin-top:24px; background:var(--brand-50); border:1px solid var(--brand-200);
+  border-radius:var(--r-md); padding:18px 22px; font-size:.92rem;
+  color:var(--slate-700);
 }
-.calc-card:hover{background:var(--white-a18)}
-.calc-card[aria-checked="true"]{border-color:var(--violet-500); background:var(--violet-a18)}
-.calc-card:focus-visible{outline:3px solid var(--violet-500); outline-offset:3px}
-.calc-card:active{background:var(--violet-a30)}
-.switch{
-  flex:0 0 auto; width:46px; height:26px; border-radius:999px;
-  background:var(--slate-700); position:relative; margin-top:2px;
-  transition:background .18s ease;
-}
-.switch::after{
-  content:""; position:absolute; top:3px; left:3px; width:20px; height:20px;
-  border-radius:50%; background:var(--text-light);
-  transition:transform .18s ease;
-}
-.calc-card[aria-checked="true"] .switch{background:var(--violet-600)}
-.calc-card[aria-checked="true"] .switch::after{transform:translateX(20px)}
-.calc-card .ct{display:block; font-family:var(--font-title); font-weight:700; font-size:1.02rem}
-.calc-card .cd{display:block; font-size:.85rem; color:var(--slate-300); margin-top:3px}
-.calc-card .cp{
-  display:block; font-family:var(--font-title); font-weight:700; font-size:.9rem;
-  color:var(--violet-500); margin-top:7px;
-}
-.calc-result{
-  background:var(--white-a10); border:1px solid var(--white-a18);
-  border-radius:var(--r-lg); padding:26px; align-self:start;
-}
-.calc-row{
-  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
-  padding:11px 0; border-bottom:1px solid var(--white-a18); font-size:.92rem;
-}
-.calc-row:last-of-type{border-bottom:0}
-.calc-row .k{color:var(--slate-300)}
-.calc-row .v{font-family:var(--font-title); font-weight:700}
-.calc-total{
-  margin-top:16px; padding-top:18px; border-top:2px solid var(--violet-600);
-}
-.calc-total .big{
-  font-family:var(--font-title); font-size:clamp(1.8rem,4vw,2.5rem);
-  font-weight:800; line-height:1.1;
-}
-.calc-total .mo{color:var(--slate-300); font-size:.95rem; margin-top:4px}
-.savings{
-  margin-top:14px; border-radius:var(--r-sm); padding:10px 14px;
-  background:var(--green-gradient-deep); color:var(--text-light);
-  font-size:.86rem; font-weight:600;
-  display:flex; align-items:center; gap:9px;
-}
-.split{
-  margin-top:16px; font-size:.84rem; color:var(--slate-300);
-  border-top:1px solid var(--white-a18); padding-top:14px;
-}
-.note-calc{margin-top:18px; font-size:.8rem; color:var(--slate-400)}
+.pending-note strong{color:var(--brand-700)}
 
 /* ── Timeline ─────────────────────────────────────────────── */
 .timeline{list-style:none; margin:32px 0 0; padding:0; position:relative}
 .timeline::before{
   content:""; position:absolute; left:15px; top:8px; bottom:8px; width:2px;
-  background:var(--indigo-100);
+  background:var(--brand-100);
 }
 .timeline li{position:relative; padding:0 0 26px 48px}
 .timeline li:last-child{padding-bottom:0}
 .timeline .dot{
   position:absolute; left:8px; top:4px; width:16px; height:16px;
   border-radius:50%; background:var(--primary-gradient);
-  border:3px solid var(--bg-color);
+  border:3px solid var(--surface);
 }
-.timeline h4{margin-bottom:3px; font-size:1.05rem}
+.timeline h4{margin-bottom:3px; font-size:1.05rem; display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.timeline .week{
+  font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  background:var(--brand-100); color:var(--brand-700);
+  border-radius:999px; padding:3px 10px; font-family:var(--font-title);
+}
 .timeline p{font-size:.9rem; color:var(--text-gray); margin:0}
+.timeline-note{
+  margin-top:26px; font-size:.9rem; color:var(--text-gray);
+  border-left:3px solid var(--brand-300); padding-left:16px;
+}
 
 /* ── Footer ───────────────────────────────────────────────── */
 .footer-info{
-  background:var(--slate-900); color:var(--slate-300);
+  background:var(--ink); color:var(--brand-200);
   padding-block:40px; padding-bottom:calc(40px + env(safe-area-inset-bottom, 0px));
   text-align:center;
 }
 .footer-info .brand{
-  font-family:var(--font-title); font-weight:700; color:var(--text-light);
-  font-size:1.05rem; margin-bottom:6px;
+  font-family:var(--font-title); font-weight:800; color:var(--text-light);
+  font-size:1.15rem; letter-spacing:-.01em; margin-bottom:10px;
 }
-.footer-info a{color:var(--violet-500); text-decoration:none; word-break:break-word}
-.footer-info a:hover{text-decoration:underline}
-.footer-info a:focus-visible{outline:3px solid var(--violet-500); outline-offset:3px; border-radius:4px}
-.footer-info .small{font-size:.8rem; color:var(--slate-400); margin-top:14px}
+.footer-info .small{font-size:.8rem; color:var(--brand-300); max-width:62ch; margin:0 auto}
 
-/* ── Estados globales (fusión Hallmark — no borrar) ───────── */
-a:focus-visible, button:focus-visible, [role="switch"]:focus-visible{
-  outline:3px solid var(--indigo-500); outline-offset:3px;
+/* ── Estados globales — no borrar ─────────────────────────── */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
+  outline:3px solid var(--brand-500); outline-offset:3px;
 }
-button:active{transform:translateY(1px)}
+a:active, button:active{transform:translateY(1px)}
 button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
 @media (prefers-reduced-motion: reduce){
@@ -417,8 +410,8 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
 /* ── Responsivo ───────────────────────────────────────────── */
 @media (max-width:992px){
-  .calc-grid{grid-template-columns:1fr}
-  .systems-grid{grid-template-columns:1fr}
+  .invest-grid{grid-template-columns:1fr}
+  .feature-list{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:768px){
   .diagnostico-grid{grid-template-columns:1fr}
@@ -428,21 +421,25 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
   .header-in{flex-direction:column; align-items:flex-start; gap:10px}
 }
 @media (max-width:500px){
-  .feature-list-two-col{grid-template-columns:1fr}
+  .feature-list{grid-template-columns:1fr}
   .wrap{padding-left:16px; padding-right:16px}
 }
 @media (max-width:400px){
   .metrics-bar{grid-template-columns:1fr}
-  .calc-card{flex-direction:column; gap:12px}
 }
 
 @media print{
   header{position:static}
-  .calculator-section{background:var(--surface); color:var(--text-dark)}
-  .calculator-section h2,.calculator-section h3{color:var(--text-dark)}
-  .calc-card,.calc-result{border-color:var(--border); background:var(--surface)}
-  .calc-card .cd,.calc-row .k,.calc-total .mo{color:var(--text-gray)}
+  .invest-section{background:var(--surface); color:var(--text-dark)}
+  .invest-section h2,.invest-section h3{color:var(--text-dark)}
+  .invest-section .lead,.invest-note,.third-party{color:var(--text-gray)}
+  .invest-panel{border-color:var(--border); background:var(--surface)}
+  .invest-label,.invest-figure .cur{color:var(--brand-700)}
+  .includes li .gl,.split-box .gl{color:var(--brand-600)}
+  .split-box{background:var(--brand-50); color:var(--text-dark)}
   .footer-info{background:var(--surface); color:var(--text-dark)}
+  .footer-info .brand{color:var(--text-dark)}
+  .footer-info .small{color:var(--text-gray)}
   section{padding-block:22px}
   .system-card,.workflow-box{box-shadow:none}
 }
@@ -453,10 +450,9 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 <header>
   <div class="header-in">
     <div class="logo">
-      <span class="omnia">omnia</span>
-      <span class="sub">in business</span>
+      <span class="wordmark">786<span class="dot">.</span>marketing</span>
     </div>
-    <span class="header-tag">Pre-propuesta · 14 sep 2026</span>
+    <span class="header-tag">Pre-propuesta · 15 sep 2026</span>
   </div>
 </header>
 
@@ -520,13 +516,13 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <h3>Recorrido completo de una venta</h3>
       <p style="color:var(--text-gray); font-size:.92rem; margin-bottom:0">
         Un solo paso queda manual, y es inevitable: escribir el número de guía.
-        Paquete Express no tiene forma de entregarlo automáticamente.
+        Las paqueterías no tienen forma de entregarlo automáticamente.
       </p>
       <ol class="steps">
         <li class="step-card">
           <span class="n">01</span>
           <span class="t">Llega el lead</span>
-          <span class="d">WhatsApp, Instagram, Facebook o TikTok, todo en una bandeja.</span>
+          <span class="d">WhatsApp, Instagram, Facebook, TikTok o la landing, todo en una bandeja.</span>
           <span class="who">Automático</span>
         </li>
         <li class="step-card">
@@ -575,96 +571,78 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 <section>
   <div class="wrap">
     <p class="eyebrow">Alcance</p>
-    <h2>Qué se construye, en dos fases</h2>
+    <h2>Qué se construye</h2>
     <p class="lead">
-      La Fase 1 es el sistema que pidieron y funciona sola. La Fase 2 es crecimiento:
-      tiene sentido cuando el menudeo ya esté corriendo.
+      Todo lo que sigue entra en una sola entrega. No hay módulos pendientes ni
+      segundas etapas: al terminar, el menudeo opera completo.
     </p>
 
-    <div class="systems-grid">
-      <article class="system-card featured">
-        <span class="sys-badge">Fase 1 &middot; Núcleo</span>
-        <h3>Venta de menudeo automatizada</h3>
-        <div class="sys-price"><span class="cur">USD</span> 3,575</div>
-        <p class="sys-monthly">pago único de implementación &middot; más USD 330 al mes</p>
-        <ul class="feature-list-two-col">
-          <li><span class="gl gl-check"></span><span>Bot de ventas con IA</span></li>
-          <li><span class="gl gl-check"></span><span>Catálogo de los 30 artículos</span></li>
-          <li><span class="gl gl-check"></span><span>Inventario que no sobrevende</span></li>
-          <li><span class="gl gl-check"></span><span>Apartado de 24 h con reloj</span></li>
-          <li><span class="gl gl-check"></span><span>Cobro por Mercado Pago</span></li>
-          <li><span class="gl gl-check"></span><span>Orden automática al almacén</span></li>
-          <li><span class="gl gl-check"></span><span>Guía al cliente por WhatsApp</span></li>
-          <li><span class="gl gl-check"></span><span>Escalamiento a persona</span></li>
-          <li><span class="gl gl-check"></span><span>Tablero de 8 etapas</span></li>
-          <li><span class="gl gl-check"></span><span>2 sesiones de capacitación</span></li>
-        </ul>
-      </article>
+    <article class="system-card">
+      <div class="sys-head">
+        <div>
+          <span class="sys-badge">Sistema completo de menudeo</span>
+          <h3 style="margin:0">Venta automatizada de punta a punta</h3>
+        </div>
+        <div>
+          <div class="sys-price"><span class="cur">USD</span> 4,065</div>
+          <p class="sys-monthly">implementación &middot; más USD 330 al mes</p>
+        </div>
+      </div>
 
-      <article class="system-card">
-        <span class="sys-badge later">Fase 2 &middot; Crecimiento</span>
-        <h3>Escalar y medir</h3>
-        <div class="sys-price"><span class="cur">USD</span> 1,179</div>
-        <p class="sys-monthly">sumado a la Fase 1 &middot; más USD 60 al mes</p>
-        <ul class="feature-list-two-col">
-          <li><span class="gl gl-chart"></span><span>Tablero de ventas y stock</span></li>
-          <li><span class="gl gl-chart"></span><span>Alerta de apartados vencidos</span></li>
-          <li><span class="gl gl-spark"></span><span>Landing de catálogo</span></li>
-          <li><span class="gl gl-spark"></span><span>Campañas Meta y TikTok</span></li>
-          <li><span class="gl gl-gift"></span><span>Post-venta y reseñas</span></li>
-          <li><span class="gl gl-gift"></span><span>Recompra a 30 días</span></li>
-          <li><span class="gl gl-check"></span><span>Tablero de post-venta</span></li>
-          <li><span class="gl gl-check"></span><span>1 sesión más de capacitación</span></li>
-        </ul>
-      </article>
-    </div>
+      <ul class="feature-list">
+        <li><span class="gl gl-check"></span><span>Bot de ventas con IA</span></li>
+        <li><span class="gl gl-check"></span><span>Catálogo de los 30 artículos</span></li>
+        <li><span class="gl gl-check"></span><span>Inventario que no sobrevende</span></li>
+        <li><span class="gl gl-check"></span><span>Apartado de 24 h con reloj</span></li>
+        <li><span class="gl gl-check"></span><span>Cobro por Mercado Pago</span></li>
+        <li><span class="gl gl-check"></span><span>Orden automática al almacén</span></li>
+        <li><span class="gl gl-check"></span><span>Guía al cliente por WhatsApp</span></li>
+        <li><span class="gl gl-check"></span><span>Escalamiento a persona</span></li>
+        <li><span class="gl gl-check"></span><span>Tablero de venta de 8 etapas</span></li>
+        <li><span class="gl gl-spark"></span><span>Landing de catálogo</span></li>
+        <li><span class="gl gl-check"></span><span>2 sesiones de capacitación</span></li>
+        <li><span class="gl gl-check"></span><span>Soporte post-implementación</span></li>
+      </ul>
+    </article>
   </div>
 </section>
 
-<section class="calculator-section">
+<section class="invest-section">
   <div class="wrap">
     <p class="eyebrow">Inversión</p>
-    <h2>Arme su alcance</h2>
-    <p class="lead">Active las fases para ver el total. Precios en dólares.</p>
+    <h2>Lo que cuesta</h2>
+    <p class="lead">Precios en dólares. Una sola entrega, sin fases posteriores.</p>
 
-    <div class="calc-grid">
-      <div class="calc-cards">
-        <div class="calc-card" role="switch" aria-checked="true" tabindex="0" data-key="sys1">
-          <span class="switch" aria-hidden="true"></span>
-          <span>
-            <span class="ct">Fase 1 &mdash; Núcleo de menudeo</span>
-            <span class="cd">Bot de ventas, inventario, apartado, cobro, despacho y guía.</span>
-            <span class="cp">USD 3,575 + 330 / mes</span>
-          </span>
+    <div class="invest-grid">
+      <div class="invest-panel">
+        <p class="invest-label">Implementación &mdash; pago único</p>
+        <div class="invest-figure"><span class="cur">USD</span> 4,065</div>
+
+        <div class="invest-sep"></div>
+
+        <p class="invest-label">Mensualidad</p>
+        <div class="invest-figure" style="font-size:clamp(1.6rem,3.4vw,2.2rem)"><span class="cur">USD</span> 330</div>
+        <p class="invest-note">Cubre el soporte, el agente de IA activo y las integraciones corriendo.</p>
+
+        <div class="split-box">
+          <span class="gl gl-bolt"></span>
+          <span>Se puede dividir en <strong>dos pagos de USD 2,032.50</strong>: mitad al arrancar y mitad a la entrega.</span>
         </div>
-        <div class="calc-card" role="switch" aria-checked="false" tabindex="0" data-key="sys2">
-          <span class="switch" aria-hidden="true"></span>
-          <span>
-            <span class="ct">Fase 2 &mdash; Crecimiento</span>
-            <span class="cd">Tableros, landing de catálogo, campañas, post-venta y recompra.</span>
-            <span class="cp">USD 1,179 + 60 / mes</span>
-          </span>
-        </div>
-        <p class="note-calc">
-          Contratando las dos fases juntas se aplica un 5% sobre la implementación.
-          Los costos de terceros &mdash; WhatsApp API, comisiones de Mercado Pago y
-          Google Workspace &mdash; corren por cuenta de ustedes y no pasan por Omnia.
-        </p>
       </div>
 
-      <div class="calc-result">
-        <h3 style="margin-bottom:14px">Su inversión</h3>
-        <div class="calc-row"><span class="k">Fase 1 &mdash; Núcleo</span><span class="v" id="r-sys1">USD 3,575</span></div>
-        <div class="calc-row"><span class="k">Fase 2 &mdash; Crecimiento</span><span class="v" id="r-sys2">&mdash;</span></div>
-        <div class="calc-total">
-          <div class="k" style="color:var(--slate-300); font-size:.85rem">Implementación, pago único</div>
-          <div class="big" id="r-total">USD 3,575</div>
-          <div class="mo" id="r-monthly">más USD 330 al mes</div>
-          <div class="savings" id="r-savings" hidden>
-            <span class="gl gl-bolt"></span><span id="r-savings-text"></span>
-          </div>
-          <div class="split" id="r-split">Se puede dividir en dos pagos de USD 1,787.50: mitad al arrancar y mitad a la entrega.</div>
-        </div>
+      <div class="invest-panel">
+        <h3 style="margin-bottom:16px">Qué cubre el mensual</h3>
+        <ul class="includes">
+          <li><span class="gl gl-check"></span><span>Soporte post-implementación</span></li>
+          <li><span class="gl gl-check"></span><span>Agente de ventas con IA activo</span></li>
+          <li><span class="gl gl-check"></span><span>Integración con Mercado Pago</span></li>
+          <li><span class="gl gl-check"></span><span>Motor de inventario conectado a su hoja</span></li>
+        </ul>
+        <p class="third-party">
+          Los costos de terceros &mdash; WhatsApp API por conversación, comisiones de
+          Mercado Pago y Google Workspace &mdash; corren por cuenta de ustedes y se
+          pagan directo al proveedor. No pasan por 786 Marketing.
+        </p>
       </div>
     </div>
   </div>
@@ -675,69 +653,90 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <p class="eyebrow">Antes de cerrar</p>
     <h2>Lo que falta para volver esto una propuesta en firme</h2>
     <p class="lead">
-      Preferimos decirlo de frente: hay cuatro datos que todavía no tenemos y sin
-      ellos no se puede construir el bot. En cuanto lleguen, cerramos el número.
+      Preferimos decirlo de frente: hay seis datos que todavía no tenemos. En
+      cuanto lleguen, entregamos la propuesta final con el mapeo y cerramos fechas.
     </p>
 
     <div class="pending-grid">
       <div class="pending-card">
-        <h4><span class="gl gl-alert"></span> Precios de venta</h4>
-        <p>El precio de cada artículo en menudeo. Es el dato más importante: sin él no hay cotización del bot ni liga de pago.</p>
+        <h4><span class="gl gl-truck"></span> Empresa proveedora de envíos</h4>
+        <p>Con quién se despacha y bajo qué modalidad. De ahí salen las tarifas, las coberturas y qué datos tiene que pedirle el bot al cliente.</p>
       </div>
       <div class="pending-card">
-        <h4><span class="gl gl-alert"></span> Costo de envío</h4>
-        <p>¿Se cobra aparte, va incluido, cuánto es? Cambia el total que calcula el bot y lo que dice el mensaje.</p>
+        <h4><span class="gl gl-image"></span> Imágenes de las pacas</h4>
+        <p>Fotos de cada artículo. Sin ellas no hay landing de catálogo ni fichas que el bot pueda mandar por WhatsApp.</p>
+      </div>
+      <div class="pending-card">
+        <h4><span class="gl gl-text"></span> Descripciones de los artículos</h4>
+        <p>Qué trae cada paca y para quién es. Cinco de los treinta todavía no tienen descripción y el bot no puede describir lo que no sabe.</p>
+      </div>
+      <div class="pending-card">
+        <h4><span class="gl gl-alert"></span> Precios de venta</h4>
+        <p>El precio de cada artículo en menudeo. Es el dato más importante: sin él no hay cotización del bot ni liga de pago.</p>
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-clock"></span> Piezas por paca</h4>
         <p>Ya se ofrecieron a sacar los estándares. Es de lo que más preguntan los clientes y el bot necesita responderlo bien.</p>
       </div>
       <div class="pending-card">
-        <h4><span class="gl gl-clock"></span> Stock inicial</h4>
+        <h4><span class="gl gl-chart"></span> Stock inicial</h4>
         <p>Cuántas pacas de cada artículo se destinan al menudeo. Les dejamos la plantilla lista para llenar.</p>
       </div>
     </div>
+
+    <p class="pending-note">
+      <strong>Las fotos y las descripciones subieron de prioridad.</strong> Al incluir
+      la landing de catálogo en esta entrega, dejaron de ser un extra deseable: un
+      catálogo web no se puede montar sin imágenes ni textos de producto. Son, junto
+      con los precios, lo primero que conviene reunir.
+    </p>
   </div>
 </section>
 
 <section style="background:var(--surface); border-top:1px solid var(--border)">
   <div class="wrap">
     <p class="eyebrow">Cómo trabajamos</p>
-    <h2>Las etapas del proyecto</h2>
+    <h2>Entre 3 y 4 semanas</h2>
     <p class="lead">
       Nuestro método dedica la mayor parte del esfuerzo a mapear antes de construir.
-      Las fechas se fijan cuando lleguen los datos pendientes.
+      Esta es la secuencia de trabajo.
     </p>
 
     <ol class="timeline">
       <li>
         <span class="dot" aria-hidden="true"></span>
-        <h4>Mapeo y definición</h4>
-        <p>Sesión de trabajo para cerrar precios, envío, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y se verifica la cuenta de Mercado Pago.</p>
+        <h4>Mapeo y definición <span class="week">Semana 1</span></h4>
+        <p>Sesión de trabajo para cerrar precios, proveedor de envíos, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y se verifica la cuenta de Mercado Pago.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
-        <h4>Montaje de la base</h4>
-        <p>Subcuenta, WhatsApp API, catálogo de los 30 artículos, tablero de venta e inventario conectado a su hoja compartida.</p>
+        <h4>Montaje de la base <span class="week">Semanas 1 &ndash; 2</span></h4>
+        <p>Subcuenta, WhatsApp API, catálogo de los 30 artículos, landing, tablero de venta e inventario conectado a su hoja compartida.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
-        <h4>Construcción de las automatizaciones</h4>
+        <h4>Construcción de las automatizaciones <span class="week">Semanas 2 &ndash; 3</span></h4>
         <p>El bot de ventas, el apartado con reloj, el cobro por Mercado Pago, la orden al almacén y el envío de la guía.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
-        <h4>Pruebas y arranque</h4>
+        <h4>Pruebas, capacitación y arranque <span class="week">Semanas 3 &ndash; 4</span></h4>
         <p>Se prueba cada flujo de punta a punta con ventas reales controladas, se capacita al equipo y al almacén, y se abre al público.</p>
       </li>
     </ol>
+
+    <p class="timeline-note">
+      Las fechas exactas se fijan una vez validada y entregada la propuesta final
+      con el mapeo. El rango de 3 a 4 semanas depende de qué tan rápido lleguen los
+      seis datos pendientes y de los tiempos de aprobación de Meta, que no
+      controlamos.
+    </p>
   </div>
 </section>
 
 <footer class="footer-info">
   <div class="wrap">
-    <div class="brand">Omnia in Business</div>
-    <div><a href="mailto:hola@omnia.business">hola@omnia.business</a></div>
+    <div class="brand">786 Marketing</div>
     <p class="small">
       Documento preliminar con fines de alcance. No constituye una cotización en
       firme: las cifras pueden ajustarse al cerrar los puntos pendientes.
@@ -745,83 +744,6 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     </p>
   </div>
 </footer>
-
-<script>
-(function(){
-  var prices = {
-    sys1: { setup: 3575, monthly: 330 },
-    sys2: { setup: 1179, monthly:  60 }
-  };
-  var PACK_DISCOUNT = 0.05;
-
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.calc-card'));
-  var state = { sys1: true, sys2: false };
-
-  function money(n){
-    return 'USD ' + n.toLocaleString('en-US', {
-      minimumFractionDigits: (n % 1 === 0 ? 0 : 2),
-      maximumFractionDigits: 2
-    });
-  }
-
-  function render(){
-    var setup = 0, monthly = 0;
-    Object.keys(state).forEach(function(k){
-      if (state[k]) { setup += prices[k].setup; monthly += prices[k].monthly; }
-    });
-
-    var both = state.sys1 && state.sys2;
-    var saved = 0;
-    if (both) {
-      saved = Math.round(setup * PACK_DISCOUNT);
-      setup = setup - saved;
-    }
-
-    document.getElementById('r-sys1').textContent = state.sys1 ? money(prices.sys1.setup) : '—';
-    document.getElementById('r-sys2').textContent = state.sys2 ? money(prices.sys2.setup) : '—';
-    document.getElementById('r-total').textContent = setup === 0 ? '—' : money(setup);
-    document.getElementById('r-monthly').textContent =
-      monthly === 0 ? 'Seleccione al menos una fase' : 'más ' + money(monthly) + ' al mes';
-
-    var sav = document.getElementById('r-savings');
-    if (saved > 0) {
-      document.getElementById('r-savings-text').textContent =
-        'Ahorra ' + money(saved) + ' al contratar ambas fases juntas';
-      sav.hidden = false;
-    } else {
-      sav.hidden = true;
-    }
-
-    var split = document.getElementById('r-split');
-    if (setup > 0) {
-      split.hidden = false;
-      split.textContent = 'Se puede dividir en dos pagos de ' + money(setup / 2) +
-        ': mitad al arrancar y mitad a la entrega.';
-    } else {
-      split.hidden = true;
-    }
-  }
-
-  function toggle(card){
-    var key = card.getAttribute('data-key');
-    state[key] = !state[key];
-    card.setAttribute('aria-checked', state[key] ? 'true' : 'false');
-    render();
-  }
-
-  cards.forEach(function(card){
-    card.addEventListener('click', function(){ toggle(card); });
-    card.addEventListener('keydown', function(e){
-      if (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') {
-        e.preventDefault();
-        toggle(card);
-      }
-    });
-  });
-
-  render();
-})();
-</script>
 
 </body>
 </html>
