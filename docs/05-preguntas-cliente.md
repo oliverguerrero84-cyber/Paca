@@ -21,9 +21,9 @@ justamente lo que los desbordó la vez pasada.
 Fotos de cada uno de los 30 artículos. **Sin ellas no hay landing de catálogo** ni
 fichas que el bot pueda mandar por WhatsApp.
 
-Este dato subió de prioridad al incluir la landing en el alcance: un catálogo web
-no se puede montar sin imágenes. **No están cotizadas** — la producción del
-material la hace el cliente.
+**Bloquea el Completo, no el Esencial** — el Esencial no lleva landing. Aun así
+conviene tenerlas: el bot manda mejores respuestas con foto. **No están cotizadas**:
+la producción del material la hace el cliente.
 
 ### 3. Descripciones de los artículos
 Qué trae cada paca y para quién es, en texto listo para publicar. Sirve para dos
@@ -50,6 +50,9 @@ por SKU. Mientras no llegue, el bot tiene que responder con rango.
 ¿Cuántas pacas de cada uno de los 30 SKUs se destinan al menudeo? Es la carga
 inicial de la columna `disponible`. La plantilla está lista en
 `data/plantilla-stock.csv`.
+
+**Sólo aplica al Completo.** El Esencial no lleva inventario conectado: el asesor
+confirma existencia a mano.
 
 ---
 

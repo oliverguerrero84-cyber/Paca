@@ -163,23 +163,44 @@ es escribir un número — nada más.
 
 ---
 
-## 7. Alcance de la entrega
+## 7. Los dos paquetes
 
-**Entrega única.** No hay fases posteriores: al terminar, el menudeo opera completo.
+Se ofrecen **dos niveles**, y el corte entre ellos no es arbitrario: **el Esencial
+es todo lo que GHL hace nativo; el Completo agrega lo que necesita piezas externas.**
 
-Bot que vende, inventario que no sobrevende, apartado de 24 h, cobro por Mercado
-Pago, orden al almacén, guía al cliente, escalamiento a humano y **landing de
-catálogo**. En números: 1 pipeline de 8 etapas · 8 workflows · 1 agente de 17 nodos ·
-2 integraciones · 5 plantillas · 1 landing de 6 secciones · 2 capacitaciones · soporte.
+### Completo — $3,200 setup / $497 al mes · 3 a 4 semanas
 
-**Retirado del alcance:** reportes y dashboards, post-venta con reseñas y recompra a
-30 días, workflow de campañas de Meta y TikTok (`LS02`) y el segundo pipeline. Si
-más adelante los quieren, se cotizan aparte.
+El sistema que el cliente pidió: bot que vende, inventario que no sobrevende,
+apartado de 24 h, cobro por Mercado Pago, orden al almacén, guía al cliente,
+escalamiento a humano y landing de catálogo.
 
-Cronograma: **entre 3 y 4 semanas**, con las fechas exactas fijadas una vez validada
-y entregada la propuesta final con el mapeo.
+1 pipeline de 8 etapas · 8 workflows · 1 agente de 17 nodos · 2 integraciones ·
+5 plantillas · 1 landing de 6 secciones · 2 capacitaciones · soporte.
 
-Números en `04-precotizacion.md`.
+### Esencial — $1,997 setup / $297 al mes · 2 semanas
+
+El mismo agente atendiendo todo el día, pero **sin nada de la operación**. El bot
+arma el pedido y **deriva a un asesor**, que confirma disponibilidad y cobra.
+
+1 pipeline de 5 etapas · 5 workflows · 1 agente de 12 nodos · **0 integraciones** ·
+3 plantillas · 1 capacitación · soporte.
+
+**No lleva:** inventario conectado, apartado con reloj, cobro automático, aviso al
+almacén, guía al cliente ni landing. Nada de n8n, Sheets ni Mercado Pago.
+
+> ⚠️ **Advertencia de alcance, para no vender de más.** El cliente dijo que no
+> sobrevender era central — *"tengo tantas de esta y no tengo más"*. **El Esencial
+> no resuelve eso.** Resuelve la atención, que es lo que consumía a las cuatro
+> vendedoras, pero deja el inventario, el cobro y el despacho en sus manos. Se
+> presenta como rampa de entrada para medir volumen, nunca como equivalente.
+
+### Retirado de ambos
+
+Reportes y dashboards, post-venta con reseñas y recompra a 30 días, workflow de
+campañas de Meta y TikTok (`LS02`) y el segundo pipeline. Si más adelante los
+quieren, se cotizan aparte.
+
+Números y desgloses en `04-precotizacion.md`.
 
 ---
 

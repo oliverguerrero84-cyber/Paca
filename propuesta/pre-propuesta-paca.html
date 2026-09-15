@@ -10,7 +10,7 @@
 <style>
 /* ──────────────────────────────────────────────────────────────
    786 Marketing · Pre-propuesta — Cliente: Paca (ropa americana)
-   Fecha: 2026-09-15 · Revisión 2 — fase única, marca 786
+   Fecha: 2026-09-15 · Revisión 3 — dos paquetes comparados
    NO reintroducir: emojis · transition:all · colores fuera de
    :root · quitar estados de foco o reduced-motion.
    ────────────────────────────────────────────────────────────── */
@@ -24,11 +24,10 @@
 
   --primary-gradient: linear-gradient(135deg, #0d5138 0%, #15855a 50%, #34c48a 100%);
   --deep-gradient:    linear-gradient(135deg, #0d5138 0%, #116343 100%);
-  --red-gradient:     linear-gradient(135deg, #f87171 0%, #dc2626 100%);
 
   /* Señales — no son marca */
   --red-50:#fef2f2; --red-200:#fecaca; --red-600:#dc2626; --red-700:#b91c1c;
-  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-600:#d97706; --amber-700:#b45309;
+  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-700:#b45309;
 
   /* Slate */
   --slate-50:#f8fafc;  --slate-100:#f1f5f9; --slate-200:#e2e8f0;
@@ -45,7 +44,6 @@
   --brand-a08: rgba(17,99,67,.08);
   --brand-a14: rgba(17,99,67,.14);
   --brand-a24: rgba(17,99,67,.24);
-  --brand-a30: rgba(52,196,138,.30);
   --shadow-sm: 0 2px 8px rgba(17,99,67,.07);
   --shadow-md: 0 8px 24px rgba(17,99,67,.10);
   --shadow-lg: 0 18px 48px rgba(17,99,67,.16);
@@ -94,18 +92,11 @@ section{padding-block:clamp(40px,7vw,80px)}
   position:relative; vertical-align:-.125em;
 }
 .gl::before{content:""; position:absolute; inset:0; background:currentColor}
-.gl-check::before{
-  clip-path:polygon(43% 73%, 88% 19%, 97% 29%, 45% 92%, 4% 55%, 13% 44%);
-}
-.gl-cross::before{
-  clip-path:polygon(18% 6%, 50% 38%, 82% 6%, 94% 18%, 62% 50%, 94% 82%, 82% 94%, 50% 62%, 18% 94%, 6% 82%, 38% 50%, 6% 18%);
-}
-.gl-bolt::before{
-  clip-path:polygon(60% 2%, 20% 55%, 45% 55%, 36% 98%, 82% 42%, 55% 42%);
-}
-.gl-alert::before{
-  clip-path:polygon(50% 4%, 98% 92%, 2% 92%);
-}
+.gl-check::before{clip-path:polygon(43% 73%, 88% 19%, 97% 29%, 45% 92%, 4% 55%, 13% 44%)}
+.gl-cross::before{clip-path:polygon(18% 6%, 50% 38%, 82% 6%, 94% 18%, 62% 50%, 94% 82%, 82% 94%, 50% 62%, 18% 94%, 6% 82%, 38% 50%, 6% 18%)}
+.gl-dash::before{clip-path:polygon(12% 44%, 88% 44%, 88% 56%, 12% 56%)}
+.gl-bolt::before{clip-path:polygon(60% 2%, 20% 55%, 45% 55%, 36% 98%, 82% 42%, 55% 42%)}
+.gl-alert::before{clip-path:polygon(50% 4%, 98% 92%, 2% 92%)}
 .gl-alert::after{
   content:""; position:absolute; left:46%; top:38%; width:8%; height:34%;
   background:var(--surface); border-radius:2px;
@@ -120,32 +111,35 @@ section{padding-block:clamp(40px,7vw,80px)}
   background:currentColor; border-radius:2px;
   box-shadow:.22em .26em 0 -.005em currentColor;
 }
-.gl-chart::before{
-  clip-path:polygon(4% 62%, 28% 62%, 28% 96%, 4% 96%, 4% 62%);
-}
+.gl-chart::before{clip-path:polygon(4% 62%, 28% 62%, 28% 96%, 4% 96%, 4% 62%)}
 .gl-chart::after{
   content:""; position:absolute; inset:0; background:currentColor;
   clip-path:polygon(38% 32%, 62% 32%, 62% 96%, 38% 96%, 38% 32%, 72% 8%, 96% 8%, 96% 96%, 72% 96%, 72% 8%);
 }
-.gl-spark::before{
-  clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%);
-}
-.gl-image::before{
-  clip-path:polygon(3% 12%, 97% 12%, 97% 88%, 3% 88%, 3% 12%, 11% 20%, 11% 80%, 89% 80%, 89% 20%);
-}
+.gl-spark::before{clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%)}
+.gl-image::before{clip-path:polygon(3% 12%, 97% 12%, 97% 88%, 3% 88%, 3% 12%, 11% 20%, 11% 80%, 89% 80%, 89% 20%)}
 .gl-image::after{
   content:""; position:absolute; inset:0; background:currentColor;
   clip-path:polygon(16% 72%, 40% 40%, 56% 60%, 68% 48%, 84% 72%);
 }
-.gl-truck::before{
-  clip-path:polygon(4% 26%, 58% 26%, 58% 66%, 4% 66%, 4% 26%, 62% 38%, 80% 38%, 94% 52%, 94% 66%, 62% 66%);
-}
+.gl-truck::before{clip-path:polygon(4% 26%, 58% 26%, 58% 66%, 4% 66%, 4% 26%, 62% 38%, 80% 38%, 94% 52%, 94% 66%, 62% 66%)}
 .gl-truck::after{
   content:""; position:absolute; inset:0; background:currentColor;
   clip-path:polygon(16% 66%, 32% 66%, 32% 84%, 16% 84%, 70% 66%, 86% 66%, 86% 84%, 70% 84%);
 }
-.gl-text::before{
-  clip-path:polygon(6% 14%, 94% 14%, 94% 26%, 6% 26%, 6% 40%, 94% 40%, 94% 52%, 6% 52%, 6% 66%, 66% 66%, 66% 78%, 6% 78%);
+.gl-text::before{clip-path:polygon(6% 14%, 94% 14%, 94% 26%, 6% 26%, 6% 40%, 94% 40%, 94% 52%, 6% 52%, 6% 66%, 66% 66%, 66% 78%, 6% 78%)}
+.gl-chat::before{clip-path:polygon(4% 10%, 96% 10%, 96% 72%, 42% 72%, 22% 94%, 22% 72%, 4% 72%)}
+.gl-card::before{clip-path:polygon(2% 20%, 98% 20%, 98% 80%, 2% 80%, 2% 20%, 10% 28%, 10% 72%, 90% 72%, 90% 28%)}
+.gl-card::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(2% 34%, 98% 34%, 98% 46%, 2% 46%, 14% 56%, 44% 56%, 44% 66%, 14% 66%);
+}
+.gl-board::before{clip-path:polygon(4% 10%, 30% 10%, 30% 90%, 4% 90%, 37% 10%, 63% 10%, 63% 64%, 37% 64%, 70% 10%, 96% 10%, 96% 46%, 70% 46%)}
+.gl-hand::before{clip-path:polygon(40% 8%, 56% 8%, 56% 52%, 74% 40%, 90% 52%, 60% 96%, 26% 96%, 14% 58%, 26% 48%, 40% 62%)}
+.gl-grad::before{clip-path:polygon(50% 8%, 98% 32%, 50% 56%, 2% 32%)}
+.gl-grad::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(22% 44%, 32% 49%, 32% 78%, 68% 78%, 68% 49%, 78% 44%, 78% 88%, 22% 88%);
 }
 
 /* ── Header glass ─────────────────────────────────────────── */
@@ -211,9 +205,7 @@ header{
 .metric .l{font-size:.8rem; color:var(--text-gray); margin-top:4px}
 
 /* ── Diagnóstico ──────────────────────────────────────────── */
-.diagnostico-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:32px;
-}
+.diagnostico-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:32px}
 .diag-card{
   border-radius:var(--r-md); padding:24px; border:1px solid var(--border);
   background:var(--surface); box-shadow:var(--shadow-sm);
@@ -232,39 +224,95 @@ header{
   padding-left:14px; margin:16px 0 0; font-size:.9rem;
 }
 
-/* ── Sistema ──────────────────────────────────────────────── */
-.system-card{
-  background:var(--surface); border:1px solid var(--brand-a24);
-  border-radius:var(--r-lg); padding:clamp(24px,3.4vw,38px);
-  box-shadow:var(--shadow-lg); margin-top:32px;
+/* ── Encabezados de paquete ───────────────────────────────── */
+.pkg-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:32px}
+.pkg-card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:clamp(22px,3vw,30px);
+  box-shadow:var(--shadow-sm); position:relative;
 }
-.sys-head{
-  display:flex; flex-wrap:wrap; align-items:flex-end; gap:18px 32px;
-  padding-bottom:22px; margin-bottom:24px; border-bottom:1px solid var(--border);
+.pkg-card.featured{
+  border-color:var(--brand-a24); box-shadow:var(--shadow-lg);
+  border-top:4px solid var(--brand-600);
 }
-.sys-head > div:first-child{flex:1 1 280px; min-width:0}
-.sys-badge{
-  display:inline-block; font-family:var(--font-title); font-size:.7rem;
+.pkg-name{
+  font-family:var(--font-title); font-weight:800;
+  font-size:clamp(1.2rem,2.4vw,1.5rem); margin:0 0 2px;
+}
+.pkg-for{color:var(--text-gray); font-size:.9rem; margin:0 0 18px; min-height:2.7em}
+.pkg-price{
+  font-family:var(--font-title); font-weight:800; line-height:1.05;
+  font-size:clamp(1.8rem,4vw,2.5rem); color:var(--text-dark);
+}
+.pkg-price .cur{font-size:.44em; color:var(--text-gray); font-weight:700}
+.pkg-mo{color:var(--brand-700); font-weight:700; font-size:.98rem; margin:4px 0 0}
+.pkg-sub{color:var(--text-gray); font-size:.82rem; margin:2px 0 0}
+.pkg-flag{
+  display:inline-block; font-family:var(--font-title); font-size:.68rem;
   font-weight:700; letter-spacing:.12em; text-transform:uppercase;
   color:var(--text-light); background:var(--primary-gradient);
-  border-radius:999px; padding:6px 14px; margin-bottom:12px;
+  border-radius:999px; padding:5px 12px; margin-bottom:12px;
 }
-.sys-price{
-  font-family:var(--font-title); font-weight:800; color:var(--text-dark);
-  font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.1;
-}
-.sys-price .cur{font-size:.5em; color:var(--text-gray); font-weight:700}
-.sys-monthly{color:var(--text-gray); font-size:.92rem; margin:2px 0 0}
-.feature-list{
-  list-style:none; margin:0; padding:0;
-  display:grid; grid-template-columns:repeat(3,1fr); gap:12px 24px;
-}
-.feature-list li{display:flex; gap:9px; align-items:flex-start; font-size:.92rem}
-.feature-list li .gl{color:var(--brand-600); margin-top:.3em}
+.pkg-flag.soft{background:var(--slate-700)}
 
-/* ── Workflow box ─────────────────────────────────────────── */
+/* ── Tabla comparativa ────────────────────────────────────── */
+.compare-wrap{
+  margin-top:28px; overflow-x:auto; border:1px solid var(--border);
+  border-radius:var(--r-md); background:var(--surface); box-shadow:var(--shadow-sm);
+}
+table.compare{width:100%; border-collapse:collapse; min-width:0}
+table.compare th, table.compare td{
+  padding:13px 16px; text-align:left; border-bottom:1px solid var(--border);
+  font-size:.92rem; vertical-align:middle;
+}
+table.compare thead th{
+  background:var(--brand-50); font-family:var(--font-title); font-weight:700;
+  font-size:.86rem; color:var(--brand-800); white-space:nowrap;
+}
+table.compare thead th:first-child{text-align:left}
+table.compare th.col, table.compare td.col{text-align:center; width:120px}
+table.compare tbody tr:last-child td{border-bottom:0}
+table.compare tbody tr.group td{
+  background:var(--slate-50); font-family:var(--font-title); font-weight:700;
+  font-size:.76rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--text-gray); padding-block:9px;
+}
+td.col .gl-check{color:var(--brand-600); font-size:1.15rem}
+td.col .gl-dash{color:var(--slate-300); font-size:1.15rem}
+td.col .txt{font-weight:700; font-size:.86rem; color:var(--brand-700)}
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+/* ── Módulos a detalle ────────────────────────────────────── */
+.module-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:32px}
+.module-card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-md); padding:24px; box-shadow:var(--shadow-sm);
+  display:flex; flex-direction:column;
+}
+.module-card.only-full{border-left:4px solid var(--brand-600)}
+.mod-head{display:flex; gap:12px; align-items:flex-start; margin-bottom:12px}
+.mod-head .gl{color:var(--brand-600); font-size:1.4rem; margin-top:.1em}
+.mod-head h3{margin:0; font-size:1.08rem; flex:1 1 auto; min-width:0}
+.pkg-tag{
+  display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; border-radius:999px; padding:4px 10px;
+  font-family:var(--font-title); white-space:nowrap; margin-top:2px;
+}
+.pkg-tag.both{background:var(--slate-100); color:var(--slate-700)}
+.pkg-tag.full{background:var(--brand-100); color:var(--brand-800)}
+.mod-what{font-size:.92rem; margin:0 0 12px}
+.mod-change{
+  font-size:.9rem; margin:auto 0 0; padding-top:12px;
+  border-top:1px dashed var(--border); color:var(--slate-700);
+}
+.mod-change b{color:var(--brand-700)}
+
+/* ── Recorrido ────────────────────────────────────────────── */
 .workflow-box{
-  margin-top:34px; background:var(--surface); border:1px solid var(--border);
+  margin-top:32px; background:var(--surface); border:1px solid var(--border);
   border-radius:var(--r-lg); padding:clamp(22px,3vw,34px); box-shadow:var(--shadow-sm);
 }
 .steps{
@@ -272,9 +320,9 @@ header{
   margin-top:20px; list-style:none; padding:0;
 }
 .step-card{
-  flex:1 1 150px; min-width:0; position:relative;
+  flex:1 1 160px; min-width:0; position:relative;
   background:var(--brand-50); border:1px solid var(--brand-100);
-  border-radius:var(--r-md); padding:16px 14px;
+  border-radius:var(--r-md); padding:16px 14px; display:flex; flex-direction:column;
 }
 .step-card .n{
   font-family:var(--font-title); font-size:.7rem; font-weight:800;
@@ -282,62 +330,83 @@ header{
 }
 .step-card .t{display:block; font-family:var(--font-title); font-weight:700; font-size:.95rem}
 .step-card .d{display:block; font-size:.82rem; color:var(--text-gray); margin-top:4px}
-.step-card::after{
-  content:""; position:absolute; right:-12px; top:50%; width:12px; height:2px;
-  background:var(--brand-200); transform:translateY(-50%);
+.step-pkgs{margin-top:auto; padding-top:12px; display:grid; gap:5px}
+.step-pkg{
+  display:flex; justify-content:space-between; gap:8px; align-items:baseline;
+  font-size:.72rem; font-family:var(--font-title);
 }
-.step-card:last-child::after{display:none}
-.step-card .who{
-  display:inline-block; margin-top:8px; font-size:.7rem; font-weight:700;
-  letter-spacing:.06em; text-transform:uppercase; border-radius:999px;
-  padding:3px 9px; background:var(--brand-100); color:var(--brand-700);
+.step-pkg .who{font-weight:700; letter-spacing:.03em}
+.step-pkg .k{color:var(--text-gray); font-weight:600}
+.step-pkg .who.auto{color:var(--brand-700)}
+.step-pkg .who.human{color:var(--amber-700)}
+
+/* ── Detrás del precio ────────────────────────────────────── */
+.behind{background:var(--ink); color:var(--text-light)}
+.behind h2,.behind h3{color:var(--text-light)}
+.behind .eyebrow{color:var(--brand-400)}
+.behind .lead{color:var(--brand-200)}
+.behind-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:32px;
 }
-.step-card .who.manual{background:var(--amber-50); color:var(--amber-700)}
+.behind-item{
+  background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-md); padding:18px 20px;
+}
+.behind-item .n{
+  font-family:var(--font-title); font-weight:800; line-height:1.1;
+  font-size:clamp(1.4rem,2.8vw,1.9rem); color:var(--brand-300);
+}
+.behind-item .l{font-size:.85rem; color:var(--brand-200); margin-top:4px}
+.behind-note{
+  margin-top:28px; padding:20px 24px; border-radius:var(--r-md);
+  background:var(--deep-gradient); border:1px solid var(--white-a18);
+  font-size:.95rem;
+}
+.behind-note strong{color:var(--brand-300)}
 
 /* ── Compliance ───────────────────────────────────────────── */
 .compliance-box{
   margin-top:30px; background:var(--amber-50); border:1px solid var(--amber-200);
   border-radius:var(--r-md); padding:22px 24px;
 }
-.compliance-box h3{
-  display:flex; align-items:center; gap:10px; color:var(--amber-700); margin-bottom:12px;
-}
+.compliance-box h3{display:flex; align-items:center; gap:10px; color:var(--amber-700); margin-bottom:12px}
 .compliance-box ul{margin:0; padding-left:20px; display:grid; gap:9px}
 .compliance-box li{font-size:.92rem; color:var(--slate-700)}
 
 /* ── Inversión ────────────────────────────────────────────── */
-.invest-section{background:var(--ink); color:var(--text-light)}
-.invest-section h2,.invest-section h3{color:var(--text-light)}
-.invest-section .eyebrow{color:var(--brand-400)}
-.invest-section .lead{color:var(--brand-200)}
-.invest-grid{display:grid; grid-template-columns:1fr .92fr; gap:26px; margin-top:32px}
-.invest-panel{
-  background:var(--white-a10); border:1px solid var(--white-a18);
-  border-radius:var(--r-lg); padding:clamp(24px,3vw,32px);
+.invest-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:32px}
+.invest-card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:clamp(24px,3vw,32px); box-shadow:var(--shadow-sm);
+}
+.invest-card.featured{border-color:var(--brand-a24); box-shadow:var(--shadow-lg)}
+.invest-label{
+  font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--brand-700); font-weight:700; font-family:var(--font-title);
 }
 .invest-figure{
-  font-family:var(--font-title); font-size:clamp(2.2rem,5.4vw,3.4rem);
-  font-weight:800; line-height:1.05;
+  font-family:var(--font-title); font-size:clamp(1.9rem,4.4vw,2.8rem);
+  font-weight:800; line-height:1.05; color:var(--text-dark);
 }
-.invest-figure .cur{font-size:.42em; color:var(--brand-300); font-weight:700}
-.invest-label{
-  font-size:.82rem; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--brand-300); font-weight:700; font-family:var(--font-title);
+.invest-figure .cur{font-size:.42em; color:var(--text-gray); font-weight:700}
+.invest-row{
+  display:flex; justify-content:space-between; gap:12px; align-items:baseline;
+  padding:11px 0; border-bottom:1px solid var(--border); font-size:.92rem;
 }
-.invest-sep{height:1px; background:var(--white-a18); margin:22px 0}
-.invest-note{color:var(--brand-200); font-size:.9rem; margin:6px 0 0}
+.invest-row:last-of-type{border-bottom:0}
+.invest-row .k{color:var(--text-gray)}
+.invest-row .v{font-family:var(--font-title); font-weight:700}
+.invest-sep{height:1px; background:var(--border); margin:20px 0}
 .split-box{
-  margin-top:22px; border-radius:var(--r-sm); padding:14px 16px;
-  background:var(--deep-gradient); border:1px solid var(--white-a18);
-  display:flex; gap:11px; align-items:flex-start; font-size:.88rem;
+  margin-top:18px; border-radius:var(--r-sm); padding:13px 16px;
+  background:var(--brand-50); border:1px solid var(--brand-200);
+  display:flex; gap:11px; align-items:flex-start; font-size:.86rem;
 }
-.split-box .gl{color:var(--brand-300); margin-top:.2em}
-.includes{list-style:none; margin:0; padding:0; display:grid; gap:11px}
-.includes li{display:flex; gap:10px; align-items:flex-start; font-size:.92rem}
-.includes li .gl{color:var(--brand-400); margin-top:.3em}
+.split-box .gl{color:var(--brand-600); margin-top:.2em}
 .third-party{
-  margin-top:22px; padding-top:18px; border-top:1px solid var(--white-a18);
-  font-size:.83rem; color:var(--brand-200);
+  margin-top:26px; padding:18px 22px; border-radius:var(--r-md);
+  background:var(--slate-100); border:1px solid var(--border);
+  font-size:.87rem; color:var(--slate-700);
 }
 
 /* ── Pendientes ───────────────────────────────────────────── */
@@ -352,13 +421,23 @@ header{
 .pending-card p{font-size:.88rem; color:var(--text-gray); margin:0}
 .pending-note{
   margin-top:24px; background:var(--brand-50); border:1px solid var(--brand-200);
-  border-radius:var(--r-md); padding:18px 22px; font-size:.92rem;
-  color:var(--slate-700);
+  border-radius:var(--r-md); padding:18px 22px; font-size:.92rem; color:var(--slate-700);
 }
 .pending-note strong{color:var(--brand-700)}
 
 /* ── Timeline ─────────────────────────────────────────────── */
-.timeline{list-style:none; margin:32px 0 0; padding:0; position:relative}
+.dur-chips{display:flex; flex-wrap:wrap; gap:12px; margin-top:24px}
+.dur-chip{
+  border:1px solid var(--border); border-radius:var(--r-md);
+  padding:14px 20px; background:var(--surface); box-shadow:var(--shadow-sm);
+}
+.dur-chip.featured{border-color:var(--brand-a24); background:var(--brand-50)}
+.dur-chip .k{
+  font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--text-gray); font-family:var(--font-title);
+}
+.dur-chip .v{font-family:var(--font-title); font-weight:800; font-size:1.15rem; color:var(--brand-700)}
+.timeline{list-style:none; margin:30px 0 0; padding:0; position:relative}
 .timeline::before{
   content:""; position:absolute; left:15px; top:8px; bottom:8px; width:2px;
   background:var(--brand-100);
@@ -410,38 +489,51 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
 /* ── Responsivo ───────────────────────────────────────────── */
 @media (max-width:992px){
-  .invest-grid{grid-template-columns:1fr}
-  .feature-list{grid-template-columns:repeat(2,1fr)}
+  .module-grid{grid-template-columns:1fr}
+  .behind-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:768px){
   .diagnostico-grid{grid-template-columns:1fr}
   .metrics-bar{grid-template-columns:1fr 1fr}
   .pending-grid{grid-template-columns:1fr}
-  .step-card::after{display:none}
+  .pkg-grid{grid-template-columns:1fr}
+  .invest-grid{grid-template-columns:1fr}
+  .pkg-for{min-height:0}
   .header-in{flex-direction:column; align-items:flex-start; gap:10px}
 }
+@media (max-width:560px){
+  .behind-grid{grid-template-columns:1fr}
+  table.compare th.col, table.compare td.col{width:76px}
+  table.compare th, table.compare td{padding:11px 10px; font-size:.85rem}
+  td.col .txt{font-size:.78rem}
+}
 @media (max-width:500px){
-  .feature-list{grid-template-columns:1fr}
   .wrap{padding-left:16px; padding-right:16px}
+  .mod-head{flex-wrap:wrap}
 }
 @media (max-width:400px){
   .metrics-bar{grid-template-columns:1fr}
+  table.compare th.col, table.compare td.col{width:52px}
+  table.compare th, table.compare td{padding:10px 7px; font-size:.79rem}
+  table.compare thead th{font-size:.74rem}
+  td.col .txt{font-size:.7rem}
 }
 
 @media print{
   header{position:static}
-  .invest-section{background:var(--surface); color:var(--text-dark)}
-  .invest-section h2,.invest-section h3{color:var(--text-dark)}
-  .invest-section .lead,.invest-note,.third-party{color:var(--text-gray)}
-  .invest-panel{border-color:var(--border); background:var(--surface)}
-  .invest-label,.invest-figure .cur{color:var(--brand-700)}
-  .includes li .gl,.split-box .gl{color:var(--brand-600)}
-  .split-box{background:var(--brand-50); color:var(--text-dark)}
+  .behind{background:var(--surface); color:var(--text-dark)}
+  .behind h2,.behind h3{color:var(--text-dark)}
+  .behind .lead,.behind-item .l{color:var(--text-gray)}
+  .behind-item{border-color:var(--border); background:var(--surface)}
+  .behind-item .n{color:var(--brand-700)}
+  .behind-note{background:var(--brand-50); color:var(--text-dark); border-color:var(--brand-200)}
+  .behind-note strong{color:var(--brand-700)}
   .footer-info{background:var(--surface); color:var(--text-dark)}
   .footer-info .brand{color:var(--text-dark)}
   .footer-info .small{color:var(--text-gray)}
-  section{padding-block:22px}
-  .system-card,.workflow-box{box-shadow:none}
+  section{padding-block:20px}
+  .module-card,.workflow-box,.pkg-card,.invest-card{box-shadow:none}
+  .compare-wrap{overflow:visible}
 }
 </style>
 </head>
@@ -461,9 +553,9 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <p class="client">Pacas de ropa americana &middot; McAllen, TX &mdash; Nuevo Laredo, Tamps.</p>
     <h1>Reactivar el menudeo, esta vez sin que los desborde</h1>
     <p class="lead">
-      Un sistema que atiende, cotiza, aparta, cobra y despacha solo. El mayoreo
-      sigue trabajándose aparte, como ustedes lo pidieron. Este documento define
-      con precisión qué se puede construir antes de cerrar un número.
+      Un sistema que atiende, cotiza y da seguimiento solo. El mayoreo sigue
+      trabajándose aparte, como ustedes lo pidieron. Preparamos dos caminos para
+      que elijan hasta dónde quieren automatizar de entrada.
     </p>
 
     <div class="metrics-bar">
@@ -496,7 +588,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <div class="diag-card solution">
         <h3><span class="gl gl-check"></span> Cómo lo resuelve el sistema</h3>
         <ul>
-          <li><span class="gl gl-check"></span><span><strong>Cada venta en un tablero de 8 etapas.</strong> Siempre se sabe dónde está cada pedido y quién falta por pagar.</span></li>
+          <li><span class="gl gl-check"></span><span><strong>Cada venta en un tablero.</strong> Siempre se sabe dónde está cada pedido y quién falta por pagar.</span></li>
           <li><span class="gl gl-check"></span><span><strong>Apartado con reloj.</strong> 24 horas, con recordatorios automáticos y liberación de la pieza si no paga.</span></li>
           <li><span class="gl gl-check"></span><span><strong>Inventario que descuenta solo.</strong> El bot nunca ofrece lo que ya está comprometido.</span></li>
           <li><span class="gl gl-check"></span><span><strong>Atiende 24/7 sin vendedoras.</strong> Ustedes sólo entran cuando el bot escala un caso.</span></li>
@@ -509,152 +601,460 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
 <section style="background:var(--surface); border-block:1px solid var(--border)">
   <div class="wrap">
+    <p class="eyebrow">Dos caminos</p>
+    <h2>Elijan hasta dónde automatizar</h2>
+    <p class="lead">
+      Los dos arrancan con el mismo bot de ventas atendiendo todo el día. La
+      diferencia está en qué tanto de la operación —inventario, cobro y despacho—
+      pasa a manos del sistema.
+    </p>
+
+    <div class="pkg-grid">
+      <article class="pkg-card">
+        <span class="pkg-flag soft">Esencial</span>
+        <p class="pkg-name">Atención automatizada</p>
+        <p class="pkg-for">Para arrancar el menudeo ya, con el bot atendiendo y su equipo cerrando las ventas.</p>
+        <div class="pkg-price"><span class="cur">USD</span> 1,997</div>
+        <p class="pkg-mo">más USD 297 al mes</p>
+        <p class="pkg-sub">Implementación en 2 semanas</p>
+      </article>
+
+      <article class="pkg-card featured">
+        <span class="pkg-flag">Completo &middot; recomendado</span>
+        <p class="pkg-name">Operación automatizada</p>
+        <p class="pkg-for">Para que el menudeo corra solo de punta a punta: inventario, cobro, almacén y guía.</p>
+        <div class="pkg-price"><span class="cur">USD</span> 3,200</div>
+        <p class="pkg-mo">más USD 497 al mes</p>
+        <p class="pkg-sub">Implementación en 3 a 4 semanas</p>
+      </article>
+    </div>
+
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th scope="col">Qué incluye</th>
+            <th scope="col" class="col">Esencial</th>
+            <th scope="col" class="col">Completo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group"><td colspan="3">Atención y venta</td></tr>
+          <tr>
+            <td>Base, dominio, correos y WhatsApp oficial de Meta</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Bandeja única: WhatsApp, Instagram, Facebook y TikTok</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Agente de ventas con IA y los 30 artículos cargados</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Separa menudeo de mayoreo y arma el pedido</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Escalamiento a una persona</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Tablero de venta</td>
+            <td class="col"><span class="txt">5 etapas</span></td>
+            <td class="col"><span class="txt">8 etapas</span></td>
+          </tr>
+
+          <tr class="group"><td colspan="3">Operación</td></tr>
+          <tr>
+            <td>Inventario conectado que no deja sobrevender</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Apartado de 24 horas con reloj y liberación automática</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Cobro con liga de Mercado Pago y confirmación automática</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Aviso automático al almacén y correo de orden a ustedes</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Número de guía al cliente por WhatsApp</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Landing de catálogo con los 30 artículos</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+
+          <tr class="group"><td colspan="3">Entrega</td></tr>
+          <tr>
+            <td>Plantillas de mensaje redactadas y tramitadas</td>
+            <td class="col"><span class="txt">3</span></td>
+            <td class="col"><span class="txt">6</span></td>
+          </tr>
+          <tr>
+            <td>Sesiones de capacitación</td>
+            <td class="col"><span class="txt">1</span></td>
+            <td class="col"><span class="txt">2</span></td>
+          </tr>
+          <tr>
+            <td>Soporte incluido en la mensualidad</td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="pending-note">
+      <strong>Para ser claros con el Esencial.</strong> Resuelve la atención, no la
+      operación: les quita de encima el trabajo que ocupaba a las cuatro vendedoras,
+      pero el inventario, el cobro y el despacho siguen en sus manos. Lo que nos
+      dijeron sobre no sobrevender &mdash;<em>"tengo tantas de esta y no tengo
+      más"</em>&mdash; sólo lo resuelve el Completo. El Esencial es una buena forma de
+      arrancar y medir volumen, no un sustituto.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">A detalle</p>
+    <h2>Qué es cada cosa y qué les cambia</h2>
+    <p class="lead">
+      Diez piezas. Las primeras cuatro y la última van en los dos paquetes; las
+      marcadas en verde son las que sólo trae el Completo.
+    </p>
+
+    <div class="module-grid">
+
+      <article class="module-card">
+        <div class="mod-head">
+          <span class="gl gl-chat"></span>
+          <h3>Base, canales y WhatsApp oficial</h3>
+          <span class="pkg-tag both">Ambos</span>
+        </div>
+        <p class="mod-what">
+          Dejamos lista la cuenta con su dominio y sus correos, damos de alta el
+          número en la API oficial de WhatsApp de Meta y conectamos Instagram,
+          Facebook y TikTok para que todo caiga en una sola bandeja con historial.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> se acaba el andar entre aplicaciones y teléfonos distintos buscando quién contestó qué.</p>
+      </article>
+
+      <article class="module-card">
+        <div class="mod-head">
+          <span class="gl gl-spark"></span>
+          <h3>Agente de ventas con inteligencia artificial</h3>
+          <span class="pkg-tag both">Ambos</span>
+        </div>
+        <p class="mod-what">
+          Conoce los 30 artículos: temporada, las tres calidades, tallas, qué prendas
+          trae cada paca y que todas pesan 100 libras. Distingue si quien escribe
+          busca menudeo o mayoreo. Tiene prohibido inventar: si no sabe un dato, lo dice.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> contesta en segundos y a cualquier hora las mismas preguntas de tallas, calidades y cuánto trae cada paca que hoy consumen a una persona entera.</p>
+      </article>
+
+      <article class="module-card">
+        <div class="mod-head">
+          <span class="gl gl-board"></span>
+          <h3>Tablero de venta</h3>
+          <span class="pkg-tag both">Ambos</span>
+        </div>
+        <p class="mod-what">
+          Cada conversación se vuelve un pedido con su etapa visible. En el Esencial
+          son 5 etapas hasta el cierre; en el Completo son 8 e incluyen apartado,
+          pago, almacén y guía.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> se termina el "no sé en qué quedó ese cliente". De un vistazo se ve quién está conversando, quién debe pagar y qué falta por enviar.</p>
+      </article>
+
+      <article class="module-card">
+        <div class="mod-head">
+          <span class="gl gl-hand"></span>
+          <h3>Escalamiento a una persona</h3>
+          <span class="pkg-tag both">Ambos</span>
+        </div>
+        <p class="mod-what">
+          Cuando el bot no entiende, cuando la conversación huele a mayoreo o cuando
+          el cliente pide hablar con alguien, el bot se apaga solo en esa
+          conversación y les avisa para que la tomen.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> ninguna venta grande se pierde porque un robot no supo qué contestar.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-chart"></span>
+          <h3>Inventario conectado que no sobrevende</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          El bot consulta la existencia real antes de ofrecer. Se conecta a la misma
+          hoja que ya comparten con el almacén, así que no cambian de herramienta.
+          Cada pedido descuenta la paca en el momento, y si el apartado se vence la
+          devuelve al inventario.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> esto es exactamente lo que resuelve el "tengo tantas de esta y no tengo más". El bot nunca vende lo que ya está comprometido.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-clock"></span>
+          <h3>Apartado de 24 horas con reloj</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          Al armar el pedido el sistema reserva la paca, le explica al cliente las
+          condiciones y arranca un reloj de 24 horas. Le recuerda faltando 12 horas y
+          otra vez faltando 2. Si no paga, libera la pieza sola para el siguiente.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> el "te pago al rato" que se vuelve mañana y luego nunca deja de dejarles mercancía apartada sin cobrar.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-card"></span>
+          <h3>Cobro con Mercado Pago</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          El sistema genera la liga de pago con el monto correcto y se la manda al
+          cliente en la misma conversación. Cuando el pago se acredita, se entera
+          solo y avanza el pedido: nadie tiene que estar revisando la cuenta.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> cobran de noche, en fin de semana y mientras están haciendo otra cosa, sin perseguir comprobantes.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-truck"></span>
+          <h3>Despacho al almacén y guía al cliente</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          Al confirmarse el pago salen dos avisos: un WhatsApp corto al almacén con
+          la orden, el artículo y el destino, y un correo a ustedes con el detalle
+          completo. Cuando el almacén captura el número de guía, el cliente lo
+          recibe al instante.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> el almacén sabe qué preparar sin que nadie le escriba, y el cliente deja de preguntar si ya salió su paquete.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-image"></span>
+          <h3>Landing de catálogo</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          Página pública con los 30 artículos, cada uno con su foto, su calidad y lo
+          que trae. Cada tarjeta abre WhatsApp con el artículo ya cargado, así el
+          bot sabe de qué le preguntan desde el primer mensaje.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> tienen a dónde mandar la publicidad. Hoy, sin Instagram ni TikTok, los clientes sólo pueden llegar por el número de WhatsApp.</p>
+      </article>
+
+      <article class="module-card">
+        <div class="mod-head">
+          <span class="gl gl-grad"></span>
+          <h3>Plantillas, capacitación y soporte</h3>
+          <span class="pkg-tag both">Ambos</span>
+        </div>
+        <p class="mod-what">
+          Redactamos los mensajes que manda el sistema y tramitamos ante Meta los que
+          lo requieren. Capacitamos a su equipo, y al almacén en el caso del
+          Completo. El soporte va incluido en la mensualidad.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> reciben el sistema funcionando y con gente que sabe usarlo, no un manual para que lo descifren solos.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-block:1px solid var(--border)">
+  <div class="wrap">
     <p class="eyebrow">Cómo funciona</p>
-    <h2>Del primer mensaje a la guía, sin que ustedes toquen nada</h2>
+    <h2>El recorrido de una venta</h2>
+    <p class="lead">
+      Los mismos seis pasos en los dos paquetes. Lo que cambia es quién los hace.
+    </p>
 
     <div class="workflow-box">
-      <h3>Recorrido completo de una venta</h3>
-      <p style="color:var(--text-gray); font-size:.92rem; margin-bottom:0">
-        Un solo paso queda manual, y es inevitable: escribir el número de guía.
-        Las paqueterías no tienen forma de entregarlo automáticamente.
-      </p>
       <ol class="steps">
         <li class="step-card">
           <span class="n">01</span>
-          <span class="t">Llega el lead</span>
-          <span class="d">WhatsApp, Instagram, Facebook, TikTok o la landing, todo en una bandeja.</span>
-          <span class="who">Automático</span>
+          <span class="t">Llega el cliente</span>
+          <span class="d">Por WhatsApp, Instagram, Facebook o TikTok. Todo a una bandeja.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who auto">Automático</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
         </li>
         <li class="step-card">
           <span class="n">02</span>
           <span class="t">El bot vende</span>
-          <span class="d">Explica calidades, tallas y contenido. Consulta el stock real.</span>
-          <span class="who">Automático</span>
+          <span class="d">Explica calidades, tallas y contenido, y arma el pedido.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who auto">Automático</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
         </li>
         <li class="step-card">
           <span class="n">03</span>
-          <span class="t">Aparta 24 h</span>
-          <span class="d">Reserva la paca, avisa las condiciones y arranca el reloj.</span>
-          <span class="who">Automático</span>
+          <span class="t">Confirma existencia</span>
+          <span class="d">Si hay paca disponible y se aparta a nombre del cliente.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
         </li>
         <li class="step-card">
           <span class="n">04</span>
           <span class="t">Cobra</span>
-          <span class="d">Liga de Mercado Pago. Al acreditarse, el sistema se entera solo.</span>
-          <span class="who">Automático</span>
+          <span class="d">Manda la liga de pago y confirma que se acreditó.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
         </li>
         <li class="step-card">
           <span class="n">05</span>
           <span class="t">Avisa al almacén</span>
-          <span class="d">WhatsApp simple al almacén y correo con el detalle a ustedes.</span>
-          <span class="who">Automático</span>
+          <span class="d">La orden al almacén y el detalle completo a ustedes.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
         </li>
         <li class="step-card">
           <span class="n">06</span>
           <span class="t">Manda la guía</span>
-          <span class="d">El almacén captura el número y el cliente lo recibe al instante.</span>
-          <span class="who manual">1 paso manual</span>
+          <span class="d">El número de rastreo llega al cliente por WhatsApp.</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who human">1 dato a mano</span></span>
+          </span>
         </li>
       </ol>
     </div>
 
-    <div class="compliance-box">
-      <h3><span class="gl gl-alert"></span> Dos cosas que hay que arrancar desde el día uno</h3>
-      <ul>
-        <li><strong>Plantillas de WhatsApp.</strong> Meta exige aprobar previamente todo mensaje que salga más de 24 horas después de que el cliente escribió. El recordatorio de apartado, la confirmación de pago y el aviso de guía caen en ese caso. La aprobación tarda de 24 a 48 horas, así que se solicita al inicio del proyecto, no al final.</li>
-        <li><strong>Cuenta de Mercado Pago verificada.</strong> Sin las verificaciones de identidad y fiscales, Mercado Pago retiene los fondos según el volumen que reciban. Les hacemos llegar los requisitos para que lo dejen listo antes del arranque.</li>
-      </ul>
-    </div>
+    <p class="pending-note">
+      <strong>El único paso que nunca se automatiza del todo es capturar el número de
+      guía.</strong> Las paqueterías no tienen forma de entregarlo solas. En el
+      Completo el almacén escribe ese número en un formulario y el sistema hace el
+      resto; el cliente lo recibe al instante.
+    </p>
   </div>
 </section>
 
-<section>
+<section class="behind">
   <div class="wrap">
-    <p class="eyebrow">Alcance</p>
-    <h2>Qué se construye</h2>
+    <p class="eyebrow">Transparencia</p>
+    <h2>Lo que hay detrás del precio</h2>
     <p class="lead">
-      Todo lo que sigue entra en una sola entrega. No hay módulos pendientes ni
-      segundas etapas: al terminar, el menudeo opera completo.
+      Para que no sea sólo un número. Esto es lo que se construye, pieza por pieza,
+      en el paquete Completo.
     </p>
 
-    <article class="system-card">
-      <div class="sys-head">
-        <div>
-          <span class="sys-badge">Sistema completo de menudeo</span>
-          <h3 style="margin:0">Venta automatizada de punta a punta</h3>
-        </div>
-        <div>
-          <div class="sys-price"><span class="cur">USD</span> 4,065</div>
-          <p class="sys-monthly">implementación &middot; más USD 330 al mes</p>
-        </div>
-      </div>
-
-      <ul class="feature-list">
-        <li><span class="gl gl-check"></span><span>Bot de ventas con IA</span></li>
-        <li><span class="gl gl-check"></span><span>Catálogo de los 30 artículos</span></li>
-        <li><span class="gl gl-check"></span><span>Inventario que no sobrevende</span></li>
-        <li><span class="gl gl-check"></span><span>Apartado de 24 h con reloj</span></li>
-        <li><span class="gl gl-check"></span><span>Cobro por Mercado Pago</span></li>
-        <li><span class="gl gl-check"></span><span>Orden automática al almacén</span></li>
-        <li><span class="gl gl-check"></span><span>Guía al cliente por WhatsApp</span></li>
-        <li><span class="gl gl-check"></span><span>Escalamiento a persona</span></li>
-        <li><span class="gl gl-check"></span><span>Tablero de venta de 8 etapas</span></li>
-        <li><span class="gl gl-spark"></span><span>Landing de catálogo</span></li>
-        <li><span class="gl gl-check"></span><span>2 sesiones de capacitación</span></li>
-        <li><span class="gl gl-check"></span><span>Soporte post-implementación</span></li>
-      </ul>
-    </article>
-  </div>
-</section>
-
-<section class="invest-section">
-  <div class="wrap">
-    <p class="eyebrow">Inversión</p>
-    <h2>Lo que cuesta</h2>
-    <p class="lead">Precios en dólares. Una sola entrega, sin fases posteriores.</p>
-
-    <div class="invest-grid">
-      <div class="invest-panel">
-        <p class="invest-label">Implementación &mdash; pago único</p>
-        <div class="invest-figure"><span class="cur">USD</span> 4,065</div>
-
-        <div class="invest-sep"></div>
-
-        <p class="invest-label">Mensualidad</p>
-        <div class="invest-figure" style="font-size:clamp(1.6rem,3.4vw,2.2rem)"><span class="cur">USD</span> 330</div>
-        <p class="invest-note">Cubre el soporte, el agente de IA activo y las integraciones corriendo.</p>
-
-        <div class="split-box">
-          <span class="gl gl-bolt"></span>
-          <span>Se puede dividir en <strong>dos pagos de USD 2,032.50</strong>: mitad al arrancar y mitad a la entrega.</span>
-        </div>
-      </div>
-
-      <div class="invest-panel">
-        <h3 style="margin-bottom:16px">Qué cubre el mensual</h3>
-        <ul class="includes">
-          <li><span class="gl gl-check"></span><span>Soporte post-implementación</span></li>
-          <li><span class="gl gl-check"></span><span>Agente de ventas con IA activo</span></li>
-          <li><span class="gl gl-check"></span><span>Integración con Mercado Pago</span></li>
-          <li><span class="gl gl-check"></span><span>Motor de inventario conectado a su hoja</span></li>
-        </ul>
-        <p class="third-party">
-          Los costos de terceros &mdash; WhatsApp API por conversación, comisiones de
-          Mercado Pago y Google Workspace &mdash; corren por cuenta de ustedes y se
-          pagan directo al proveedor. No pasan por 786 Marketing.
-        </p>
-      </div>
+    <div class="behind-grid">
+      <div class="behind-item"><div class="n">30</div><div class="l">artículos cargados en el catálogo del bot, con sus tallas, calidades y contenido</div></div>
+      <div class="behind-item"><div class="n">17</div><div class="l">pasos de conversación programados en el agente de ventas</div></div>
+      <div class="behind-item"><div class="n">8</div><div class="l">automatizaciones, una de ellas de 18 pasos sólo para el apartado</div></div>
+      <div class="behind-item"><div class="n">5</div><div class="l">flujos en el motor externo que lleva el inventario y los pagos</div></div>
+      <div class="behind-item"><div class="n">2</div><div class="l">integraciones: Mercado Pago y la hoja de inventario del almacén</div></div>
+      <div class="behind-item"><div class="n">6</div><div class="l">plantillas de mensaje, 4 de ellas con trámite de aprobación ante Meta</div></div>
+      <div class="behind-item"><div class="n">8</div><div class="l">etapas de tablero con sus reglas de avance</div></div>
+      <div class="behind-item"><div class="n">6</div><div class="l">secciones de landing con los dos catálogos de temporada</div></div>
+      <div class="behind-item"><div class="n">2</div><div class="l">sesiones de capacitación, una para ustedes y otra para el almacén</div></div>
     </div>
+
+    <p class="behind-note">
+      Una forma de verlo: <strong>tenían cuatro vendedoras atendiendo mensajes uno
+      por uno</strong>, y aun así el menudeo los desbordó. Este sistema atiende sin
+      horario y sin que crezca el equipo cuando crezcan las ventas. Saquen ustedes
+      la cuenta de lo que costaba ese esquema al mes.
+    </p>
   </div>
 </section>
 
 <section>
+  <div class="wrap">
+    <p class="eyebrow">Inversión</p>
+    <h2>Lo que cuesta cada camino</h2>
+    <p class="lead">Precios en dólares. La mensualidad cubre el soporte y que el sistema siga corriendo.</p>
+
+    <div class="invest-grid">
+      <article class="invest-card">
+        <p class="invest-label">Esencial</p>
+        <div class="invest-figure"><span class="cur">USD</span> 1,997</div>
+        <p style="color:var(--text-gray); font-size:.9rem; margin:2px 0 0">implementación, pago único</p>
+        <div class="invest-sep"></div>
+        <div class="invest-row"><span class="k">Mensualidad</span><span class="v">USD 297</span></div>
+        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 5,561</span></div>
+        <div class="invest-row"><span class="k">Entrega</span><span class="v">2 semanas</span></div>
+        <div class="split-box">
+          <span class="gl gl-bolt"></span>
+          <span>Se puede dividir en <strong>dos pagos de USD 998.50</strong>: mitad al arrancar y mitad a la entrega.</span>
+        </div>
+      </article>
+
+      <article class="invest-card featured">
+        <p class="invest-label">Completo &middot; recomendado</p>
+        <div class="invest-figure"><span class="cur">USD</span> 3,200</div>
+        <p style="color:var(--text-gray); font-size:.9rem; margin:2px 0 0">implementación, pago único</p>
+        <div class="invest-sep"></div>
+        <div class="invest-row"><span class="k">Mensualidad</span><span class="v">USD 497</span></div>
+        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 9,164</span></div>
+        <div class="invest-row"><span class="k">Entrega</span><span class="v">3 a 4 semanas</span></div>
+        <div class="split-box">
+          <span class="gl gl-bolt"></span>
+          <span>Se puede dividir en <strong>dos pagos de USD 1,600</strong>: mitad al arrancar y mitad a la entrega.</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="third-party">
+      <strong>Qué cubre la mensualidad:</strong> el soporte, el agente de IA activo,
+      el monitoreo de que todo siga corriendo, los ajustes al bot conforme se
+      aprende qué pregunta la gente, y los cambios de catálogo entre temporadas
+      &mdash; el paso de verano a invierno y de vuelta. En el Completo también el
+      motor de inventario y la conexión con Mercado Pago.
+      <br><br>
+      <strong>Qué se paga aparte, directo al proveedor:</strong> WhatsApp API cobra
+      por conversación, Mercado Pago cobra su comisión por venta y Google Workspace
+      su licencia. Esos costos son de ustedes y no pasan por 786 Marketing. Tampoco
+      incluye las fotos ni los textos de producto, que los entregan ustedes.
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-block:1px solid var(--border)">
   <div class="wrap">
     <p class="eyebrow">Antes de cerrar</p>
     <h2>Lo que falta para volver esto una propuesta en firme</h2>
     <p class="lead">
-      Preferimos decirlo de frente: hay seis datos que todavía no tenemos. En
-      cuanto lleguen, entregamos la propuesta final con el mapeo y cerramos fechas.
+      Preferimos decirlo de frente. En cuanto lleguen estos datos entregamos la
+      propuesta final con el mapeo y cerramos fechas.
     </p>
 
     <div class="pending-grid">
@@ -663,16 +1063,16 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
         <p>Con quién se despacha y bajo qué modalidad. De ahí salen las tarifas, las coberturas y qué datos tiene que pedirle el bot al cliente.</p>
       </div>
       <div class="pending-card">
+        <h4><span class="gl gl-alert"></span> Precios de venta</h4>
+        <p>El precio de cada artículo en menudeo. Sin él el bot no puede cotizar ni generar liga de pago en ninguno de los dos paquetes.</p>
+      </div>
+      <div class="pending-card">
         <h4><span class="gl gl-image"></span> Imágenes de las pacas</h4>
-        <p>Fotos de cada artículo. Sin ellas no hay landing de catálogo ni fichas que el bot pueda mandar por WhatsApp.</p>
+        <p>Fotos de cada artículo. Necesarias para la landing y para las fichas que el bot manda por WhatsApp. Bloquean el Completo.</p>
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-text"></span> Descripciones de los artículos</h4>
-        <p>Qué trae cada paca y para quién es. Cinco de los treinta todavía no tienen descripción y el bot no puede describir lo que no sabe.</p>
-      </div>
-      <div class="pending-card">
-        <h4><span class="gl gl-alert"></span> Precios de venta</h4>
-        <p>El precio de cada artículo en menudeo. Es el dato más importante: sin él no hay cotización del bot ni liga de pago.</p>
+        <p>Qué trae cada paca y para quién es. Cinco de los treinta todavía no tienen descripción, y el bot no puede describir lo que no sabe.</p>
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-clock"></span> Piezas por paca</h4>
@@ -680,56 +1080,59 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-chart"></span> Stock inicial</h4>
-        <p>Cuántas pacas de cada artículo se destinan al menudeo. Les dejamos la plantilla lista para llenar.</p>
+        <p>Cuántas pacas de cada artículo se destinan al menudeo. Necesario para el Completo; les dejamos la plantilla lista para llenar.</p>
       </div>
     </div>
-
-    <p class="pending-note">
-      <strong>Las fotos y las descripciones subieron de prioridad.</strong> Al incluir
-      la landing de catálogo en esta entrega, dejaron de ser un extra deseable: un
-      catálogo web no se puede montar sin imágenes ni textos de producto. Son, junto
-      con los precios, lo primero que conviene reunir.
-    </p>
   </div>
 </section>
 
-<section style="background:var(--surface); border-top:1px solid var(--border)">
+<section>
   <div class="wrap">
     <p class="eyebrow">Cómo trabajamos</p>
-    <h2>Entre 3 y 4 semanas</h2>
+    <h2>Cuánto tarda</h2>
     <p class="lead">
-      Nuestro método dedica la mayor parte del esfuerzo a mapear antes de construir.
-      Esta es la secuencia de trabajo.
+      Dedicamos la mayor parte del esfuerzo a mapear antes de construir. El Esencial
+      es más rápido porque no lleva integraciones externas.
     </p>
+
+    <div class="dur-chips">
+      <div class="dur-chip">
+        <div class="k">Esencial</div>
+        <div class="v">2 semanas</div>
+      </div>
+      <div class="dur-chip featured">
+        <div class="k">Completo</div>
+        <div class="v">3 a 4 semanas</div>
+      </div>
+    </div>
 
     <ol class="timeline">
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Mapeo y definición <span class="week">Semana 1</span></h4>
-        <p>Sesión de trabajo para cerrar precios, proveedor de envíos, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y se verifica la cuenta de Mercado Pago.</p>
+        <p>Sesión de trabajo para cerrar precios, proveedor de envíos, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y, en el Completo, se verifica la cuenta de Mercado Pago.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Montaje de la base <span class="week">Semanas 1 &ndash; 2</span></h4>
-        <p>Subcuenta, WhatsApp API, catálogo de los 30 artículos, landing, tablero de venta e inventario conectado a su hoja compartida.</p>
+        <p>Cuenta, WhatsApp API, catálogo de los 30 artículos en el bot y tablero de venta. En el Completo se suman la landing y el inventario conectado a su hoja compartida.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Construcción de las automatizaciones <span class="week">Semanas 2 &ndash; 3</span></h4>
-        <p>El bot de ventas, el apartado con reloj, el cobro por Mercado Pago, la orden al almacén y el envío de la guía.</p>
+        <p>El agente de ventas y el escalamiento en los dos paquetes. En el Completo además el apartado con reloj, el cobro por Mercado Pago, la orden al almacén y el envío de la guía.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Pruebas, capacitación y arranque <span class="week">Semanas 3 &ndash; 4</span></h4>
-        <p>Se prueba cada flujo de punta a punta con ventas reales controladas, se capacita al equipo y al almacén, y se abre al público.</p>
+        <p>Se prueba cada flujo de punta a punta con ventas reales controladas, se capacita al equipo y se abre al público.</p>
       </li>
     </ol>
 
     <p class="timeline-note">
       Las fechas exactas se fijan una vez validada y entregada la propuesta final
-      con el mapeo. El rango de 3 a 4 semanas depende de qué tan rápido lleguen los
-      seis datos pendientes y de los tiempos de aprobación de Meta, que no
-      controlamos.
+      con el mapeo. El rango depende de qué tan rápido lleguen los datos pendientes
+      y de los tiempos de aprobación de Meta, que no controlamos.
     </p>
   </div>
 </section>

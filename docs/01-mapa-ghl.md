@@ -3,7 +3,16 @@
 Nomenclatura estándar: **LS** lead sources · **SP** sales pipeline ·
 **AP** active projects.
 
-Entrega única — todo lo de este documento va en el mismo alcance.
+Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
+**Esencial** va marcado en cada sección.
+
+| | Esencial | Completo |
+|---|---|---|
+| Pipeline | 5 etapas | 8 etapas |
+| Workflows | 5 | 8 |
+| Nodos del agente | 12 | 17 |
+| Integraciones externas | 0 | 2 |
+| Landing | — | 6 secciones |
 
 ---
 
@@ -22,11 +31,18 @@ Entrega única — todo lo de este documento va en el mismo alcance.
 | 7 | Enviado — Guía Generada | El almacén capturó el número de guía |
 | 8 | Entregado / Cerrado | Cierre |
 
-Un solo pipeline. El de post-venta y recompra se retiró del alcance.
+**En el Esencial son 5 etapas:** Lead Nuevo → En Conversación (Bot) → Pedido
+Armado → Confirmado y Cobrado → Cerrado. Las etapas 3 a 7 del Completo (apartado,
+liga de pago, pago confirmado, almacén, guía) se colapsan en una sola porque el
+asesor las lleva a mano.
+
+El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 
 ---
 
 ## 2. Workflows
+
+### Completo — 8 workflows
 
 | Código | Nombre | Trigger | Nodos |
 |---|---|---|---:|
@@ -38,6 +54,20 @@ Un solo pipeline. El de post-venta y recompra se retiró del alcance.
 | `SP05` | Despacho: almacén + dueños | Opportunity Stage Changed → Pago Confirmado | 10 |
 | `AP01` | Captura de guía → tracking al cliente | Form Submitted (form almacén) | 9 |
 | `AP02` | Escalamiento a humano | Tag Added `escalar-humano` | 8 |
+
+### Esencial — 5 workflows
+
+| Código | Nombre | Trigger | Nodos |
+|---|---|---|---:|
+| `LS01` | Entrada de lead menudeo | Contact Created (filtro por canal) | 8 |
+| `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
+| `SP02` | Pedido armado → aviso al asesor + tarea | Tag Added `pedido-armado` | 10 |
+| `SP03` | Seguimiento de pedido sin cerrar | Opportunity Stage Changed | 8 |
+| `AP02` | Escalamiento a humano | Tag Added `escalar-humano` | 8 |
+
+`SP02`, `SP03`, `SP04`, `SP05` y `AP01` del Completo **no existen en el Esencial**:
+todos dependen de n8n, de Mercado Pago o de la cadena de despacho. En su lugar,
+`SP02` del Esencial avisa al asesor y le crea la tarea para que cierre él.
 
 ### Detalle de los tres workflows críticos
 
@@ -70,7 +100,7 @@ quieren trabajar la recompra, se cotizan aparte.
 
 ## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
 
-17 nodos, con IA generativa avanzada.
+**Completo: 17 nodos.** Con IA generativa avanzada.
 
 | # | Nodo | Función |
 |---:|---|---|
@@ -92,6 +122,18 @@ quieren trabajar la recompra, se cotizan aparte.
 | 16 | API Call → n8n `N3` | Genera la liga de Mercado Pago |
 | 17 | End Node | — |
 
+### Esencial — 12 nodos
+
+Los mismos 1 a 8 y 12 a 13, sin las tres llamadas API a n8n (nodos 9, 14 y 16) ni
+el router de stock (10) ni el nodo de alternativas (11). Cierra distinto:
+
+| # | Nodo | Función |
+|---:|---|---|
+| 9 | Capture | Nombre y teléfono |
+| 10 | Text Input | Ciudad y estado |
+| 11 | Text Gen | Resumen del pedido + aviso de que un asesor confirma disponibilidad y cobra |
+| 12 | End Node | Marca `pedido-armado`, que dispara `SP02` |
+
 ### Global Prompt — reglas permanentes
 
 1. **Nunca inventar stock, precios ni cantidad de piezas.** Siempre leerlos de la KB o de la API. Si el dato no está, decirlo.
@@ -100,6 +142,9 @@ quieren trabajar la recompra, se cotizan aparte.
 4. Las piezas por paca **varían**: responder con rango y aclararlo, nunca con cifra exacta.
 5. Todas las pacas pesan **100 lb / 45 kg**. Ese dato sí es fijo.
 6. Tono: cercano y mexicano, sin tecnicismos.
+7. **Sólo en el Esencial:** nunca afirmar disponibilidad. El bot arma el pedido y
+   avisa que un asesor confirma existencia y cobra. No hay inventario conectado que
+   consultar.
 
 ### Knowledge Base
 
@@ -109,7 +154,7 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 
 > ⚠️ 5 SKUs (corsé ×2, playera comercial, chamarra ×2, suéter navideño) **no están
 > descritos en ningún transcript**. El agente no puede describir lo que no sabe.
-> Pregunta #13 en `05-preguntas-cliente.md`.
+> Pregunta #3 en `05-preguntas-cliente.md`.
 
 ---
 
@@ -160,7 +205,7 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > enviarlos a aprobación en la semana 1 del proyecto, no al final. Es el ítem que
 > más fácilmente atora el go-live.
 
-## 8. Landing de catálogo
+## 8. Landing de catálogo — sólo Completo
 
 Página pública con los 30 artículos, montada en GHL. **6 secciones:**
 
