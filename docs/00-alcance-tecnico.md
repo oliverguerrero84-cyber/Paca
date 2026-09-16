@@ -56,26 +56,33 @@ que todo sea recibido a través de un robot"*.
 
 Esto acota el alcance de forma importante y hay que dejarlo escrito en la propuesta.
 
-### Cómo se cierra la venta: híbrido
+### Cómo se cierra la venta: todo en la conversación, salvo el pago
 
-La decisión de fondo de la segunda junta. Tres caminos posibles:
+> **Esta decisión cambió en la revisión 5.** Antes decía "el bot atiende y la tienda
+> cobra". Ver `07-decision-checkout.md` para el razonamiento completo.
 
-| | A favor | En contra |
-|---|---|---|
-| Conversacional puro | Lo más amigable para su público; es como ya venden | Navegar 30 artículos por chat es pesado, y capturar direcciones conversando es **justo lo que los desbordó** |
-| Tienda pura | Carrito abandonado nativo, checkout que valida antes de cobrar | Mauricio: su cliente *"no sabe escribir bien, no sabe usar muy bien el teléfono"* — un checkout seco los pierde |
-| **Híbrido** ✅ | El bot absorbe a los curiosos y la tienda captura los datos estructurados | Dos piezas que mantener |
+La venta ocurre **íntegra en WhatsApp**. El agente atiende, muestra fotos y videos,
+resuelve dudas, arma el pedido, pide el código postal y deja elegir sucursal. Al
+final manda **una liga de pago**: el cliente sale de WhatsApp una sola vez, a una
+página de un solo paso, y vuelve solo.
 
-**Elegido: híbrido con red de seguridad.** El bot atiende, califica y limpia; al
-cerrar manda a la tienda. Si el cliente se atora en el checkout, el carrito
-abandonado lo detecta y el bot ofrece terminar la compra por chat con liga de pago.
+Tres razones para no mandarlos a una tienda:
 
-Pamela lo había pedido así: *"me gustó la idea que el bot atienda y limpie hasta que
-termine al final del embudo, y ya cuando termine, ok, te abro la landing"*.
+1. **Fricción para su público.** Mauricio: *"muchas veces no saben cómo escribir
+   bien, no saben cómo usar muy bien el teléfono, las redes"*. Un checkout con
+   carrito los pierde.
+2. **Mercado Pago nombra Invoices y Payment Links como soportados, pero no nombra el
+   checkout de la tienda.** Cobrar por ahí es apostar a algo sin confirmar.
+3. **El apartado y el checkout de la tienda chocan.** Si alguien aparta la última
+   paca, la tienda se la muestra agotada *a esa misma persona* cuando va a pagar.
 
-Germán aportó el argumento que decide la captura de dirección: **un formulario que
-no deja pagar hasta que los datos sean válidos.** Conversando, la dirección siempre
-sale mal — Pamela contó cómo se les iban las horas persiguiendo códigos postales.
+Sobre la captura de dirección, Germán tenía razón en que conversando sale mal — pero
+la solución no es un formulario, es **pedir sólo el código postal**. Cinco dígitos
+es lo único que ese público da sin equivocarse, y el sistema devuelve las sucursales
+para que elija de una lista. Detalle en `06-logistica-envia.md`.
+
+**La página pública sobrevive como catálogo**, no como caja: es el destino de la
+publicidad, porque no tienen Instagram ni TikTok.
 
 ---
 
@@ -90,8 +97,9 @@ sale mal — Pamela contó cómo se les iban las horas persiguiendo códigos pos
 | Temporizador del apartado + recordatorios | Workflow con `Wait` + `Goal Event` |
 | Orden simple al almacén por WhatsApp | `Send Message` en workflow |
 | Correo con el detalle completo a los dueños | `Send Internal Notification` / `Send Message — Email` |
-| Cobro con tarjeta, OXXO y SPEI | **Mercado Pago nativo** (Pagos → Integraciones) |
-| Catálogo público con los 30 artículos | **Tienda de GHL** con inventario nativo |
+| Cobro con tarjeta, OXXO y SPEI | **Liga de pago** (API de Invoices) con Mercado Pago nativo |
+| Catálogo con fotos y videos | **En la conversación**, más una página pública para la publicidad |
+| Inventario que no sobrevende | Productos de GHL + `Update Inventory` desde n8n |
 | Envío del rastreo al cliente | `Send Message — WhatsApp` disparado por los eventos de Envia |
 | Escalamiento a humano | Tag + `Update Conversation AI Bot Status → Off` |
 
@@ -213,7 +221,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 | Duración del apartado | 24 h | El cliente pidió 24; nosotros habíamos propuesto 2–3 h |
 | Paquetería | **Paquete Express vía Envia.com**, sólo a ocurre | Confirmado en la segunda junta |
 | Costo de envío | **Incluido en el precio**, igual a toda la República | Confirmado: *"es a cualquier parte, ya incluido el envío"* |
-| Cierre de la venta | **Híbrido**: bot atiende, tienda cobra | Decisión de la segunda junta |
+| Cierre de la venta | **Todo en WhatsApp**; sale una vez a la liga de pago | Revisión 5 — ver `07-decision-checkout.md` |
 | Devoluciones | **No hay**, política explícita | *"tratamos que la venta sea sincera y directa: es esto y trae esto y no hay devolución"* |
 | Volumen esperado | 500 a 800 envíos al mes, hasta 1,000 | Miguel: *"de acuerdo a la experiencia, arriba de 500 muy fácilmente"* |
 | Pasarela | Mercado Pago | Pedido por el cliente y recomendado por nosotros en la llamada |
@@ -232,8 +240,8 @@ artículos e inventario en vivo, apartado de 24 h con reloj, cobro con tarjeta, 
 y SPEI, guía y recolección automáticas, rastreo hasta la sucursal, buscador de
 sucursal por código postal y escalamiento a humano.
 
-1 pipeline de 8 etapas · 9 workflows · 1 agente de 16 nodos · 2 integraciones ·
-6 plantillas · tienda de 8 secciones · 2 capacitaciones · soporte.
+1 pipeline de 8 etapas · 9 workflows · 1 agente de 19 nodos · 2 integraciones ·
+6 plantillas · catálogo público de 6 secciones · 2 capacitaciones · soporte.
 
 ### Esencial — $1,997 setup / $297 al mes · 2 semanas
 

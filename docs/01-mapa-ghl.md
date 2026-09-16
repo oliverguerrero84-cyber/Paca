@@ -10,10 +10,10 @@ Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
 |---|---|---|
 | Pipeline | 5 etapas | 8 etapas |
 | Workflows | 5 | 9 |
-| Nodos del agente | 12 | 16 |
+| Nodos del agente | 12 | 19 |
 | Integraciones externas | 0 | 2 (Envia.com + n8n) |
-| Tienda | — | 30 productos con inventario nativo |
-| Cobro | — | Mercado Pago nativo |
+| Catálogo | En la conversación | En la conversación + página pública opcional |
+| Cobro | — | Liga de pago con Mercado Pago |
 
 ---
 
@@ -50,7 +50,7 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 | `LS01` | Entrada de lead menudeo | Contact Created (WhatsApp) | 10 |
 | `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
 | `SP02` | Apartado 24 h + recordatorios + liberación | Inbound Webhook (n8n `N1`) | 16 |
-| `SP03` | Liga de pago Mercado Pago + seguimiento | Opportunity Stage Changed → Apartado | 10 |
+| `SP03` | **Crea la liga de pago** (API de Invoices) y da seguimiento | Opportunity Stage Changed → Apartado | 12 |
 | `SP04` | Pago confirmado → nº de orden | **Goal Event `Payment Received`** | 10 |
 | `SP05` | Despacho: guía Envia + PDF al almacén + correo a dueños | Opportunity Stage Changed → Pagado | 12 |
 | `AP01` | Rastreo: avisos hasta "llegó a tu sucursal" | Inbound Webhook (n8n `N5`) | 10 |
@@ -112,7 +112,10 @@ quieren trabajar la recompra, se cotizan aparte.
 
 ## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
 
-**Completo: 16 nodos.** Con IA generativa avanzada.
+**Completo: 19 nodos.** Con IA generativa avanzada.
+
+La conversación es el catálogo: el agente muestra, resuelve y arma el pedido
+completo sin que el cliente salga de WhatsApp.
 
 | # | Nodo | Función |
 |---:|---|---|
@@ -120,27 +123,32 @@ quieren trabajar la recompra, se cotizan aparte.
 | 2 | AI Agent | Saluda y califica: ¿menudeo o mayoreo? |
 | 3 | Router AI | mayoreo → escalar · menudeo → seguir · duda general → KB |
 | 4 | Search KB | Catálogo de las 30 pacas |
-| 5 | Text Input | Temporada (campo gemelo, ver gotchas) |
-| 6 | Text Input | Categoría: mujer / hombre / niño / especiales |
-| 7 | Text Input | Calidad: Boutique / Premium / Especial |
-| 8 | Text Input | Cantidad de pacas |
-| 9 | API Call → n8n `N1` | Consulta de disponibilidad real en GHL |
-| 10 | Router Condicional | ¿Hay stock suficiente? |
-| 11 | AI Agent | Ofrece alternativas si no hay |
-| 12 | Capture | Nombre y teléfono |
-| 13 | Text Input | **Código postal** — 5 dígitos |
-| 14 | API Call → n8n `N3` | Buscador de sucursal: devuelve 2-3 opciones cercanas |
-| 15 | Text Gen | Resumen del pedido + liga a la tienda para completar el checkout |
-| 16 | End Node | — |
+| 5 | AI Agent | Resuelve dudas de tallas, calidades, contenido y peso |
+| 6 | Text Input | Temporada (campo gemelo, ver gotchas) |
+| 7 | Text Input | Categoría: mujer / hombre / niño / especiales |
+| 8 | Text Input | Calidad: Boutique / Premium / Especial |
+| 9 | Text Gen | **Manda foto y video** del artículo elegido |
+| 10 | Text Input | Cantidad de pacas |
+| 11 | API Call → n8n `N1` | Consulta de disponibilidad real en GHL |
+| 12 | Router Condicional | ¿Hay stock suficiente? |
+| 13 | AI Agent | Ofrece alternativas si no hay |
+| 14 | Capture | Nombre y teléfono |
+| 15 | Text Input | **Código postal** — 5 dígitos |
+| 16 | API Call → n8n `N3` | Buscador de sucursal: devuelve 2-3 opciones cercanas |
+| 17 | Single Choice | El cliente **elige** sucursal de la lista |
+| 18 | Text Gen | Resumen del pedido + aviso de que no hay devoluciones |
+| 19 | End Node | Marca `pedido-listo`, que dispara `SP02` (apartado) |
 
-**Qué cambió:** el agente ya no genera la liga de pago (eso es nativo ahora) ni crea
-el apartado por su cuenta; **entrega al checkout**, que es donde se valida el código
-postal y se elige sucursal. Entra el buscador de sucursal, que antes no existía.
+**Qué cambió en la revisión 5:** el agente ya no manda a la tienda. Absorbe el
+catálogo (fotos y videos por WhatsApp, como pidieron en la junta) y el buscador de
+sucursal, y cierra dejando el pedido armado. **El cliente sale de WhatsApp una sola
+vez: para pagar.**
 
 ### Esencial — 12 nodos
 
-Los mismos 1 a 8 y 12 a 13, sin las tres llamadas API a n8n (nodos 9, 14 y 16) ni
-el router de stock (10) ni el nodo de alternativas (11). Cierra distinto:
+Atiende y arma el pedido igual, pero **sin consultar nada**: no lleva las llamadas
+API a n8n, ni el router de stock, ni el nodo de alternativas, ni el buscador de
+sucursal. Cierra derivando a un asesor:
 
 | # | Nodo | Función |
 |---:|---|---|
@@ -227,11 +235,15 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > enviarlos a aprobación en la semana 1 del proyecto, no al final. Es el ítem que
 > más fácilmente atora el go-live.
 
-## 8. Tienda de catálogo — sólo Completo
+## 8. Catálogo público — sólo Completo
 
-Tienda de GHL con los 30 artículos, **inventario nativo** y checkout con Mercado
-Pago. Es vitrina y semáforo de disponibilidad; el cobro del apartado va por liga
-(ver `02-arquitectura-inventario.md` §3). **8 secciones:**
+**No cobra, no arma carritos y no descuenta stock.** La venta ocurre íntegra en la
+conversación (ver `07-decision-checkout.md`). Esta página existe por una razón
+concreta: **no tienen Instagram ni TikTok**, así que hoy los leads sólo pueden
+llegar por el número de WhatsApp. Es el destino de la publicidad.
+
+Cada artículo lleva un botón que **abre WhatsApp con el SKU precargado**, para que
+el agente sepa de qué le preguntan desde el primer mensaje. **6 secciones:**
 
 | # | Sección | Contenido |
 |---|---|---|
@@ -242,14 +254,15 @@ Pago. Es vitrina y semáforo de disponibilidad; el cobro del apartado va por lig
 | 5 | Preguntas frecuentes | Peso, piezas, tallas, calidades, envío |
 | 6 | Cierre | CTA final a WhatsApp + datos del negocio |
 
-Cada tarjeta de artículo arranca la conversación en WhatsApp con el SKU
-precargado, de modo que el agente ya sabe de qué paca le están preguntando y se
-salta los nodos 5 a 7 (temporada, categoría, calidad).
+Al llegar con el SKU precargado, el agente se salta los nodos 6 a 8 (temporada,
+categoría y calidad) y va directo a cantidad y disponibilidad.
 
-> ⚠️ **Bloqueada por contenido.** La landing no se puede montar sin **fotos** y
-> **descripciones** de cada artículo, y ninguna de las dos cosas existe hoy. No
-> están cotizadas: las entrega el cliente. Preguntas #2 y #3 de
-> `05-preguntas-cliente.md`.
+> ⚠️ **Bloqueada por contenido.** No se puede montar sin **fotos, videos y
+> descripciones** de cada artículo, y hoy no existe ninguna de las tres. No están
+> cotizadas: las entrega el cliente. Preguntas #2 y #3 de `05-preguntas-cliente.md`.
+>
+> Nota: el catálogo de la conversación necesita el mismo material. La diferencia es
+> que el agente puede arrancar sin fotos —describiendo— y la página no.
 
 ## 9. Calendarios
 

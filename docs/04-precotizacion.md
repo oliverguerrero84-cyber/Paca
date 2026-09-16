@@ -26,15 +26,15 @@ El Completo queda en **1.72×** el Esencial al primer año. Brecha de entrada:
 ## Por qué subió el Completo de $3,200 a $3,600
 
 La segunda junta y la investigación técnica cambiaron el alcance. El cálculo sube
-poco —de $4,065 a **$4,190**— pero **lo que el cliente ve crecer es mucho más**:
+poco —de $4,065 a **$4,179**— pero **lo que el cliente ve crecer es mucho más**:
 
 | Lo que se agregó | Por qué importa |
 |---|---|
-| **Tienda con los 30 artículos** | Catálogo público con fotos, videos e inventario en vivo |
+| **Catálogo con fotos y videos en la conversación** | El agente muestra cada paca sin que el cliente salga de WhatsApp |
 | **Guía generada sola** (Envia.com) | El almacén deja de ir por guías y de capturarlas en Excel |
 | **Rastreo hasta "llegó a tu sucursal"** | Con servicio a ocurre, es el aviso más valioso del flujo |
 | **Buscador de sucursal por código postal** | Ataca la razón de fondo por la que apagaron el menudeo |
-| **Tarjeta, OXXO y SPEI en un solo checkout** | Los tres métodos que pidieron, sin desarrollo extra |
+| **Tarjeta, OXXO y SPEI en una sola liga** | Los tres métodos que pidieron, sin desarrollo extra |
 | **Registro manual de transferencias** | Para los pagos que llegan a su banco |
 
 Y **desaparece el último paso manual**: las revisiones anteriores decían que
@@ -55,7 +55,7 @@ Los precios de venta son **decisión comercial del equipo**, no salida del cotiz
 | Paquete | Calculado | Comercial | Diferencia |
 |---|---|---|---|
 | Esencial | $2,044 / $230 | **$1,997 / $297** | setup −$47 · mensual +$67 |
-| Completo | $4,190 / $330 | **$3,600 / $497** | setup −$590 (−14%) · mensual +$167 (+51%) |
+| Completo | $4,179 / $330 | **$3,600 / $497** | setup −$579 (−14%) · mensual +$167 (+51%) |
 
 > ⚠️ **La estructura del Completo sigue sin ser un descuento.** Contra la estructura
 > original ($4,065 / $330), el primer año pasa de $8,025 a **$9,564** y el año 2 de
@@ -65,20 +65,20 @@ Los precios de venta son **decisión comercial del equipo**, no salida del cotiz
 
 ---
 
-## Desglose del Completo · calculado $4,190 / $330
+## Desglose del Completo · calculado $4,179 / $330
 
 | Módulo | Setup | Mensual |
 |---|---:|---:|
 | Setup de subcuenta (DNS, dominio, WhatsApp API, correos) | $250 | — |
 | CRM & Pipelines — 1 pipeline de 8 etapas + 3 vistas | $320 | — |
-| Automatizaciones & Workflows — 9 workflows | $1,010 | — |
-| Chatbot / AI Chat — agente de 16 nodos con IA avanzada | $640 | $80 |
+| Automatizaciones & Workflows — 9 workflows | $1,034 | — |
+| Chatbot / AI Chat — agente de 19 nodos con IA avanzada | $685 | $80 |
 | Integraciones — Envia.com + motor de apartado (n8n) | $600 | $100 |
 | Documentos & Templates — 6 plantillas | $400 | — |
-| Tienda de catálogo — 8 secciones | $570 | — |
+| Catálogo público — 6 secciones | $490 | — |
 | Capacitación — 2 sesiones (dueños y almacén) | $400 | — |
 | Soporte post-implementación | — | $150 |
-| **Total calculado** | **$4,190** | **$330** |
+| **Total calculado** | **$4,179** | **$330** |
 
 > **Mercado Pago e inventario ya no aparecen como integraciones** porque son nativos
 > de GHL. Antes pesaban $600 de setup y $100 al mes ellos solos.
@@ -105,7 +105,7 @@ atención; el Completo es la operación.**
 
 | | Esencial | Completo |
 |---|---|---|
-| Tienda con los 30 artículos | — | ● |
+| Catálogo con fotos y videos | — | ● |
 | Inventario en vivo | — | ● GHL nativo |
 | Apartado de 24 h con reloj | — | ● n8n + `Update Inventory` |
 | Cobro (tarjeta, OXXO, SPEI) | — | ● Mercado Pago nativo |
@@ -149,16 +149,16 @@ disponibilidad y cobra.
 import sys; sys.path.insert(0,'<ruta>/ghl-cotizador/scripts')
 from ghl_cotizador import calcular_cotizacion
 
-wf=[('LS01',10),('SP01',8),('SP02',16),('SP03',10),('SP04',10),
+wf=[('LS01',10),('SP01',8),('SP02',16),('SP03',12),('SP04',10),
     ('SP05',12),('AP01',10),('AP02',8),('AP03',7)]
 completo=dict(setup_subcuenta='completo',
   pipelines=[{'nombre':'SP','etapas':8}], vistas_filtros=3,
   workflows=[{'nombre':a,'nodos':b} for a,b in wf],
-  chatbots=[{'nombre':'Agente','nodos':16,'ia_avanzada':True}],
+  chatbots=[{'nombre':'Agente','nodos':19,'ia_avanzada':True}],
   integraciones=2, plantillas=6, calendarios=False,
-  landing_pages=[{'nombre':'Tienda','secciones':8}],
+  landing_pages=[{'nombre':'Catalogo','secciones':6}],
   reportes=False, sesiones_capacitacion=2, soporte=True)
-# -> 4190 / 330
+# -> 4179 / 330
 ```
 
 El Esencial no cambió; su scope está en la revisión anterior de este documento y en

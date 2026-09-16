@@ -1,10 +1,9 @@
 # Arquitectura de inventario, apartado y cobro
 
-> **Reescrito en la revisión 4.** Las versiones anteriores ponían el stock en Google
-> Sheets porque dábamos por hecho que GHL no sabía llevar inventario. **Era falso:**
-> la tienda de GHL tiene control de stock nativo y un endpoint `Update Inventory`.
-> El stock ahora vive en GHL, donde el cliente lo ve, y n8n queda reducido a una
-> sola función: ser el reloj del apartado.
+> **Revisión 5.** El stock vive en GHL (la revisión 4 lo sacó de Google Sheets al
+> descubrir que GHL sí lleva inventario nativo). Lo nuevo de esta revisión: **el
+> cobro sale del checkout de la tienda y pasa a una liga de pago**, lo que convierte
+> a n8n en **dueño único del contador**. Ver `07-decision-checkout.md`.
 
 ---
 
@@ -16,8 +15,8 @@
                                       ▼
   ┌──────────────────────────────────────────────────────────────┐
   │  GHL                                                          │
-  │  CRM · Agente de ventas · Tienda con los 30 artículos         │
-  │  Inventario nativo · Mercado Pago nativo · Workflows          │
+  │  CRM · Agente (Agent Studio) · Productos con inventario        │
+  │  Ligas de pago con Mercado Pago · Workflows                    │
   └──────────────────────────────────────────────────────────────┘
         │  webhook                          ▲  inbound webhook
         ▼                                   │
@@ -40,7 +39,7 @@ n8n ya no es el motor del sistema, es un temporizador y un traductor.
 
 | Dato | Dónde vive | Quién lo escribe |
 |---|---|---|
-| Catálogo de los 30 artículos | Productos de GHL | Se carga una vez; los dueños editan precios |
+| Catálogo de los 30 artículos | Productos de GHL — el precio vive aquí y lo usan las ligas de pago | Se carga una vez; los dueños editan precios |
 | **Stock disponible** | `availableQuantity` del producto en GHL | Los dueños al reponer; n8n al apartar y liberar |
 | Apartados vigentes | Oportunidades del pipeline + campos custom | Los workflows |
 | Pagos | Mercado Pago nativo, dentro de GHL | Mercado Pago |
@@ -80,15 +79,21 @@ pagas se libera para el siguiente.
   toca nada más          que se liberó
 ```
 
-### El detalle que evita un bug caro
+### Por qué n8n es dueño único del contador
 
-**La venta NO pasa por el checkout de la tienda.** Va por una **liga de pago de
-Mercado Pago atada a la reserva**. Si pasara por el checkout, GHL descontaría stock
-otra vez al completarse la orden y la pieza quedaría en doble baja.
+**La venta no pasa por ningún checkout de tienda.** El agente arma el pedido, n8n
+aparta, y un workflow de GHL crea la **liga de pago** con la API de Invoices. Como
+GHL sólo descuenta stock en órdenes de su tienda, y aquí no hay ninguna, **nadie
+más toca el contador**. n8n descuenta al apartar y devuelve al vencer. Punto.
 
-La tienda cumple dos funciones y ninguna es cobrar: **vitrina** con fotos y videos,
-y **semáforo de disponibilidad real** (porque lee el mismo `availableQuantity` que
-n8n escribe).
+Eso elimina dos bugs que tenía el diseño de la revisión 4:
+
+| Bug | Qué pasaba |
+|---|---|
+| **Doble descuento** | n8n descontaba al apartar y GHL volvía a descontar al completarse la orden de la tienda |
+| **La última paca no se podía pagar** | Si alguien apartaba la última unidad, n8n la bajaba a 0 y la tienda se la mostraba agotada **a esa misma persona** cuando iba a pagar |
+
+El segundo era el grave. Sacar el cobro de la tienda los elimina de raíz.
 
 ### Recordatorios
 
@@ -125,7 +130,7 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 |---|---|---|
 | `N1 · Apartar` | Webhook desde GHL | Lee `availableQuantity`; si hay, descuenta 1 y devuelve OK. Si no, devuelve agotado |
 | `N2 · Liberar vencidos` | Cron cada 15 min | Busca apartados vencidos y devuelve el stock con `Update Inventory` |
-| `N3 · Buscar sucursal` | API Call del agente o del checkout | Código postal → sucursales cercanas (ver `06-logistica-envia.md`) |
+| `N3 · Buscar sucursal` | API Call del agente | Código postal → 2-3 sucursales cercanas (ver `06-logistica-envia.md`) |
 | `N4 · Generar guía` | Webhook al confirmarse el pago | Crea la guía en Envia, devuelve PDF y número de rastreo |
 | `N5 · Rastrear` | Cron / webhook de Envia | Actualiza el estatus y dispara el aviso al cliente |
 
@@ -140,6 +145,11 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 
 **Nativo desde abril de 2026.** Se conecta en Pagos → Integraciones con Public Key y
 Access Token. No hay middleware, no hay webhook IPN que interpretar, no hay n8n.
+
+**La liga la genera GHL, no n8n.** El agente captura qué quiere el cliente, n8n
+confirma que hay stock, y un workflow de GHL crea la liga con la API de Invoices /
+Payment Links. El monto sale del producto; el cobro sale por Mercado Pago porque
+está conectado a nivel cuenta. **n8n nunca toca un peso.**
 
 Un solo checkout cubre los tres métodos que pidieron en la junta:
 
@@ -189,6 +199,15 @@ Regla de oro del playbook: *"se guardó" no es "funciona"*. Tres supuestos de es
 diseño dependen del comportamiento real de GHL y hay que probarlos con una venta de
 prueba antes de dar por bueno el flujo:
 
-1. Que `Update Inventory` se refleje de inmediato en la disponibilidad de la tienda.
-2. Que una liga de pago de Mercado Pago **no** descuente stock por su cuenta.
+1. Que la **API de Invoices / Payment Links cobre con Mercado Pago.** El changelog
+   los nombra como soportados, pero hay que verlo cobrar: es el supuesto que
+   sostiene todo el diseño.
+2. Que **pagar una liga no descuente stock solo.** Si lo hiciera, vuelve el doble
+   descuento y n8n dejaría de ser dueño único del contador.
 3. Que `Payment Received` dispare igual con los tres métodos, incluido el efectivo.
+4. Que el nodo **`API Call` de Agent Studio responda a tiempo**, para que la
+   conversación no se sienta trabada.
+
+**Plan B si falla la prueba 1:** cobrar por el checkout de la tienda y renunciar al
+apartado de 24 h, porque ahí sí chocan. Conviene saberlo antes de prometer el
+apartado, no después.
