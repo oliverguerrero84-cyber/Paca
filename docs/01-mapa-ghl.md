@@ -9,10 +9,11 @@ Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
 | | Esencial | Completo |
 |---|---|---|
 | Pipeline | 5 etapas | 8 etapas |
-| Workflows | 5 | 8 |
-| Nodos del agente | 12 | 17 |
-| Integraciones externas | 0 | 2 |
-| Landing | — | 6 secciones |
+| Workflows | 5 | 9 |
+| Nodos del agente | 12 | 16 |
+| Integraciones externas | 0 | 2 (Envia.com + n8n) |
+| Tienda | — | 30 productos con inventario nativo |
+| Cobro | — | Mercado Pago nativo |
 
 ---
 
@@ -26,9 +27,9 @@ Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
 | 2 | En Conversación (Bot) | El agente toma la conversación |
 | 3 | Pedido Apartado (24 h) | n8n confirma la reserva de stock |
 | 4 | Liga de Pago Enviada | Se envió la liga de Mercado Pago |
-| 5 | Pago Confirmado | Webhook IPN validó el pago |
+| 5 | Pago Confirmado | Mercado Pago acreditó — `Payment Received` |
 | 6 | Orden en Almacén | Se disparó la orden de despacho |
-| 7 | Enviado — Guía Generada | El almacén capturó el número de guía |
+| 7 | Enviado — Guía Generada | Envia generó la guía y el almacén despachó |
 | 8 | Entregado / Cerrado | Cierre |
 
 **En el Esencial son 5 etapas:** Lead Nuevo → En Conversación (Bot) → Pedido
@@ -42,18 +43,26 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 
 ## 2. Workflows
 
-### Completo — 8 workflows
+### Completo — 9 workflows
 
 | Código | Nombre | Trigger | Nodos |
 |---|---|---|---:|
-| `LS01` | Entrada de lead menudeo | Contact Created (filtro por canal) | 10 |
+| `LS01` | Entrada de lead menudeo | Contact Created (WhatsApp) | 10 |
 | `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
-| `SP02` | Apartado 24 h + recordatorios + liberación | Inbound Webhook (n8n N2) | 18 |
-| `SP03` | Liga de pago Mercado Pago | Opportunity Stage Changed → Apartado | 12 |
-| `SP04` | Confirmación de pago + nº de orden | Inbound Webhook (n8n N4) | 14 |
-| `SP05` | Despacho: almacén + dueños | Opportunity Stage Changed → Pago Confirmado | 10 |
-| `AP01` | Captura de guía → tracking al cliente | Form Submitted (form almacén) | 9 |
+| `SP02` | Apartado 24 h + recordatorios + liberación | Inbound Webhook (n8n `N1`) | 16 |
+| `SP03` | Liga de pago Mercado Pago + seguimiento | Opportunity Stage Changed → Apartado | 10 |
+| `SP04` | Pago confirmado → nº de orden | **Goal Event `Payment Received`** | 10 |
+| `SP05` | Despacho: guía Envia + PDF al almacén + correo a dueños | Opportunity Stage Changed → Pagado | 12 |
+| `AP01` | Rastreo: avisos hasta "llegó a tu sucursal" | Inbound Webhook (n8n `N5`) | 10 |
 | `AP02` | Escalamiento a humano | Tag Added `escalar-humano` | 8 |
+| `AP03` | Registro manual de pago por transferencia | Form Submitted (form interno) | 7 |
+
+**Qué cambió respecto a la revisión 3:**
+- `SP04` ya no necesita Inbound Webhook: con Mercado Pago nativo, el **Goal Event
+  `Payment Received` dispara solo**.
+- `SP05` genera la guía en vez de esperar a que el almacén la capture.
+- `AP01` deja de ser un formulario y pasa a ser rastreo automático.
+- `AP03` es nuevo: el registro manual de transferencias a su banco.
 
 ### Esencial — 5 workflows
 
@@ -71,24 +80,27 @@ todos dependen de n8n, de Mercado Pago o de la cadena de despacho. En su lugar,
 
 ### Detalle de los tres workflows críticos
 
-**`SP02` — Apartado 24 h (18 nodos).** El corazón del sistema.
-Trigger inbound webhook desde n8n → actualiza campos del apartado → mueve a etapa
-3 → envía resumen con términos y condiciones → `Wait 12 h` → IF ¿ya pagó? → si no,
-recordatorio (template) → `Wait 10 h` → IF ¿ya pagó? → si no, recordatorio final
-(template) → `Wait 2 h` → IF ¿ya pagó? → si no, webhook a n8n para liberar →
-tag `apartado-vencido` → mensaje de recuperación (template).
-`Goal Event` = pago confirmado, que salta todos los waits y corta el flujo.
+**`SP02` — Apartado 24 h (16 nodos).** El corazón del sistema.
+Trigger inbound webhook desde n8n `N1` (que ya descontó el stock) → actualiza
+campos del apartado → mueve a etapa 3 → envía resumen con términos y condiciones →
+`Wait 12 h` → IF ¿ya pagó? → si no, recordatorio (template) → `Wait 10 h` → IF ¿ya
+pagó? → si no, recordatorio final (template) → `Wait 2 h` → IF ¿ya pagó? → si no,
+webhook a n8n `N2` para liberar → tag `apartado-vencido` → mensaje de recuperación.
+`Goal Event` = **`Payment Received`**, que salta todos los waits y corta el flujo.
 
-**`SP04` — Confirmación de pago (14 nodos).** Trigger **Inbound Webhook**, no
-`Payment Received` (ver `02-arquitectura-inventario.md` §5). Guarda `orden_id`,
-monto y fecha → mueve a etapa 5 → quita tag de apartado → confirma al cliente
-(template) → dispara SP05.
+> Rama del efectivo: si el método elegido es OXXO o Paycash, los `Wait` se calculan
+> sobre la vigencia de la referencia de Mercado Pago, no sobre 24 h. El efectivo
+> tarda hasta 72 h hábiles en acreditar.
 
-**`AP01` — Guía → tracking (9 nodos).** Trigger `Form Submitted` del formulario
-interno del almacén, que lleva el `orden_id` precargado. Guarda la guía → mueve a
-etapa 7 → envía al cliente su número de guía (template) → notifica a los dueños.
-El `orden_id` precargado es lo que garantiza que *"esa liga no se le envíe a nadie
-más"*, la preocupación que Miguel planteó en la llamada.
+**`SP04` — Pago confirmado (10 nodos).** Trigger **Goal Event `Payment Received`**,
+que ahora sí funciona porque Mercado Pago es pasarela nativa. Guarda `orden_id`,
+monto y método → mueve a etapa 5 → quita el tag de apartado → confirma al cliente
+(template) → dispara `SP05`.
+
+**`SP05` — Despacho (12 nodos).** Llama a n8n `N4`, que genera la guía en Envia.
+Manda el **PDF de la etiqueta al WhatsApp del almacén** con nombre, cantidad,
+destino y CP —**nunca el monto**, regla explícita de Miguel— y el correo completo a
+los dueños. Programa la recolección y mueve a etapa 6.
 
 ### Retirados del alcance
 
@@ -100,7 +112,7 @@ quieren trabajar la recompra, se cotizan aparte.
 
 ## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
 
-**Completo: 17 nodos.** Con IA generativa avanzada.
+**Completo: 16 nodos.** Con IA generativa avanzada.
 
 | # | Nodo | Función |
 |---:|---|---|
@@ -108,19 +120,22 @@ quieren trabajar la recompra, se cotizan aparte.
 | 2 | AI Agent | Saluda y califica: ¿menudeo o mayoreo? |
 | 3 | Router AI | mayoreo → escalar · menudeo → seguir · duda general → KB |
 | 4 | Search KB | Catálogo de las 30 pacas |
-| 5 | Single Choice | Temporada: Verano / Invierno |
-| 6 | Single Choice | Categoría: Mujer / Hombre / Niño / Especiales |
-| 7 | Single Choice | Calidad: Boutique / Premium / Especial |
+| 5 | Text Input | Temporada (campo gemelo, ver gotchas) |
+| 6 | Text Input | Categoría: mujer / hombre / niño / especiales |
+| 7 | Text Input | Calidad: Boutique / Premium / Especial |
 | 8 | Text Input | Cantidad de pacas |
-| 9 | API Call → n8n `N1` | Consulta de stock en tiempo real |
+| 9 | API Call → n8n `N1` | Consulta de disponibilidad real en GHL |
 | 10 | Router Condicional | ¿Hay stock suficiente? |
 | 11 | AI Agent | Ofrece alternativas si no hay |
 | 12 | Capture | Nombre y teléfono |
-| 13 | Text Input | Ciudad, estado y sucursal de la paquetería |
-| 14 | API Call → n8n `N2` | Crea apartado, reserva stock, genera `orden_id` |
-| 15 | Text Gen | Resumen del pedido + T&C del apartado de 24 h |
-| 16 | API Call → n8n `N3` | Genera la liga de Mercado Pago |
-| 17 | End Node | — |
+| 13 | Text Input | **Código postal** — 5 dígitos |
+| 14 | API Call → n8n `N3` | Buscador de sucursal: devuelve 2-3 opciones cercanas |
+| 15 | Text Gen | Resumen del pedido + liga a la tienda para completar el checkout |
+| 16 | End Node | — |
+
+**Qué cambió:** el agente ya no genera la liga de pago (eso es nativo ahora) ni crea
+el apartado por su cuenta; **entrega al checkout**, que es donde se valida el código
+postal y se elige sucursal. Entra el buscador de sucursal, que antes no existía.
 
 ### Esencial — 12 nodos
 
@@ -142,7 +157,12 @@ el router de stock (10) ni el nodo de alternativas (11). Cierra distinto:
 4. Las piezas por paca **varían**: responder con rango y aclararlo, nunca con cifra exacta.
 5. Todas las pacas pesan **100 lb / 45 kg**. Ese dato sí es fijo.
 6. Tono: cercano y mexicano, sin tecnicismos.
-7. **Sólo en el Esencial:** nunca afirmar disponibilidad. El bot arma el pedido y
+7. **No hay devoluciones.** Política explícita del cliente: *"tratamos que la venta
+   sea sincera y directa: es esto, trae esto, y no hay devolución"*. El bot debe
+   decirlo antes de mandar al checkout, nunca después de cobrar.
+8. **Nunca adivinar la sucursal ni la ubicación.** Siempre pedir el código postal y
+   dejar que el buscador devuelva las opciones.
+9. **Sólo en el Esencial:** nunca afirmar disponibilidad. El bot arma el pedido y
    avisa que un asesor confirma existencia y cobra. No hay inventario conectado que
    consultar.
 
@@ -187,8 +207,10 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 
 | Formulario | Quién lo usa | Campos |
 |---|---|---|
-| `Captura de Guía — Almacén` | El almacén | `orden_id` (precargado, oculto), `numero_guia`, `fecha_envio` |
+| `Registrar Pago Manual` | Los dueños | `orden_id`, `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Mercado Pago |
 | `Ajuste Manual de Stock` | Los dueños (opcional) | `sku`, `nuevo_disponible`, `motivo` |
+
+> El formulario de captura de guía **desapareció**: Envia genera la guía sola.
 
 ## 7. Plantillas de mensaje
 
@@ -205,9 +227,11 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > enviarlos a aprobación en la semana 1 del proyecto, no al final. Es el ítem que
 > más fácilmente atora el go-live.
 
-## 8. Landing de catálogo — sólo Completo
+## 8. Tienda de catálogo — sólo Completo
 
-Página pública con los 30 artículos, montada en GHL. **6 secciones:**
+Tienda de GHL con los 30 artículos, **inventario nativo** y checkout con Mercado
+Pago. Es vitrina y semáforo de disponibilidad; el cobro del apartado va por liga
+(ver `02-arquitectura-inventario.md` §3). **8 secciones:**
 
 | # | Sección | Contenido |
 |---|---|---|
@@ -231,3 +255,51 @@ salta los nodos 5 a 7 (temporada, categoría, calidad).
 
 **No se necesitan.** El menudeo no agenda citas. Si más adelante quieren
 consultoría de mayoreo con cita, se agrega como módulo aparte.
+
+---
+
+## 10. Gotchas del toolkit — leer antes de construir
+
+Del `PLAYBOOK-GHL.md` del CLI v2.2. Cada regla costó un bug en producción real.
+
+### Qué se puede automatizar y qué no
+
+| Pieza | Cómo se construye |
+|---|---|
+| Workflows y triggers | **Por API** (la interna, con token Firebase). Los 9 workflows son guionables |
+| Pipelines, campos, custom values | Por API pública (PIT) |
+| **Bots de Conversation AI** | **Sólo UI.** Prompts, acciones y canales se pegan a mano — no hay atajo |
+
+Esto importa para estimar: el agente es trabajo manual aunque todo lo demás se
+scripte.
+
+### Reglas que cambian el diseño del agente
+
+- **Los bots no pueden escribir en dropdowns** (`SINGLE_OPTIONS`). Por eso los
+  nodos 5, 6 y 7 son campos de texto gemelos + un workflow normalizador que los
+  pasa al dropdown real. Si se diseñan como Single Choice, no guardan nada.
+- **Las acciones tienen límite de 500 caracteres.** El prompt no, pero las acciones
+  sí. Hay que contarlos antes de entregar el texto.
+- **Contact Info sólo llena campos vacíos** y extrae de lo que dice la persona. No
+  sobreescribe ni corrige.
+- **Un Transfer Bot con condición agresiva roba el primer turno** y las capturas no
+  se ejecutan. Las condiciones de transferencia deben prohibir transferir en el
+  primer mensaje — crítico para el escalamiento a mayoreo.
+- **Una acción de Contact Info puede dejar de ejecutar sola**, con la configuración
+  intacta. Lo que la destraba es reordenar las acciones.
+- **KB subida ≠ KB asociada al bot.** Son dos pasos.
+- Prompts de ~500 palabras obedecen mejor que los de 1,200.
+
+### Sobre la ventana de 24 horas
+
+El playbook confirma lo que ya teníamos: **los mensajes libres no necesitan
+plantilla de Meta mientras el cliente haya iniciado la conversación.** Las
+plantillas sólo hacen falta para mensajes que arranca la empresa — que en este
+proyecto son cuatro (ver §7).
+
+### La regla de oro
+
+> **GHL guarda y muestra nodos malformados que después no ejecutan, sin dar error.**
+
+De ahí el protocolo: crear el nodo a mano en la UI una vez, leerlo por API y clonar
+su forma exacta. Y verificar por API, nunca por el panel del contacto, que cachea.

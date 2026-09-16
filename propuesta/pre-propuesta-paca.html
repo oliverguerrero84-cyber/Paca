@@ -10,7 +10,7 @@
 <style>
 /* ──────────────────────────────────────────────────────────────
    786 Marketing · Pre-propuesta — Cliente: Paca (ropa americana)
-   Fecha: 2026-09-15 · Revisión 3 — dos paquetes comparados
+   Fecha: 2026-09-16 · Revisión 4 — tienda, Envia.com y precio nuevo
    NO reintroducir: emojis · transition:all · colores fuera de
    :root · quitar estados de foco o reduced-motion.
    ────────────────────────────────────────────────────────────── */
@@ -316,11 +316,11 @@ td.col .txt{font-weight:700; font-size:.86rem; color:var(--brand-700)}
   border-radius:var(--r-lg); padding:clamp(22px,3vw,34px); box-shadow:var(--shadow-sm);
 }
 .steps{
-  display:flex; flex-wrap:wrap; gap:12px; align-items:stretch;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; align-items:stretch;
   margin-top:20px; list-style:none; padding:0;
 }
 .step-card{
-  flex:1 1 160px; min-width:0; position:relative;
+  min-width:0; position:relative;
   background:var(--brand-50); border:1px solid var(--brand-100);
   border-radius:var(--r-md); padding:16px 14px; display:flex; flex-direction:column;
 }
@@ -332,11 +332,11 @@ td.col .txt{font-weight:700; font-size:.86rem; color:var(--brand-700)}
 .step-card .d{display:block; font-size:.82rem; color:var(--text-gray); margin-top:4px}
 .step-pkgs{margin-top:auto; padding-top:12px; display:grid; gap:5px}
 .step-pkg{
-  display:flex; justify-content:space-between; gap:8px; align-items:baseline;
-  font-size:.72rem; font-family:var(--font-title);
+  display:flex; justify-content:space-between; gap:6px; align-items:baseline;
+  font-size:.72rem; font-family:var(--font-title); min-width:0;
 }
-.step-pkg .who{font-weight:700; letter-spacing:.03em}
-.step-pkg .k{color:var(--text-gray); font-weight:600}
+.step-pkg .who{font-weight:700; letter-spacing:.03em; white-space:nowrap}
+.step-pkg .k{color:var(--text-gray); font-weight:600; white-space:nowrap}
 .step-pkg .who.auto{color:var(--brand-700)}
 .step-pkg .who.human{color:var(--amber-700)}
 
@@ -491,10 +491,12 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 @media (max-width:992px){
   .module-grid{grid-template-columns:1fr}
   .behind-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(3,1fr)}
 }
 @media (max-width:768px){
   .diagnostico-grid{grid-template-columns:1fr}
   .metrics-bar{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}
   .pending-grid{grid-template-columns:1fr}
   .pkg-grid{grid-template-columns:1fr}
   .invest-grid{grid-template-columns:1fr}
@@ -513,6 +515,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 }
 @media (max-width:400px){
   .metrics-bar{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
   table.compare th.col, table.compare td.col{width:52px}
   table.compare th, table.compare td{padding:10px 7px; font-size:.79rem}
   table.compare thead th{font-size:.74rem}
@@ -622,8 +625,8 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <article class="pkg-card featured">
         <span class="pkg-flag">Completo &middot; recomendado</span>
         <p class="pkg-name">Operación automatizada</p>
-        <p class="pkg-for">Para que el menudeo corra solo de punta a punta: inventario, cobro, almacén y guía.</p>
-        <div class="pkg-price"><span class="cur">USD</span> 3,200</div>
+        <p class="pkg-for">Para que el menudeo corra solo de punta a punta: tienda, inventario, cobro, guía y rastreo.</p>
+        <div class="pkg-price"><span class="cur">USD</span> 3,600</div>
         <p class="pkg-mo">más USD 497 al mes</p>
         <p class="pkg-sub">Implementación en 3 a 4 semanas</p>
       </article>
@@ -673,7 +676,12 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
           <tr class="group"><td colspan="3">Operación</td></tr>
           <tr>
-            <td>Inventario conectado que no deja sobrevender</td>
+            <td>Tienda con los 30 artículos, fotos y videos</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Inventario en vivo que no deja sobrevender</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
@@ -683,22 +691,27 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
           <tr>
-            <td>Cobro con liga de Mercado Pago y confirmación automática</td>
+            <td>Cobro con tarjeta, OXXO en efectivo y transferencia SPEI</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
           <tr>
-            <td>Aviso automático al almacén y correo de orden a ustedes</td>
+            <td>Buscador de sucursal por código postal</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
           <tr>
-            <td>Número de guía al cliente por WhatsApp</td>
+            <td>Guía y recolección generadas automáticamente</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
           <tr>
-            <td>Landing de catálogo con los 30 artículos</td>
+            <td>Aviso al almacén con la etiqueta lista para imprimir</td>
+            <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
+            <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
+          </tr>
+          <tr>
+            <td>Rastreo hasta "ya llegó a tu sucursal"</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
@@ -739,7 +752,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <p class="eyebrow">A detalle</p>
     <h2>Qué es cada cosa y qué les cambia</h2>
     <p class="lead">
-      Diez piezas. Las primeras cuatro y la última van en los dos paquetes; las
+      Doce piezas. Las primeras cuatro y la última van en los dos paquetes; las
       marcadas en verde son las que sólo trae el Completo.
     </p>
 
@@ -803,17 +816,32 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
       <article class="module-card only-full">
         <div class="mod-head">
-          <span class="gl gl-chart"></span>
-          <h3>Inventario conectado que no sobrevende</h3>
+          <span class="gl gl-image"></span>
+          <h3>Tienda con los 30 artículos</h3>
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          El bot consulta la existencia real antes de ofrecer. Se conecta a la misma
-          hoja que ya comparten con el almacén, así que no cambian de herramienta.
-          Cada pedido descuenta la paca en el momento, y si el apartado se vence la
-          devuelve al inventario.
+          Catálogo público con foto y video de cada paca, lo que trae, su calidad y
+          sus tallas. Muestra la disponibilidad real en vivo, así que nadie puede
+          pedir algo que ya se acabó. El bot manda al cliente directo al artículo del
+          que estaban hablando.
         </p>
-        <p class="mod-change"><b>Lo que cambia:</b> esto es exactamente lo que resuelve el "tengo tantas de esta y no tengo más". El bot nunca vende lo que ya está comprometido.</p>
+        <p class="mod-change"><b>Lo que cambia:</b> dejan de contestar veinte veces al día las mismas preguntas de qué trae y qué hay, y tienen a dónde mandar la publicidad.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-chart"></span>
+          <h3>Inventario en vivo que no sobrevende</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          El stock vive dentro del sistema, en la misma pantalla donde ven sus
+          ventas. Cada apartado descuenta la paca en el momento y cada apartado
+          vencido la devuelve. Ustedes ajustan la cantidad cuando llega mercancía o
+          cuando mueven pacas al mayoreo.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> esto es exactamente lo que resuelve el "tengo tantas de esta y no tengo más". Nunca se vende lo que ya está comprometido.</p>
       </article>
 
       <article class="module-card only-full">
@@ -823,9 +851,11 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          Al armar el pedido el sistema reserva la paca, le explica al cliente las
-          condiciones y arranca un reloj de 24 horas. Le recuerda faltando 12 horas y
-          otra vez faltando 2. Si no paga, libera la pieza sola para el siguiente.
+          Funciona como comprar un boleto de concierto: el cliente elige su paca, el
+          sistema se la aparta y arranca un reloj de 24 horas. Le recuerda faltando
+          12 horas y otra vez faltando 2. Si no paga, la pieza se libera sola para el
+          siguiente. Quien pague en efectivo tiene más tiempo, porque OXXO tarda en
+          reportar, y el sistema se lo dice.
         </p>
         <p class="mod-change"><b>Lo que cambia:</b> el "te pago al rato" que se vuelve mañana y luego nunca deja de dejarles mercancía apartada sin cobrar.</p>
       </article>
@@ -837,40 +867,57 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          El sistema genera la liga de pago con el monto correcto y se la manda al
-          cliente en la misma conversación. Cuando el pago se acredita, se entera
-          solo y avanza el pedido: nadie tiene que estar revisando la cuenta.
+          Un solo checkout con los tres métodos que pidieron: <strong>tarjeta,
+          efectivo en OXXO y transferencia SPEI</strong>. Cuando el pago se acredita
+          el sistema se entera solo y avanza el pedido. Y si alguien les transfiere
+          directo al banco, lo registran en un formulario de un campo y el sistema
+          sigue solo desde ahí.
         </p>
-        <p class="mod-change"><b>Lo que cambia:</b> cobran de noche, en fin de semana y mientras están haciendo otra cosa, sin perseguir comprobantes.</p>
+        <p class="mod-change"><b>Lo que cambia:</b> cobran de noche, en fin de semana y mientras están haciendo otra cosa. Se acabó el juntar tickets y el "aquí hay doscientos mil pesos, ¿de quién son?".</p>
       </article>
 
       <article class="module-card only-full">
         <div class="mod-head">
           <span class="gl gl-truck"></span>
-          <h3>Despacho al almacén y guía al cliente</h3>
+          <h3>Guía, recolección y despacho automáticos</h3>
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          Al confirmarse el pago salen dos avisos: un WhatsApp corto al almacén con
-          la orden, el artículo y el destino, y un correo a ustedes con el detalle
-          completo. Cuando el almacén captura el número de guía, el cliente lo
-          recibe al instante.
+          Al confirmarse el pago el sistema <strong>genera la guía solo</strong>, le
+          manda al almacén la etiqueta lista para imprimir y pegar, y programa la
+          recolección. A ustedes les llega el correo con el detalle completo; al
+          almacén sólo el nombre, la cantidad y el destino &mdash; nunca el dinero.
         </p>
-        <p class="mod-change"><b>Lo que cambia:</b> el almacén sabe qué preparar sin que nadie le escriba, y el cliente deja de preguntar si ya salió su paquete.</p>
+        <p class="mod-change"><b>Lo que cambia:</b> el almacén deja de ir por guías y de capturarlas en Excel. Imprime y pega. Se acabó el pasar guías a mano de una hoja a otra.</p>
       </article>
 
       <article class="module-card only-full">
         <div class="mod-head">
-          <span class="gl gl-image"></span>
-          <h3>Landing de catálogo</h3>
+          <span class="gl gl-spark"></span>
+          <h3>Rastreo hasta la sucursal</h3>
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          Página pública con los 30 artículos, cada uno con su foto, su calidad y lo
-          que trae. Cada tarjeta abre WhatsApp con el artículo ya cargado, así el
-          bot sabe de qué le preguntan desde el primer mensaje.
+          El sistema sigue el paquete y le avisa al cliente en cada paso, hasta el
+          mensaje que de verdad importa con servicio a ocurre:
+          <strong>"ya llegó a tu sucursal, puedes recogerlo"</strong>.
         </p>
-        <p class="mod-change"><b>Lo que cambia:</b> tienen a dónde mandar la publicidad. Hoy, sin Instagram ni TikTok, los clientes sólo pueden llegar por el número de WhatsApp.</p>
+        <p class="mod-change"><b>Lo que cambia:</b> se acaba el "oye, no me llegó" seguido de alguien rastreando a mano para contestarle.</p>
+      </article>
+
+      <article class="module-card only-full">
+        <div class="mod-head">
+          <span class="gl gl-board"></span>
+          <h3>Buscador de sucursal por código postal</h3>
+          <span class="pkg-tag full">Sólo Completo</span>
+        </div>
+        <p class="mod-what">
+          El cliente escribe <strong>cinco dígitos</strong> y el sistema le muestra
+          las dos o tres sucursales más cercanas con su dirección y su liga de mapa.
+          Elige de una lista; nunca escribe la dirección. Si no hay cobertura en su
+          zona, se lo dice de una vez y no se pierde tiempo.
+        </p>
+        <p class="mod-change"><b>Lo que cambia:</b> esto ataca la razón por la que apagaron el menudeo. Se acabó el "avenida Camarón por calle Coctel" y las horas persiguiendo direcciones en Google Maps.</p>
       </article>
 
       <article class="module-card">
@@ -896,7 +943,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <p class="eyebrow">Cómo funciona</p>
     <h2>El recorrido de una venta</h2>
     <p class="lead">
-      Los mismos seis pasos en los dos paquetes. Lo que cambia es quién los hace.
+      Los mismos siete pasos en los dos paquetes. Lo que cambia es quién los hace.
     </p>
 
     <div class="workflow-box">
@@ -948,21 +995,30 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
         </li>
         <li class="step-card">
           <span class="n">06</span>
-          <span class="t">Manda la guía</span>
-          <span class="d">El número de rastreo llega al cliente por WhatsApp.</span>
+          <span class="t">Genera la guía</span>
+          <span class="d">La etiqueta se crea sola y llega al almacén lista para imprimir.</span>
           <span class="step-pkgs">
             <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
-            <span class="step-pkg"><span class="k">Completo</span><span class="who human">1 dato a mano</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
+          </span>
+        </li>
+        <li class="step-card">
+          <span class="n">07</span>
+          <span class="t">Avisa que llegó</span>
+          <span class="d">Rastrea el paquete hasta "ya está en tu sucursal, recógelo".</span>
+          <span class="step-pkgs">
+            <span class="step-pkg"><span class="k">Esencial</span><span class="who human">Un asesor</span></span>
+            <span class="step-pkg"><span class="k">Completo</span><span class="who auto">Automático</span></span>
           </span>
         </li>
       </ol>
     </div>
 
     <p class="pending-note">
-      <strong>El único paso que nunca se automatiza del todo es capturar el número de
-      guía.</strong> Las paqueterías no tienen forma de entregarlo solas. En el
-      Completo el almacén escribe ese número en un formulario y el sistema hace el
-      resto; el cliente lo recibe al instante.
+      <strong>En el Completo no queda ningún paso manual.</strong> Al conectar la
+      paquetería por sistema, la guía se genera sola y el almacén sólo imprime y
+      pega. Lo único que ustedes hacen es reponer inventario cuando llega mercancía
+      &mdash; y atender los casos que el bot les escale.
     </p>
   </div>
 </section>
@@ -977,14 +1033,14 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     </p>
 
     <div class="behind-grid">
-      <div class="behind-item"><div class="n">30</div><div class="l">artículos cargados en el catálogo del bot, con sus tallas, calidades y contenido</div></div>
-      <div class="behind-item"><div class="n">17</div><div class="l">pasos de conversación programados en el agente de ventas</div></div>
-      <div class="behind-item"><div class="n">8</div><div class="l">automatizaciones, una de ellas de 18 pasos sólo para el apartado</div></div>
-      <div class="behind-item"><div class="n">5</div><div class="l">flujos en el motor externo que lleva el inventario y los pagos</div></div>
-      <div class="behind-item"><div class="n">2</div><div class="l">integraciones: Mercado Pago y la hoja de inventario del almacén</div></div>
+      <div class="behind-item"><div class="n">30</div><div class="l">artículos cargados en la tienda y en el catálogo del bot, con tallas, calidades y contenido</div></div>
+      <div class="behind-item"><div class="n">16</div><div class="l">pasos de conversación programados en el agente de ventas</div></div>
+      <div class="behind-item"><div class="n">9</div><div class="l">automatizaciones, una de ellas de 16 pasos sólo para el apartado</div></div>
+      <div class="behind-item"><div class="n">5</div><div class="l">flujos en el motor que lleva el reloj del apartado y la paquetería</div></div>
+      <div class="behind-item"><div class="n">146</div><div class="l">sucursales de Paquete Express cargadas para el buscador por código postal</div></div>
       <div class="behind-item"><div class="n">6</div><div class="l">plantillas de mensaje, 4 de ellas con trámite de aprobación ante Meta</div></div>
       <div class="behind-item"><div class="n">8</div><div class="l">etapas de tablero con sus reglas de avance</div></div>
-      <div class="behind-item"><div class="n">6</div><div class="l">secciones de landing con los dos catálogos de temporada</div></div>
+      <div class="behind-item"><div class="n">3</div><div class="l">métodos de pago en un solo checkout: tarjeta, efectivo y transferencia</div></div>
       <div class="behind-item"><div class="n">2</div><div class="l">sesiones de capacitación, una para ustedes y otra para el almacén</div></div>
     </div>
 
@@ -1020,15 +1076,15 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
 
       <article class="invest-card featured">
         <p class="invest-label">Completo &middot; recomendado</p>
-        <div class="invest-figure"><span class="cur">USD</span> 3,200</div>
+        <div class="invest-figure"><span class="cur">USD</span> 3,600</div>
         <p style="color:var(--text-gray); font-size:.9rem; margin:2px 0 0">implementación, pago único</p>
         <div class="invest-sep"></div>
         <div class="invest-row"><span class="k">Mensualidad</span><span class="v">USD 497</span></div>
-        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 9,164</span></div>
+        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 9,564</span></div>
         <div class="invest-row"><span class="k">Entrega</span><span class="v">3 a 4 semanas</span></div>
         <div class="split-box">
           <span class="gl gl-bolt"></span>
-          <span>Se puede dividir en <strong>dos pagos de USD 1,600</strong>: mitad al arrancar y mitad a la entrega.</span>
+          <span>Se puede dividir en <strong>dos pagos de USD 1,800</strong>: mitad al arrancar y mitad a la entrega.</span>
         </div>
       </article>
     </div>
@@ -1038,12 +1094,17 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       el monitoreo de que todo siga corriendo, los ajustes al bot conforme se
       aprende qué pregunta la gente, y los cambios de catálogo entre temporadas
       &mdash; el paso de verano a invierno y de vuelta. En el Completo también el
-      motor de inventario y la conexión con Mercado Pago.
+      reloj del apartado y la conexión con la paquetería.
       <br><br>
-      <strong>Qué se paga aparte, directo al proveedor:</strong> WhatsApp API cobra
-      por conversación, Mercado Pago cobra su comisión por venta y Google Workspace
-      su licencia. Esos costos son de ustedes y no pasan por 786 Marketing. Tampoco
-      incluye las fotos ni los textos de producto, que los entregan ustedes.
+      <strong>Qué se paga aparte, directo al proveedor:</strong> WhatsApp cobra por
+      conversación, Mercado Pago su comisión por venta, la paquetería sus guías
+      &mdash; se carga saldo y se paga por envío, sin mensualidad ni comisión
+      &mdash; y Google Workspace su licencia. Esos costos son de ustedes y no pasan
+      por 786 Marketing. Tampoco incluye las fotos ni los videos de producto, que
+      los entregan ustedes.
+      <br><br>
+      <strong>No se construye flujo de devoluciones</strong>, porque su política es
+      que no hay. El bot lo dice antes de mandar a pagar, nunca después de cobrar.
     </div>
   </div>
 </section>
@@ -1054,21 +1115,23 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <h2>Lo que falta para volver esto una propuesta en firme</h2>
     <p class="lead">
       Preferimos decirlo de frente. En cuanto lleguen estos datos entregamos la
-      propuesta final con el mapeo y cerramos fechas.
+      propuesta final con el mapeo y cerramos fechas. La buena noticia es que en la
+      última junta ya se cerraron dos: el envío va incluido en el precio y la
+      paquetería queda en Paquete Express a ocurre.
     </p>
 
     <div class="pending-grid">
       <div class="pending-card">
-        <h4><span class="gl gl-truck"></span> Empresa proveedora de envíos</h4>
-        <p>Con quién se despacha y bajo qué modalidad. De ahí salen las tarifas, las coberturas y qué datos tiene que pedirle el bot al cliente.</p>
+        <h4><span class="gl gl-image"></span> Fotos y videos de las pacas</h4>
+        <p>De cada uno de los 30 artículos. Sin ellos no hay tienda que mostrar ni fichas que el bot pueda mandar por WhatsApp.</p>
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-alert"></span> Precios de venta</h4>
         <p>El precio de cada artículo en menudeo. Sin él el bot no puede cotizar ni generar liga de pago en ninguno de los dos paquetes.</p>
       </div>
       <div class="pending-card">
-        <h4><span class="gl gl-image"></span> Imágenes de las pacas</h4>
-        <p>Fotos de cada artículo. Necesarias para la landing y para las fichas que el bot manda por WhatsApp. Bloquean el Completo.</p>
+        <h4><span class="gl gl-truck"></span> Tarifas de la paquetería</h4>
+        <p>Hay que pedir tarifa por volumen para sus 500 a 800 envíos al mes. No bloquea el arranque, pero sí conviene cerrarlo antes.</p>
       </div>
       <div class="pending-card">
         <h4><span class="gl gl-text"></span> Descripciones de los artículos</h4>

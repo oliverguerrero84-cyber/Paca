@@ -7,23 +7,24 @@ ellas no se puede armar el bot ni cerrar el alcance.
 
 ## 🔴 Bloqueantes — sin esto no se puede construir
 
-### 1. Empresa proveedora de los envíos
-¿Con quién se despacha y bajo qué modalidad? Históricamente usaban Paquete Express
-con servicio a ocurre, pero el proveedor de este sistema está por confirmar.
+### 1. ~~Empresa proveedora de los envíos~~ — RESUELTA
 
-De esta respuesta salen tres cosas: las **tarifas** (y por lo tanto el total que
-cobra el bot), las **coberturas**, y **qué datos tiene que pedirle el bot al
-cliente**. Si se mantienen en modalidad a ocurre, basta con ciudad y sucursal; si
-pasan a entrega a domicilio, hay que rehacer la captura de dirección — que es
-justamente lo que los desbordó la vez pasada.
+Confirmado en la segunda junta: **Paquete Express, sólo a ocurre**, vía Envia.com.
+Y el **envío va incluido en el precio**, igual a toda la República — lo que además
+cierra la pregunta del costo de envío que arrastrábamos.
 
-### 2. Imágenes de las pacas
-Fotos de cada uno de los 30 artículos. **Sin ellas no hay landing de catálogo** ni
-fichas que el bot pueda mandar por WhatsApp.
+> Miguel: *"yo pongo una paca de seis mil trescientos pesos, es a cualquier parte,
+> ya incluido el envío, a cualquier parte de la República."*
 
-**Bloquea el Completo, no el Esencial** — el Esencial no lleva landing. Aun así
-conviene tenerlas: el bot manda mejores respuestas con foto. **No están cotizadas**:
-la producción del material la hace el cliente.
+Queda un pendiente menor: **pedir tarifas a Envia.com** para su volumen real
+(500–800 guías al mes) y confirmar que la cuenta permite filtrar paqueterías.
+
+### 2. Imágenes **y videos** de las pacas
+Fotos de cada uno de los 30 artículos, **y videos**. En la segunda junta Miguel lo
+subrayó: *"luego piden, oye, video, quieren ver un video a través del WhatsApp"*.
+
+**Sin ellos no hay tienda** ni fichas que el bot pueda mandar. **Bloquea el
+Completo, no el Esencial.** **No están cotizados**: la producción la hace el cliente.
 
 ### 3. Descripciones de los artículos
 Qué trae cada paca y para quién es, en texto listo para publicar. Sirve para dos
@@ -111,10 +112,11 @@ vivos y por la landing. Si quieren pauta, se cotiza aparte.
 
 ## Resumen para la llamada
 
-Si sólo hay tiempo para pedir tres cosas: **los precios por SKU** (#4), las
-**fotos** (#2) y el **proveedor de envíos** (#1). Sin precios el bot no puede
-cotizar, sin fotos no hay landing y sin proveedor no se sabe qué total cobrar.
+Ya sólo quedan **dos cosas que de verdad bloquean**: los **precios por SKU** (#4) y
+el **material de producto** — fotos y videos (#2) más las descripciones (#3).
 
-Las descripciones (#3) y las piezas por paca (#5) el cliente ya se ofreció a
-mandarlas — basta con recordárselo. El resto se puede resolver en paralelo con la
-construcción.
+Sin precios el bot no puede cotizar ni se puede armar la tienda. Sin material no hay
+tienda que mostrar. Las piezas por paca (#5) y el stock inicial (#6) el cliente ya
+se ofreció a mandarlos: basta con recordárselo.
+
+El proveedor de envíos y el costo del envío **se cerraron en la segunda junta**.

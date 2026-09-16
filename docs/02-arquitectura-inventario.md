@@ -1,179 +1,194 @@
 # Arquitectura de inventario, apartado y cobro
 
-Cómo se resuelve lo que GHL no puede hacer solo.
+> **Reescrito en la revisión 4.** Las versiones anteriores ponían el stock en Google
+> Sheets porque dábamos por hecho que GHL no sabía llevar inventario. **Era falso:**
+> la tienda de GHL tiene control de stock nativo y un endpoint `Update Inventory`.
+> El stock ahora vive en GHL, donde el cliente lo ve, y n8n queda reducido a una
+> sola función: ser el reloj del apartado.
 
 ---
 
 ## 1. Diagrama general
 
 ```
-  Canales: WhatsApp API · Instagram · Facebook · TikTok · Widget web
-                              │
-                              ▼
-  ┌───────────────────────────────────────────────────────┐
-  │  GHL                                                  │
-  │  CRM · Conversaciones · Workflows · Agent Studio      │
-  └───────────────────────────────────────────────────────┘
-        │  webhook saliente          ▲  inbound webhook
-        ▼  (no espera respuesta)     │  (n8n responde por acá)
-  ┌───────────────────────────────────────────────────────┐
-  │  n8n — el motor                                       │
-  │  aritmética · reservas · nº de orden · Mercado Pago    │
-  └───────────────────────────────────────────────────────┘
-        │                                    │
-        ▼                                    ▼
-  Google Sheets                        Mercado Pago
-  (fuente de verdad del stock)      (Checkout Pro + IPN)
+  Campañas Meta e Instagram ──► WhatsApp (único canal de entrada)
+                                      │
+                                      ▼
+  ┌──────────────────────────────────────────────────────────────┐
+  │  GHL                                                          │
+  │  CRM · Agente de ventas · Tienda con los 30 artículos         │
+  │  Inventario nativo · Mercado Pago nativo · Workflows          │
+  └──────────────────────────────────────────────────────────────┘
+        │  webhook                          ▲  inbound webhook
+        ▼                                   │
+  ┌──────────────────────────────────────────────────────────────┐
+  │  n8n — dos trabajos, nada más                                 │
+  │  1. El reloj del apartado (Update Inventory ±1)               │
+  │  2. El puente con Envia.com (guía, recolección, rastreo)      │
+  └──────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+                    Envia.com ──► Paquete Express
 ```
 
-**Por qué n8n en el medio:** GHL no hace aritmética en campos numéricos
-(`ghl-limitations.md`), así que no puede restar una paca del stock. Y su webhook
-saliente **no espera respuesta**, así que todo ida y vuelta es asíncrono.
+**Lo que cambió:** Mercado Pago y el inventario salieron de n8n y entraron a GHL.
+n8n ya no es el motor del sistema, es un temporizador y un traductor.
 
 ---
 
-## 2. Google Sheets — la fuente de verdad
+## 2. Dónde vive cada cosa
 
-Cuatro pestañas. Plantillas listas en `data/`.
+| Dato | Dónde vive | Quién lo escribe |
+|---|---|---|
+| Catálogo de los 30 artículos | Productos de GHL | Se carga una vez; los dueños editan precios |
+| **Stock disponible** | `availableQuantity` del producto en GHL | Los dueños al reponer; n8n al apartar y liberar |
+| Apartados vigentes | Oportunidades del pipeline + campos custom | Los workflows |
+| Pagos | Mercado Pago nativo, dentro de GHL | Mercado Pago |
+| Guías y rastreo | Envia.com, reflejado en campos custom | n8n |
 
-### `STOCK` — 30 filas, una por SKU
+**No hay Google Sheet.** El cliente ve y edita su stock en la misma pantalla donde
+ve sus ventas. Es una herramienta menos que aprender y una fuente de verdad menos
+que sincronizar.
 
-| Columna | Quién la escribe |
-|---|---|
-| `sku`, `nombre_display`, `temporada`, `categoria`, `calidad` | Fijas, del catálogo |
-| `precio_menudeo_mxn` | **Los dueños** ⚠️ pendiente |
-| `piezas_aprox` | **Los dueños** ⚠️ pendiente |
-| `disponible` | Los dueños al cargar; n8n al reservar y liberar |
-| `apartado` | Sólo n8n |
-| `vendido_hist` | Sólo n8n |
-| `activo` | Los dueños (SI/NO — saca un SKU del bot sin borrarlo) |
-
-**`disponible` es únicamente la porción asignada a menudeo.** El mayoreo nunca entra
-a este Sheet. Cuando los dueños mueven pacas de un lado al otro, editan la celda a
-mano — ese es exactamente el "híbrido" que pidieron:
-
-> "Ustedes tendrían que poner que ustedes por aparte, por fuera vendieron 500."
-
-### `APARTADOS` · `ORDENES` · `CONFIG`
-
-`APARTADOS` y `ORDENES` las escribe **sólo n8n** — nadie las toca a mano, salvo la
-columna `guia` de `ORDENES`, que el almacén llena vía formulario GHL.
-`CONFIG` guarda los parámetros del sistema (horas de apartado, costo de envío,
-WhatsApp del almacén, correo de los dueños).
-
-> **Protección:** todas las pestañas protegidas salvo las columnas que los dueños
-> sí deben editar (`disponible`, `precio_menudeo_mxn`, `piezas_aprox`, `activo`).
-> Es la mitigación del riesgo #4: que alguien rompa una fórmula sin darse cuenta.
+> El mayoreo sigue fuera: `availableQuantity` es sólo la porción asignada a menudeo.
+> Cuando muevan pacas de un lado al otro, ajustan la cantidad en el producto.
 
 ---
 
-## 3. Máquina de estados del apartado
+## 3. El apartado tipo boleto de concierto
 
-Lo que el cliente pidió como *"guardar la pieza 24 horas"*:
+Es como lo pidió el cliente en la segunda junta: eliges, se abre un reloj, y si no
+pagas se libera para el siguiente.
 
 ```
-              [disponible]
+              [DISPONIBLE]
                    │
-                   │  el bot arma el pedido → n8n reserva
+                   │  el cliente pulsa "Apartar"
+                   │  n8n lee availableQuantity; si > 0 → Update Inventory −1
                    ▼
-              [apartado]                      ⏱ arranca el reloj de 24 h
-         disponible −1 · apartado +1
+              [APARTADO]                    ⏱ arranca el reloj de 24 h
+         se crea la oportunidad · se manda la liga de pago
                    │
         ┌──────────┴──────────┐
         │                     │
      paga                  vence sin pagar
         │                     │
         ▼                     ▼
-    [pagado]              [liberado]
-  apartado −1            apartado −1
-  vendido_hist +1        disponible +1
+    [VENDIDO]             [LIBERADO]
+  el stock ya estaba      n8n → Update Inventory +1
+  descontado: no se       se le avisa al cliente
+  toca nada más          que se liberó
 ```
 
-**Por qué dos contadores y no uno:** si sólo se restara de `disponible`, una paca
-apartada y no pagada quedaría invisible para siempre. Con `apartado` separado, los
-dueños ven en todo momento cuántas pacas están comprometidas pero sin cobrar — que
-es justo el dolor que describieron:
+### El detalle que evita un bug caro
 
-> "Muchas veces los pagos no son inmediatos. O sea, mucha gente de repente dice
-> 'ah, bueno, sí, quiero tantas y tantas y te pago al rato'. 'Ay, sí, se me pasó el
-> rato, voy mañana'."
+**La venta NO pasa por el checkout de la tienda.** Va por una **liga de pago de
+Mercado Pago atada a la reserva**. Si pasara por el checkout, GHL descontaría stock
+otra vez al completarse la orden y la pieza quedaría en doble baja.
 
-**Recordatorios** durante la ventana: a las 12 h y a las 2 h de vencer.
-Ambos requieren template aprobado por Meta (caen fuera de la ventana de 24 h de WhatsApp).
+La tienda cumple dos funciones y ninguna es cobrar: **vitrina** con fotos y videos,
+y **semáforo de disponibilidad real** (porque lee el mismo `availableQuantity` que
+n8n escribe).
+
+### Recordatorios
+
+A las **12 h** y a las **2 h** de vencer. Los dos caen fuera de la ventana de 24 h
+de WhatsApp, así que necesitan plantilla aprobada por Meta.
+
+### El choque con el efectivo
+
+Los pagos en OXXO y Paycash tardan **hasta 72 horas hábiles** en acreditarse — más
+que el apartado de 24 h. Si el comprador elige efectivo:
+
+- el apartado **se extiende hasta que venza la referencia** de Mercado Pago;
+- el bot se lo dice al entregar el comprobante, para que no crea que tiene 24 h.
+
+Tarjeta y SPEI se acreditan al instante y no necesitan la excepción.
+
+### Pagos fuera de Mercado Pago
+
+Tienen cuenta en un banco mexicano y reciben transferencias directas. Para ese caso
+hay un formulario interno **"Registrar pago manual"**: se elige la orden, se marca
+pagada y el workflow confirma la reserva y dispara el despacho.
+
+> Ojo con la distinción: **OXXO y SPEI dentro de Mercado Pago se confirman solos.**
+> El registro manual es únicamente para transferencias a su banco, fuera de la
+> pasarela.
 
 ---
 
-## 4. Flujos de n8n
+## 4. Los flujos de n8n
 
-| Flujo | Entrada | Qué hace | Salida |
-|---|---|---|---|
-| `N1 · Consultar stock` | API Call del agente (nodo 9) | Lee `STOCK`, filtra por SKU, devuelve `disponible` | Respuesta directa al agente |
-| `N2 · Crear apartado` | API Call del agente (nodo 14) | Verifica stock, `disponible −1`, `apartado +1`, genera `orden_id`, calcula `expira_en` | Inbound Webhook → GHL (dispara SP02) |
-| `N3 · Generar liga de pago` | API Call del agente (nodo 16) | Crea preferencia en Checkout Pro con el monto de `CONFIG` | Devuelve la liga + guarda `mp_preference_id` |
-| `N4 · Confirmar pago` | Webhook IPN de Mercado Pago | Valida el pago, `apartado −1`, `vendido_hist +1`, marca la orden pagada | Inbound Webhook → GHL (dispara SP04) |
-| `N5 · Liberar vencidos` | Cron cada 15 min | Busca apartados con `expira_en` pasado y estado `apartado`; `apartado −1`, `disponible +1` | Inbound Webhook → GHL (dispara recuperación) |
+Sólo cinco, y ninguno lleva lógica de negocio pesada.
 
-> **`N2` corre en modo cola con concurrencia 1.** Google Sheets no tiene
-> transacciones: si dos clientes apartan la última paca al mismo tiempo, un
-> read-check-write concurrente puede dejar el stock en negativo. Serializando ese
-> flujo el problema desaparece. Para 30 SKUs y volumen de menudeo alcanza de sobra.
-> Si el volumen crece, la ruta de escape es mover `STOCK` a Supabase o Airtable y
-> usar un update atómico — el resto de la arquitectura no cambia.
+| Flujo | Entrada | Qué hace |
+|---|---|---|
+| `N1 · Apartar` | Webhook desde GHL | Lee `availableQuantity`; si hay, descuenta 1 y devuelve OK. Si no, devuelve agotado |
+| `N2 · Liberar vencidos` | Cron cada 15 min | Busca apartados vencidos y devuelve el stock con `Update Inventory` |
+| `N3 · Buscar sucursal` | API Call del agente o del checkout | Código postal → sucursales cercanas (ver `06-logistica-envia.md`) |
+| `N4 · Generar guía` | Webhook al confirmarse el pago | Crea la guía en Envia, devuelve PDF y número de rastreo |
+| `N5 · Rastrear` | Cron / webhook de Envia | Actualiza el estatus y dispara el aviso al cliente |
 
-> **`N5` existe porque el reloj no puede vivir en GHL.** Los campos `Date` de GHL no
-> guardan hora, así que `expira_en` se calcula y se evalúa en n8n. El `Wait` de SP02
-> es el camino feliz; `N5` es la red de seguridad que libera stock aunque el
-> workflow de GHL se haya caído o el contacto haya salido del flujo.
+> **`N1` corre serializado (concurrencia 1).** Si dos clientes apartan la última paca
+> en el mismo segundo, un read-check-write concurrente puede dejar el stock en
+> negativo. Serializando ese flujo el problema desaparece. Con 30 artículos y el
+> volumen que esperan (500–800 al mes) alcanza de sobra.
 
 ---
 
 ## 5. Cobro con Mercado Pago
 
-```
-  Agente (nodo 16) → n8n N3 → Checkout Pro API → liga de pago
-                                                      │
-                          GHL envía la liga por WhatsApp
-                                                      │
-                                              cliente paga
-                                                      │
-                          Mercado Pago → webhook IPN → n8n N4
-                                                      │
-                          Inbound Webhook → GHL → SP04 → despacho
-```
+**Nativo desde abril de 2026.** Se conecta en Pagos → Integraciones con Public Key y
+Access Token. No hay middleware, no hay webhook IPN que interpretar, no hay n8n.
 
-> ⚠️ **El Goal Event `Payment Received` de GHL no sirve acá.** Sólo dispara con
-> pagos procesados por GHL. Con Mercado Pago el trigger es un **Inbound Webhook**.
-> Es el error más fácil de cometer en la construcción y deja el flujo de
-> confirmación sin ejecutarse nunca.
+Un solo checkout cubre los tres métodos que pidieron en la junta:
 
-Mercado Pago funciona como wallet: recibe y aloja el dinero, y de ahí se transfiere
-a la cuenta bancaria mexicana que el cliente ya tiene. Antes del go-live necesitan
-la cuenta **verificada** — sin las verificaciones de identidad y fiscales, Mercado
-Pago retiene fondos según el flujo recibido. Ya salió en la llamada; hay que
-enviarles los requisitos.
+| Método | Acreditación |
+|---|---|
+| Tarjeta de crédito o débito | Inmediata |
+| Transferencia SPEI | Inmediata |
+| Efectivo en OXXO o Paycash | Hasta 72 h hábiles |
+
+**El Goal Event `Payment Received` sí funciona**, porque el pago es un pago de GHL.
+Los workflows de confirmación se disparan solos.
 
 ---
 
-## 6. Despacho y tracking
+## 6. Despacho y rastreo
 
 ```
   Pago confirmado
         │
-        ├──► WhatsApp al ALMACÉN:  nº de orden · SKU · cantidad · ciudad · sucursal
+        ├──► n8n genera la guía en Envia.com
+        │         │
+        │         ├──► PDF de la etiqueta al ALMACÉN por WhatsApp
+        │         │    (nombre · cantidad · destino · CP — nunca el dinero)
+        │         │
+        │         └──► programa la recolección en Nuevo Laredo
         │
-        └──► Email a los DUEÑOS:   orden completa · cliente · monto · SKU · destino
-                │
-        el almacén prepara y lleva a la paquetería
-                │
-        abre el formulario GHL (con orden_id precargado) y escribe la guía
-                │
-        Form Submitted → workflow AP01 → WhatsApp al cliente con su guía
+        └──► correo a los DUEÑOS con la orden completa, incluido el monto
+                  │
+        Envia rastrea el paquete y n8n dispara los avisos:
+          "va en camino" → "llegó a tu sucursal, ya puedes recogerlo"
 ```
 
-Este reparto sale textual de la llamada:
+Este reparto sale textual de la primera llamada: *"un correo con detalle a ustedes y
+un whatsapp simple al almacén que llegue con número de orden y la pieza, y la
+dirección"*. Y Miguel lo reforzó en la segunda: **el almacén no ve dinero.**
 
-> "Un correo con detalle a ustedes y un whatsapp simple al almacén que llegue con
-> número de orden y la pieza, o sea qué pieza es y ya, y la dirección."
+> **El aviso de "ya llegó a tu sucursal" es el mensaje más valioso del sistema.**
+> Con servicio a ocurre el cliente tiene que ir físicamente por su paquete. Pamela
+> describió el dolor exacto: *"oye, no me llegó y que no sé qué. Y ahí, órale, a
+> rastrear."*
 
-**El único paso manual de todo el sistema es escribir el número de guía.** Es
-inevitable: las paqueterías no tienen API pública práctica.
+---
+
+## 7. Qué hay que validar en la cuenta antes de construir
+
+Regla de oro del playbook: *"se guardó" no es "funciona"*. Tres supuestos de este
+diseño dependen del comportamiento real de GHL y hay que probarlos con una venta de
+prueba antes de dar por bueno el flujo:
+
+1. Que `Update Inventory` se refleje de inmediato en la disponibilidad de la tienda.
+2. Que una liga de pago de Mercado Pago **no** descuente stock por su cuenta.
+3. Que `Payment Received` dispare igual con los tres métodos, incluido el efectivo.

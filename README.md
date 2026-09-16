@@ -19,14 +19,14 @@ no se entromete con mi menudeo"*.
 
 | | Esencial | Completo |
 |---|---:|---:|
-| Implementación | **$1,997** | **$3,200** |
+| Implementación | **$1,997** | **$3,600** |
 | Mensualidad | **$297** | **$497** |
-| Primer año | $5,561 | $9,164 |
+| Primer año | $5,561 | $9,564 |
 | Entrega | 2 semanas | 3 a 4 semanas |
 
-El corte no es arbitrario: **el Esencial es todo lo que GHL hace nativo; el
-Completo agrega lo que necesita piezas externas** (inventario conectado, Mercado
-Pago, despacho y guía, landing).
+El corte: **el Esencial es la atención; el Completo es la operación.** El Completo
+agrega tienda con inventario en vivo, apartado de 24 h, cobro con tarjeta/OXXO/SPEI,
+y guía, recolección y rastreo automáticos vía Envia.com.
 
 > ⚠️ El Esencial resuelve **la atención**, no **la operación**. El cliente dijo que
 > no sobrevender era central; eso sólo lo resuelve el Completo. Se ofrece como
@@ -46,15 +46,19 @@ Pago, despacho y guía, landing).
 
 ## Datos de partida
 
-`data/` trae el catálogo de 30 SKUs y las plantillas de las pestañas del Google
-Sheet que va a operar como fuente de verdad del inventario en el Completo.
+`data/catalogo.csv` trae los 30 SKUs y es la fuente de la Knowledge Base del agente
+y de la carga de productos en la tienda.
 
 ## Lo que hay que saber en una línea
 
-GHL **no puede llevar el inventario solo** (no tiene aritmética en campos numéricos)
-y **Mercado Pago no es pasarela nativa**. Las dos cosas centrales que pidió el
-cliente viven fuera de GHL, en **n8n + Google Sheets** — y son justo lo que separa
-al Completo del Esencial.
+**Mercado Pago y el inventario ya son nativos de GHL** — las revisiones 2 y 3 de
+estos documentos decían lo contrario y estaban equivocadas. Lo único que GHL no sabe
+hacer es **apartar sin cobrar**, y ahí es donde queda n8n: como reloj del apartado,
+no como motor del sistema. La logística la resuelve **Envia.com**, que genera guías,
+programa recolecciones, rastrea y da el catálogo de sucursales.
+
+Los datos de `data/` (los 30 SKUs) siguen igual; las plantillas de Google Sheets
+quedaron obsoletas al mudar el stock a GHL.
 
 ## Pendiente en este repo
 

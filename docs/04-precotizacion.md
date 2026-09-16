@@ -12,50 +12,76 @@ referencia. **Precios en USD.**
 
 | | Esencial | Completo |
 |---|---:|---:|
-| **Implementación** (pago único) | **$1,997** | **$3,200** |
+| **Implementación** (pago único) | **$1,997** | **$3,600** |
 | **Mensualidad** | **$297** | **$497** |
-| Primer año | $5,561 | $9,164 |
+| Primer año | $5,561 | $9,564 |
 | Desde el año 2 | $3,564 | $5,964 |
 | Entrega | 2 semanas | 3 a 4 semanas |
 
-El Completo queda en **1.65×** el Esencial al primer año. La brecha de entrada es de
-**$1,203 de setup y $200 al mes**.
+El Completo queda en **1.72×** el Esencial al primer año. Brecha de entrada:
+**$1,603 de setup y $200 al mes**.
+
+---
+
+## Por qué subió el Completo de $3,200 a $3,600
+
+La segunda junta y la investigación técnica cambiaron el alcance. El cálculo sube
+poco —de $4,065 a **$4,190**— pero **lo que el cliente ve crecer es mucho más**:
+
+| Lo que se agregó | Por qué importa |
+|---|---|
+| **Tienda con los 30 artículos** | Catálogo público con fotos, videos e inventario en vivo |
+| **Guía generada sola** (Envia.com) | El almacén deja de ir por guías y de capturarlas en Excel |
+| **Rastreo hasta "llegó a tu sucursal"** | Con servicio a ocurre, es el aviso más valioso del flujo |
+| **Buscador de sucursal por código postal** | Ataca la razón de fondo por la que apagaron el menudeo |
+| **Tarjeta, OXXO y SPEI en un solo checkout** | Los tres métodos que pidieron, sin desarrollo extra |
+| **Registro manual de transferencias** | Para los pagos que llegan a su banco |
+
+Y **desaparece el último paso manual**: las revisiones anteriores decían que
+capturar el número de guía era inevitable. Ya no lo es.
+
+**El Esencial no se mueve** porque nada de esto le toca: no lleva tienda, ni Envia,
+ni Mercado Pago, ni inventario. Subirlo sería cobrar por algo que no recibe.
+
+**La mensualidad tampoco se mueve.** Subir setup y mensual a la vez es difícil de
+defender, y los $497 ya tienen buen margen sobre los $330 calculados.
 
 ---
 
 ## Calculado contra comercial
 
 Los precios de venta son **decisión comercial del equipo**, no salida del cotizador.
-Ambos números quedan registrados aquí para que nadie los confunda.
 
 | Paquete | Calculado | Comercial | Diferencia |
 |---|---|---|---|
-| Esencial | $2,044 / $230 | **$1,997 / $297** | setup −$47 · mensual +$67 (+29%) |
-| Completo | $4,065 / $330 | **$3,200 / $497** | setup −$865 (−21%) · mensual +$167 (+51%) |
+| Esencial | $2,044 / $230 | **$1,997 / $297** | setup −$47 · mensual +$67 |
+| Completo | $4,190 / $330 | **$3,600 / $497** | setup −$590 (−14%) · mensual +$167 (+51%) |
 
-> ⚠️ **La reestructura del Completo no es un descuento.** Contra la estructura
-> anterior ($4,065 / $330), el Completo pasa de $8,025 a **$9,164** el primer año
-> (**+$1,139**) y de $3,960 a **$5,964** anuales desde el segundo
-> (**+$2,004 al año**). Baja la barrera de entrada en $865 y lo recupera con creces
-> en el recurrente. Es una decisión legítima, pero **se está cobrando más, no
-> menos** — que nadie lo presente al cliente como una rebaja.
+> ⚠️ **La estructura del Completo sigue sin ser un descuento.** Contra la estructura
+> original ($4,065 / $330), el primer año pasa de $8,025 a **$9,564** y el año 2 de
+> $3,960 a $5,964. La barrera de entrada baja; el recurrente sube más. Es una
+> decisión legítima, pero **se cobra más, no menos** — que nadie lo presente al
+> cliente como una rebaja.
 
 ---
 
-## Desglose del Completo · calculado $4,065 / $330
+## Desglose del Completo · calculado $4,190 / $330
 
 | Módulo | Setup | Mensual |
 |---|---:|---:|
 | Setup de subcuenta (DNS, dominio, WhatsApp API, correos) | $250 | — |
 | CRM & Pipelines — 1 pipeline de 8 etapas + 3 vistas | $320 | — |
-| Automatizaciones & Workflows — 8 workflows | $1,000 | — |
-| Chatbot / AI Chat — agente de 17 nodos con IA avanzada | $655 | $80 |
-| Integraciones — Mercado Pago + motor de inventario | $600 | $100 |
-| Documentos & Templates — 5 plantillas | $350 | — |
-| Landing de catálogo — 6 secciones | $490 | — |
+| Automatizaciones & Workflows — 9 workflows | $1,010 | — |
+| Chatbot / AI Chat — agente de 16 nodos con IA avanzada | $640 | $80 |
+| Integraciones — Envia.com + motor de apartado (n8n) | $600 | $100 |
+| Documentos & Templates — 6 plantillas | $400 | — |
+| Tienda de catálogo — 8 secciones | $570 | — |
 | Capacitación — 2 sesiones (dueños y almacén) | $400 | — |
 | Soporte post-implementación | — | $150 |
-| **Total calculado** | **$4,065** | **$330** |
+| **Total calculado** | **$4,190** | **$330** |
+
+> **Mercado Pago e inventario ya no aparecen como integraciones** porque son nativos
+> de GHL. Antes pesaban $600 de setup y $100 al mes ellos solos.
 
 ## Desglose del Esencial · calculado $2,044 / $230
 
@@ -70,54 +96,30 @@ Ambos números quedan registrados aquí para que nadie los confunda.
 | Soporte post-implementación | — | $150 |
 | **Total calculado** | **$2,044** | **$230** |
 
-**Qué le quitamos al Completo para llegar al Esencial:** las 2 integraciones
-externas (−$600 setup, −$100 mes), la landing (−$490), 3 workflows y los nodos de
-los que quedan (−$486), 5 nodos del agente (−$75), 2 plantillas (−$100), 1 sesión
-de capacitación (−$200), 3 etapas de pipeline y 1 vista (−$70).
-
 ---
 
 ## Qué diferencia realmente a los dos paquetes
 
-El corte no es arbitrario: **el Esencial es todo lo que GHL hace nativo, el
-Completo agrega lo que necesita piezas externas.**
+El corte sigue siendo el mismo, aunque la frontera se movió: **el Esencial es la
+atención; el Completo es la operación.**
 
 | | Esencial | Completo |
 |---|---|---|
-| Inventario conectado | — | n8n + Google Sheets |
-| Apartado de 24 h con reloj | — | Workflow + n8n |
-| Cobro por Mercado Pago | — | n8n + API Checkout Pro |
-| Aviso al almacén y correo de orden | — | Workflow nativo |
-| Guía al cliente | — | Formulario + workflow |
-| Landing de catálogo | — | GHL Pages |
+| Tienda con los 30 artículos | — | ● |
+| Inventario en vivo | — | ● GHL nativo |
+| Apartado de 24 h con reloj | — | ● n8n + `Update Inventory` |
+| Cobro (tarjeta, OXXO, SPEI) | — | ● Mercado Pago nativo |
+| Guía y recolección automáticas | — | ● Envia.com |
+| Rastreo hasta la sucursal | — | ● |
+| Buscador de sucursal por CP | — | ● |
 | Integraciones externas | **0** | 2 |
 
 En el Esencial el agente arma el pedido y **deriva a un asesor**, que confirma
-disponibilidad y cobra. Resuelve la atención, no la operación.
+disponibilidad y cobra.
 
 > ⚠️ **Advertencia de alcance.** El cliente dijo que no sobrevender era central
 > (*"tengo tantas de esta y no tengo más"*). **El Esencial no resuelve eso.** Se
-> presenta como rampa de entrada para medir volumen, nunca como equivalente del
-> Completo.
-
----
-
-## Comparación con paquetes de la tabla
-
-| Modalidad | Setup | Mensual | Primer año |
-|---|---:|---:|---:|
-| **Completo à la carte** | **$4,065** | **$330** | **$8,025** |
-| Starter | $4,140 | $330 | $8,100 |
-| Pro | $3,818 | $460 | $9,338 |
-| Enterprise | $4,128 | $580 | $11,088 |
-
-Ninguno ahorra. À la carte sigue siendo la base de cálculo.
-
-> **Nota sobre Pro y Enterprise.** Hay un bug en `ghl_cotizador.py:435`: suma
-> `cantidad_cb × $80` al mensual de extras aunque el paquete ya incluya el chatbot.
-> Corregido, Pro daría $3,818 / $380 = $8,378 al primer año, que sigue perdiendo
-> contra los $8,025 de à la carte. La conclusión no cambia, pero el número que
-> imprime el script está mal.
+> presenta como rampa de entrada, nunca como equivalente del Completo.
 
 ---
 
@@ -128,16 +130,16 @@ Ninguno ahorra. À la carte sigue siendo la base de cálculo.
 | **Mayoreo** | El cliente lo pidió explícitamente aparte y manual |
 | Venta de piezas sueltas | Exigiría inventario por prenda/talla/foto — otro proyecto |
 | Reportes y dashboards | Se retiró del alcance |
-| Post-venta, reseñas y recompra | Se retiró del alcance |
+| Post-venta, reseñas y recompra | Se retiró. Además **no quieren reseñas de Google** por el hate de la competencia |
 | Campañas de Meta y TikTok (`LS02`) | Se retiró del alcance |
-| Integración con la paquetería | Sin API pública; la guía se captura a mano |
 | Facturación CFDI | No se habló. Sería integración adicional |
-| **Fotografía y textos de producto** | **No cotizado** — los entrega el cliente |
+| **Fotografía y video de producto** | **No cotizado** — los entrega el cliente |
+| Devoluciones | **No hay**, es política del cliente. No se construye flujo |
 | Pauta publicitaria | Gasto del cliente, aparte |
-| Costos de terceros | WhatsApp API por conversación, comisiones de Mercado Pago, n8n si es alojado, Google Workspace |
+| Costos de terceros | WhatsApp API por conversación, comisiones de Mercado Pago, **saldo de Envia.com por guía**, n8n si es alojado, Google Workspace |
 
-> Los **costos de terceros** los paga el cliente directamente y no pasan por
-> 786 Marketing.
+> **Envia.com es prepago, sin mensualidad ni comisión**: se carga saldo y se paga
+> por guía. Con 500–800 envíos al mes, conviene pedirles tarifa por volumen.
 
 ---
 
@@ -147,24 +149,17 @@ Ninguno ahorra. À la carte sigue siendo la base de cálculo.
 import sys; sys.path.insert(0,'<ruta>/ghl-cotizador/scripts')
 from ghl_cotizador import calcular_cotizacion
 
-wf_full=[('LS01',10),('SP01',8),('SP02',18),('SP03',12),('SP04',14),('SP05',10),('AP01',9),('AP02',8)]
+wf=[('LS01',10),('SP01',8),('SP02',16),('SP03',10),('SP04',10),
+    ('SP05',12),('AP01',10),('AP02',8),('AP03',7)]
 completo=dict(setup_subcuenta='completo',
   pipelines=[{'nombre':'SP','etapas':8}], vistas_filtros=3,
-  workflows=[{'nombre':a,'nodos':b} for a,b in wf_full],
-  chatbots=[{'nombre':'Agente','nodos':17,'ia_avanzada':True}],
-  integraciones=2, plantillas=5, calendarios=False,
-  landing_pages=[{'nombre':'Catalogo','secciones':6}],
+  workflows=[{'nombre':a,'nodos':b} for a,b in wf],
+  chatbots=[{'nombre':'Agente','nodos':16,'ia_avanzada':True}],
+  integraciones=2, plantillas=6, calendarios=False,
+  landing_pages=[{'nombre':'Tienda','secciones':8}],
   reportes=False, sesiones_capacitacion=2, soporte=True)
-# -> 4065 / 330
-
-wf_lite=[('LS01',8),('SP01',8),('SP02',10),('SP03',8),('AP02',8)]
-esencial=dict(setup_subcuenta='completo',
-  pipelines=[{'nombre':'SP','etapas':5}], vistas_filtros=2,
-  workflows=[{'nombre':a,'nodos':b} for a,b in wf_lite],
-  chatbots=[{'nombre':'Agente','nodos':12,'ia_avanzada':True}],
-  integraciones=0, plantillas=3, calendarios=False,
-  reportes=False, sesiones_capacitacion=1, soporte=True)
-# -> 2044 / 230
+# -> 4190 / 330
 ```
 
-El detalle de cada workflow y sus nodos está en `01-mapa-ghl.md`.
+El Esencial no cambió; su scope está en la revisión anterior de este documento y en
+`01-mapa-ghl.md`.

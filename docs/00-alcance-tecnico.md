@@ -33,10 +33,16 @@ Por eso históricamente manejaron **únicamente Paquete Express** y **sólo serv
 ocurre** — el cliente recoge en sucursal. Esto **simplifica el alcance**: no hay que
 validar direcciones domiciliarias, sólo capturar ciudad y sucursal.
 
-> ⚠️ **El proveedor de envíos para este sistema está por confirmar.** El cliente lo
-> puso como punto pendiente. De él dependen las tarifas, las coberturas y qué datos
-> tiene que pedirle el bot. El diseño asume modalidad a ocurre; si cambian a entrega
-> a domicilio, hay que rehacer la captura de dirección. Pregunta bloqueante #1.
+En la segunda junta lo confirmaron: **siguen con Paquete Express y sólo a ocurre.**
+Miguel lo explicó sin rodeos: *"Paquete Express es muy así de Cancún, Mérida,
+Villahermosa. No llega a Zacatlán de las Manzanas."* Llega a unas 146 sucursales en
+ciudades principales, y esa limitación **les sirve como filtro**: quien no tenga
+sucursal cerca se descalifica solo, y para ellos eso es una ventaja, no una pérdida.
+
+También cerraron el precio del envío: **va incluido**. Miguel: *"yo pongo una paca
+de seis mil trescientos pesos, es a cualquier parte, ya incluido el envío, a
+cualquier parte de la República."* Eso **cierra la pregunta bloqueante del costo de
+envío** que arrastrábamos desde la primera llamada.
 
 ## 3. Lo que piden
 
@@ -49,6 +55,27 @@ que todo sea recibido a través de un robot"*.
 > "Mi mayoreo yo lo trabajo aparte. Lo que yo no sé entromete con mi menudeo."
 
 Esto acota el alcance de forma importante y hay que dejarlo escrito en la propuesta.
+
+### Cómo se cierra la venta: híbrido
+
+La decisión de fondo de la segunda junta. Tres caminos posibles:
+
+| | A favor | En contra |
+|---|---|---|
+| Conversacional puro | Lo más amigable para su público; es como ya venden | Navegar 30 artículos por chat es pesado, y capturar direcciones conversando es **justo lo que los desbordó** |
+| Tienda pura | Carrito abandonado nativo, checkout que valida antes de cobrar | Mauricio: su cliente *"no sabe escribir bien, no sabe usar muy bien el teléfono"* — un checkout seco los pierde |
+| **Híbrido** ✅ | El bot absorbe a los curiosos y la tienda captura los datos estructurados | Dos piezas que mantener |
+
+**Elegido: híbrido con red de seguridad.** El bot atiende, califica y limpia; al
+cerrar manda a la tienda. Si el cliente se atora en el checkout, el carrito
+abandonado lo detecta y el bot ofrece terminar la compra por chat con liga de pago.
+
+Pamela lo había pedido así: *"me gustó la idea que el bot atienda y limpie hasta que
+termine al final del embudo, y ya cuando termine, ok, te abro la landing"*.
+
+Germán aportó el argumento que decide la captura de dirección: **un formulario que
+no deja pagar hasta que los datos sean válidos.** Conversando, la dirección siempre
+sale mal — Pamela contó cómo se les iban las horas persiguiendo códigos postales.
 
 ---
 
@@ -63,8 +90,9 @@ Esto acota el alcance de forma importante y hay que dejarlo escrito en la propue
 | Temporizador del apartado + recordatorios | Workflow con `Wait` + `Goal Event` |
 | Orden simple al almacén por WhatsApp | `Send Message` en workflow |
 | Correo con el detalle completo a los dueños | `Send Internal Notification` / `Send Message — Email` |
-| Captura de la guía por el almacén | Formulario GHL + trigger `Form Submitted` |
-| Envío del tracking al cliente | `Send Message — WhatsApp` disparado por ese formulario |
+| Cobro con tarjeta, OXXO y SPEI | **Mercado Pago nativo** (Pagos → Integraciones) |
+| Catálogo público con los 30 artículos | **Tienda de GHL** con inventario nativo |
+| Envío del rastreo al cliente | `Send Message — WhatsApp` disparado por los eventos de Envia |
 | Escalamiento a humano | Tag + `Update Conversation AI Bot Status → Off` |
 
 Todo esto entra sin fricción. Es aproximadamente el 70% del proyecto.
@@ -75,7 +103,7 @@ Todo esto entra sin fricción. Es aproximadamente el 70% del proyecto.
 
 Esta es la sección que Yera necesita para no prometer de más.
 
-### 5.1 · Inventario descontable — **no existe en GHL**
+### 5.1 · Apartar sin cobrar — eso sí que no existe en GHL
 
 Es el requisito central del cliente:
 
@@ -83,29 +111,42 @@ Es el requisito central del cliente:
 > la venta en sí, porque la tenemos muy específica. O sea, tengo tantas de esta y no
 > tengo más."
 
-Pero la referencia de limitaciones de GHL (`ghl-limitations.md`) es categórica:
+Y en la segunda junta lo precisó como un boleto de concierto: eliges, se abre un
+reloj de 24 h, y si no pagas la pieza se libera para el siguiente.
 
-> ❌ **No hay aritmética nativa en campos numéricos.** GHL no puede sumar, restar,
-> multiplicar ni dividir valores de campos number.
+**GHL sí lleva inventario.** Su tienda tiene control de stock nativo
+(Pagos → Productos → Inventario) y un endpoint oficial `Update Inventory` con
+`availableQuantity`. Lo que **no** sabe hacer es reservar una pieza sin cobrarla:
+descuenta al pagarse la orden, no antes.
 
-**Solución:** el stock vive en **Google Sheets** y **n8n** hace toda la aritmética.
-No es un parche — es la única arquitectura posible, y encaja con que el cliente
-*ya* opera así: *"realmente es un Excel que manejamos compartido"* con el almacén.
-Detalle completo en `02-arquitectura-inventario.md`.
+**Solución:** el stock vive en GHL y **n8n es el reloj del apartado**, escribiendo
+por `Update Inventory` al reservar y al liberar. Detalle completo en
+`02-arquitectura-inventario.md`.
 
-### 5.2 · Mercado Pago — **no es pasarela nativa de GHL**
+> Lo que sigue siendo cierto de la referencia de limitaciones: **GHL no hace
+> aritmética en campos de contacto.** Por eso el conteo no puede vivir en un campo
+> custom — pero sí vive en el producto de la tienda, que es otra cosa.
 
-GHL trae Stripe, PayPal, NMI, Authorize.net y Razorpay. **Mercado Pago no está.**
-El cliente lo pidió explícitamente y nosotros se lo recomendamos en la llamada, así
-que se queda — pero vía integración.
+### 5.2 · Mercado Pago — **ya es pasarela nativa**
 
-**Solución:** n8n genera la preferencia de pago con la API de Checkout Pro y
-devuelve la liga; el webhook IPN de Mercado Pago avisa cuando se acredita.
+> ⚠️ **Corrección.** Las revisiones 2 y 3 de este documento decían que Mercado Pago
+> no era nativo y había que pasarlo por n8n. **Era falso.** HighLevel lo liberó el
+> **27 de abril de 2026** y México es uno de los siete países soportados. Se conecta
+> en Pagos → Integraciones con Public Key y Access Token.
 
-> ⚠️ **Trampa técnica:** el Goal Event `Payment Received` de GHL **no dispara** con
-> Mercado Pago — sólo funciona con pagos nativos de GHL. Hay que usar un
-> **Inbound Webhook** como trigger. Si esto se pasa por alto en la construcción, el
-> flujo de confirmación de pago simplemente nunca se ejecuta.
+Consecuencias, todas a favor:
+
+- **El Goal Event `Payment Received` sí dispara**, porque el pago es un pago de GHL.
+  No hace falta Inbound Webhook ni middleware.
+- **Un solo checkout cubre los tres métodos que pidieron**: tarjeta, efectivo en
+  OXXO y Paycash, y transferencia SPEI. En la junta se dijo que OXXO sólo se podía
+  por WooCommerce; tampoco es cierto, Checkout Pro en México ya lo trae.
+- Se cae una integración externa completa del alcance.
+
+> ⚠️ **Lo que sí hay que vigilar:** los pagos en efectivo tardan **hasta 72 horas
+> hábiles** en acreditar, más que el apartado de 24 h. Si el comprador elige
+> efectivo, el apartado se extiende hasta que venza la referencia de Mercado Pago y
+> el bot se lo dice. Tarjeta y SPEI son instantáneos.
 
 ### 5.3 · Ventana de 24 horas de WhatsApp — **el principal riesgo de cronograma**
 
@@ -125,18 +166,30 @@ Los mensajes que **caen fuera de la ventana** en este flujo:
 Hay que crearlos y mandarlos a aprobación **al inicio del proyecto**, no al final.
 Es el ítem que más fácilmente atora un go-live.
 
-### 5.4 · Las paqueterías no tienen API pública práctica
+### 5.4 · Paquete Express no tiene API propia — pero Envia.com sí
 
-No hay forma de generar la guía ni leer el tracking automáticamente. Ya se lo
-adelantamos al cliente en la llamada:
+> ⚠️ **Corrección.** Las revisiones anteriores decían que no había forma de generar
+> la guía ni leer el rastreo automáticamente, y que el almacén tendría que capturar
+> el número a mano. **Ya no aplica.** Oliver trajo a **Envia.com**, un agregador que
+> sí expone Paquete Express por API.
 
-> "Claramente sí tiene que ser híbrido, o sea ustedes tendrían que meter esa liga en
-> donde nosotros le indiquemos para que el sistema dispare automáticamente ese
-> mensaje al cliente correspondiente."
+Lo que Envia resuelve (detalle en `06-logistica-envia.md`):
 
-**Solución:** formulario GHL con el `orden_id` precargado. El almacén captura la
-guía, el `Form Submitted` dispara el WhatsApp al cliente correcto. El paso manual
-es escribir un número — nada más.
+| Endpoint | Para qué |
+|---|---|
+| `POST /ship/generate/` | **Genera la guía con número de rastreo** |
+| `POST /ship/pickup/` | Programa la recolección en el almacén |
+| `GET /ship/track/` | Estatus y eventos → avisos automáticos al cliente |
+| `GET /carrier-branches` | **Catálogo de sucursales** por paquetería y país |
+| `GET /validate-zip-code` | Valida el código postal y devuelve ciudad y estado |
+
+**Se cae el único paso manual del sistema.** Hoy el almacén va a Paquete Express,
+recoge las guías y las captura en Excel. Con esto, el sistema genera la guía al
+confirmarse el pago, le manda el PDF al almacén para que lo imprima y pegue,
+programa la recolección y rastrea hasta que el paquete llega a la sucursal.
+
+**Costo:** prepago, sin mensualidad ni comisión. Se carga saldo y se paga por guía.
+Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 
 ### 5.5 · Otras limitaciones que condicionan el diseño
 
@@ -158,7 +211,11 @@ es escribir un número — nada más.
 | Motor externo | n8n + Google Sheets | El cliente ya comparte un Excel con el almacén → cero curva de aprendizaje |
 | Mayoreo | **Fuera de alcance**, sigue manual | Textual del cliente |
 | Duración del apartado | 24 h | El cliente pidió 24; nosotros habíamos propuesto 2–3 h |
-| Paquetería | **Por confirmar**, modalidad a ocurre | Históricamente Paquete Express; el proveedor definitivo es punto pendiente |
+| Paquetería | **Paquete Express vía Envia.com**, sólo a ocurre | Confirmado en la segunda junta |
+| Costo de envío | **Incluido en el precio**, igual a toda la República | Confirmado: *"es a cualquier parte, ya incluido el envío"* |
+| Cierre de la venta | **Híbrido**: bot atiende, tienda cobra | Decisión de la segunda junta |
+| Devoluciones | **No hay**, política explícita | *"tratamos que la venta sea sincera y directa: es esto y trae esto y no hay devolución"* |
+| Volumen esperado | 500 a 800 envíos al mes, hasta 1,000 | Miguel: *"de acuerdo a la experiencia, arriba de 500 muy fácilmente"* |
 | Pasarela | Mercado Pago | Pedido por el cliente y recomendado por nosotros en la llamada |
 
 ---
@@ -168,14 +225,15 @@ es escribir un número — nada más.
 Se ofrecen **dos niveles**, y el corte entre ellos no es arbitrario: **el Esencial
 es todo lo que GHL hace nativo; el Completo agrega lo que necesita piezas externas.**
 
-### Completo — $3,200 setup / $497 al mes · 3 a 4 semanas
+### Completo — $3,600 setup / $497 al mes · 3 a 4 semanas
 
-El sistema que el cliente pidió: bot que vende, inventario que no sobrevende,
-apartado de 24 h, cobro por Mercado Pago, orden al almacén, guía al cliente,
-escalamiento a humano y landing de catálogo.
+El sistema que el cliente pidió: bot que atiende y califica, tienda con los 30
+artículos e inventario en vivo, apartado de 24 h con reloj, cobro con tarjeta, OXXO
+y SPEI, guía y recolección automáticas, rastreo hasta la sucursal, buscador de
+sucursal por código postal y escalamiento a humano.
 
-1 pipeline de 8 etapas · 8 workflows · 1 agente de 17 nodos · 2 integraciones ·
-5 plantillas · 1 landing de 6 secciones · 2 capacitaciones · soporte.
+1 pipeline de 8 etapas · 9 workflows · 1 agente de 16 nodos · 2 integraciones ·
+6 plantillas · tienda de 8 secciones · 2 capacitaciones · soporte.
 
 ### Esencial — $1,997 setup / $297 al mes · 2 semanas
 
@@ -215,4 +273,6 @@ Números y desgloses en `04-precotizacion.md`.
 | 5 | Cuenta de Mercado Pago sin verificar → retención de fondos | Ya salió en la llamada; enviarles los requisitos |
 | 6 | 5 de los 30 SKUs no están descritos en ningún transcript (corsé, playera comercial, chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
 | 7 | **No hay fotos de producto.** La landing y las fichas del bot no se pueden montar sin ellas | Pregunta bloqueante #2. **No están cotizadas**: las produce el cliente |
-| 8 | **Proveedor de envíos sin definir.** De él salen tarifas, coberturas y qué datos pide el bot | Pregunta bloqueante #1. Bloquea el cálculo del total a cobrar |
+| 8 | **El almacén nunca debe ver dinero.** Miguel fue explícito: *"ellos no tienen por qué enterarse"* | El aviso al almacén lleva sólo nombre, cantidad, destino y CP. Regla dura del diseño |
+| 9 | Efectivo en OXXO acredita hasta 72 h después, más que el apartado de 24 h | El apartado se extiende a la vigencia de la referencia de Mercado Pago |
+| 10 | Piden **fotos y videos** de producto, no sólo fotos | Sube el peso del pendiente de material. Sigue sin cotizarse: lo entrega el cliente |
