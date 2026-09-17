@@ -10,7 +10,7 @@
 <style>
 /* ──────────────────────────────────────────────────────────────
    786 Marketing · Pre-propuesta — Cliente: Paca (ropa americana)
-   Fecha: 2026-09-16 · Revisión 5 — la venta vive en la conversación
+   Fecha: 2026-09-17 · Revisión 6 — costos de comunicación al frente
    NO reintroducir: emojis · transition:all · colores fuera de
    :root · quitar estados de foco o reduced-motion.
    ────────────────────────────────────────────────────────────── */
@@ -408,6 +408,8 @@ td.col .txt{font-weight:700; font-size:.86rem; color:var(--brand-700)}
   background:var(--slate-100); border:1px solid var(--border);
   font-size:.87rem; color:var(--slate-700);
 }
+.third-party p{margin:0 0 14px}
+.third-party p:last-child{margin-bottom:0}
 
 /* ── Pendientes ───────────────────────────────────────────── */
 .pending-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:28px}
@@ -547,7 +549,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     <div class="logo">
       <span class="wordmark">786<span class="dot">.</span>marketing</span>
     </div>
-    <span class="header-tag">Pre-propuesta · 15 sep 2026</span>
+    <span class="header-tag">Pre-propuesta · 17 sep 2026</span>
   </div>
 </header>
 
@@ -737,12 +739,16 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     </div>
 
     <p class="pending-note">
-      <strong>Para ser claros con el Esencial.</strong> Resuelve la atención, no la
-      operación: les quita de encima el trabajo que ocupaba a las cuatro vendedoras,
-      pero el inventario, el cobro y el despacho siguen en sus manos. Lo que nos
-      dijeron sobre no sobrevender &mdash;<em>"tengo tantas de esta y no tengo
-      más"</em>&mdash; sólo lo resuelve el Completo. El Esencial es una buena forma de
-      arrancar y medir volumen, no un sustituto.
+      <strong>Lo que el Esencial deja en sus manos.</strong> Resuelve la atención
+      &mdash;el trabajo que ocupaba a las cuatro vendedoras&mdash; y ahí se detiene:
+      cada venta sigue pasando por ustedes. Alguien tiene que revisar si todavía hay
+      esa paca, cobrar, avisarle al almacén y sacar la guía, pedido por pedido. Y lo
+      que nos plantearon &mdash;<em>"tengo tantas de esta y no tengo más"</em>&mdash;
+      queda igual: sin inventario en vivo el bot puede vender lo que ya no existe, y
+      esa llamada la hacen ustedes. Con el volumen del que hablaron, ese trabajo
+      manual crece al mismo ritmo que las ventas. <strong>El Completo es el que
+      cierra el círculo</strong>: aparta, cobra, despacha y rastrea sin que nadie
+      levante la mano.
     </p>
   </div>
 </section>
@@ -1070,7 +1076,6 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
         <p style="color:var(--text-gray); font-size:.9rem; margin:2px 0 0">implementación, pago único</p>
         <div class="invest-sep"></div>
         <div class="invest-row"><span class="k">Mensualidad</span><span class="v">USD 297</span></div>
-        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 5,561</span></div>
         <div class="invest-row"><span class="k">Entrega</span><span class="v">2 semanas</span></div>
         <div class="split-box">
           <span class="gl gl-bolt"></span>
@@ -1084,7 +1089,6 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
         <p style="color:var(--text-gray); font-size:.9rem; margin:2px 0 0">implementación, pago único</p>
         <div class="invest-sep"></div>
         <div class="invest-row"><span class="k">Mensualidad</span><span class="v">USD 497</span></div>
-        <div class="invest-row"><span class="k">Primer año</span><span class="v">USD 9,564</span></div>
         <div class="invest-row"><span class="k">Entrega</span><span class="v">3 a 4 semanas</span></div>
         <div class="split-box">
           <span class="gl gl-bolt"></span>
@@ -1094,21 +1098,35 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
     </div>
 
     <div class="third-party">
-      <strong>Qué cubre la mensualidad:</strong> el soporte, el agente de IA activo,
-      el monitoreo de que todo siga corriendo, los ajustes al bot conforme se
-      aprende qué pregunta la gente, y los cambios de catálogo entre temporadas
-      &mdash; el paso de verano a invierno y de vuelta. En el Completo también el
-      reloj del apartado y la conexión con la paquetería.
-      <br><br>
-      <strong>Qué se paga aparte, directo al proveedor:</strong> WhatsApp cobra por
-      conversación, Mercado Pago su comisión por venta, la paquetería sus guías
-      &mdash; se carga saldo y se paga por envío, sin mensualidad ni comisión
-      &mdash; y Google Workspace su licencia. Esos costos son de ustedes y no pasan
-      por 786 Marketing. Tampoco incluye las fotos ni los videos de producto, que
-      los entregan ustedes.
-      <br><br>
-      <strong>No se construye flujo de devoluciones</strong>, porque su política es
-      que no hay. El bot lo dice antes de mandar a pagar, nunca después de cobrar.
+      <p>
+        <strong>Qué cubre la mensualidad:</strong> el soporte, el agente de IA activo,
+        el monitoreo de que todo siga corriendo, los ajustes al bot conforme se
+        aprende qué pregunta la gente, y los cambios de catálogo entre temporadas
+        &mdash; el paso de verano a invierno y de vuelta. En el Completo también el
+        reloj del apartado y la conexión con la paquetería.
+      </p>
+      <p>
+        <strong>Costos de comunicación &mdash; se pagan aparte, directo al
+        proveedor:</strong> el sistema habla mucho, y cada quien cobra lo suyo. Va
+        aquí la <strong>conexión de WhatsApp con Meta</strong> y su cobro por
+        conversación; los <strong>correos electrónicos</strong> que salen al cliente
+        y a ustedes con el detalle de cada orden; y los <strong>mensajes automáticos
+        del pedido</strong> &mdash; el recordatorio del apartado, la confirmación de
+        pago, el número de guía y el "ya llegó a tu sucursal" &mdash;, que viajan por
+        esa misma conversación. Se cobran por mensaje y por conversación, los cobra
+        el proveedor y no pasan por 786 Marketing.
+      </p>
+      <p>
+        <strong>Los demás costos de terceros</strong> también corren por su cuenta:
+        Mercado Pago su comisión por venta, la paquetería sus guías &mdash; se carga
+        saldo y se paga por envío, sin mensualidad ni comisión &mdash; y Google
+        Workspace su licencia. Tampoco entran las fotos ni los videos de producto,
+        que los entregan ustedes.
+      </p>
+      <p>
+        <strong>No se construye flujo de devoluciones</strong>, porque su política es
+        que no hay. El bot lo dice antes de mandar a pagar, nunca después de cobrar.
+      </p>
     </div>
   </div>
 </section>
