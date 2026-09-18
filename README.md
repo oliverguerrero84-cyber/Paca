@@ -1,12 +1,12 @@
 # Paca — Automatización de menudeo sobre GoHighLevel
 
-Documentación de alcance y pre-propuesta de **786 Marketing** para el proyecto de
+Documentación de alcance y propuesta de **786 Marketing** para el proyecto de
 **pacas de ropa americana** (cliente: Pamela y Miguel — McAllen TX, almacén en
 Nuevo Laredo, Tamaulipas). Proyecto referido por Yera.
 
-> **Estado: pre-propuesta.** Esto **no es** una propuesta definitiva. El alcance
-> final depende de los datos que el cliente todavía no entrega
-> (ver `docs/05-preguntas-cliente.md`).
+> **Estado: propuesta definitiva** (18 sep 2026). Los precios están cerrados. Lo
+> que sigue pendiente son los datos del cliente (`docs/05-preguntas-cliente.md`),
+> que mueven la **fecha de arranque**, no el precio.
 
 ## Qué pide el cliente
 
@@ -19,10 +19,14 @@ no se entromete con mi menudeo"*.
 
 | | Esencial | Completo |
 |---|---:|---:|
-| Implementación | **$1,997** | **$3,600** |
-| Mensualidad | **$297** | **$497** |
-| Primer año | $5,561 | $9,564 |
+| Implementación | **$2,899** | **$4,497** |
+| Mensualidad | **$437** | **$637** |
+| Primer año | $8,143 | $12,141 |
 | Entrega | 2 semanas | 3 a 4 semanas |
+
+> El **primer año no aparece en el documento del cliente** — se quitó a propósito
+> para que la cifra anual no opaque la mensualidad. Aquí se conserva porque sostiene
+> la cotización.
 
 El corte: **el Esencial es la atención; el Completo es la operación.** El Completo
 agrega tienda con inventario en vivo, apartado de 24 h, cobro con tarjeta/OXXO/SPEI,
@@ -30,7 +34,9 @@ y guía, recolección y rastreo automáticos vía Envia.com.
 
 > ⚠️ El Esencial resuelve **la atención**, no **la operación**. El cliente dijo que
 > no sobrevender era central; eso sólo lo resuelve el Completo. Se ofrece como
-> rampa de entrada, nunca como equivalente.
+> rampa de entrada, nunca como equivalente. En el documento del cliente **no se
+> argumenta a favor del Esencial**: el bloque bajo la comparativa refuerza el
+> Completo y punto.
 
 ## Documentos
 
@@ -42,7 +48,7 @@ y guía, recolección y rastreo automáticos vía Envia.com.
 | [`docs/03-catalogo-productos.md`](docs/03-catalogo-productos.md) | Los 30 SKUs normalizados — fuente de la Knowledge Base |
 | [`docs/04-precotizacion.md`](docs/04-precotizacion.md) | Los dos paquetes, calculado contra comercial |
 | [`docs/05-preguntas-cliente.md`](docs/05-preguntas-cliente.md) | Lo que falta preguntar |
-| [`propuesta/pre-propuesta-paca.html`](propuesta/pre-propuesta-paca.html) | Pre-propuesta comparativa para enviar al cliente |
+| [`propuesta/propuesta-paca.html`](propuesta/propuesta-paca.html) | Propuesta comparativa para enviar al cliente |
 
 ## Datos de partida
 
@@ -62,6 +68,6 @@ quedaron obsoletas al mudar el stock a GHL.
 
 ## Pendiente en este repo
 
-El logo de 786 Marketing en `propuesta/pre-propuesta-paca.html` es un **wordmark
+El logo de 786 Marketing en `propuesta/propuesta-paca.html` es un **wordmark
 provisional reconstruido en CSS**. El bloque del header trae las instrucciones para
 sustituirlo por el archivo real; la clase `.logo-img` ya está lista.

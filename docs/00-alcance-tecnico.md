@@ -233,7 +233,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 Se ofrecen **dos niveles**, y el corte entre ellos no es arbitrario: **el Esencial
 es todo lo que GHL hace nativo; el Completo agrega lo que necesita piezas externas.**
 
-### Completo — $3,600 setup / $497 al mes · 3 a 4 semanas
+### Completo — $4,497 setup / $637 al mes · 3 a 4 semanas
 
 El sistema que el cliente pidió: bot que atiende y califica, tienda con los 30
 artículos e inventario en vivo, apartado de 24 h con reloj, cobro con tarjeta, OXXO
@@ -243,7 +243,7 @@ sucursal por código postal y escalamiento a humano.
 1 pipeline de 8 etapas · 9 workflows · 1 agente de 19 nodos · 2 integraciones ·
 6 plantillas · catálogo público de 6 secciones · 2 capacitaciones · soporte.
 
-### Esencial — $1,997 setup / $297 al mes · 2 semanas
+### Esencial — $2,899 setup / $437 al mes · 2 semanas
 
 El mismo agente atendiendo todo el día, pero **sin nada de la operación**. El bot
 arma el pedido y **deriva a un asesor**, que confirma disponibilidad y cobra.

@@ -1,10 +1,10 @@
-# Pre-cotización — dos paquetes
+# Cotización — dos paquetes
 
 Calculada con `ghl-cotizador/scripts/ghl_cotizador.py` y la tabla de precios de
 referencia. **Precios en USD.**
 
-> **Esto es una pre-cotización.** El número final puede moverse cuando lleguen los
-> datos de `05-preguntas-cliente.md`.
+> **Precios cerrados el 18 de sep de 2026.** Los datos que faltan en
+> `05-preguntas-cliente.md` mueven la fecha de arranque, no el precio.
 
 ---
 
@@ -12,18 +12,42 @@ referencia. **Precios en USD.**
 
 | | Esencial | Completo |
 |---|---:|---:|
-| **Implementación** (pago único) | **$1,997** | **$3,600** |
-| **Mensualidad** | **$297** | **$497** |
-| Primer año | $5,561 | $9,564 |
-| Desde el año 2 | $3,564 | $5,964 |
+| **Implementación** (pago único) | **$2,899** | **$4,497** |
+| **Mensualidad** | **$437** | **$637** |
+| Primer año | $8,143 | $12,141 |
+| Desde el año 2 | $5,244 | $7,644 |
 | Entrega | 2 semanas | 3 a 4 semanas |
 
-El Completo queda en **1.72×** el Esencial al primer año. Brecha de entrada:
-**$1,603 de setup y $200 al mes**.
+El Completo queda en **1.49×** el Esencial al primer año. Brecha de entrada:
+**$1,598 de setup y $200 al mes**.
+
+**El primer año no va en el documento del cliente.** Se quitó de las tarjetas de
+inversión para que la cifra anual no opaque la mensualidad. Vive aquí.
 
 ---
 
-## Por qué subió el Completo de $3,200 a $3,600
+## Piso, holgura y reparto — NO VA AL CLIENTE
+
+Los precios de arriba son el **precio de venta con holgura** que fijó Brenda. Debajo
+de ellos hay un piso: hasta ahí se puede bajar en una negociación sin tocar el
+margen de nadie.
+
+| | Piso | Venta | Holgura |
+|---|---:|---:|---:|
+| Esencial setup | $2,599 | **$2,899** | $300 |
+| Completo setup | $4,300 | **$4,497** | $197 |
+| Mensualidades | $437 / $637 | $437 / $637 | sin holgura |
+
+Del piso, lo que se lleva **786 Marketing**: $10,000 MXN del setup del Esencial,
+$12,500 MXN del setup del Completo y $2,500 MXN al mes de cada paquete. El resto es
+nuestro.
+
+> Brenda mandó primero una versión con el Completo calculado sobre $3,200 y la
+> corrigió: la base correcta era **$3,600**, que es la que ya traía la propuesta.
+
+---
+
+## Por qué subió el Completo de $3,200 a $3,600 (antes del margen de 786)
 
 La segunda junta y la investigación técnica cambiaron el alcance. El cálculo sube
 poco —de $4,065 a **$4,179**— pero **lo que el cliente ve crecer es mucho más**:
@@ -43,8 +67,9 @@ capturar el número de guía era inevitable. Ya no lo es.
 **El Esencial no se mueve** porque nada de esto le toca: no lleva tienda, ni Envia,
 ni Mercado Pago, ni inventario. Subirlo sería cobrar por algo que no recibe.
 
-**La mensualidad tampoco se mueve.** Subir setup y mensual a la vez es difícil de
-defender, y los $497 ya tienen buen margen sobre los $330 calculados.
+**La mensualidad tampoco se movió en ese momento**, por no subir setup y mensual a
+la vez. Subió después, con el margen de 786 encima: quedó en $637 contra los $330
+calculados.
 
 ---
 
@@ -54,14 +79,14 @@ Los precios de venta son **decisión comercial del equipo**, no salida del cotiz
 
 | Paquete | Calculado | Comercial | Diferencia |
 |---|---|---|---|
-| Esencial | $2,044 / $230 | **$1,997 / $297** | setup −$47 · mensual +$67 |
-| Completo | $4,179 / $330 | **$3,600 / $497** | setup −$579 (−14%) · mensual +$167 (+51%) |
+| Esencial | $2,044 / $230 | **$2,899 / $437** | setup +$855 (+42%) · mensual +$207 (+90%) |
+| Completo | $4,179 / $330 | **$4,497 / $637** | setup +$318 (+8%) · mensual +$307 (+93%) |
 
-> ⚠️ **La estructura del Completo sigue sin ser un descuento.** Contra la estructura
-> original ($4,065 / $330), el primer año pasa de $8,025 a **$9,564** y el año 2 de
-> $3,960 a $5,964. La barrera de entrada baja; el recurrente sube más. Es una
-> decisión legítima, pero **se cobra más, no menos** — que nadie lo presente al
-> cliente como una rebaja.
+> **Se cae la advertencia que vivía aquí.** Las revisiones anteriores marcaban que el
+> Completo se cobraba por debajo del calculado en setup y se compensaba en el
+> recurrente, y pedían no presentarlo como rebaja. Con el margen de 786 encima, el
+> comercial quedó **arriba del calculado en los dos ejes**, en los dos paquetes. Ya
+> no hay nada que aclarar.
 
 ---
 
