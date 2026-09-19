@@ -48,6 +48,8 @@ y guía, recolección y rastreo automáticos vía Envia.com.
 | [`docs/03-catalogo-productos.md`](docs/03-catalogo-productos.md) | Los 30 SKUs normalizados — fuente de la Knowledge Base |
 | [`docs/04-precotizacion.md`](docs/04-precotizacion.md) | Los dos paquetes, calculado contra comercial |
 | [`docs/05-preguntas-cliente.md`](docs/05-preguntas-cliente.md) | Lo que falta preguntar |
+| [`docs/08-traspaso.md`](docs/08-traspaso.md) | **Para quien se incorpora.** Estado, decisiones cerradas y qué sigue |
+| [`docs/09-conversacion.md`](docs/09-conversacion.md) | La conversación completa — cómo se llegó a cada decisión |
 | [`propuesta/propuesta-paca.html`](propuesta/propuesta-paca.html) | Propuesta comparativa para enviar al cliente |
 
 ## Datos de partida
