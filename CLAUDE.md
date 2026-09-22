@@ -6,7 +6,9 @@ Tamaulipas). Lo construye **786 Marketing** sobre GoHighLevel. El **mayoreo qued
 aparte y manual**, textual del cliente: *"mi mayoreo yo lo trabajo aparte, no se
 entromete con mi menudeo"*.
 
-**Si te acabas de incorporar, lee `docs/08-traspaso.md` antes de tocar nada.**
+**Si te acabas de incorporar:** `docs/10-contexto-completo.md` es el proyecto
+entero en una sola lectura, y `docs/08-traspaso.md` es tu tarea concreta. Lee los
+dos antes de tocar nada.
 
 ---
 
@@ -63,7 +65,8 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 
 | Ruta | Qué es |
 |---|---|
-| `docs/08-traspaso.md` | **Empieza aquí.** Estado, decisiones tomadas y lo que sigue |
+| `docs/10-contexto-completo.md` | **Empieza aquí.** Todo el proyecto en una lectura, más cómo montarlo en tu computadora |
+| `docs/08-traspaso.md` | Tu tarea concreta y cómo arrancar la sesión |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué lleva cada paquete |
 | `docs/01-mapa-ghl.md` | Pipeline, workflows, agente de Agent Studio y landing |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |

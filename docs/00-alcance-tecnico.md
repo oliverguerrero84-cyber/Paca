@@ -206,7 +206,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 | El bot de Conversation AI **no envía mensajes desde workflows** | Todo outbound programado va con `Send Message`, nunca por el bot |
 | El webhook de salida de GHL **no espera respuesta** | Todo ida y vuelta con n8n es asíncrono: n8n responde disparando un Inbound Webhook y un segundo workflow continúa |
 | Los campos `Date` de GHL **no guardan hora** | El `expira_en` del apartado se calcula y vive en n8n, no en un campo de GHL |
-| Google Sheets **no tiene transacciones** | El workflow de reserva corre serializado en n8n (concurrencia 1) |
+| Un read-check-write concurrente puede dejar el stock en negativo | El flujo de reserva `N1` corre serializado en n8n (concurrencia 1) |
 | `Wait` usa **días calendario**, no hábiles | Irrelevante aquí: el apartado es de 24 h literales |
 
 ---
@@ -216,7 +216,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 | Decisión | Valor | Origen |
 |---|---|---|
 | Unidad de venta | Paca completa cerrada de 100 lb, de 1 en 1 | Definido con el usuario. No se venden piezas sueltas — obligaría a un inventario por prenda/talla/foto y multiplicaría el proyecto |
-| Motor externo | n8n + Google Sheets | El cliente ya comparte un Excel con el almacén → cero curva de aprendizaje |
+| Motor externo | n8n, contra los productos de GHL | Revisión 5: el stock vive en `availableQuantity` del producto. Una herramienta menos que aprender y una fuente de verdad menos que sincronizar |
 | Mayoreo | **Fuera de alcance**, sigue manual | Textual del cliente |
 | Duración del apartado | 24 h | El cliente pidió 24; nosotros habíamos propuesto 2–3 h |
 | Paquetería | **Paquete Express vía Envia.com**, sólo a ocurre | Confirmado en la segunda junta |
@@ -277,9 +277,9 @@ Números y desgloses en `04-precotizacion.md`.
 | 1 | **Faltan los precios de venta por SKU.** Sin ellos no hay bot ni liga de pago | Pregunta bloqueante #1 — pedirla hoy |
 | 2 | Templates de Meta sin aprobar al go-live | Redactarlos y enviarlos a aprobación en la semana 1 |
 | 3 | Dos clientes apartando la última paca a la vez | n8n serializado; ruta de escape a Supabase documentada |
-| 4 | El cliente edita el Sheet a mano y rompe una fórmula | Pestañas protegidas; sólo `disponible` y `precio` editables |
+| 4 | Los dueños ajustan `availableQuantity` a mano mientras hay apartados vivos | n8n es dueño único del contador; el ajuste manual es para reponer, no para corregir apartados |
 | 5 | Cuenta de Mercado Pago sin verificar → retención de fondos | Ya salió en la llamada; enviarles los requisitos |
-| 6 | 5 de los 30 SKUs no están descritos en ningún transcript (corsé, playera comercial, chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
+| 6 | 6 de los 30 SKUs no están descritos en ningún transcript (2 corsé, playera comercial, 2 chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
 | 7 | **No hay fotos de producto.** La landing y las fichas del bot no se pueden montar sin ellas | Pregunta bloqueante #2. **No están cotizadas**: las produce el cliente |
 | 8 | **El almacén nunca debe ver dinero.** Miguel fue explícito: *"ellos no tienen por qué enterarse"* | El aviso al almacén lleva sólo nombre, cantidad, destino y CP. Regla dura del diseño |
 | 9 | Efectivo en OXXO acredita hasta 72 h después, más que el apartado de 24 h | El apartado se extiende a la vigencia de la referencia de Mercado Pago |

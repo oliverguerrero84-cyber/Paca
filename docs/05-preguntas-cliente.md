@@ -30,7 +30,7 @@ Completo, no el Esencial.** **No están cotizados**: la producción la hace el c
 Qué trae cada paca y para quién es, en texto listo para publicar. Sirve para dos
 cosas: la landing y la Knowledge Base del agente.
 
-Cinco de los treinta **no están descritos en ningún transcript** y el agente no
+Seis de los treinta **no están descritos en ningún transcript** y el agente no
 puede describir lo que no sabe: `CORSE VERANO BOUTIQUE`, `CORSE VERANO PREMIUM`,
 `PLAYERA COMERCIAL`, `CHAMARRA BOUTIQUE`, `CHAMARRA PREMIUM` y `SUÉTER NAVIDEÑO`.
 

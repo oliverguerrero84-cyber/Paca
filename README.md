@@ -44,11 +44,12 @@ y guía, recolección y rastreo automáticos vía Envia.com.
 |---|---|
 | [`docs/00-alcance-tecnico.md`](docs/00-alcance-tecnico.md) | **Empieza aquí.** Qué sí se puede construir, qué no es nativo en GHL y qué lleva cada paquete |
 | [`docs/01-mapa-ghl.md`](docs/01-mapa-ghl.md) | Pipeline, workflows, agente y landing, marcados por paquete |
-| [`docs/02-arquitectura-inventario.md`](docs/02-arquitectura-inventario.md) | Google Sheets + n8n, máquina de estados del apartado, concurrencia |
+| [`docs/02-arquitectura-inventario.md`](docs/02-arquitectura-inventario.md) | Inventario en productos de GHL + n8n, máquina de estados del apartado, concurrencia |
 | [`docs/03-catalogo-productos.md`](docs/03-catalogo-productos.md) | Los 30 SKUs normalizados — fuente de la Knowledge Base |
 | [`docs/04-precotizacion.md`](docs/04-precotizacion.md) | Los dos paquetes, calculado contra comercial |
 | [`docs/05-preguntas-cliente.md`](docs/05-preguntas-cliente.md) | Lo que falta preguntar |
-| [`docs/08-traspaso.md`](docs/08-traspaso.md) | **Para quien se incorpora.** Estado, decisiones cerradas y qué sigue |
+| [`docs/10-contexto-completo.md`](docs/10-contexto-completo.md) | **Para quien se incorpora.** Todo el proyecto en una lectura, más el arranque local |
+| [`docs/08-traspaso.md`](docs/08-traspaso.md) | La tarea pendiente: la liga de pago |
 | [`docs/09-conversacion.md`](docs/09-conversacion.md) | La conversación completa — cómo se llegó a cada decisión |
 | [`propuesta/propuesta-paca.html`](propuesta/propuesta-paca.html) | Propuesta comparativa para enviar al cliente |
 

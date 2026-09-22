@@ -1,7 +1,10 @@
 # Traspaso a Germán — estado del proyecto y qué sigue
 
-> **Lee esto primero.** Resume dónde quedó todo al **19 de septiembre de 2026** y qué
-> falta. El detalle está en los demás documentos de `docs/`, y cada sección apunta al
+> **Esto es tu tarea.** Para el contexto completo del proyecto —el negocio, la
+> arquitectura, las decisiones y cómo trabajarlo desde tu computadora— lee primero
+> `docs/10-contexto-completo.md`.
+>
+> Aquí va dónde quedó todo y qué falta. El detalle está en los demás documentos de `docs/`, y cada sección apunta al
 > que corresponde. El registro de cómo se llegó a cada decisión está en
 > `docs/09-conversacion.md`, que **no es fuente de verdad**: si contradice a un
 > documento, gana el documento.
@@ -148,9 +151,9 @@ cerrarlo antes de enviarlo.
 |---|---|
 | **Precios de venta por SKU** | Sin esto el bot no puede cotizar ni generar liga, en ninguno de los dos paquetes |
 | **Fotos y videos** de los 30 artículos | El catálogo del bot y la landing |
-| **Descripciones** — 5 de 30 no tienen | El bot no puede describir lo que no sabe |
+| **Descripciones** — 6 de 30 no tienen | El bot no puede describir lo que no sabe |
 | **Piezas por paca** | Es de lo que más preguntan los clientes |
-| **Stock inicial** al menudeo | Necesario para el Completo. La plantilla está en `data/plantilla-stock.csv` |
+| **Stock inicial** al menudeo | Necesario para el Completo. Ya se les mandó `entregables/catalogo-menudeo-para-llenar.xlsx` para capturarlo |
 | **Tarifa por volumen** de la paquetería | 500 a 800 envíos al mes. No bloquea el arranque |
 
 Ya se cerraron dos: el **envío va incluido en el precio** y la paquetería es

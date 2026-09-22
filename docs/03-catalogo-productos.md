@@ -82,7 +82,7 @@ varía por paca, nunca con una cifra inventada.
 | Archivo | Uso |
 |---|---|
 | `data/catalogo.csv` | Fuente de la **Knowledge Base** del agente de Agent Studio |
-| `data/plantilla-stock.csv` | Pestaña `STOCK` del Google Sheet — el cliente llena `precio_menudeo_mxn`, `piezas_aprox` y `disponible` |
+| `data/plantilla-stock.csv` | Base de la carga inicial a productos de GHL. El cliente captura precio, piezas y stock en `entregables/catalogo-menudeo-para-llenar.xlsx`, que sale de aquí |
 | `data/plantilla-apartados.csv` | Pestaña `APARTADOS` — la escribe n8n, nadie a mano |
 | `data/plantilla-ordenes.csv` | Pestaña `ORDENES` — la escribe n8n; el almacén sólo toca `guia` vía formulario |
 | `data/plantilla-config.csv` | Pestaña `CONFIG` — parámetros del sistema |
