@@ -129,7 +129,7 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 | Flujo | Entrada | Qué hace |
 |---|---|---|
 | `N1 · Apartar` | Webhook desde GHL | Lee `availableQuantity`; si hay, descuenta 1 y devuelve OK. Si no, devuelve agotado |
-| `N2 · Liberar vencidos` | Cron cada 15 min | Busca apartados vencidos y devuelve el stock con `Update Inventory` |
+| `N2 · Liberar vencidos` | Webhook desde `SP02`, **más** un cron de respaldo cada 15 min | Devuelve el stock con `Update Inventory`. Son dos caminos, no uno — ver abajo |
 | `N3 · Buscar sucursal` | API Call del agente | Código postal → 2-3 sucursales cercanas (ver `06-logistica-envia.md`) |
 | `N4 · Generar guía` | Webhook al confirmarse el pago | Crea la guía en Envia, devuelve PDF y número de rastreo |
 | `N5 · Rastrear` | Cron / webhook de Envia | Actualiza el estatus y dispara el aviso al cliente |
@@ -138,6 +138,28 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 > en el mismo segundo, un read-check-write concurrente puede dejar el stock en
 > negativo. Serializando ese flujo el problema desaparece. Con 30 artículos y el
 > volumen que esperan (500–800 al mes) alcanza de sobra.
+
+### Los dos caminos para liberar, y por qué son dos
+
+**El reloj vive en GHL, no en n8n.** La cadena de `Wait` de `SP02` —12 h, 10 h, 2 h—
+es quien mide, y al vencer le avisa a `N2` cuál apartado soltar. n8n no decide nada:
+ejecuta. Por eso **n8n se queda sin estado**, que es lo que corresponde a un servicio
+que sólo se consulta.
+
+El **cron cada 15 minutos es una barredora**, no el mecanismo principal. Existe para
+un caso concreto: si la cadena de `SP02` se rompe a media ejecución —contacto
+borrado, workflow editado mientras corría, un tropiezo de GHL— ese apartado no se
+libera nunca y esa paca queda muerta en el inventario sin que nadie se entere. Es una
+fuga silenciosa de stock, y el cron es lo único que la atrapa.
+
+Para saber qué barrer, el cron lee **`expira_en`, un campo de texto en GHL** — no un
+`Date`, que descarta la hora. Es el mismo precedente de `fecha_pago`.
+
+> **El riesgo de tener dos caminos: que ambos suelten el mismo apartado y el stock
+> suba +2.** Es el espejo exacto del doble descuento que ya eliminamos. El seguro es
+> `estado_apartado`: soltar **sólo si sigue en `apartado`**, y ponerlo en `vencido` en
+> el mismo paso. Ese check-and-set tiene que pasar por el **mismo flujo serializado de
+> `N1`**, o dos procesos leen `apartado` a la vez y suman los dos.
 
 ---
 
@@ -195,18 +217,22 @@ dirección"*. Y Miguel lo reforzó en la segunda: **el almacén no ve dinero.**
 
 ## 7. Qué hay que validar en la cuenta antes de construir
 
-Regla de oro del playbook: *"se guardó" no es "funciona"*. Tres supuestos de este
-diseño dependen del comportamiento real de GHL y hay que probarlos con una venta de
-prueba antes de dar por bueno el flujo:
+Regla de oro del playbook: *"se guardó" no es "funciona"*. **Cinco** supuestos de este
+diseño dependen del comportamiento real de GHL y hay que probarlos en cuenta antes de
+dar por bueno el flujo. La numeración es la misma que en `docs/11-cronograma.md` y
+`docs/13-accesos.md`, y no se cambia:
 
 1. Que la **API de Invoices / Payment Links cobre con Mercado Pago.** El changelog
    los nombra como soportados, pero hay que verlo cobrar: es el supuesto que
    sostiene todo el diseño.
 2. Que **pagar una liga no descuente stock solo.** Si lo hiciera, vuelve el doble
    descuento y n8n dejaría de ser dueño único del contador.
-3. Que `Payment Received` dispare igual con los tres métodos, incluido el efectivo.
-4. Que el nodo **`API Call` de Agent Studio responda a tiempo**, para que la
-   conversación no se sienta trabada.
+3. Que el nodo **`API Call` de Agent Studio responda a tiempo**, para que la
+   conversación no se sienta trabada. Necesita `N1` vivo, así que va en la semana 2.
+4. Que `Payment Received` dispare igual con los tres métodos, incluido el efectivo.
+5. Que **Agent Studio soporte los nodos que diseñamos** — `API Call`, `Single Choice`,
+   `Capture`. Prueba de humo con tres o cuatro nodos sueltos, en la semana 1: si no
+   puede, no es un ajuste, es rediseñar el carril del agente entero.
 
 **Plan B si falla la prueba 1:** cobrar por el checkout de la tienda y renunciar al
 apartado de 24 h, porque ahí sí chocan. Conviene saberlo antes de prometer el

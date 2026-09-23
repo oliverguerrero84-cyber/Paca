@@ -37,6 +37,14 @@ todo lo demás cuelga de ellas.
 | **0.2** | **Crear la subcuenta de Paca** — pipeline `SP · Menudeo` de 8 etapas, las 4 carpetas de campos custom y los 7 custom values | 786 | Todo lo de GHL: productos, ligas, workflows |
 | **0.3** | **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
+**La instancia de n8n ya tiene dueño.** Corre en la de Germán, prestada al proyecto.
+Eso destraba `0.3` de inmediato y es lo más rápido para arrancar.
+
+Lo que conviene dejar escrito ahora y no en la entrega: **el apartado del cliente va a
+correr sobre una instancia que no es del cliente.** Si algún día hay que moverla, se
+mueve con su negocio encima. Falta definir quién la opera en el día a día y qué pasa
+con ella en el traspaso.
+
 ⚠️ **El PIT de 0.1 se compartió en texto plano por chat** (`docs/12-alta-subcuenta.md`).
 Hay que revocarlo y generar uno nuevo. El token **no quedó en el repo** —ni en el árbol
 ni en el historial—, así que basta con revocarlo en GHL.
@@ -157,11 +165,18 @@ es trabajo manual de principio a fin: los bots de GHL no tienen API.
 Y en orden, una vez que esas piezas existen:
 
 ```
-D1  VALIDACIÓN 3 — el nodo API Call responde a tiempo      786   <- necesita N1 vivo
-D2  Construir los 19 nodos del agente                      786   <- a mano, sin API
-D3  Enganchar el canal de WhatsApp al agente               786
-D4  Subir la Knowledge Base y asociarla                    786
+D1  VALIDACIÓN 5 — Agent Studio soporta los nodos diseñados 786  <- va en la semana 1
+D2  VALIDACIÓN 3 — el nodo API Call responde a tiempo       786  <- necesita N1 vivo
+D3  Construir los 19 nodos del agente                       786  <- a mano, sin API
+D4  Enganchar el canal de WhatsApp al agente                786
+D5  Subir la Knowledge Base y asociarla                     786
 ```
+
+**`D1` no espera a nada y por eso sube a la semana 1.** Es una prueba de humo en
+Korvance: armar tres o cuatro nodos sueltos —un `API Call`, un `Single Choice`, un
+`Capture`— y ver que existan y corran. Todo el diseño conversacional asume que Agent
+Studio puede hacer eso; si no puede, no es un ajuste, es rediseñar el carril entero.
+Descubrirlo en la semana 3, con los 19 nodos a medio armar, es el peor momento.
 
 **La validación 3 pertenece a este carril, no al de cobro.** Comprobar que el nodo
 `API Call` responde a tiempo exige que `N1` ya exista: es una prueba contra un endpoint
@@ -202,7 +217,7 @@ teóricas. Tres se resuelven preguntando en el onboarding; el segundo es nuestro
 | # | Hueco | Bloquea |
 |---|---|---|
 | 1 | **Cómo se obtienen las credenciales de API de Envia**, y si hay ambiente de pruebas | `C3`, y con él `N3`, `N4` y `N5` |
-| 2 | **Dónde corre n8n y con qué cuenta** — sólo aparece como costo de terceros | `0.3`, que es raíz de medio proyecto |
+| 2 | ~~Dónde corre n8n~~ — **resuelto**: la instancia de Germán, prestada. Falta quién la opera y qué pasa en el traspaso | Ya no bloquea `0.3` |
 | 3 | **Qué es Korvance y de quién es** — aparece una sola vez en todo el repo | Saber si las pruebas viven en el lugar correcto |
 | 4 | **Roles y permisos** de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |
 

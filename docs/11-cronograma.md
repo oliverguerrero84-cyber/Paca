@@ -73,6 +73,7 @@ habilita a qué. Esta tabla sigue esa cadena, no al revés.
 | **Validación 1** — la liga cobra con Mercado Pago | 786 | `B3`. Con monto mínimo real, no en papel |
 | **Validación 2** — pagar la liga no descuenta stock solo | 786 | `B4`. Si lo descontara, vuelve el doble descuento |
 | **Validación 4** — `Payment Received` dispara con los tres métodos | 786 | `B5`. Arrancar la de efectivo ya: OXXO tarda hasta 72 h hábiles |
+| **Validación 5** — Agent Studio soporta los nodos diseñados | 786 | `D1`. Prueba de humo en Korvance. Si no puede, se rediseña el carril del agente entero |
 | Arrancar verificación de identidad y fiscal en Mercado Pago | Cliente | `B6`. Ya no bloquea el diseño, pero sí el cobro real |
 | Abrir cuenta de Envia.com y fondearla | Cliente | `C1` y `C2`. Prepago, sin mensualidad ni comisión |
 | Cargar los 30 SKUs con nombre y las 24 descripciones que sí existen | 786 | Precio y stock se llenan después |

@@ -205,7 +205,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 |---|---|
 | El bot de Conversation AI **no envía mensajes desde workflows** | Todo outbound programado va con `Send Message`, nunca por el bot |
 | El webhook de salida de GHL **no espera respuesta** | Todo ida y vuelta con n8n es asíncrono: n8n responde disparando un Inbound Webhook y un segundo workflow continúa |
-| Los campos `Date` de GHL **no guardan hora** | El `expira_en` del apartado se calcula y vive en n8n, no en un campo de GHL |
+| Los campos `Date` de GHL **no guardan hora** | `expira_en` va como campo de **texto**, igual que `fecha_pago`. No vive en n8n: n8n se queda sin estado |
 | Un read-check-write concurrente puede dejar el stock en negativo | El flujo de reserva `N1` corre serializado en n8n (concurrencia 1) |
 | `Wait` usa **días calendario**, no hábiles | Irrelevante aquí: el apartado es de 24 h literales |
 

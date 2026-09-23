@@ -190,7 +190,8 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
 `cantidad_apartada` (número) · `monto_apartado` (número) · `estado_apartado`
-(dropdown: apartado / pagado / vencido / cancelado)
+(dropdown: apartado / pagado / vencido / cancelado) · `expira_en` (texto — **no**
+Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 
 **Carpeta `Pago`:** `mp_preference_id` (texto) · `liga_pago` (texto) ·
 `fecha_pago` (texto — **no** Date: los Date de GHL no guardan hora)
