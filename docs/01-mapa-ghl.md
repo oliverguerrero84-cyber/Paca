@@ -291,6 +291,16 @@ Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 > Los UTM **no se capturan solos** en GHL (`ghl-limitations.md`). `LS01` los lee de
 > la URL del widget y los escribe en estos campos.
 
+**Tipos, como quedaron creados el 24 sep.** Todo es `TEXT` salvo tres:
+`cantidad_apartada` y `monto_apartado` son `NUMERICAL`, y `estado_apartado` es
+`SINGLE_OPTIONS`. **Las cuatro fechas van en `TEXT`, no en `DATE`**: los `DATE` de
+GHL no guardan hora, y eso vale igual para `fecha_envio` y `fecha_primer_contacto`
+que para las dos que ya lo decían.
+
+> `estado_apartado` sí puede ser desplegable porque **lo escriben los workflows, no
+> el bot**. La limitación del toolkit es que los bots no pueden escribir en
+> `SINGLE_OPTIONS`; `SP02` sí.
+
 ## 5. Custom values
 
 `url_n8n_consultar_stock` · `url_n8n_crear_apartado` · `url_n8n_buscar_sucursal` ·

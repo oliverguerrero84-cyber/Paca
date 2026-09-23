@@ -5,6 +5,19 @@
 > **Korvance**, agrupados en la carpeta **«Alta de subcuenta»**
 > (`MZ6vbpBXTkiZRQfNlK6J`), listos para arrastrarlos a un formulario.
 
+## 0. Por qué este formulario vive en Korvance
+
+El proyecto arrancó **sin tener ninguna cuenta** donde alojar al cliente. Se decidió
+alojarlo en la agencia de Germán, y el formulario se armó en **Korvance** porque era
+el único lugar que existía. No fue un error de diseño: era la única forma de arrancar.
+
+Sobre la marcha salió la limitación: **lo que el cliente captura en la cuenta de la
+agencia no se jala solo a su propia subcuenta.** Así que Germán abrió el formulario
+desde Korvance, lo llenó, y con esos datos **creó Greentex Clothing LLC a mano**.
+
+De ahí en adelante todo lo de GHL va directo a Greentex. Este formulario se queda en
+Korvance y sirve para el siguiente cliente.
+
 > ⚠️ **Rotar el PIT.** El token con el que se crearon estos campos se compartió en
 > texto plano por chat. Conviene revocarlo y generar uno nuevo en la subcuenta.
 

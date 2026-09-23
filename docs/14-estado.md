@@ -11,9 +11,9 @@
 
 ## 1. Dónde estamos, en una línea
 
-**El cliente aceptó y pagó el Completo, y su subcuenta ya existe: Greentex Clothing
-LLC.** Está vacía —nada construido dentro todavía— y el arranque real depende de la
-sesión de mapeo y de los datos que falta que ellos manden.
+**El cliente aceptó y pagó el Completo, su subcuenta existe —Greentex Clothing LLC— y
+ya tiene el esqueleto de GHL de pie**: pipeline, campos y custom values. Falta el
+motor —n8n, workflows y el agente— y los datos que el cliente todavía no manda.
 
 ## 2. Hecho
 
@@ -30,6 +30,7 @@ sesión de mapeo y de los datos que falta que ellos manden.
 | Mapa de desarrollo en una página para el equipo | Germán | 23 sep |
 | Condiciones de pago corregidas en la propuesta | 786 | 23 sep |
 | **Subcuenta del cliente creada** — Greentex Clothing LLC, y es donde se trabaja de aquí en adelante | 786 | 24 sep |
+| **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, 19 campos custom en 4 carpetas y los 8 custom values | 786 | 24 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
 > Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
@@ -43,7 +44,6 @@ Son los tres eslabones raíz de `docs/13-accesos.md` §2. Todo lo demás cuelga 
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Se compartió en texto plano por chat | 786 |
-| `0.2b` | **Levantar el esqueleto** dentro de Greentex: pipeline `SP · Menudeo` de 8 etapas, 19 campos custom en 4 carpetas y 8 custom values. Todo especificado en `docs/01-mapa-ghl.md` §1, §4 y §5 | 786 |
 | `0.3` | **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | `A5` | Redactar las 6 plantillas de mensaje | 786 |
@@ -71,6 +71,7 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 
 | Qué | Espera a |
 |---|---|
+| **7 de los 8 custom values están en `PENDIENTE`** — las 5 URLs de n8n, el WhatsApp del almacén y el correo de los dueños | Las URLs, a que n8n exista (`0.3`); las otras dos, a que las mande el cliente |
 | Validaciones 1, 2 y 4 — que la liga cobre, que no descuente stock sola, que `Payment Received` dispare | La subcuenta (`0.2`) |
 | **Validación 3** — que el nodo `API Call` responda a tiempo | Que `N1` exista, o sea la semana 2 |
 | Mandar las 4 plantillas a Meta (`A6`) | La WhatsApp Business Account (`A4`) |
