@@ -408,7 +408,7 @@ el reparto con 786, el total del primer año ni datos de contacto.
 | `docs/07-decision-checkout.md` | Por qué el cobro va por liga y no por la tienda |
 | `docs/09-conversacion.md` | La conversación completa — **no es fuente de verdad** |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
-| `entregables/` | Lo que se le manda al cliente: el Excel del catálogo |
+| `entregables/` | El Excel que se le manda al cliente, y el mapa de desarrollo, que es interno |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |
 
 ---

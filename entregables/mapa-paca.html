@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa de desarrollo — Proyecto Paca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/*
+  Mapa interno de desarrollo — 786 Marketing · Proyecto Paca
+  Mismo checklist que la propuesta:
+  · sin emojis                     · sin transition: all
+  · colores sólo desde :root       · sin {marcadores} sin resolver
+  · prefers-reduced-motion respetado
+  · la marca es 786 Marketing
+  Archivo suelto: se abre en el navegador, sin dependencias salvo la
+  tipografía de Google. Se imprime a PDF con una hoja por sección.
+*/
+:root{
+  --papel:#F7F5F0;
+  --tarjeta:#FFFFFF;
+  --tinta:#1A1A18;
+  --tinta-suave:#4A463E;
+  --gris:#6E6A62;
+  --linea:#DDD8CE;
+  --linea-tenue:#EDE9E1;
+  --hueso:#F5F2EC;
+  --crema:#FDFBF7;
+
+  --oscuro:#1A1A18;
+  --oscuro-2:#2A2823;
+  --oscuro-3:#3A3833;
+  --sobre-oscuro:#F7F5F0;
+  --sobre-oscuro-suave:#A8A49B;
+  --sobre-oscuro-medio:#C9C4B8;
+
+  --meta:#1B4D7A;
+  --meta-fondo:#F2F6F9;
+  --meta-borde:#C3D4E0;
+  --cobro:#9C5424;
+  --cobro-fondo:#FAF2EB;
+  --cobro-borde:#E0C3A8;
+  --envio:#2F6B4F;
+  --envio-fondo:#F1F7F3;
+  --envio-borde:#C2D9CB;
+  --agente:#6B4585;
+  --agente-fondo:#F7F4F9;
+  --paqueteria:#7A6A2E;
+  --paqueteria-fondo:#F7F5EB;
+  --paqueteria-borde:#D6CFA8;
+
+  --alerta:#8C3A1E;
+  --alerta-fondo:#FBF0EC;
+  --alerta-borde:#C08A76;
+  --cliente:#5E3F0D;
+  --cliente-fondo:#F3E5C8;
+
+  --flecha:#9A958B;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.5;
+}
+.hoja{max-width:1440px;margin:0 auto;padding:56px 48px 72px}
+.hoja + .hoja{border-top:1px solid var(--linea)}
+
+h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:700;margin:0;line-height:1.05}
+h1{font-size:clamp(32px,4vw,50px)}
+h2{font-size:22px}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--gris);margin-bottom:8px}
+.cab{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--tinta);padding-bottom:18px;margin-bottom:24px}
+.cab p{margin:0;font-size:15px;color:var(--tinta-suave);max-width:440px}
+.cab .der{text-align:right}
+
+.cod{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;min-width:24px;flex-shrink:0;padding-top:2px}
+.pill{display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--cliente);background:var(--cliente-fondo);padding:3px 7px;border-radius:4px}
+.nota{font-size:12px;color:var(--gris);margin-top:4px;line-height:1.35}
+.nota.fuerte{font-weight:600}
+.fila{display:flex;gap:10px;align-items:flex-start}
+.fila .txt{font-size:13.5px;line-height:1.4}
+.fila .txt strong{font-weight:600}
+
+.raiz{background:var(--oscuro);border-radius:14px;padding:22px 26px;margin-bottom:22px}
+.raiz-cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;margin-bottom:16px}
+.raiz-cab .num{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--sobre-oscuro);background:var(--oscuro-3);padding:4px 10px;border-radius:6px}
+.raiz-cab h2{color:var(--sobre-oscuro);font-size:23px}
+.raiz-cab .sub{font-size:14px;color:var(--sobre-oscuro-suave)}
+.raiz-cajas{display:flex;flex-wrap:wrap;gap:16px}
+.raiz-caja{flex:1 1 240px;background:var(--oscuro-2);border-radius:10px;padding:16px 18px}
+.raiz-caja .cod{color:var(--sobre-oscuro-medio);margin-bottom:7px;padding-top:0}
+.raiz-caja .tit{font-size:15px;font-weight:600;color:var(--sobre-oscuro);line-height:1.35;margin-bottom:5px}
+.raiz-caja .txt{font-size:13px;color:var(--sobre-oscuro-suave);line-height:1.45}
+
+.flecha{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0}
+.flecha span{font-size:13px;color:var(--gris);font-style:italic}
+
+.carriles{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:8px}
+.carril{flex:1 1 320px;background:var(--tarjeta);border:1px solid var(--linea);border-top:5px solid var(--linea);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:13px}
+.carril.a{border-top-color:var(--meta)}
+.carril.b{border-top-color:var(--cobro)}
+.carril.c{border-top-color:var(--envio)}
+.carril-cab{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.letra{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--tarjeta);width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.carril.a .letra{background:var(--meta)}
+.carril.b .letra{background:var(--cobro)}
+.carril.c .letra{background:var(--envio)}
+.carril.a .cod{color:var(--meta)}
+.carril.b .cod{color:var(--cobro)}
+.carril.c .cod{color:var(--envio)}
+.lema{font-size:13px;font-weight:600;line-height:1.4}
+.pasos{display:flex;flex-direction:column;gap:10px}
+.destacar{border-radius:8px;padding:9px 10px;margin:0 -10px}
+.carril.a .destacar{background:var(--meta-fondo)}
+.carril.b .destacar{background:var(--cobro-fondo)}
+.carril.c .destacar{background:var(--envio-fondo)}
+.corte{border-top:1px dashed var(--linea);padding-top:10px;display:flex;flex-direction:column;gap:10px}
+.corte .leyenda{font-size:11.5px;color:var(--gris);font-style:italic}
+.hueco{background:var(--alerta-fondo);border:1px dashed var(--alerta-borde);border-radius:8px;padding:9px 10px;margin:0 -10px}
+.carril.c .hueco .cod{color:var(--alerta)}
+.hueco .nota{color:var(--alerta);font-weight:600}
+
+.convergencia{background:var(--tarjeta);border:1px solid var(--linea);border-left:5px solid var(--agente);border-radius:12px;padding:20px 24px;margin:18px 0}
+.convergencia .interior{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}
+.convergencia .intro{flex:1 1 260px;max-width:300px}
+.convergencia .intro .letra{background:var(--agente)}
+.convergencia .intro p{margin:0;font-size:13.5px;color:var(--tinta-suave);line-height:1.45}
+.convergencia .cajas{flex:3 1 460px;display:flex;flex-wrap:wrap;gap:13px}
+.convergencia .caja{flex:1 1 150px;background:var(--agente-fondo);border-radius:9px;padding:13px 15px}
+.convergencia .caja .cod{color:var(--agente);font-size:11px;margin-bottom:6px;padding-top:0}
+.convergencia .caja .tit{font-size:13.5px;font-weight:600;line-height:1.4}
+
+.cierre{display:flex;flex-wrap:wrap;gap:20px;align-items:stretch}
+.entrega{flex:2 1 420px;background:var(--oscuro);border-radius:12px;padding:18px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:20px}
+.entrega h2{color:var(--sobre-oscuro);font-size:20px}
+.entrega p{margin:0;font-size:13.5px;color:var(--sobre-oscuro-medio);line-height:1.45}
+.sin-dueno{flex:1 1 300px;background:var(--alerta-fondo);border:1px dashed var(--alerta-borde);border-radius:12px;padding:14px 20px}
+.sin-dueno .kicker{color:var(--alerta);margin-bottom:6px}
+.sin-dueno p{margin:0;font-size:12.5px;color:var(--tinta-suave);line-height:1.5}
+
+.leyenda-sist{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px;font-size:12.5px;color:var(--tinta-suave)}
+.leyenda-sist .et{display:inline-flex;align-items:center;gap:6px}
+.leyenda-sist .punto{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.p-agente{background:var(--agente)}
+.p-n8n{background:var(--envio)}
+.p-ghl{background:var(--meta)}
+.p-mp{background:var(--cobro)}
+.p-envia{background:var(--paqueteria)}
+
+.venta{display:flex;flex-wrap:wrap;gap:24px}
+.venta-col{flex:1 1 420px;display:flex;flex-direction:column;gap:10px}
+.paso{display:flex;gap:14px;align-items:stretch}
+.paso .riel{flex-shrink:0;width:30px;display:flex;flex-direction:column;align-items:center}
+.paso .bolita{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--tarjeta);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.paso .linea{flex-grow:1;width:2px;background:var(--linea);margin-top:6px}
+.paso .cuerpo{flex-grow:1;background:var(--tarjeta);border:1px solid var(--linea);border-radius:10px;padding:13px 16px}
+.paso .cuerpo .tit{font-size:14.5px;font-weight:600;line-height:1.35}
+.paso.agente .bolita{background:var(--agente)}
+.paso.n8n .bolita{background:var(--envio)}
+.paso.n8n .cuerpo{background:var(--envio-fondo);border-color:var(--envio-borde)}
+.paso.ghl .bolita{background:var(--meta)}
+.paso.ghl .cuerpo{background:var(--meta-fondo);border-color:var(--meta-borde)}
+.paso.mp .bolita{background:var(--cobro)}
+.paso.mp .cuerpo{background:var(--cobro-fondo);border-color:var(--cobro-borde)}
+.paso.envia .bolita{background:var(--paqueteria)}
+.paso.envia .cuerpo{background:var(--paqueteria-fondo);border-color:var(--paqueteria-borde)}
+.paso.apartado .cuerpo{background:var(--oscuro);border-color:var(--oscuro)}
+.paso.apartado .cuerpo .tit{color:var(--sobre-oscuro)}
+.paso.apartado .cuerpo .nota{color:var(--sobre-oscuro-suave)}
+.paso.regla .cuerpo{background:var(--alerta-fondo);border:2px solid var(--alerta-borde)}
+.paso.regla .nota{color:var(--alerta);font-weight:600}
+
+.trio{display:flex;flex-wrap:wrap;gap:20px;margin-top:22px}
+.trio .bloque{flex:1 1 280px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:18px 22px}
+.trio h2{font-size:18px;margin-bottom:7px}
+.trio p{margin:0;font-size:13px;color:var(--tinta-suave);line-height:1.5}
+
+.semanas{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:22px}
+.semana{flex:1 1 260px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.semana.final{background:var(--oscuro);border-color:var(--oscuro)}
+.semana-cab{border-bottom:1px solid var(--linea-tenue);padding-bottom:12px;display:flex;align-items:baseline;gap:10px}
+.semana.final .semana-cab{border-bottom-color:var(--oscuro-3)}
+.semana-cab .n{font-family:'Fraunces',Georgia,serif;font-size:40px;font-weight:700;line-height:1}
+.semana.final .semana-cab .n{color:var(--sobre-oscuro)}
+.semana-cab .fecha{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--gris)}
+.semana.final .semana-cab .fecha{color:var(--sobre-oscuro-suave)}
+.semana-cab .titulo{font-size:14px;font-weight:600;margin-top:3px}
+.semana.final .semana-cab .titulo{color:var(--sobre-oscuro)}
+.semana ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;flex-grow:1}
+.semana li{font-size:13px;line-height:1.4}
+.semana.final li{color:var(--sobre-oscuro)}
+.semana .cierra{background:var(--hueso);border-radius:8px;padding:11px 13px}
+.semana.final .cierra{background:var(--oscuro-2)}
+.semana .cierra .kicker{font-size:10px;letter-spacing:.07em;margin-bottom:5px}
+.semana.final .cierra .kicker{color:var(--sobre-oscuro-suave)}
+.semana .cierra p{margin:0;font-size:12.5px;color:var(--tinta-suave);line-height:1.45}
+.semana.final .cierra p{color:var(--sobre-oscuro-medio)}
+
+.entregables{background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:20px 24px}
+.entregables .enc{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.entregables .enc .apunte{font-size:13.5px;color:var(--gris)}
+.entregables .rejilla{display:flex;flex-wrap:wrap;gap:14px}
+.entregables .item{flex:1 1 200px;background:var(--crema);border:1px solid var(--linea-tenue);border-radius:9px;padding:13px 15px}
+.entregables .item.critico{background:var(--alerta-fondo);border:2px solid var(--alerta-borde)}
+.entregables .fecha{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--cliente);background:var(--cliente-fondo);display:inline-block;padding:3px 8px;border-radius:4px;margin-bottom:8px}
+.entregables .item.critico .fecha{color:var(--tarjeta);background:var(--alerta)}
+.entregables .item .tit{font-size:13.5px;font-weight:600;line-height:1.4}
+.entregables .item.critico .nota{color:var(--alerta);font-weight:600}
+
+.pie{max-width:1440px;margin:0 auto;padding:0 48px 56px;font-size:12.5px;color:var(--gris);line-height:1.6}
+.pie strong{color:var(--tinta-suave)}
+
+.c-alerta{color:var(--alerta)}
+.c-envio{color:var(--envio)}
+.c-agente{color:var(--agente)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  body{background:var(--tarjeta)}
+  .hoja{break-after:page;padding:24px}
+  .hoja:last-of-type{break-after:auto}
+  .hoja + .hoja{border-top:0}
+}
+</style>
+</head>
+<body>
+
+<section class="hoja">
+  <div class="cab">
+    <div>
+      <div class="kicker">786 MARKETING &middot; PROYECTO PACA &middot; INTERNO</div>
+      <h1>Cadena de dependencias</h1>
+    </div>
+    <p class="der">Nada arranca antes que su dependencia.<br>Los carriles corren en paralelo porque no se estorban.</p>
+  </div>
+
+  <div class="raiz">
+    <div class="raiz-cab">
+      <div class="num">0</div>
+      <h2>Eslab&oacute;n 0 &mdash; la ra&iacute;z</h2>
+      <div class="sub">No depende de nadie. Todo lo dem&aacute;s cuelga de aqu&iacute;.</div>
+    </div>
+    <div class="raiz-cajas">
+      <div class="raiz-caja">
+        <div class="cod">0.1</div>
+        <div class="tit">Rotar el PIT de Korvance</div>
+        <div class="txt">Se compartió en texto plano. Va primero: todo lo demás usa ese token.</div>
+      </div>
+      <div class="raiz-caja">
+        <div class="cod">0.2</div>
+        <div class="tit">Crear la subcuenta de GHL</div>
+        <div class="txt">Pipeline de 8 etapas, campos custom y custom values. Sin ella no hay productos ni ligas.</div>
+      </div>
+      <div class="raiz-caja">
+        <div class="cod">0.3</div>
+        <div class="tit">Levantar la instancia de n8n</div>
+        <div class="txt">Sus URLs van en custom values. Habilita los 5 flujos N1 a N5.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flecha">
+    <svg width="22" height="30" viewBox="0 0 22 30" fill="none" aria-hidden="true"><path d="M11 0 L11 22" stroke="#9A958B" stroke-width="2"></path><path d="M4 21 L11 29 L18 21" stroke="#9A958B" stroke-width="2" fill="none"></path></svg>
+    <span>los tres carriles arrancan aqu&iacute;</span>
+  </div>
+
+  <div class="carriles">
+
+    <div class="carril a">
+      <div>
+        <div class="carril-cab"><div class="letra">A</div><h2>Meta y WhatsApp</h2></div>
+        <div class="lema c-alerta">El m&aacute;s largo. El &uacute;nico plazo que no controlamos.</div>
+      </div>
+      <div class="pasos">
+        <div class="fila"><div class="cod">A1</div><div><div class="txt">Verificar su Meta Business Manager</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila"><div class="cod">A2</div><div><div class="txt">Agregar a 786 como socio del portafolio</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila destacar"><div class="cod">A3</div><div><div class="txt">Confirmar que el n&uacute;mero recibe SMS o voz</div><div class="nota">No espera a nadie. Si es VoIP, hay que conseguir otro.</div></div></div>
+        <div class="fila destacar"><div class="cod">A5</div><div><div class="txt">Redactar las 6 plantillas</div><div class="nota">Tampoco espera: se adelanta.</div></div></div>
+        <div class="fila"><div class="cod">A4</div><div><div class="txt"><strong>Alta del n&uacute;mero &rarr; nace la WABA</strong></div><div class="nota">Necesita A2.</div></div></div>
+        <div class="fila"><div class="cod">A6</div><div><div class="txt"><strong>Mandar las 4 plantillas a Meta</strong></div><div class="nota fuerte c-alerta">Cuello de botella: 24 a 48 h, y puede rechazar.</div></div></div>
+        <div class="fila"><div class="cod">A7</div><div><div class="txt">Aprobadas &rarr; ya sirven en SP02, SP04 y SP05</div></div></div>
+      </div>
+    </div>
+
+    <div class="carril b">
+      <div>
+        <div class="carril-cab"><div class="letra">B</div><h2>Cobro</h2></div>
+        <div class="lema c-envio">Ya no bloquea el dise&ntilde;o: probamos con la cuenta de 786.</div>
+      </div>
+      <div class="pasos">
+        <div class="fila"><div class="cod">B1</div><div><div class="txt">Public Key y Access Token de 786</div></div></div>
+        <div class="fila"><div class="cod">B2</div><div><div class="txt">Conectar en Pagos &rarr; Integraciones</div></div></div>
+        <div class="fila destacar"><div class="cod">B3</div><div><div class="txt"><strong>Validaci&oacute;n 1 &mdash; la liga cobra de verdad</strong></div><div class="nota fuerte c-alerta">El supuesto que sostiene todo el dise&ntilde;o.</div></div></div>
+        <div class="fila destacar"><div class="cod">B4</div><div><div class="txt">Validaci&oacute;n 2 &mdash; pagar no descuenta stock solo</div></div></div>
+        <div class="fila destacar"><div class="cod">B5</div><div><div class="txt">Validaci&oacute;n 4 &mdash; Payment Received, los 3 m&eacute;todos</div><div class="nota">Lanzar la de efectivo ya: OXXO tarda hasta 72 h h&aacute;biles.</div></div></div>
+        <div class="corte">
+          <div class="leyenda">arriba corre en Korvance, d&iacute;a 1</div>
+          <div class="fila"><div class="cod">B6</div><div><div class="txt">Abrir y verificar Mercado Pago</div><span class="pill">CLIENTE</span></div></div>
+          <div class="fila"><div class="cod">B7</div><div><div class="txt">Sus credenciales sustituyen a las nuestras</div><div class="nota">Antes del go-live.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carril c">
+      <div>
+        <div class="carril-cab"><div class="letra">C</div><h2>Env&iacute;os</h2></div>
+        <div class="lema c-envio">Se parte en dos, y ah&iacute; ganamos tiempo.</div>
+      </div>
+      <div class="pasos">
+        <div class="fila"><div class="cod">C1</div><div><div class="txt">Abrir cuenta en Envia.com</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila"><div class="cod">C2</div><div><div class="txt">Fondearla &mdash; prepago, sin mensualidad</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila hueco"><div class="cod">C3</div><div><div class="txt"><strong>Credenciales de API</strong></div><div class="nota">Sin due&ntilde;o. Nadie sabe c&oacute;mo se obtienen.</div></div></div>
+        <div class="fila destacar"><div class="cod">C4</div><div><div class="txt"><strong>N3 &mdash; buscar sucursal por CP</strong></div><div class="nota fuerte c-envio">Consulta de cat&aacute;logo: NO necesita saldo.</div></div></div>
+        <div class="fila"><div class="cod">C5</div><div><div class="txt">N4 generar gu&iacute;a &middot; N5 rastrear</div><div class="nota">S&Iacute; necesitan saldo: esperan a C2.</div></div></div>
+        <div class="fila"><div class="cod">C6</div><div><div class="txt">Pedir tarifas para 500 a 800 gu&iacute;as al mes</div><div class="nota">No bloquea, pero afecta el margen.</div></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="flecha">
+    <svg width="600" height="28" viewBox="0 0 600 28" fill="none" aria-hidden="true"><path d="M40 2 L40 12 L560 12 L560 2" stroke="#9A958B" stroke-width="2"></path><path d="M300 12 L300 20" stroke="#9A958B" stroke-width="2"></path><path d="M293 19 L300 27 L307 19" stroke="#9A958B" stroke-width="2" fill="none"></path></svg>
+  </div>
+
+  <div class="convergencia">
+    <div class="interior">
+      <div class="intro">
+        <div class="carril-cab"><div class="letra">D</div><h2>El agente</h2></div>
+        <p>Aqu&iacute; converge todo. Es el &uacute;nico punto donde los tres carriles se juntan, y es trabajo manual: los bots no tienen API.</p>
+      </div>
+      <div class="cajas">
+        <div class="caja"><div class="cod">D1</div><div class="tit">Validaci&oacute;n 3</div><div class="nota">El nodo API Call responde a tiempo. Necesita N1 vivo.</div></div>
+        <div class="caja"><div class="cod">D2</div><div class="tit">Los 19 nodos</div><div class="nota">A mano, sin API. El bloque m&aacute;s lento.</div></div>
+        <div class="caja"><div class="cod">D3</div><div class="tit">Enganchar WhatsApp</div><div class="nota">Viene de A4.</div></div>
+        <div class="caja"><div class="cod">D4</div><div class="tit">Knowledge Base</div><div class="nota">Subirla y asociarla. Son dos pasos.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cierre">
+    <div class="entrega">
+      <h2>Entrega</h2>
+      <p>Todos los carriles cerrados &middot; plantillas aprobadas (A7) &middot; credenciales del cliente en su lugar (B7) &middot; fotos y videos cargados</p>
+    </div>
+    <div class="sin-dueno">
+      <div class="kicker">SIN DUE&Ntilde;O TODAV&Iacute;A</div>
+      <p>Credenciales de Envia &middot; d&oacute;nde corre n8n &middot; qu&eacute; es Korvance &middot; roles del equipo del cliente</p>
+    </div>
+  </div>
+</section>
+
+<section class="hoja">
+  <div class="cab">
+    <div>
+      <div class="kicker">QU&Eacute; ESTAMOS CONSTRUYENDO</div>
+      <h1>C&oacute;mo corre una venta</h1>
+    </div>
+    <p class="der">La venta vive en la conversaci&oacute;n de WhatsApp.<br>El cliente sale de ah&iacute; una sola vez, para pagar, y regresa solo.</p>
+  </div>
+
+  <div class="leyenda-sist">
+    <span>Qui&eacute;n act&uacute;a:</span>
+    <span class="et"><span class="punto p-agente"></span>Agente</span>
+    <span class="et"><span class="punto p-n8n"></span>n8n</span>
+    <span class="et"><span class="punto p-ghl"></span>GoHighLevel</span>
+    <span class="et"><span class="punto p-mp"></span>Mercado Pago</span>
+    <span class="et"><span class="punto p-envia"></span>Envia</span>
+  </div>
+
+  <div class="venta">
+    <div class="venta-col">
+      <div class="paso agente"><div class="riel"><div class="bolita">1</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Llega un mensaje por WhatsApp</div><div class="nota">Hoy no tienen redes: los leads s&oacute;lo pueden entrar por aqu&iacute;.</div></div></div>
+      <div class="paso agente"><div class="riel"><div class="bolita">2</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">El agente atiende y califica</div><div class="nota">Menudeo o mayoreo. Calidades, tallas, qu&eacute; trae, peso. Manda foto y video.</div></div></div>
+      <div class="paso agente"><div class="riel"><div class="bolita">3</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Captura art&iacute;culo y cantidad</div></div></div>
+      <div class="paso n8n"><div class="riel"><div class="bolita">4</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Pregunta a n8n si hay existencia</div><div class="nota fuerte c-envio">Dentro del mismo turno: el cliente pregunta y le contestan al momento.</div></div></div>
+      <div class="paso agente"><div class="riel"><div class="bolita">5</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Pide el c&oacute;digo postal, 5 d&iacute;gitos</div></div></div>
+      <div class="paso n8n"><div class="riel"><div class="bolita">6</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n devuelve 2 o 3 sucursales cercanas</div><div class="nota">Consulta a tabla contra Envia, nunca IA. Un modelo inventando sucursales es una gu&iacute;a perdida.</div></div></div>
+      <div class="paso agente"><div class="riel"><div class="bolita">7</div></div><div class="cuerpo"><div class="tit">El cliente elige de la lista</div></div></div>
+    </div>
+    <div class="venta-col">
+      <div class="paso n8n apartado"><div class="riel"><div class="bolita">8</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n APARTA: descuenta 1 y arranca el reloj de 24 h</div><div class="nota">Como un boleto de concierto. Serializado: si dos aparecen a la vez, una pierde limpio.</div></div></div>
+      <div class="paso ghl"><div class="riel"><div class="bolita">9</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">GHL crea la liga de pago</div><div class="nota">Liga, no carrito. Mandarlos a un checkout es fricci&oacute;n para este p&uacute;blico.</div></div></div>
+      <div class="paso mp"><div class="riel"><div class="bolita">10</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Paga: tarjeta, OXXO o SPEI</div><div class="nota fuerte c-alerta">Con efectivo el apartado se extiende hasta que vence la referencia: OXXO tarda hasta 72 h h&aacute;biles.</div></div></div>
+      <div class="paso ghl"><div class="riel"><div class="bolita">11</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Pago acreditado &rarr; la venta se confirma sola</div></div></div>
+      <div class="paso envia"><div class="riel"><div class="bolita">12</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n genera la gu&iacute;a y programa la recolecci&oacute;n</div><div class="nota">Paquete Express a ocurre. El env&iacute;o va incluido en el precio.</div></div></div>
+      <div class="paso ghl regla"><div class="riel"><div class="bolita">13</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Al almac&eacute;n le llega la etiqueta lista</div><div class="nota">Nombre, cantidad, destino y CP. NUNCA el monto: regla dura de Miguel.</div></div></div>
+      <div class="paso envia"><div class="riel"><div class="bolita">14</div></div><div class="cuerpo"><div class="tit">n8n rastrea &rarr; &laquo;ya lleg&oacute; a tu sucursal&raquo;</div></div></div>
+    </div>
+  </div>
+
+  <div class="trio">
+    <div class="bloque"><h2>Si no paga</h2><p>Recordatorio a las 12 h, otro a las 22 h, y a las 24 h el stock se libera solo. El pago salta todas las esperas.</p></div>
+    <div class="bloque"><h2>Tres reglas que no se mueven</h2><p>n8n nunca le habla al cliente &middot; n8n nunca toca Mercado Pago &middot; el aviso de que no hay devoluciones va antes de cobrar, nunca despu&eacute;s.</p></div>
+    <div class="bloque"><h2>Fuera de alcance</h2><p>El mayoreo sigue manual y aparte, por decisi&oacute;n del cliente. Tampoco hay devoluciones, reportes ni piezas sueltas.</p></div>
+  </div>
+</section>
+
+<section class="hoja">
+  <div class="cab">
+    <div>
+      <div class="kicker">22 SEP &mdash; 20 OCT 2026</div>
+      <h1>Las cuatro semanas</h1>
+    </div>
+    <p class="der">El contrato cuenta desde la sesi&oacute;n de mapeo, y a&uacute;n no ocurre.<br>Si el onboarding se recorre, la entrega se recorre igual.</p>
+  </div>
+
+  <div class="semanas">
+    <div class="semana">
+      <div class="semana-cab"><div class="n">1</div><div><div class="fecha">22 &ndash; 28 SEP</div><div class="titulo">Accesos y supuestos</div></div></div>
+      <ul>
+        <li>Reuni&oacute;n de onboarding</li>
+        <li>Eslab&oacute;n 0: PIT, subcuenta, n8n</li>
+        <li>Alta del n&uacute;mero y la WABA</li>
+        <li class="c-alerta"><strong>Las 4 plantillas a Meta</strong></li>
+        <li>Validaciones 1, 2 y 4</li>
+        <li>Cargar los 30 SKUs</li>
+      </ul>
+      <div class="cierra"><div class="kicker">CIERRA CON</div><p>Subcuenta y n8n de pie, plantillas en cola, supuestos respondidos.</p></div>
+    </div>
+
+    <div class="semana">
+      <div class="semana-cab"><div class="n">2</div><div><div class="fecha">29 SEP &ndash; 5 OCT</div><div class="titulo">El motor</div></div></div>
+      <ul>
+        <li>N1 apartar &middot; N2 liberar vencidos</li>
+        <li>Validaci&oacute;n 3 &mdash; el nodo API Call</li>
+        <li>SP02 apartado de 24 h &mdash; 16 nodos</li>
+        <li>SP03 liga de pago &middot; SP04 pago confirmado</li>
+        <li>Prueba de concurrencia</li>
+        <li>Cargar precios y stock inicial</li>
+      </ul>
+      <div class="cierra"><div class="kicker">CIERRA CON</div><p>Se puede apartar una paca y cobrarla. Dos clientes a la vez: uno pierde limpio.</p></div>
+    </div>
+
+    <div class="semana">
+      <div class="semana-cab"><div class="n">3</div><div><div class="fecha">6 &ndash; 12 OCT</div><div class="titulo">Conversaci&oacute;n y log&iacute;stica</div></div></div>
+      <ul>
+        <li class="c-agente"><strong>El agente: 19 nodos, a mano</strong></li>
+        <li>Knowledge Base: subir y asociar</li>
+        <li>LS01 &middot; SP01 &middot; AP02 &mdash; 26 nodos</li>
+        <li>N3 sucursal &middot; N4 gu&iacute;a &middot; N5 rastreo</li>
+        <li>SP05 despacho &middot; AP01 rastreo</li>
+        <li>Enganchar WhatsApp &middot; fotos y videos</li>
+      </ul>
+      <div class="cierra"><div class="kicker">CIERRA CON</div><p>El bot conversa, aparta, cobra y despacha. Todas las piezas existen.</p></div>
+    </div>
+
+    <div class="semana final">
+      <div class="semana-cab"><div class="n">4</div><div><div class="fecha">13 &ndash; 20 OCT</div><div class="titulo">Punta a punta y entrega</div></div></div>
+      <ul>
+        <li>3 pedidos de prueba: tarjeta, OXXO, SPEI</li>
+        <li>El apartado se extiende con efectivo</li>
+        <li>El almac&eacute;n no ve el monto</li>
+        <li>AP03 pagos manuales &mdash; el &uacute;ltimo</li>
+        <li>Capacitaci&oacute;n a Pamela, Miguel y Mauricio</li>
+      </ul>
+      <div class="cierra"><div class="kicker">SEMANA SIN NADA NUEVO</div><p>Es a prop&oacute;sito: GHL guarda nodos mal formados que luego no ejecutan, sin dar error.</p></div>
+    </div>
+  </div>
+
+  <div class="entregables">
+    <div class="enc">
+      <h2>Lo que tiene que llegar del cliente</h2>
+      <div class="apunte">Nada de esto mueve el precio. Todo mueve la fecha.</div>
+    </div>
+    <div class="rejilla">
+      <div class="item"><div class="fecha">29 SEP</div><div class="tit">Meta Business Manager verificado</div><div class="nota">Sin BM no hay WABA, y sin WABA no salen las plantillas.</div></div>
+      <div class="item"><div class="fecha">29 SEP</div><div class="tit">Verificaci&oacute;n de Mercado Pago iniciada</div><div class="nota">Sin ella retiene fondos al go-live.</div></div>
+      <div class="item critico"><div class="fecha">5 OCT</div><div class="tit">El Excel: precios, piezas y stock</div><div class="nota">Despu&eacute;s de esta fecha, la entrega del 20 se mueve.</div></div>
+      <div class="item"><div class="fecha">5 OCT</div><div class="tit">Envia.com con saldo, y 6 descripciones</div><div class="nota">Sin saldo, N4 no genera gu&iacute;as.</div></div>
+      <div class="item"><div class="fecha">12 OCT</div><div class="tit">Fotos y videos de los 30 art&iacute;culos</div><div class="nota">El cat&aacute;logo del bot llega vac&iacute;o sin ellos.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="pie">
+  <p><strong>C&oacute;mo leerlo.</strong> La primera hoja dice en qu&eacute; orden se dan de alta las cosas, la segunda qu&eacute; estamos construyendo, la tercera cu&aacute;ndo. Si la primera y la tercera se contradicen, gana la primera: las fechas se mueven, el orden no. El detalle vive en <strong>docs/13-accesos.md</strong> y <strong>docs/11-cronograma.md</strong>.</p>
+  <p>Documento interno de 786 Marketing. No se comparte con el cliente.</p>
+</footer>
+
+</body>
+</html>

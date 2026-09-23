@@ -79,6 +79,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 | `docs/07-decision-checkout.md` | Por qué el cobro va por liga y no por la tienda |
 | `docs/09-conversacion.md` | Cómo se llegó a cada decisión — **no es fuente de verdad** |
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
+| `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |
