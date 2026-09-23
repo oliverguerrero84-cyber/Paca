@@ -54,25 +54,35 @@ Hay que saberlo antes de prometerlo en la reunión de onboarding, no después.
 
 ## 3. Semana 1 · 22 – 28 sep — Onboarding, accesos y supuestos
 
+**El orden importa y está en `docs/13-accesos.md`.** Aquí van las fechas; allá va qué
+habilita a qué. Esta tabla sigue esa cadena, no al revés.
+
 | Qué | Quién | Nota |
 |---|---|---|
 | **Reunión de onboarding (mapeo)** | 786 + cliente | Es la compuerta. Todo lo demás cuelga de aquí |
 | Salir de la reunión con fecha comprometida del Excel | 786 | `entregables/catalogo-menudeo-para-llenar.xlsx` ya está en sus manos |
-| ~~Definir el número de WhatsApp del bot~~ | — | **Resuelto: +1 (956) 820-2011**, nuevo y sin usar |
-| **Dar de alta el número en Meta y crear la WhatsApp Business Account** | 786 | Sin WABA no hay dónde mandar las plantillas. Va antes que ellas |
-| Confirmar que el número recibe SMS o llamada de voz | 786 | Meta manda ahí el código. Si es VoIP, el alta puede fallar |
-| Verificar el Meta Business Manager | Cliente | La otra mitad de la pregunta 11, sigue abierta |
-| Arrancar verificación de identidad y fiscal en Mercado Pago | Cliente | Sin esto retiene fondos. Tarda, por eso va en la semana 1 |
-| Abrir cuenta de Envia.com y fondearla | Cliente | Prepago, sin mensualidad ni comisión |
-| Redactar las 6 plantillas y **mandar las 4 a Meta** | 786 | Cuello de botella largo |
-| **Validación 1** — la liga cobra con Mercado Pago | 786 | Con monto mínimo real, no en papel |
-| **Validación 2** — pagar la liga no descuenta stock solo | 786 | Si lo descontara, vuelve el doble descuento |
-| **Validación 3** — el nodo `API Call` responde a tiempo | 786 | Si tarda, la conversación se siente trabada |
-| Subcuenta de GHL, pipeline `SP · Menudeo` de 8 etapas, campos custom | 786 | No necesita nada del cliente |
+| **Rotar el PIT de Korvance** | 786 | Eslabón `0.1`. Se compartió en texto plano por chat |
+| **Crear la subcuenta**, pipeline `SP · Menudeo` de 8 etapas, campos custom y custom values | 786 | Eslabón `0.2`. **Es la raíz**: sin ella no hay productos, ligas ni workflows |
+| **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 | Eslabón `0.3`. Habilita los 5 flujos y la validación 3 |
+| Verificar el Meta Business Manager y agregar a 786 como socio | Cliente | `A1` y `A2`. Es el primer bloqueante del carril más largo |
+| Confirmar que el número recibe SMS o llamada de voz | 786 | `A3`. No espera a nadie, y si es VoIP hay que conseguir otro número |
+| Redactar las 6 plantillas | 786 | `A5`. Tampoco espera a nadie: se adelanta |
+| **Dar de alta el número en Meta y crear la WhatsApp Business Account** | 786 | `A4`. Necesita `A2` |
+| **Mandar las 4 plantillas a Meta** | 786 | `A6`. Necesita `A4`. Cuello de botella: 24 a 48 h y puede rechazar |
+| Conectar Mercado Pago con las credenciales de 786 | 786 | `B1` y `B2`. En Korvance, sin esperar al cliente |
+| **Validación 1** — la liga cobra con Mercado Pago | 786 | `B3`. Con monto mínimo real, no en papel |
+| **Validación 2** — pagar la liga no descuenta stock solo | 786 | `B4`. Si lo descontara, vuelve el doble descuento |
+| **Validación 4** — `Payment Received` dispara con los tres métodos | 786 | `B5`. Arrancar la de efectivo ya: OXXO tarda hasta 72 h hábiles |
+| Arrancar verificación de identidad y fiscal en Mercado Pago | Cliente | `B6`. Ya no bloquea el diseño, pero sí el cobro real |
+| Abrir cuenta de Envia.com y fondearla | Cliente | `C1` y `C2`. Prepago, sin mensualidad ni comisión |
 | Cargar los 30 SKUs con nombre y las 24 descripciones que sí existen | 786 | Precio y stock se llenan después |
 
-**Cierre de la semana:** los 3 supuestos respondidos con sí o no, las plantillas en
-cola de Meta y el esqueleto de GHL de pie.
+**Cierre de la semana:** la subcuenta y n8n de pie, las plantillas en cola de Meta, y
+las validaciones 1, 2 y 4 respondidas con sí o no.
+
+> **La validación 3 se movió a la semana 2.** Mide cuánto tarda el nodo `API Call` en
+> recibir respuesta de `N1`, y `N1` no existe hasta la semana 2. Probarla antes es
+> medir contra nada.
 
 ---
 
@@ -84,12 +94,13 @@ más."*
 | Qué | Nota |
 |---|---|
 | `N1` apartar — serializado, concurrencia 1 | El que evita que dos clientes aparten la última paca |
+| **Validación 3** — el nodo `API Call` responde a tiempo | Va aquí y no en la semana 1: necesita `N1` vivo para medir contra algo |
 | `N2` liberar vencidos — cron cada 15 min | El reloj que suelta lo que no se pagó |
 | `SP02` apartado de 24 h, recordatorios y liberación | 16 nodos. El más grande de los 9 |
 | `SP03` crea la liga de pago por la API de Invoices | 12 nodos |
 | `SP04` pago confirmado → número de orden | Goal Event `Payment Received` |
 | **Prueba de concurrencia** | Dos apartados simultáneos de la última paca. Una tiene que perder limpio |
-| **Arrancar la prueba de OXXO** | Hasta 72 h hábiles en acreditar. Si se lanza el jueves, el resultado llega la otra semana |
+| Recoger el resultado de la prueba de OXXO | Se lanzó en la semana 1 con la validación 4. Acredita en hasta 72 h hábiles |
 | Cargar precios, piezas y stock inicial | **Sólo si ya llegó el Excel** |
 
 **El Excel bloquea el contenido, no la plomería.** Los 9 workflows, los 5 flujos de

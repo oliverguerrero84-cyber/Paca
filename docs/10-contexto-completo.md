@@ -397,6 +397,7 @@ el reparto con 786, el total del primer año ni datos de contacto.
 | `docs/08-traspaso.md` | **Tu tarea concreta** y cómo arrancar |
 | `docs/10-contexto-completo.md` | Este documento |
 | `docs/11-cronograma.md` | El cronograma de las 4 semanas — **interno** |
+| `docs/13-accesos.md` | La cadena de altas y accesos, ordenada por dependencias — **interno** |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué no es nativo en GHL |
 | `docs/01-mapa-ghl.md` | Pipeline, workflows, los 19 nodos del agente, plantillas |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |

@@ -67,6 +67,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 |---|---|
 | `docs/10-contexto-completo.md` | **Empieza aquí.** Todo el proyecto en una lectura, más cómo montarlo en tu computadora |
 | `docs/11-cronograma.md` | Las 4 semanas al go-live, con fechas y puntos de no retorno — **interno** |
+| `docs/13-accesos.md` | **El orden de las altas.** Qué habilita a qué, y quién lo hace — **interno** |
 | `docs/08-traspaso.md` | Tu tarea concreta y cómo arrancar la sesión |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué lleva cada paquete |
 | `docs/01-mapa-ghl.md` | Pipeline, workflows, agente de Agent Studio y landing |
