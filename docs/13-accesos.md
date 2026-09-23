@@ -52,6 +52,11 @@ ni en el historial—, así que basta con revocarlo en GHL.
 Los 23 campos de alta ya existen en Korvance y el script para replicarlos es
 idempotente, así que 0.2 no arranca de cero.
 
+> **Korvance es la cuenta de trabajo de Germán**, no de la agencia: es un ambiente
+> de pruebas. O sea que esos 23 campos **no están donde van a vivir**. Al crear la
+> subcuenta de Paca hay que replicarlos ahí corriendo
+> `scripts/crear-campos-alta-subcuenta.py` contra la cuenta nueva.
+
 ---
 
 ## 3. Carril A — Meta y WhatsApp
@@ -218,7 +223,7 @@ teóricas. Tres se resuelven preguntando en el onboarding; el segundo es nuestro
 |---|---|---|
 | 1 | **Cómo se obtienen las credenciales de API de Envia**, y si hay ambiente de pruebas | `C3`, y con él `N3`, `N4` y `N5` |
 | 2 | ~~Dónde corre n8n~~ — **resuelto**: la instancia de Germán, prestada. Falta quién la opera y qué pasa en el traspaso | Ya no bloquea `0.3` |
-| 3 | **Qué es Korvance y de quién es** — aparece una sola vez en todo el repo | Saber si las pruebas viven en el lugar correcto |
+| ~~3~~ | ~~**Qué es Korvance y de quién es**~~ — **RESUELTO el 23 sep**: es la cuenta de trabajo de Germán, un ambiente de pruebas | — |
 | 4 | **Roles y permisos** de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |
 
 ---

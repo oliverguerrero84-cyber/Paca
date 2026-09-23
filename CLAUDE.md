@@ -7,8 +7,8 @@ aparte y manual**, textual del cliente: *"mi mayoreo yo lo trabajo aparte, no se
 entromete con mi menudeo"*.
 
 **Si te acabas de incorporar:** `docs/10-contexto-completo.md` es el proyecto
-entero en una sola lectura, y `docs/08-traspaso.md` es tu tarea concreta. Lee los
-dos antes de tocar nada.
+entero en una sola lectura y `docs/14-estado.md` dice en qué va hoy. Lee los dos
+antes de tocar nada.
 
 ---
 
@@ -65,6 +65,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 
 | Ruta | Qué es |
 |---|---|
+| `docs/14-estado.md` | **En qué va todo hoy** — hecho, en curso, bloqueado y por quién |
 | `docs/10-contexto-completo.md` | **Empieza aquí.** Todo el proyecto en una lectura, más cómo montarlo en tu computadora |
 | `docs/11-cronograma.md` | Las 4 semanas al go-live, con fechas y puntos de no retorno — **interno** |
 | `docs/13-accesos.md` | **El orden de las altas.** Qué habilita a qué, y quién lo hace — **interno** |

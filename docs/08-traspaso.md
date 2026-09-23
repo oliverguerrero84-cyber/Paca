@@ -13,51 +13,35 @@
 
 ## 1. Dónde quedó
 
-La propuesta está **cerrada y lista para enviar** al cliente, salvo dos cosas: el
-logo y las condiciones de pago (§2).
+**El estado vive en `docs/14-estado.md`**, que se actualiza conforme avanza el
+proyecto. Este documento ya no lo lleva: quedó congelado en el día del traspaso y
+citarlo como estado fue justo lo que llevó a afirmar que no se había tocado la cuenta
+de GoHighLevel cuando ya había 23 campos creados.
 
-| | |
-|---|---|
-| Documento del cliente | `propuesta/propuesta-paca.html` — revisión 7 |
-| Último commit | `ef5cad6` en `claude/cool-dirac-4sht9y` |
-| Precios | Esencial **$2,899 / $437** · Completo **$4,497 / $637** |
-| Arquitectura | Decidida y documentada. No hay nada construido en GHL todavía |
-| Cliente | Pamela, Miguel y Mauricio Hernández — McAllen TX, almacén en Nuevo Laredo |
-
-Lo que **no** está hecho: no se ha tocado la cuenta de GoHighLevel. Todo lo que hay
-es alcance, arquitectura y la propuesta. La implementación arranca cuando el cliente
-acepte.
+Lo que no cambia: el cliente es Pamela, Miguel y Mauricio Hernández — McAllen TX,
+almacén en Nuevo Laredo — y contrató el **Completo, $4,497 de implementación y $637
+al mes**.
 
 ---
 
 ## 2. Tu tarea — la liga de pago
 
 Hay que **generar la liga con la que el cliente paga e incrustarla en la propuesta**.
-Y antes de eso, corregir algo que quedó desfasado.
+### Las condiciones de pago — ya corregidas
 
-### Las condiciones de pago cambiaron y el HTML todavía no lo sabe
+Se corrigieron el 23 de sep (revisión 8). La página ya dice lo que de verdad se cobra:
+**la implementación completa al arrancar, y la mensualidad un mes después de
+entregado.** No hay que volver a tocar esas líneas; se dejan aquí por si hay que
+ubicarlas:
 
-Esto se definió después de cerrar la revisión 7, así que la página sigue diciendo lo
-viejo:
-
-| | Lo que dice la página hoy | Lo que se va a cobrar |
-|---|---|---|
-| Implementación | dos pagos, mitad al arrancar y mitad a la entrega | **pago completo**, una sola liga |
-| Mensualidad | no dice cuándo empieza | **segunda liga**, con **un mes de gracia después de entregado** |
-
-**Si incrustas la liga sin corregir el texto, la página pide la mitad y la liga cobra
-el total.** Los tres lugares exactos:
-
-| Línea | Qué dice |
+| Línea | Qué dice ahora |
 |---|---|
-| `propuesta/propuesta-paca.html:1079` | `dos pagos de USD 1,449.50` — tarjeta del Esencial |
-| `propuesta/propuesta-paca.html:1092` | `dos pagos de USD 2,248.50` — tarjeta del Completo |
-| `propuesta/propuesta-paca.html:1172` | `anticipo del 50 %… el saldo contra entrega` — bloque «Cómo se formaliza» |
+| `propuesta-paca.html:1079` · `.split-box` | El primer mes de operación va sin costo — tarjeta del Esencial |
+| `propuesta-paca.html:1092` · `.split-box` | Lo mismo — tarjeta del Completo |
+| `propuesta-paca.html:1171` · `.pending-note` | «Cómo se formaliza»: se cubre la implementación y la mensualidad arranca un mes después de la entrega |
 
-Los dos primeros son cajas `.split-box`; el tercero es un `.pending-note`. Las clases
-ya existen, así que se puede reescribir el texto sin tocar el CSS. Ojo con el
-checklist del `CLAUDE.md` si agregas un botón: los colores salen de `:root` y no se
-usan emojis.
+**Ojo con el checklist del `CLAUDE.md` si agregas un botón de pago**: los colores salen
+de `:root`, no se usan emojis, y el responsivo se mide en Chromium, no se supone.
 
 ### Cómo generar la liga
 

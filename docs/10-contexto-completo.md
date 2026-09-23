@@ -70,9 +70,8 @@ El paquete **Completo**, pagado y arrancando.
 | Mensualidad | **USD 637**, con **un mes de gracia después de entregado** |
 | Entrega | 3 a 4 semanas desde la sesión de mapeo |
 
-> ⚠️ **La propuesta HTML todavía dice "dos pagos" y "anticipo del 50 %".** Las
-> condiciones cambiaron después de cerrarla. Hay que corregir esas tres líneas antes
-> de incrustar la liga de pago — está detallado en `docs/08-traspaso.md` §2.
+> **El mes de gracia es real y se le vende como beneficio:** el primer mes de
+> operación va sin costo. La propuesta ya lo dice así desde la revisión 8.
 
 **Qué cubre la mensualidad:** soporte, el agente de IA activo, monitoreo, ajustes al
 bot conforme se aprende qué pregunta la gente, los cambios de catálogo entre
@@ -398,6 +397,7 @@ el reparto con 786, el total del primer año ni datos de contacto.
 | `docs/10-contexto-completo.md` | Este documento |
 | `docs/11-cronograma.md` | El cronograma de las 4 semanas — **interno** |
 | `docs/13-accesos.md` | La cadena de altas y accesos, ordenada por dependencias — **interno** |
+| `docs/14-estado.md` | **En qué va todo hoy** — hecho, en curso y bloqueado |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué no es nativo en GHL |
 | `docs/01-mapa-ghl.md` | Pipeline, workflows, los 19 nodos del agente, plantillas |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |
