@@ -1,0 +1,5 @@
+# Renders: la fuente es entregables/mapa-paca.html
+*.pdf
+
+# Basura de herramientas
+excalidraw.log
