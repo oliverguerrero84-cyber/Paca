@@ -11,9 +11,9 @@
 
 ## 1. Dónde estamos, en una línea
 
-**El cliente aceptó y pagó el Completo. Nada está construido todavía en GoHighLevel**
-—salvo los campos del formulario de alta, que viven en una cuenta de pruebas— y el
-arranque real depende de la sesión de mapeo y de los datos que falta que ellos manden.
+**El cliente aceptó y pagó el Completo, y su subcuenta ya existe: Greentex Clothing
+LLC.** Está vacía —nada construido dentro todavía— y el arranque real depende de la
+sesión de mapeo y de los datos que falta que ellos manden.
 
 ## 2. Hecho
 
@@ -29,11 +29,12 @@ arranque real depende de la sesión de mapeo y de los datos que falta que ellos 
 | **La cadena de altas y accesos**, ordenada por dependencias | Germán | 23 sep |
 | Mapa de desarrollo en una página para el equipo | Germán | 23 sep |
 | Condiciones de pago corregidas en la propuesta | 786 | 23 sep |
+| **Subcuenta del cliente creada** — Greentex Clothing LLC, y es donde se trabaja de aquí en adelante | 786 | 24 sep |
 
-> Los 23 campos están en **Korvance, que es la cuenta de trabajo de Germán** — un
-> ambiente de pruebas. Cuando se cree la subcuenta de Paca hay que replicarlos ahí
-> corriendo `scripts/crear-campos-alta-subcuenta.py` contra la cuenta nueva. Es
-> idempotente y está hecho justo para eso.
+> Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
+> Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
+> cliente, y ya cumplieron. **No se copian a Greentex.** El script sirve para el
+> siguiente cliente.
 
 ## 3. Lo siguiente, y nada de esto espera a nadie
 
@@ -42,7 +43,7 @@ Son los tres eslabones raíz de `docs/13-accesos.md` §2. Todo lo demás cuelga 
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Se compartió en texto plano por chat | 786 |
-| `0.2` | **Crear la subcuenta de Paca**: pipeline de 8 etapas, campos y custom values | 786 |
+| `0.2b` | **Levantar el esqueleto** dentro de Greentex: pipeline `SP · Menudeo` de 8 etapas, 19 campos custom en 4 carpetas y 8 custom values. Todo especificado en `docs/01-mapa-ghl.md` §1, §4 y §5 | 786 |
 | `0.3` | **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | `A5` | Redactar las 6 plantillas de mensaje | 786 |

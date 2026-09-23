@@ -69,11 +69,11 @@ habilita a qué. Esta tabla sigue esa cadena, no al revés.
 | Redactar las 6 plantillas | 786 | `A5`. Tampoco espera a nadie: se adelanta |
 | **Dar de alta el número en Meta y crear la WhatsApp Business Account** | 786 | `A4`. Necesita `A2` |
 | **Mandar las 4 plantillas a Meta** | 786 | `A6`. Necesita `A4`. Cuello de botella: 24 a 48 h y puede rechazar |
-| Conectar Mercado Pago con las credenciales de 786 | 786 | `B1` y `B2`. En Korvance, sin esperar al cliente |
+| Conectar Mercado Pago con las credenciales de 786 | 786 | `B1` y `B2`. En Greentex, sin esperar al cliente |
 | **Validación 1** — la liga cobra con Mercado Pago | 786 | `B3`. Con monto mínimo real, no en papel |
 | **Validación 2** — pagar la liga no descuenta stock solo | 786 | `B4`. Si lo descontara, vuelve el doble descuento |
 | **Validación 4** — `Payment Received` dispara con los tres métodos | 786 | `B5`. Arrancar la de efectivo ya: OXXO tarda hasta 72 h hábiles |
-| **Validación 5** — Agent Studio soporta los nodos diseñados | 786 | `D1`. Prueba de humo en Korvance. Si no puede, se rediseña el carril del agente entero |
+| **Validación 5** — Agent Studio soporta los nodos diseñados | 786 | `D1`. Prueba de humo en Greentex. Si no puede, se rediseña el carril del agente entero |
 | Arrancar verificación de identidad y fiscal en Mercado Pago | Cliente | `B6`. Ya no bloquea el diseño, pero sí el cobro real |
 | Abrir cuenta de Envia.com y fondearla | Cliente | `C1` y `C2`. Prepago, sin mensualidad ni comisión |
 | Cargar los 30 SKUs con nombre y las 24 descripciones que sí existen | 786 | Precio y stock se llenan después |

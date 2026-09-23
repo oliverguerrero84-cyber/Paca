@@ -19,6 +19,23 @@ antes de tocar nada.
 Se trabaja y se empuja a **`claude/cool-dirac-4sht9y`**. Nunca a otra sin permiso
 explícito.
 
+### La cuenta de GoHighLevel
+
+Todo lo que se construya va a la subcuenta del cliente:
+
+| | |
+|---|---|
+| Subcuenta | **Greentex Clothing LLC** — McAllen, Texas |
+| `GHL_LOCATION_ID` | `c9jj5uu1WZOIkwi6Vfj5` |
+| Zona horaria | `America/Chicago` |
+
+El id no es un secreto —GHL lo muestra en la URL y sin token no sirve de nada— y cada
+corrida del CLI lo necesita. **El token sí lo es**: va en `GHL_API_KEY`, se lee del
+entorno y nunca se escribe a un archivo.
+
+**Korvance ya no es la cuenta de trabajo.** Fue el ambiente donde se armó el
+formulario de alta y ahí se queda; nada nuevo va ahí.
+
 ### Precios cerrados (18 sep 2026)
 
 | | Esencial | Completo |

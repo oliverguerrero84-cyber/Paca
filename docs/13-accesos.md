@@ -27,14 +27,16 @@ Dentro de cada carril, los eslabones van numerados y **cada uno espera al anteri
 
 ## 2. Eslabón 0 — la raíz, antes que todo lo demás
 
-Hoy no hay nada construido: `docs/08-traspaso.md` §1 dice que **no se ha tocado la
-cuenta de GoHighLevel**. Estas tres cosas son de 786, ninguna depende del cliente, y
-todo lo demás cuelga de ellas.
+La subcuenta ya existe y está **vacía**: cero campos, custom values, etiquetas,
+pipelines y productos, verificado el 24 de sep. Lo demás de este eslón sigue en pie.
+Todo esto es de 786, ninguna depende del cliente, y el resto del proyecto cuelga de
+ello.
 
 | # | Qué | Quién | Qué desbloquea |
 |---|---|---|---|
 | **0.1** | **Rotar el PIT de Korvance** | 786 | Va primero por higiene: todo lo demás usa ese token |
-| **0.2** | **Crear la subcuenta de Paca** — pipeline `SP · Menudeo` de 8 etapas, las 4 carpetas de campos custom y los 7 custom values | 786 | Todo lo de GHL: productos, ligas, workflows |
+| ~~**0.2a**~~ | ~~**Crear la subcuenta**~~ — **HECHA el 24 sep**: **Greentex Clothing LLC** (`c9jj5uu1WZOIkwi6Vfj5`) — McAllen, Texas, zona horaria `America/Chicago` | 786 | — |
+| **0.2b** | **Levantar el esqueleto dentro**: pipeline `SP · Menudeo` de 8 etapas, las 4 carpetas con sus 19 campos custom y los 8 custom values | 786 | Todo lo de GHL: productos, ligas, workflows |
 | **0.3** | **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
 **La instancia de n8n ya tiene dueño.** Corre en la de Germán, prestada al proyecto.
@@ -49,13 +51,16 @@ con ella en el traspaso.
 Hay que revocarlo y generar uno nuevo. El token **no quedó en el repo** —ni en el árbol
 ni en el historial—, así que basta con revocarlo en GHL.
 
-Los 23 campos de alta ya existen en Korvance y el script para replicarlos es
-idempotente, así que 0.2 no arranca de cero.
+Los 23 campos del formulario de alta ya existen en Korvance y ahí se quedan. **`0.2b`
+arranca de cero**: los 19 campos del proyecto son otros —apartado, pago, envío y
+atribución— y están especificados en `docs/01-mapa-ghl.md` §4.
 
-> **Korvance es la cuenta de trabajo de Germán**, no de la agencia: es un ambiente
-> de pruebas. O sea que esos 23 campos **no están donde van a vivir**. Al crear la
-> subcuenta de Paca hay que replicarlos ahí corriendo
-> `scripts/crear-campos-alta-subcuenta.py` contra la cuenta nueva.
+> **Corrección.** Una versión anterior de esta nota decía que esos 23 campos había
+> que replicarlos en la subcuenta del cliente. **Es falso.** Son el formulario con
+> el que la agencia le pide sus datos al cliente *para poder crear la subcuenta*, y
+> ya cumplieron. Viven en el ambiente de la agencia y **no se copian a Greentex**:
+> sería meter un formulario de onboarding dentro del CRM del cliente. El script
+> sirve para el siguiente cliente, no para éste.
 
 ---
 
@@ -97,8 +102,12 @@ aprobadas.
 ## 4. Carril B — Cobro con Mercado Pago
 
 786 tiene cuenta propia, y eso cambia el proyecto: **las tres validaciones que sostienen
-el diseño se corren en Korvance desde el día 1**, sin esperar la verificación fiscal del
-cliente.
+el diseño se corren desde el día 1**, sin esperar la verificación fiscal del cliente.
+
+Van en **Greentex**, que ya existe: es donde el sistema va a correr de verdad, y una
+liga que cobra en otra subcuenta no prueba que cobre en ésta. La contra es que dejan
+rastro —producto de prueba, factura, cobro mínimo—, así que **hay que limpiarlo al
+terminar cada validación**.
 
 ```
 B1  Public Key + Access Token de la cuenta de 786          786
@@ -106,7 +115,7 @@ B2  Conectar en Pagos -> Integraciones                     786
 B3  VALIDACIÓN 1 — la liga de pago cobra de verdad         786
 B4  VALIDACIÓN 2 — pagar la liga no descuenta stock solo   786
 B5  VALIDACIÓN 4 — Payment Received con los tres métodos   786
-─────────── todo lo de arriba corre en Korvance, día 1 ───────────
+─────────── todo lo de arriba corre en Greentex, día 1 ───────────
 B6  El cliente abre y verifica Mercado Pago                CLIENTE  <- tarda
 B7  Sus credenciales sustituyen a las de 786               786      <- antes del go-live
 ```
@@ -178,7 +187,7 @@ D5  Subir la Knowledge Base y asociarla                     786
 ```
 
 **`D1` no espera a nada y por eso sube a la semana 1.** Es una prueba de humo en
-Korvance: armar tres o cuatro nodos sueltos —un `API Call`, un `Single Choice`, un
+Greentex: armar tres o cuatro nodos sueltos —un `API Call`, un `Single Choice`, un
 `Capture`— y ver que existan y corran. Todo el diseño conversacional asume que Agent
 Studio puede hacer eso; si no puede, no es un ajuste, es rediseñar el carril entero.
 Descubrirlo en la semana 3, con los 19 nodos a medio armar, es el peor momento.

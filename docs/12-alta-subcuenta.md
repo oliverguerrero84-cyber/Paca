@@ -112,10 +112,16 @@ contact.alta_notas               contact.alta_usuario3_correo
 > Si hiciera falta otra, hay que borrar el campo y rehacerlo — y actualizar todo lo que
 > la cite.
 
-## 7. Volver a correrlo
+## 7. Para el siguiente cliente
+
+**Estos campos se quedan en el ambiente de la agencia y no se copian a la subcuenta
+del cliente.** Son el formulario con el que se le piden los datos *para poder crear
+esa subcuenta*: una vez creada, ya cumplieron. Meterlos en el CRM del cliente sería
+dejarle ahí un formulario de onboarding que no es suyo.
 
 `scripts/crear-campos-alta-subcuenta.py` es idempotente: deduplica por clave, así que
-correrlo otra vez no duplica nada. Sirve para replicar estos campos en otra subcuenta.
+correrlo otra vez no duplica nada. Sirve para montar el mismo formulario en otro
+ambiente cuando entre el siguiente cliente.
 
 ```bash
 export GHL_API_KEY='pit-...'
