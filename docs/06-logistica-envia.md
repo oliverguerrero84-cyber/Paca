@@ -131,13 +131,19 @@ sistema le va a decir cuál es la sucursal más cercana."* Es la solución corre
 
 ## 4. Dónde se pide el código postal
 
-En el **checkout**, no conversando. Es el argumento de Germán y es el correcto:
+**Conversando, en el nodo 15 del agente.** Y en el 16 se consulta a n8n `N3`, que
+devuelve 2 o 3 sucursales para que el cliente elija.
 
-> "Obligarlos a que me llenes el formulario completo, sí o sí. Si no, no se activa
-> el botón de pagar."
+> ⚠️ **Esta sección decía lo contrario hasta hoy.** Decía "en el checkout, no
+> conversando", con el argumento de obligar a llenar el formulario antes de activar el
+> botón de pagar. **Quedó obsoleta el 16 de septiembre**, cuando el checkout de la
+> tienda salió del camino de venta: el cobro va por liga y ya no hay formulario donde
+> forzar nada. Ver `docs/07-decision-checkout.md`.
 
-El bot puede adelantarlo si la conversación fluye hacia allá, pero el dato que vale
-es el que se captura en el formulario, donde se valida antes de dejar pagar.
+La preocupación de fondo seguía siendo correcta —el dato tiene que estar validado
+antes de generar la guía— y se resuelve igual, sólo que antes: `validate-zip-code`
+corre cuando el cliente da el CP, y si no hay sucursal cerca se le dice en ese momento,
+no después de cobrarle.
 
 ---
 

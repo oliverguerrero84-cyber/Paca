@@ -125,6 +125,28 @@ reactivan con el lanzamiento? El workflow de campañas (`LS02`) **salió del
 alcance**, así que hoy los leads entran por WhatsApp, por los canales que sigan
 vivos y por la landing. Si quieren pauta, se cotiza aparte.
 
+### 16. ¿El cliente podrá preguntarle al bot por su paquete?
+
+Hoy **no**, y conviene que lo sepan antes de la entrega, no después.
+
+El rastreo está diseñado **sólo de ida**: n8n vigila el envío y dispara los avisos
+—"va en camino", "llegó a tu sucursal"—. Pero si el comprador escribe *"¿dónde está mi
+pedido?"* antes de que llegue el aviso, el agente no tiene cómo contestarle: sus 19
+nodos terminan cuando el pedido queda armado, y su Knowledge Base es el catálogo, no
+las órdenes. La única salida es escalar a un humano a mano.
+
+Con servicio a ocurre —el cliente tiene que ir físicamente por su paquete— y 500 a 800
+envíos al mes, va a pasar seguido. Y es justo el dolor que describió Pamela:
+
+> *"Oye, no me llegó y que no sé qué. Y ahí, órale, a rastrear."*
+
+**Qué costaría agregarlo:** un `API Call` más en el agente y un flujo de n8n que
+consulte `ship/track` por número de orden — reaprovecha lo que `N5` ya hace contra
+Envia. No es alcance contratado, así que se cotiza aparte.
+
+Un detalle que juega a favor: como el cliente escribe primero, la respuesta es **mensaje
+libre y no necesita plantilla de Meta**. No suma trámite, sólo construcción.
+
 ---
 
 ## Resumen para la llamada

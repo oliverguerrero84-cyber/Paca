@@ -110,6 +110,92 @@ quieren trabajar la recompra, se cotizan aparte.
 
 ---
 
+## 2.bis Quién llama a quién
+
+La pregunta que más se repite. La respuesta cabe en una regla:
+
+> **El agente llama a n8n cuando el cliente está esperando.
+> El workflow llama a n8n cuando no hay nadie esperando.**
+
+```
+  mensaje del cliente
+         │
+         ▼
+      AGENTE ───► API Call ───► n8n            SÍNCRONO
+         │          (espera la respuesta en el mismo turno)
+         │
+         └─► tag ───► WORKFLOW ───► webhook ───► n8n     ASÍNCRONO
+                          ▲                        │
+                          └── Inbound Webhook ◄────┘
+                              (otro workflow continúa)
+```
+
+**Ningún workflow invoca al agente.** El agente arranca por mensaje entrante —nodo 1,
+`Start Trigger — Chat Message`— y punto. Lo único que un workflow puede hacerle es
+**prenderlo o apagarlo** con `Update Conversation AI Bot Status`. Un bot tampoco puede
+mandar mensajes desde un workflow: para eso está `Send Message`.
+
+**El carril asíncrono no es una preferencia, es una limitación.** El webhook de salida
+de GHL no espera respuesta, así que todo ida y vuelta con n8n se cierra con n8n
+disparando un Inbound Webhook y un segundo workflow continuando. Por eso `SP02` y
+`AP01` tienen ese trigger.
+
+**El carril síncrono es la razón entera de usar Agent Studio.** Su nodo `API Call` sí
+espera dentro del turno. Se usa dos veces, las dos con el cliente mirando la pantalla:
+stock (nodo 11) y sucursal (nodo 16). Nada más.
+
+De ahí se sigue lo que más se pregunta: **no hace falta un asistente para llamar a una
+API.** Un asistente sirve para conversar. Crear la guía, cobrar o rastrear ocurren
+cuando nadie conversa, así que los hace un workflow llamando a n8n. Y un segundo
+asistente no sobra: estorba, porque dos bots en el mismo WhatsApp se pelean el primer
+turno.
+
+### Falta un eslabón entre el nodo 19 y `SP02`
+
+El nodo 19 marca el tag `pedido-listo`. `SP02` dispara con un Inbound Webhook de n8n
+`N1`. **Entre esas dos cosas no hay nada escrito**, y la evidencia es que
+`url_n8n_crear_apartado` existe como custom value sin que ningún documento diga quién
+la llama.
+
+La secuencia real tiene que ser:
+
+```
+nodo 19 marca pedido-listo
+   → [FALTA: un workflow que llame a url_n8n_crear_apartado]
+   → n8n N1 descuenta el stock
+   → N1 dispara el Inbound Webhook
+   → SP02 arranca el reloj de 24 h
+```
+
+No es que `SP02` tenga dos triggers contradictorios: es que **falta el workflow del
+medio**, y no está en la lista de 9. No puede ser el propio `SP02` porque un workflow
+no dispara con un tag y con un Inbound Webhook a la vez, y el webhook de salida no
+espera respuesta.
+
+> **Pendiente de diseño.** Hay que decidir si ese eslabón es un workflow nuevo —y
+> entonces son 10, no 9— o si `SP02` se parte en dos. Afecta la cotización, que está
+> hecha sobre 9 workflows y 93 nodos.
+
+### `SP01` — qué es y qué no
+
+Aparece en la tabla como *"Handoff al agente + control bot on/off"* con 8 nodos, y
+**nunca se detalló**. El nombre engaña: no invoca al agente, porque nada lo invoca.
+
+Como `AP02` ya se encarga de apagar —tag `escalar-humano` →
+`Update Conversation AI Bot Status → Off`—, si `SP01` también apagara habría dos
+workflows peleándose el mismo interruptor. El reparto que deja a cada uno con un
+trabajo limpio:
+
+| | Qué hace | Trigger |
+|---|---|---|
+| `AP02` | **Apaga** el bot: el cliente pide un humano, o el agente detecta mayoreo | Tag Added `escalar-humano` |
+| `SP01` | **Prende** el bot: el cliente vuelve a escribir después de que un humano cerró | Customer Replied |
+
+> **Es una propuesta, no un hallazgo.** Ningún documento lo dice. Confírmalo al
+> construirlo, en la semana 3.
+
+---
+
 ## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
 
 **Completo: 19 nodos.** Con IA generativa avanzada.
@@ -207,10 +293,18 @@ Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 
 ## 5. Custom values
 
-`url_n8n_consultar_stock` · `url_n8n_crear_apartado` · `url_n8n_liga_pago` ·
-`whatsapp_almacen` · `email_duenos` · `horas_apartado` · `form_captura_guia_link`
+`url_n8n_consultar_stock` · `url_n8n_crear_apartado` · `url_n8n_buscar_sucursal` ·
+`url_n8n_generar_guia` · `url_n8n_rastrear` · `whatsapp_almacen` · `email_duenos` ·
+`horas_apartado`
 
 > Las URLs de n8n van en custom values, nunca hardcodeadas en los workflows.
+
+**Dos que se cayeron de la lista**, los dos residuos de revisiones viejas:
+
+- `url_n8n_liga_pago` — la liga la crea `SP03` con la API de Invoices de GHL.
+  **n8n nunca toca un peso**, así que no hay URL que guardar
+- `form_captura_guia_link` — el formulario de captura de guía desapareció (ver §6).
+  Envia genera la guía sola
 
 ## 6. Formularios
 
@@ -290,8 +384,9 @@ scripte.
 ### Reglas que cambian el diseño del agente
 
 - **Los bots no pueden escribir en dropdowns** (`SINGLE_OPTIONS`). Por eso los
-  nodos 5, 6 y 7 son campos de texto gemelos + un workflow normalizador que los
-  pasa al dropdown real. Si se diseñan como Single Choice, no guardan nada.
+  nodos 6, 7 y 8 —temporada, categoría y calidad— son campos de texto gemelos + un
+  workflow normalizador que los pasa al dropdown real. Si se diseñan como Single
+  Choice, no guardan nada.
 - **Las acciones tienen límite de 500 caracteres.** El prompt no, pero las acciones
   sí. Hay que contarlos antes de entregar el texto.
 - **Contact Info sólo llena campos vacíos** y extrae de lo que dice la persona. No
