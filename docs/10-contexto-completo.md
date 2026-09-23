@@ -262,7 +262,7 @@ la pauta publicitaria. Si los quieren, se cotizan aparte.
 | **Descripciones** — faltan 6 de 30 | El agente no puede describir lo que no sabe |
 | **Piezas por paca** | De lo que más preguntan los compradores |
 | **Stock inicial** al menudeo | La carga inicial de `availableQuantity` |
-| **Número de WhatsApp** para el bot | Conviene uno nuevo: el que se conecte deja de funcionar en la app normal |
+| **Meta Business Manager verificado** | Sin BM no hay WhatsApp Business Account, y sin WABA no se pueden mandar las plantillas a aprobación |
 | **Mercado Pago verificado** | Sin verificación de identidad y fiscal, retiene fondos |
 | **Cuenta de Envia.com** con saldo | Prepago, sin mensualidad ni comisión |
 
@@ -396,6 +396,7 @@ el reparto con 786, el total del primer año ni datos de contacto.
 | `CLAUDE.md` | Las reglas. Claude Code lo lee solo al abrir el repo |
 | `docs/08-traspaso.md` | **Tu tarea concreta** y cómo arrancar |
 | `docs/10-contexto-completo.md` | Este documento |
+| `docs/11-cronograma.md` | El cronograma de las 4 semanas — **interno** |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué no es nativo en GHL |
 | `docs/01-mapa-ghl.md` | Pipeline, workflows, los 19 nodos del agente, plantillas |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |

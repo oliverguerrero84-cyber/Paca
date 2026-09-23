@@ -80,10 +80,27 @@ El cliente dijo 24 h; nosotros habíamos propuesto 2–3 h en la llamada. El map
 construido sobre **24 h**. Confirmarlo, porque 24 h implica que más mensajes caen
 fuera de la ventana de WhatsApp y necesitan template aprobado.
 
-### 11. WhatsApp: ¿número nuevo o el actual?
-¿Meta Business Manager ya verificado? Un número que hoy usan en la app de WhatsApp
-normal **no puede** migrarse a la API sin perder el historial. Conviene número nuevo
-dedicado al bot.
+### 11. ~~WhatsApp: ¿número nuevo o el actual?~~ — RESUELTA a medias
+
+El número del bot es **+1 (956) 820-2011**, y es **nuevo, sin usar**. Nadie lo trae
+en el celular, así que no aplica la pérdida de historial que advertía esta pregunta:
+darlo de alta en la API no apaga nada.
+
+Es un número de McAllen, y eso no estorba. WhatsApp corre sobre datos —el comprador
+mexicano no paga larga distancia— y Meta cobra la conversación según el país de
+**quien recibe**, así que la tarifa sigue siendo la de México.
+
+Quedan dos cabos, los dos nuestros y los dos de la semana 1:
+
+- **¿El Meta Business Manager ya está verificado?** Es la otra mitad de esta pregunta
+  y sigue abierta. Sin BM verificado no hay WhatsApp Business Account.
+- **¿El número recibe SMS o llamada de voz?** Meta manda el código de verificación por
+  uno de los dos. Si resultara ser VoIP, el alta puede fallar y habría que conseguir
+  otro — mejor saberlo ahora que en la semana 3.
+
+> El alta de este número **habilita el envío de las plantillas a Meta**, que es el
+> plazo más largo del proyecto. Por eso subió a la semana 1 en
+> `docs/11-cronograma.md`.
 
 ### 12. Cuenta de Mercado Pago
 ¿Ya la tienen abierta y **verificada**? Sin las verificaciones de identidad y
