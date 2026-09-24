@@ -137,6 +137,32 @@ la moneda de la subcuenta tal cual y Mercado Pago la rechaza si no es la suya. P
 cerrar la validación 1 hay que poner la subcuenta en ARS mientras se prueba con la
 cuenta argentina, y en MXN cuando entren las credenciales de México.
 
+**Segunda ronda, misma tarde.** La subcuenta pasó a ARS y se creó la liga `link - arg`
+de AR$1,000 sobre `test 1`. El error de moneda desapareció. El pago con tarjeta de
+prueba falló ahora con **`At least one policy returned UNAUTHORIZED`**, que es un
+rechazo de Mercado Pago por política de acceso, no de GHL. Se probó también con un
+**comprador de prueba** creado en el panel de desarrolladores y su correo
+`test_user_…@testuser.com`, con titular `APRO` y DNI `12345678`: **mismo error**.
+
+Lo que queda descartado: la moneda, el correo del comprador y los datos de la tarjeta.
+Lo que sigue como sospechoso: **las llaves `TEST-`** que están en la pestaña Test de la
+integración. Mercado Pago restringe esas credenciales para cobros con tarjeta, y su
+camino recomendado hoy es otro:
+
+1. Crear una cuenta de prueba **vendedora** (Argentina) en la misma aplicación.
+2. Entrar a Mercado Pago con ese usuario de prueba y crear ahí una aplicación.
+3. Tomar sus credenciales de **producción**, que empiezan con `APP_USR-`, y ponerlas
+   en la pestaña **Test** de GHL en lugar de las `TEST-`.
+4. Pagar con el comprador de prueba y la tarjeta `APRO`.
+
+Dato para no perder tiempo mañana: en el panel de desarrolladores de 786 hay dos
+aplicaciones, **Propify AI** (`255587700785459`, Checkout API) y **Self house**
+(`803360543599152`, Checkout Bricks). Las cuentas de prueba se crean por aplicación,
+y hay que confirmar de cuál salieron las llaves que están en GHL.
+
+> Todo esto sigue siendo la cuenta argentina. Aunque pase, la validación 4 (OXXO y
+> SPEI) espera a credenciales de una cuenta de **México**.
+
 > ⚠️ **Las credenciales conectadas son de una cuenta de Mercado Pago de Argentina, no
 > de México.** El checkout pide *Cardholder ID* con las opciones **DNI, Cédula, L.C.,
 > L.E., Otro** —documentos argentinos— y **sólo ofrece tarjeta**. No aparecen OXXO ni
