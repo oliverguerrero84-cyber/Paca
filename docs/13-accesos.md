@@ -145,21 +145,30 @@ rechazo de Mercado Pago por política de acceso, no de GHL. Se probó también c
 `test_user_…@testuser.com`, con titular `APRO` y DNI `12345678`: **mismo error**.
 
 Lo que queda descartado: la moneda, el correo del comprador y los datos de la tarjeta.
-Lo que sigue como sospechoso: **las llaves `TEST-`** que están en la pestaña Test de la
-integración. Mercado Pago restringe esas credenciales para cobros con tarjeta, y su
-camino recomendado hoy es otro:
 
-1. Crear una cuenta de prueba **vendedora** (Argentina) en la misma aplicación.
-2. Entrar a Mercado Pago con ese usuario de prueba y crear ahí una aplicación.
-3. Tomar sus credenciales de **producción**, que empiezan con `APP_USR-`, y ponerlas
-   en la pestaña **Test** de GHL en lugar de las `TEST-`.
-4. Pagar con el comprador de prueba y la tarjeta `APRO`.
+**Diagnóstico, 25 de septiembre.** En la lista oficial de errores de Mercado Pago ese
+mensaje corresponde al código **`PA_UNAUTHORIZED_RESULT_FROM_POLICIES`** (HTTP 403):
+*«La cuenta está bloqueada y sus claves de API fueron revocadas. Comunícate con Soporte
+de Mercado Pago para desbloquear tu cuenta»*. No es el prefijo `TEST-` ni la
+configuración de GHL: **la cuenta argentina de 786 tiene las llaves revocadas por
+política**. Cualquier llave que salga de Propify AI o de Self house va a fallar igual.
 
-Dato para no perder tiempo mañana: en el panel de desarrolladores de 786 hay dos
-aplicaciones, **Propify AI** (`255587700785459`, Checkout API) y **Self house**
-(`803360543599152`, Checkout Bricks). Las cuentas de prueba se crean por aplicación.
-**Las llaves que están en GHL salieron de Propify AI**, confirmado el 24 sep: la cuenta
-vendedora de prueba y el comprador ya creado tienen que vivir ahí.
+Dos caminos, y conviene correr el primero mientras se abre el segundo:
+
+1. **Probar con una cuenta vendedora de prueba de México**, que tiene sus propias
+   llaves y no hereda el bloqueo. Ya existe, junto con un comprador de prueba
+   mexicano; los dos se crearon el 24 sep con el MCP de Mercado Pago y se ven en la
+   pestaña *Usuarios de prueba* del panel de desarrolladores de 786. Con el par de
+   México se cubren la validación 1 y la 4 en la misma ronda. Pasos: entrar a
+   mercadopago.com.mx con el vendedor de prueba en una ventana de incógnito, crear una
+   aplicación en su panel de desarrolladores, tomar las credenciales de esa aplicación
+   y ponerlas en la pestaña Test de la integración en GHL; pasar la subcuenta a
+   **MXN**; hacer una liga sobre `test 1` y pagarla con el comprador de México y la
+   tarjeta `APRO`. Si el checkout muestra OXXO y SPEI, la validación 4 también queda
+   cerrada.
+2. **Levantar ticket a Soporte de Mercado Pago** por la cuenta argentina bloqueada.
+   Sólo importa si 786 quiere seguir usando esa cuenta para algo; para Paca no hace
+   falta, porque las llaves del go-live son las del cliente (`B6`/`B7`).
 
 > Todo esto sigue siendo la cuenta argentina. Aunque pase, la validación 4 (OXXO y
 > SPEI) espera a credenciales de una cuenta de **México**.
