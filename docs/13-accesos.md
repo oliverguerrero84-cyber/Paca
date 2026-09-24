@@ -27,16 +27,21 @@ Dentro de cada carril, los eslabones van numerados y **cada uno espera al anteri
 
 ## 2. Eslabón 0 — la raíz, antes que todo lo demás
 
-La subcuenta ya existe y está **vacía**: cero campos, custom values, etiquetas,
-pipelines y productos, verificado el 24 de sep. Lo demás de este eslón sigue en pie.
-Todo esto es de 786, ninguna depende del cliente, y el resto del proyecto cuelga de
-ello.
+La subcuenta ya existe y el esqueleto está dentro (ver tabla), verificado el 24 de
+sep. Lo que sigue en pie de este eslabón es de 786, ninguna parte depende del cliente,
+y el resto del proyecto cuelga de ello.
+
+> **Dos cosas más que salieron el 24 de sep al revisarla:** la subcuenta quedó con la
+> moneda en **USD**, y tiene un producto de prueba (`test 1`, $1.00 USD) y un workflow
+> en borrador sin nombre.
 
 | # | Qué | Quién | Qué desbloquea |
 |---|---|---|---|
 | **0.1** | **Rotar el PIT de Korvance** | 786 | Va primero por higiene: todo lo demás usa ese token |
 | ~~**0.2a**~~ | ~~**Crear la subcuenta**~~ — **HECHA el 24 sep**: **Greentex Clothing LLC** (`c9jj5uu1WZOIkwi6Vfj5`) — McAllen, Texas, zona horaria `America/Chicago` | 786 | — |
 | ~~**0.2b**~~ | ~~**Levantar el esqueleto dentro**~~ — **HECHO el 24 sep**: pipeline de 8 etapas, 4 carpetas con sus 19 campos y los 8 custom values, verificados releyendo la cuenta | 786 | — |
+| **0.2c** | **Cambiar la moneda de la subcuenta a MXN** antes de cargar un solo precio real | 786 | Que las ligas salgan en pesos. Mercado Pago México no cobra en dólares |
+| **0.2d** | **Generar un PIT de la subcuenta Greentex** | 786 | El MCP de GHL hoy sólo ve Korvance: todo lo de Greentex por API da `403` |
 | **0.3** | **Levantar la instancia de n8n** y **volver a llenar las 5 URLs**, que hoy están en `PENDIENTE` | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
 **La instancia de n8n ya tiene dueño.** Corre en la de Germán, prestada al proyecto.
@@ -109,20 +114,44 @@ liga que cobra en otra subcuenta no prueba que cobre en ésta. La contra es que 
 rastro —producto de prueba, factura, cobro mínimo—, así que **hay que limpiarlo al
 terminar cada validación**.
 
+Korvance —la subcuenta de trabajo de 786, en Argentina y con Stripe, donde entró el
+pago del cliente por la implementación— **no se toca**.
+
 ```
-B1  Public Key + Access Token de la cuenta de 786          786
-B2  Conectar en Pagos -> Integraciones                     786
-B3  VALIDACIÓN 1 — la liga de pago cobra de verdad         786
+B1  Public Key + Access Token de la cuenta de 786          786      HECHO (modo test)
+B2  Conectar en Pagos -> Integraciones                     786      HECHO (proveedor por defecto)
+B3  VALIDACIÓN 1 — la liga de pago cobra de verdad         786      A MEDIAS, ver abajo
 B4  VALIDACIÓN 2 — pagar la liga no descuenta stock solo   786
-B5  VALIDACIÓN 4 — Payment Received con los tres métodos   786
+B5  VALIDACIÓN 4 — Payment Received con los tres métodos   786      BLOQUEADA, ver abajo
 ─────────── todo lo de arriba corre en Greentex, día 1 ───────────
 B6  El cliente abre y verifica Mercado Pago                CLIENTE  <- tarda
 B7  Sus credenciales sustituyen a las de 786               786      <- antes del go-live
 ```
 
+**Lo que se probó el 24 de septiembre.** Se creó la liga
+`link.korvance.com/payment-link/6ab58d404ae1d456728396ec` sobre `test 1`, en modo Test.
+Abierta como cliente, **sí levanta el checkout de Mercado Pago** con la marca `TEST
+MODE`: la mitad mecánica de la validación 1 está. Falta pagarla con una tarjeta de
+prueba de Mercado Pago y ver la transacción en GHL —eso lo hace Germán, no el
+asistente— y falta repetirla con credenciales de México, por lo que sigue.
+
+> ⚠️ **Las credenciales conectadas son de una cuenta de Mercado Pago de Argentina, no
+> de México.** El checkout pide *Cardholder ID* con las opciones **DNI, Cédula, L.C.,
+> L.E., Otro** —documentos argentinos— y **sólo ofrece tarjeta**. No aparecen OXXO ni
+> SPEI, porque esos métodos existen únicamente en cuentas de México. Consecuencias:
+>
+> - La **validación 4** (los tres métodos) **no se puede correr** con esta cuenta. Ni en
+>   test ni en live.
+> - Una cuenta argentina cobra en pesos argentinos; el producto está en USD y el
+>   catálogo real va en MXN. Aunque el pago de prueba pase, no prueba el caso real.
+> - **Hace falta una cuenta de Mercado Pago México**, y basta con sus credenciales de
+>   **test**: no requiere verificación fiscal. Puede ser la del cliente —sin esperar
+>   `B6` completo— o una de 786 dada de alta en México. Sustituye a `B1`.
+
 B3 necesita un producto con precio dentro de la subcuenta, así que va después del
 eslabón 0 — pero con **un producto de prueba**, no con el catálogo real. El Excel del
-cliente no bloquea esto.
+cliente no bloquea esto. `test 1` ya existe, pero **sin inventario activado**: para la
+validación 2 hay que prenderle *Track inventory* y darle cantidad.
 
 **La validación 4 es nueva aquí.** Estaba sólo en `docs/02-arquitectura-inventario.md` y
 no había llegado al cronograma: hay que comprobar que `Payment Received` dispare igual
@@ -234,6 +263,7 @@ teóricas. Tres se resuelven preguntando en el onboarding; el segundo es nuestro
 | 2 | ~~Dónde corre n8n~~ — **resuelto**: la instancia de Germán, prestada. Falta quién la opera y qué pasa en el traspaso | Ya no bloquea `0.3` |
 | ~~3~~ | ~~**Qué es Korvance y de quién es**~~ — **RESUELTO el 23 sep**: es la cuenta de trabajo de Germán, un ambiente de pruebas | — |
 | 4 | **Roles y permisos** de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |
+| 5 | **Credenciales de Mercado Pago México** — las conectadas son de Argentina y no tienen OXXO ni SPEI | `B5`, y la mitad real de `B3` |
 
 ---
 

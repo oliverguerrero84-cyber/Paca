@@ -107,6 +107,12 @@ Quedan dos cabos, los dos nuestros y los dos de la semana 1:
 fiscales, Mercado Pago retiene fondos según el flujo recibido. Ya salió en la
 llamada; quedamos de enviarles los requisitos.
 
+**Subió de urgencia el 24 de septiembre.** La cuenta de Mercado Pago con la que 786
+está probando es de Argentina, y ahí no existen OXXO ni SPEI. Para probar los tres
+métodos hace falta una cuenta de **México**, y para eso **bastan sus credenciales de
+prueba**, que se sacan del panel de desarrolladores sin esperar la verificación fiscal.
+Si el cliente ya tiene la cuenta abierta, aunque no esté verificada, ya sirve para esto.
+
 ---
 
 ## 🟢 Deseables — se pueden resolver después
