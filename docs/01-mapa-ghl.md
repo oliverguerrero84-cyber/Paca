@@ -275,6 +275,8 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 ## 4. Custom fields
 
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
+`articulo_apartado` (texto — el nombre legible; `sku_apartado` guarda la clave y
+ningún mensaje al cliente puede decir «tu apartado de PV-MUJ-BOU») ·
 `cantidad_apartada` (número) · `monto_apartado` (número) · `estado_apartado`
 (dropdown: apartado / pagado / vencido / cancelado) · `expira_en` (texto — **no**
 Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
@@ -282,7 +284,8 @@ Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 **Carpeta `Pago`:** `mp_preference_id` (texto) · `liga_pago` (texto) ·
 `fecha_pago` (texto — **no** Date: los Date de GHL no guardan hora)
 
-**Carpeta `Envío`:** `ciudad` · `estado_mx` · `sucursal_ocurre` · `numero_guia` ·
+**Carpeta `Envío`:** `ciudad` · `estado_mx` · `codigo_postal` (lo pide la regla 8 del
+Global Prompt y `SP05` lo manda al almacén) · `sucursal_ocurre` · `numero_guia` ·
 `fecha_envio`
 
 **Carpeta `Atribución`:** `canal_origen` · `utm_source` · `utm_medium` ·

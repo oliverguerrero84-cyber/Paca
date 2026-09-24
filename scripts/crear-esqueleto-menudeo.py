@@ -43,6 +43,9 @@ CARPETAS = [
     ("Apartado", [
         ("orden_id",           "Orden ID",            "TEXT",           None),
         ("sku_apartado",       "SKU apartado",        "TEXT",           None),
+        # El nombre legible. sku_apartado es la clave (PV-MUJ-BOU) y ningún
+        # mensaje al cliente puede decir "tu apartado de PV-MUJ-BOU".
+        ("articulo_apartado",  "Artículo apartado",   "TEXT",           None),
         ("cantidad_apartada",  "Cantidad apartada",   "NUMERICAL",      None),
         ("monto_apartado",     "Monto apartado",      "NUMERICAL",      None),
         # Desplegable porque lo escriben los workflows, no el bot: la limitación
@@ -58,6 +61,9 @@ CARPETAS = [
     ("Envío", [
         ("ciudad",             "Ciudad",            "TEXT", None),
         ("estado_mx",          "Estado",            "TEXT", None),
+        # SP05 manda al almacén "nombre, cantidad, destino y CP", y la regla 8
+        # del Global Prompt obliga a pedir el código postal. Necesita dónde vivir.
+        ("codigo_postal",      "Código postal",     "TEXT", None),
         ("sucursal_ocurre",    "Sucursal a ocurre", "TEXT", None),
         ("numero_guia",        "Número de guía",    "TEXT", None),
         ("fecha_envio",        "Fecha de envío",    "TEXT", None),
