@@ -40,7 +40,7 @@ y el resto del proyecto cuelga de ello.
 | **0.1** | **Rotar el PIT de Korvance** | 786 | Va primero por higiene: todo lo demás usa ese token |
 | ~~**0.2a**~~ | ~~**Crear la subcuenta**~~ — **HECHA el 24 sep**: **Greentex Clothing LLC** (`c9jj5uu1WZOIkwi6Vfj5`) — McAllen, Texas, zona horaria `America/Chicago` | 786 | — |
 | ~~**0.2b**~~ | ~~**Levantar el esqueleto dentro**~~ — **HECHO el 24 sep**: pipeline de 8 etapas, 4 carpetas con sus 19 campos y los 8 custom values, verificados releyendo la cuenta | 786 | — |
-| **0.2c** | **Cambiar la moneda de la subcuenta a MXN** antes de cargar un solo precio real | 786 | Que las ligas salgan en pesos. Mercado Pago México no cobra en dólares |
+| **0.2c** | **La moneda de la subcuenta tiene que coincidir con la cuenta de Mercado Pago conectada.** Hoy está en USD; para la cuenta de test argentina va ARS, y para el go-live MXN | 786 | Probado el 24 sep: GHL **no convierte**. Con USD el pago falla con `Currency mismatch` |
 | **0.2d** | **Generar un PIT de la subcuenta Greentex** | 786 | El MCP de GHL hoy sólo ve Korvance: todo lo de Greentex por API da `403` |
 | **0.3** | **Levantar la instancia de n8n** y **volver a llenar las 5 URLs**, que hoy están en `PENDIENTE` | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
@@ -131,9 +131,11 @@ B7  Sus credenciales sustituyen a las de 786               786      <- antes del
 **Lo que se probó el 24 de septiembre.** Se creó la liga
 `link.korvance.com/payment-link/6ab58d404ae1d456728396ec` sobre `test 1`, en modo Test.
 Abierta como cliente, **sí levanta el checkout de Mercado Pago** con la marca `TEST
-MODE`: la mitad mecánica de la validación 1 está. Falta pagarla con una tarjeta de
-prueba de Mercado Pago y ver la transacción en GHL —eso lo hace Germán, no el
-asistente— y falta repetirla con credenciales de México, por lo que sigue.
+MODE`. El pago de prueba con tarjeta **falló con `Currency mismatch: "USD" is not
+supported by this Mercado Pago account. Expected currency: "ARS"`**. Es decir: GHL manda
+la moneda de la subcuenta tal cual y Mercado Pago la rechaza si no es la suya. Para
+cerrar la validación 1 hay que poner la subcuenta en ARS mientras se prueba con la
+cuenta argentina, y en MXN cuando entren las credenciales de México.
 
 > ⚠️ **Las credenciales conectadas son de una cuenta de Mercado Pago de Argentina, no
 > de México.** El checkout pide *Cardholder ID* con las opciones **DNI, Cédula, L.C.,
