@@ -1,0 +1,163 @@
+{
+  "name": "N2 · Liberar vencidos",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## N2 · Liberar vencidos\n\nCada 15 minutos busca apartados cuyo reloj ya pasó y devuelve el stock.\n\nCompara `expira_en` —que escribe N1 en ISO 8601 con offset— contra la hora actual.\nSi ya venció: stock +1 y el apartado pasa a `vencido`.\n\n**El cliente NO se entera por aquí.** El aviso lo manda GHL con su plantilla 4,\ndisparada por el cambio de `estado_apartado`.\n\n**Excepción del efectivo:** si el pago es OXXO o Paycash, el apartado se extiende\nhasta que venza la referencia de Mercado Pago. Esos apartados llevan `expira_en`\nmás largo desde el principio, así que este flujo no necesita saber nada especial.",
+        "height": 340,
+        "width": 480
+      },
+      "id": "nota-n2",
+      "name": "Qué hace",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-400, -60]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] }
+      },
+      "id": "cron",
+      "name": "Cada 15 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [140, 140]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ location_id: $env.GHL_LOCATION_ID, pipeline_id: $env.GHL_PIPELINE_ID, pipeline_stage_id: $env.GHL_STAGE_APARTADO, status: 'open', limit: 100 }) }}",
+        "options": {}
+      },
+      "id": "buscar",
+      "name": "GHL · apartados abiertos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [360, 140],
+      "credentials": {
+        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+      },
+      "notes": "Sólo la etapa «Pedido Apartado (24 h)». Los que ya pagaron están en otra etapa y no se tocan."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Separa los que ya vencieron. expira_en se lee del custom field.\n// Si viene vacío o no parsea, se ignora: mejor no liberar que liberar de más.\nconst ahora = Date.now();\nconst oportunidades = $input.first().json.opportunities || [];\nconst vencidos = [];\n\nfor (const o of oportunidades) {\n  const campos = o.customFields || [];\n  const buscar = (clave) => {\n    const c = campos.find(x => (x.fieldKey || '').endsWith(clave) || x.id === clave);\n    return c ? (c.fieldValue ?? c.value) : null;\n  };\n\n  const expira = buscar('expira_en');\n  const estado = buscar('estado_apartado');\n  if (!expira || estado === 'pagado' || estado === 'vencido') continue;\n\n  const t = Date.parse(expira);\n  if (Number.isNaN(t)) continue;   // formato raro: no se toca\n  if (t > ahora) continue;          // todavía tiene tiempo\n\n  vencidos.push({\n    opportunityId: o.id,\n    contactId: o.contactId,\n    sku: buscar('sku_apartado'),\n    articulo: buscar('articulo_apartado'),\n    cantidad: Number(buscar('cantidad_apartada') || 1),\n    expira_en: expira\n  });\n}\n\nreturn vencidos.map(v => ({ json: v }));"
+      },
+      "id": "filtrar",
+      "name": "¿Cuáles vencieron?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [580, 140]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/products/?locationId={{$env.GHL_LOCATION_ID}}&limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Accept", "value": "application/json" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "productos",
+      "name": "GHL · listar productos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 140],
+      "credentials": {
+        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Para cada vencido, encuentra su price y calcula el stock devuelto.\nconst productos = $input.first().json.products || [];\nconst vencidos = $('¿Cuáles vencieron?').all().map(i => i.json);\nconst salida = [];\n\nfor (const v of vencidos) {\n  for (const p of productos) {\n    for (const precio of (p.prices || [])) {\n      if ((precio.sku || '').trim() === (v.sku || '').trim()) {\n        salida.push({ json: { ...v,\n          productId: p._id || p.id,\n          priceId: precio._id || precio.id,\n          nuevoStock: Number(precio.availableQuantity ?? 0) + v.cantidad } });\n      }\n    }\n  }\n}\nreturn salida;"
+      },
+      "id": "calcular",
+      "name": "Calcular stock devuelto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 140]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/products/{{$json.productId}}/price/{{$json.priceId}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, availableQuantity: $json.nuevoStock }) }}",
+        "options": {}
+      },
+      "id": "devolver",
+      "name": "GHL · devolver stock",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1240, 140],
+      "credentials": {
+        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{$json.contactId}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ customFields: [{ key: 'estado_apartado', field_value: 'vencido' }] }) }}",
+        "options": {}
+      },
+      "id": "marcar",
+      "name": "GHL · marcar vencido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1460, 140],
+      "credentials": {
+        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+      },
+      "notes": "Los campos del contacto se ESCRIBEN por key y se LEEN por id. Esto dispara la plantilla 4 desde GHL."
+    }
+  ],
+  "connections": {
+    "Cada 15 minutos": { "main": [[{ "node": "GHL · apartados abiertos", "type": "main", "index": 0 }]] },
+    "GHL · apartados abiertos": { "main": [[{ "node": "¿Cuáles vencieron?", "type": "main", "index": 0 }]] },
+    "¿Cuáles vencieron?": { "main": [[{ "node": "GHL · listar productos", "type": "main", "index": 0 }]] },
+    "GHL · listar productos": { "main": [[{ "node": "Calcular stock devuelto", "type": "main", "index": 0 }]] },
+    "Calcular stock devuelto": { "main": [[{ "node": "GHL · devolver stock", "type": "main", "index": 0 }]] },
+    "GHL · devolver stock": { "main": [[{ "node": "GHL · marcar vencido", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "pinData": {}
+}

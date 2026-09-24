@@ -33,6 +33,7 @@ motor —n8n, workflows y el agente— y los datos que el cliente todavía no ma
 | **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, **21** campos custom en 4 carpetas y los 8 custom values | 786 | 24 sep |
 | **Los 3 usuarios del cliente**, dados de alta a mano | 786 | 24 sep |
 | **Las 6 plantillas de mensaje redactadas** (`A5`), listas para mandar a Meta | 786 | 24 sep |
+| **Los 5 flujos de n8n escritos** como JSON importable — **sin probar**, no hay instancia donde correrlos | 786 | 24 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
 > Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
@@ -46,7 +47,8 @@ Son los tres eslabones raíz de `docs/13-accesos.md` §2. Todo lo demás cuelga 
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Se compartió en texto plano por chat | 786 |
-| `0.3` | **Levantar la instancia de n8n** y dejar sus URLs en los custom values | 786 |
+| `0.3` | **Levantar la instancia de n8n**, importar los 5 flujos de `n8n/` y dejar sus URLs en los custom values. Ojo: `N1` va con **concurrencia 1** | 786 |
+| — | **Conseguir las credenciales de Envia** y hacer una guía de prueba. Destraba tres de los seis supuestos de `n8n/README.md` | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
