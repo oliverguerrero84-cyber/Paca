@@ -157,8 +157,9 @@ camino recomendado hoy es otro:
 
 Dato para no perder tiempo mañana: en el panel de desarrolladores de 786 hay dos
 aplicaciones, **Propify AI** (`255587700785459`, Checkout API) y **Self house**
-(`803360543599152`, Checkout Bricks). Las cuentas de prueba se crean por aplicación,
-y hay que confirmar de cuál salieron las llaves que están en GHL.
+(`803360543599152`, Checkout Bricks). Las cuentas de prueba se crean por aplicación.
+**Las llaves que están en GHL salieron de Propify AI**, confirmado el 24 sep: la cuenta
+vendedora de prueba y el comprador ya creado tienen que vivir ahí.
 
 > Todo esto sigue siendo la cuenta argentina. Aunque pase, la validación 4 (OXXO y
 > SPEI) espera a credenciales de una cuenta de **México**.
