@@ -102,6 +102,13 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   recibe nada y le contesta al cliente sin la liga.
 - **GHL guarda y muestra nodos malformados que después no ejecutan**, sin avisar. Que
   un workflow se vea armado en la interfaz no quiere decir que corra.
+- **`GET /products/` no trae precios.** Un flujo que busque el `sku` ahí contesta
+  «agotado» con stock de sobra, sin error. El stock se lee con `GET /products/inventory`
+  (una llamada: `sku`, cantidad, price y product) y se escribe reescribiendo el price
+  **completo**, porque el `PUT` parcial da 422. Pasó el 25 sep en la primera prueba de `N1`.
+- **La instancia de n8n bloquea `$env`.** Los flujos leen su configuración de un nodo
+  `Config` al inicio de cada uno, no de variables de entorno. Si alguien vuelve a poner
+  `$env.…`, el nodo falla con *«access to env vars denied»*.
 
 ---
 
@@ -127,7 +134,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/15-plantillas.md` | Las 6 plantillas de mensaje, listas para mandar a Meta |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
-| `n8n/` | Los 5 flujos de n8n como JSON importable — **escritos, sin probar** |
+| `n8n/` | Los 5 flujos de n8n como JSON importable — importados en el n8n de Germán; `N1` probado hasta el apartado, el resto sin probar |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |

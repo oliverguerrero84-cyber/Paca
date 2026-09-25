@@ -41,6 +41,10 @@ el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
 | Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | 786 | 24 – 25 sep |
 | **Ensayo del asistente con Custom API de Conversation AI**: con un endpoint falso, el bot recogió los datos, llamó una vez y mandó la liga. Mecanismo probado sin n8n | 786 | 25 sep |
 | **Ensayo de la factura por API en Korvance**: 201, queda enviada con Stripe, liga `{dominio}/invoice/{id}` confirmada. `N1` corregido con lo que la API exige | 786 | 25 sep |
+| **Primera prueba de `N1` en el n8n de Germán**: llegó hasta «¿Alcanza?» y contestó agotado con stock de 3, porque `GET /products/` no trae precios. Corregido: `N1` y `N2` leen `/products/inventory` | Germán y 786 | 25 sep |
+| **Los 5 flujos sin `$env`**: la instancia lo bloquea, así que cada flujo trae un nodo `Config` con sus valores. Sin tocar Portainer | 786 | 25 sep |
+| **4 URLs de n8n en los custom values de Greentex**, en modo prueba (`webhook-test`) | 786 | 25 sep |
+| **`N5` con webhook `rastrear`** para la acción del bot; antes sólo tenía cron | 786 | 25 sep |
 | **PIT de Greentex creado (`0.2d`) y los 5 campos nuevos en la subcuenta**: `invoice_id`, `servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`; `mp_preference_id` borrado. 25 campos en total | 786 | 25 sep |
 | **Los 5 flujos importados en el n8n de Germán** (`0.3` a medias: faltan variables, credenciales y las URLs en los custom values) | Germán | 25 sep |
 | **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | 786 | 25 sep |
@@ -60,7 +64,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
-| `0.3` | **Importar los 5 flujos a la instancia de n8n** (la de Germán, prestada), llenar las variables de entorno de `n8n/README.md` y dejar las URLs en los custom values. `N1` con **concurrencia 1**. Al conectarlo al asistente, **medir que responda en menos de 10 s**: es el límite de la acción Custom API y lo que falta de la validación 3 | 786 |
+| `0.3` | **Reimportar los 5 flujos** desde el repo (ya cambiaron: inventario, `Config`, webhook de `N5`), asignar las dos credenciales en sus nodos y poner `N1` en **concurrencia 1**. Luego la prueba de `N1` de punta a punta y **medir que responda en menos de 10 s**: validación 3 | Germán |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
@@ -86,7 +90,7 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 
 | Qué | Espera a |
 |---|---|
-| **3 de los 7 custom values siguen en `PENDIENTE`**: `url_n8n_rastrear`, el WhatsApp del almacén y el correo de los dueños. Las otras tres URLs ya apuntan al n8n de Germán, en modo prueba (`webhook-test`) | La de rastreo, al webhook de `N5`; las otras dos, a que las mande el cliente |
+| **2 de los 7 custom values siguen en `PENDIENTE`**: el WhatsApp del almacén y el correo de los dueños. Las 4 URLs ya apuntan al n8n de Germán, en modo prueba (`webhook-test`); al activar los flujos se quitan el `-test` | A que las mande el cliente |
 | **Validación 3** — que el nodo `API Call` responda a tiempo | Que `N1` exista, o sea la semana 2 |
 | Mandar las 4 plantillas a Meta (`A6`) — **ya redactadas** en `docs/15-plantillas.md` | La WhatsApp Business Account (`A4`) |
 | **Validaciones 1, 2 y 4** | Que el cliente conecte Stripe (`B1`). La 4 además pregunta si el checkout de GHL muestra OXXO y SPEI; si no, el plan es tarjeta más transferencia manual con `AP03` |
