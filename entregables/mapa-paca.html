@@ -293,19 +293,14 @@ h2{font-size:22px}
     <div class="carril b">
       <div>
         <div class="carril-cab"><div class="letra">B</div><h2>Cobro</h2></div>
-        <div class="lema c-envio">Ya no bloquea el dise&ntilde;o: probamos con la cuenta de 786.</div>
+        <div class="lema c-envio">Stripe del cliente. Ninguna validaci&oacute;n corre hasta que la conecte.</div>
       </div>
       <div class="pasos">
-        <div class="fila"><div class="cod">B1</div><div><div class="txt">Public Key y Access Token de 786</div></div></div>
-        <div class="fila"><div class="cod">B2</div><div><div class="txt">Conectar en Pagos &rarr; Integraciones</div></div></div>
-        <div class="fila destacar"><div class="cod">B3</div><div><div class="txt"><strong>Validaci&oacute;n 1 &mdash; la liga cobra de verdad</strong></div><div class="nota fuerte c-alerta">El supuesto que sostiene todo el dise&ntilde;o.</div></div></div>
+        <div class="fila"><div class="cod">B1</div><div><div class="txt">Conectar su Stripe en Pagos &rarr; Integraciones</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila"><div class="cod">B2</div><div><div class="txt">Activar OXXO y transferencia MX en el panel de Stripe</div><span class="pill">CLIENTE</span></div></div>
+        <div class="fila destacar"><div class="cod">B3</div><div><div class="txt"><strong>Validaci&oacute;n 1 &mdash; la factura creada por API cobra</strong></div><div class="nota fuerte c-alerta">El supuesto que sostiene todo el dise&ntilde;o.</div></div></div>
         <div class="fila destacar"><div class="cod">B4</div><div><div class="txt">Validaci&oacute;n 2 &mdash; pagar no descuenta stock solo</div></div></div>
-        <div class="fila destacar"><div class="cod">B5</div><div><div class="txt">Validaci&oacute;n 4 &mdash; Payment Received, los 3 m&eacute;todos</div><div class="nota">Lanzar la de efectivo ya: OXXO tarda hasta 72 h h&aacute;biles.</div></div></div>
-        <div class="corte">
-          <div class="leyenda">arriba corre en Korvance, d&iacute;a 1</div>
-          <div class="fila"><div class="cod">B6</div><div><div class="txt">Abrir y verificar Mercado Pago</div><span class="pill">CLIENTE</span></div></div>
-          <div class="fila"><div class="cod">B7</div><div><div class="txt">Sus credenciales sustituyen a las nuestras</div><div class="nota">Antes del go-live.</div></div></div>
-        </div>
+        <div class="fila destacar"><div class="cod">B5</div><div><div class="txt">Validaci&oacute;n 4 &mdash; &iquest;el checkout muestra OXXO y SPEI?</div><div class="nota">Si no: tarjeta por la liga y transferencia manual con AP03.</div></div></div>
       </div>
     </div>
 
@@ -371,7 +366,7 @@ h2{font-size:22px}
     <span class="et"><span class="punto p-agente"></span>Agente</span>
     <span class="et"><span class="punto p-n8n"></span>n8n</span>
     <span class="et"><span class="punto p-ghl"></span>GoHighLevel</span>
-    <span class="et"><span class="punto p-mp"></span>Mercado Pago</span>
+    <span class="et"><span class="punto p-mp"></span>Stripe</span>
     <span class="et"><span class="punto p-envia"></span>Envia</span>
   </div>
 
@@ -387,8 +382,8 @@ h2{font-size:22px}
     </div>
     <div class="venta-col">
       <div class="paso n8n apartado"><div class="riel"><div class="bolita">8</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n APARTA: descuenta 1 y arranca el reloj de 24 h</div><div class="nota">Como un boleto de concierto. Serializado: si dos aparecen a la vez, una pierde limpio.</div></div></div>
-      <div class="paso ghl"><div class="riel"><div class="bolita">9</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">GHL crea la liga de pago</div><div class="nota">Liga, no carrito. Mandarlos a un checkout es fricci&oacute;n para este p&uacute;blico.</div></div></div>
-      <div class="paso mp"><div class="riel"><div class="bolita">10</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Paga: tarjeta, OXXO o SPEI</div><div class="nota fuerte c-alerta">Con efectivo el apartado se extiende hasta que vence la referencia: OXXO tarda hasta 72 h h&aacute;biles.</div></div></div>
+      <div class="paso ghl"><div class="riel"><div class="bolita">9</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n crea la factura en GHL y devuelve la liga</div><div class="nota">Liga, no carrito. Mandarlos a un checkout es fricci&oacute;n para este p&uacute;blico.</div></div></div>
+      <div class="paso mp"><div class="riel"><div class="bolita">10</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Paga con tarjeta; OXXO o SPEI si el checkout los muestra</div><div class="nota fuerte c-alerta">Con efectivo el apartado se extiende hasta que vence el voucher de Stripe: 5 d&iacute;as.</div></div></div>
       <div class="paso ghl"><div class="riel"><div class="bolita">11</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Pago acreditado &rarr; la venta se confirma sola</div></div></div>
       <div class="paso envia"><div class="riel"><div class="bolita">12</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">n8n genera la gu&iacute;a y programa la recolecci&oacute;n</div><div class="nota">Paquete Express a ocurre. El env&iacute;o va incluido en el precio.</div></div></div>
       <div class="paso ghl regla"><div class="riel"><div class="bolita">13</div><div class="linea"></div></div><div class="cuerpo"><div class="tit">Al almac&eacute;n le llega la etiqueta lista</div><div class="nota">Nombre, cantidad, destino y CP. NUNCA el monto: regla dura de Miguel.</div></div></div>
@@ -398,7 +393,7 @@ h2{font-size:22px}
 
   <div class="trio">
     <div class="bloque"><h2>Si no paga</h2><p>Recordatorio a las 12 h, otro a las 22 h, y a las 24 h el stock se libera solo. El pago salta todas las esperas.</p></div>
-    <div class="bloque"><h2>Tres reglas que no se mueven</h2><p>n8n nunca le habla al cliente &middot; n8n nunca toca Mercado Pago &middot; el aviso de que no hay devoluciones va antes de cobrar, nunca despu&eacute;s.</p></div>
+    <div class="bloque"><h2>Tres reglas que no se mueven</h2><p>n8n nunca le habla al cliente &middot; n8n nunca toca Stripe &middot; el aviso de que no hay devoluciones va antes de cobrar, nunca despu&eacute;s.</p></div>
     <div class="bloque"><h2>Fuera de alcance</h2><p>El mayoreo sigue manual y aparte, por decisi&oacute;n del cliente. Tampoco hay devoluciones, reportes ni piezas sueltas.</p></div>
   </div>
 </section>
@@ -432,7 +427,7 @@ h2{font-size:22px}
         <li>N1 apartar &middot; N2 liberar vencidos</li>
         <li>Validaci&oacute;n 3 &mdash; el nodo API Call</li>
         <li>SP02 apartado de 24 h &mdash; 16 nodos</li>
-        <li>SP03 liga de pago &middot; SP04 pago confirmado</li>
+        <li>N1 crea la factura &middot; SP04 pago confirmado</li>
         <li>Prueba de concurrencia</li>
         <li>Cargar precios y stock inicial</li>
       </ul>
@@ -455,8 +450,8 @@ h2{font-size:22px}
     <div class="semana final">
       <div class="semana-cab"><div class="n">4</div><div><div class="fecha">13 &ndash; 20 OCT</div><div class="titulo">Punta a punta y entrega</div></div></div>
       <ul>
-        <li>3 pedidos de prueba: tarjeta, OXXO, SPEI</li>
-        <li>El apartado se extiende con efectivo</li>
+        <li>Pedidos de prueba: tarjeta y lo que muestre el checkout</li>
+        <li>El apartado se extiende con efectivo, si hay OXXO</li>
         <li>El almac&eacute;n no ve el monto</li>
         <li>AP03 pagos manuales &mdash; el &uacute;ltimo</li>
         <li>Capacitaci&oacute;n a Pamela, Miguel y Mauricio</li>
@@ -472,7 +467,7 @@ h2{font-size:22px}
     </div>
     <div class="rejilla">
       <div class="item"><div class="fecha">29 SEP</div><div class="tit">Meta Business Manager verificado</div><div class="nota">Sin BM no hay WABA, y sin WABA no salen las plantillas.</div></div>
-      <div class="item"><div class="fecha">29 SEP</div><div class="tit">Verificaci&oacute;n de Mercado Pago iniciada</div><div class="nota">Sin ella retiene fondos al go-live.</div></div>
+      <div class="item"><div class="fecha">29 SEP</div><div class="tit">Stripe conectado en Greentex</div><div class="nota">Sin &eacute;l no corre ninguna validaci&oacute;n de cobro.</div></div>
       <div class="item critico"><div class="fecha">5 OCT</div><div class="tit">El Excel: precios, piezas y stock</div><div class="nota">Despu&eacute;s de esta fecha, la entrega del 20 se mueve.</div></div>
       <div class="item"><div class="fecha">5 OCT</div><div class="tit">Envia.com con saldo, y 6 descripciones</div><div class="nota">Sin saldo, N4 no genera gu&iacute;as.</div></div>
       <div class="item"><div class="fecha">12 OCT</div><div class="tit">Fotos y videos de los 30 art&iacute;culos</div><div class="nota">El cat&aacute;logo del bot llega vac&iacute;o sin ellos.</div></div>

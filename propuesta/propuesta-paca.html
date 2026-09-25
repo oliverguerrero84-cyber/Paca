@@ -693,7 +693,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
           <tr>
-            <td>Liga de pago con tarjeta, OXXO en efectivo y SPEI</td>
+            <td>Liga de pago con tarjeta, y OXXO o transferencia si el checkout los permite</td>
             <td class="col"><span class="gl gl-dash"></span><span class="sr-only">No incluido</span></td>
             <td class="col"><span class="gl gl-check"></span><span class="sr-only">Incluido</span></td>
           </tr>
@@ -857,8 +857,8 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
           Funciona como comprar un boleto de concierto: el cliente elige su paca, el
           sistema se la aparta y arranca un reloj de 24 horas. Le recuerda faltando
           12 horas y otra vez faltando 2. Si no paga, la pieza se libera sola para el
-          siguiente. Quien pague en efectivo tiene más tiempo, porque OXXO tarda en
-          reportar, y el sistema se lo dice.
+          siguiente. Si el checkout llega a ofrecer efectivo en OXXO, quien pague así
+          tiene más tiempo, porque OXXO tarda en reportar, y el sistema se lo dice.
         </p>
         <p class="mod-change"><b>Lo que cambia:</b> el "te pago al rato" que se vuelve mañana y luego nunca deja de dejarles mercancía apartada sin cobrar.</p>
       </article>
@@ -866,13 +866,14 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <article class="module-card only-full">
         <div class="mod-head">
           <span class="gl gl-card"></span>
-          <h3>Cobro con Mercado Pago</h3>
+          <h3>Cobro con Stripe</h3>
           <span class="pkg-tag full">Sólo Completo</span>
         </div>
         <p class="mod-what">
-          Al cerrar el pedido el bot manda <strong>una liga de pago</strong> con los
-          tres métodos que pidieron: <strong>tarjeta, efectivo en OXXO y
-          transferencia SPEI</strong>. Es una página de un solo paso, no una tienda.
+          Al cerrar el pedido el bot manda <strong>una liga de pago</strong> para pagar
+          con <strong>tarjeta</strong>. Si el checkout lo permite, también efectivo en
+          OXXO y transferencia SPEI; eso se confirma en las pruebas, no se promete.
+          Es una página de un solo paso, no una tienda.
           Cuando el pago se acredita el sistema se entera solo. Y si alguien les
           transfiere directo al banco, lo registran en un formulario de un campo.
         </p>
@@ -1047,7 +1048,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <div class="behind-item"><div class="n">146</div><div class="l">sucursales de Paquete Express cargadas para el buscador por código postal</div></div>
       <div class="behind-item"><div class="n">6</div><div class="l">plantillas de mensaje, 4 de ellas con trámite de aprobación ante Meta</div></div>
       <div class="behind-item"><div class="n">8</div><div class="l">etapas de tablero con sus reglas de avance</div></div>
-      <div class="behind-item"><div class="n">3</div><div class="l">métodos de pago en una sola liga: tarjeta, efectivo y transferencia</div></div>
+      <div class="behind-item"><div class="n">1</div><div class="l">liga de pago por pedido, con tarjeta y los métodos que permita el checkout</div></div>
       <div class="behind-item"><div class="n">2</div><div class="l">sesiones de capacitación, una para ustedes y otra para el almacén</div></div>
     </div>
 
@@ -1115,7 +1116,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       </p>
       <p>
         <strong>Los demás costos de terceros</strong> también corren por su cuenta:
-        Mercado Pago su comisión por venta, la paquetería sus guías &mdash; se carga
+        Stripe su comisión por venta, la paquetería sus guías &mdash; se carga
         saldo y se paga por envío, sin mensualidad ni comisión &mdash; y Google
         Workspace su licencia. Tampoco entran las fotos ni los videos de producto,
         que los entregan ustedes.
@@ -1203,7 +1204,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Mapeo y definición <span class="week">Semana 1</span></h4>
-        <p>Sesión de trabajo para cerrar precios, proveedor de envíos, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y, en el Completo, se verifica la cuenta de Mercado Pago.</p>
+        <p>Sesión de trabajo para cerrar precios, proveedor de envíos, stock y condiciones. Se solicitan las plantillas de WhatsApp a Meta y, en el Completo, se conecta su cuenta de Stripe.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
@@ -1213,7 +1214,7 @@ button[disabled], [aria-disabled="true"]{opacity:.5; cursor:not-allowed}
       <li>
         <span class="dot" aria-hidden="true"></span>
         <h4>Construcción de las automatizaciones <span class="week">Semanas 2 &ndash; 3</span></h4>
-        <p>El agente de ventas y el escalamiento en los dos paquetes. En el Completo además el apartado con reloj, el cobro por Mercado Pago, la orden al almacén y el envío de la guía.</p>
+        <p>El agente de ventas y el escalamiento en los dos paquetes. En el Completo además el apartado con reloj, el cobro por Stripe, la orden al almacén y el envío de la guía.</p>
       </li>
       <li>
         <span class="dot" aria-hidden="true"></span>
