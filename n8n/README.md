@@ -106,6 +106,11 @@ producción la cuenta va en MXN—. Tarifas de referencia Nuevo Laredo → Monte
 sucursales aceptan máximo 50 kg por paquete, así que un pedido de varias pacas a
 `ground_do` necesita una guía por paca. Falta ese ciclo en `N4`.
 
+**`N5` tiene dos disparadores (25 sep):** el cron de cada hora, que avisa a `AP01`, y un
+webhook `rastrear` que la acción «Rastrear envío» del bot llama con `{ contactId }` y
+que contesta `estatus`, `estatus_texto`, `entrega_estimada` y `track_url` en el mismo
+turno. Su URL va en el custom value `url_n8n_rastrear`.
+
 ## Orden de importación
 
 Da igual: no dependen entre sí. Pero para probar conviene `N3` primero —es el único

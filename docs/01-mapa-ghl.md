@@ -331,13 +331,20 @@ que para las dos que ya lo decían.
 
 ## 5. Custom values
 
-`url_n8n_consultar_stock` · `url_n8n_crear_apartado` · `url_n8n_buscar_sucursal` ·
-`url_n8n_generar_guia` · `url_n8n_rastrear` · `whatsapp_almacen` · `email_duenos` ·
-`horas_apartado`
+`url_n8n_crear_apartado` · `url_n8n_buscar_sucursal` · `url_n8n_generar_guia` ·
+`url_n8n_rastrear` · `whatsapp_almacen` · `email_duenos` · `horas_apartado`
+
+Las tres primeras ya apuntan al n8n de Germán (25 sep), **en modo prueba**: son URLs
+`webhook-test/…`, que sólo responden mientras el flujo está escuchando en el editor.
+Al activar los flujos se cambian por las mismas sin `-test`. `url_n8n_rastrear` espera
+a que `N5` tenga su webhook (ver `n8n/README.md`).
 
 > Las URLs de n8n van en custom values, nunca hardcodeadas en los workflows.
 
-**Dos que se cayeron de la lista**, los dos residuos de revisiones viejas:
+**Tres que se cayeron de la lista**, residuos de revisiones viejas:
+
+- `url_n8n_consultar_stock` — `N1` consulta y aparta en la misma llamada; no hay
+  consulta suelta. Se borró de Greentex el 25 sep
 
 - `url_n8n_liga_pago` — la liga es la factura que `N1` crea con la API de Invoices de
   GHL en la misma llamada del apartado (`url_n8n_crear_apartado`). **n8n nunca toca

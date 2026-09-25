@@ -86,7 +86,7 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 
 | Qué | Espera a |
 |---|---|
-| **7 de los 8 custom values están en `PENDIENTE`** — las 5 URLs de n8n, el WhatsApp del almacén y el correo de los dueños | Las URLs, a que n8n exista (`0.3`); las otras dos, a que las mande el cliente |
+| **3 de los 7 custom values siguen en `PENDIENTE`**: `url_n8n_rastrear`, el WhatsApp del almacén y el correo de los dueños. Las otras tres URLs ya apuntan al n8n de Germán, en modo prueba (`webhook-test`) | La de rastreo, al webhook de `N5`; las otras dos, a que las mande el cliente |
 | **Validación 3** — que el nodo `API Call` responda a tiempo | Que `N1` exista, o sea la semana 2 |
 | Mandar las 4 plantillas a Meta (`A6`) — **ya redactadas** en `docs/15-plantillas.md` | La WhatsApp Business Account (`A4`) |
 | **Validaciones 1, 2 y 4** | Que el cliente conecte Stripe (`B1`). La 4 además pregunta si el checkout de GHL muestra OXXO y SPEI; si no, el plan es tarjeta más transferencia manual con `AP03` |

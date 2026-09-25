@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N5 · Rastrear\n\nCada hora revisa los envíos en curso y empuja el estatus de vuelta a GHL.\n\nEl aviso que de verdad importa es **«ya llegó a tu sucursal, puedes recogerlo»**:\ncon servicio a ocurre, ése es el mensaje que evita el «oye, no me llegó».\n\n**Una sola llamada por corrida:** `POST /ship/generaltrack/` acepta todas las guías\nen un arreglo (probado el 25 sep). El `status` viene de un catálogo en inglés.\n\n**Este flujo no le escribe al cliente.** Sólo mueve la oportunidad de etapa y\nactualiza el campo; el mensaje lo manda GHL con la plantilla 3 o con AP01.",
+        "content": "## N5 · Rastrear\n\nCada hora revisa los envíos en curso y empuja el estatus de vuelta a GHL.\n\nEl aviso que de verdad importa es **«ya llegó a tu sucursal, puedes recogerlo»**:\ncon servicio a ocurre, ése es el mensaje que evita el «oye, no me llegó».\n\n**Una sola llamada por corrida:** `POST /ship/generaltrack/` acepta todas las guías\nen un arreglo (probado el 25 sep). El `status` viene de un catálogo en inglés.\n\n**Este flujo no le escribe al cliente.** Sólo mueve la oportunidad de etapa y\nactualiza el campo; el mensaje lo manda GHL con la plantilla 3 o con AP01.\n\n**Dos disparadores (25 sep):** el cron de cada hora avisa a AP01 de los cambios; el webhook `rastrear` contesta al bot por una sola guía, en el mismo turno.",
         "height": 300,
         "width": 470
       },
@@ -203,6 +203,170 @@
         160
       ],
       "notes": "AP01 recibe esto y decide qué plantilla mandar. n8n no le escribe al cliente."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rastrear",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-rastrear",
+      "name": "Webhook · rastrear",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        140,
+        420
+      ],
+      "webhookId": "rastrear",
+      "notes": "Segundo disparador de N5: lo llama la acción «Rastrear envío» del bot con { contactId }. Responde en el mismo turno (10 s máx). Custom value url_n8n_rastrear."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.body.contactId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "leer-contacto",
+      "name": "GHL · leer contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "La guía vive en el campo numero_guia del contacto; la escribe N4."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Saca la guía del contacto. Sin guía, se responde sin llamar a Envia.\nconst c = $json.contact || {};\nconst campos = c.customFields || [];\nconst buscar = (clave) => { const x = campos.find(f => (f.fieldKey || '').endsWith(clave) || f.id === clave); return x ? (x.fieldValue ?? x.value) : null; };\nconst guia = buscar('numero_guia');\nreturn [{ json: { contactId: c.id, numero_guia: guia, track_url: buscar('track_url'), sin_guia: !guia } }];"
+      },
+      "id": "guia-contacto",
+      "name": "Guía del contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g1",
+              "leftValue": "={{ $json.sin_guia }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-sin-guia",
+      "name": "¿Sin guía?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        800,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, estatus: 'sin_guia', estatus_texto: 'Tu pedido está en preparación; todavía no tiene guía.' }) }}",
+        "options": {}
+      },
+      "id": "resp-sin-guia",
+      "name": "Responder sin guía",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ENVIA_API_URL }}/ship/generaltrack/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ trackingNumbers: [$json.numero_guia] }) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "track-uno",
+      "name": "Envia · generaltrack (una guía)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mismo catálogo que «Traducir estatus», pero para una sola guía y en palabras para el bot.\nconst r = $json;\nconst previo = $('Guía del contacto').first().json;\nif (r.meta === 'error' || !(r.data || []).length) {\n  return [{ json: { ok: false, estatus: 'desconocido', estatus_texto: 'No pude consultar el rastreo ahora mismo; intenta en unos minutos.', track_url: previo.track_url } }];\n}\nconst t = r.data[0];\nconst clave = String(t.status || '').toLowerCase().replace(/[^a-z]/g, '');\nconst camino = ['en_transito', 'Tu paquete ya va en camino.'];\nconst sucursal = ['en_sucursal', 'Tu paquete ya está en la sucursal, listo para recoger.'];\nconst incid = ['incidencia', 'Hubo un contratiempo con tu envío; ya lo estamos revisando.'];\nconst cancel = ['cancelado', 'Esa guía se canceló; te contactamos para resolverlo.'];\nconst mapa = { created: ['creada', 'Tu guía ya está generada y el paquete está por salir del almacén.'],\n  pickedup: camino, collected: camino, shipped: camino, intransit: camino,\n  outfordelivery: ['en_reparto', 'Tu paquete está en reparto, llega hoy.'],\n  readyforpickup: sucursal, availableforpickup: sucursal, atbranch: sucursal,\n  delivered: ['entregado', 'Tu paquete ya fue entregado.'],\n  canceled: cancel, cancelled: cancel, exception: incid, returned: incid };\nconst [estado, texto] = mapa[clave] || camino;\nconst eta = t.estimatedDelivery ? ` Entrega estimada: ${String(t.estimatedDelivery).slice(0, 10)}.` : '';\nreturn [{ json: { ok: true, estatus: estado, estatus_crudo: t.status, estatus_texto: texto + eta, entrega_estimada: t.estimatedDelivery, track_url: t.trackUrlSite || t.trackUrl || previo.track_url } }];"
+      },
+      "id": "estatus-palabras",
+      "name": "Estatus en palabras",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "resp-rastreo",
+      "name": "Responder rastreo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1460,
+        480
+      ]
     }
   ],
   "connections": {
@@ -282,6 +446,79 @@
           }
         ],
         []
+      ]
+    },
+    "Webhook · rastrear": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer contacto": {
+      "main": [
+        [
+          {
+            "node": "Guía del contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guía del contacto": {
+      "main": [
+        [
+          {
+            "node": "¿Sin guía?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sin guía?": {
+      "main": [
+        [
+          {
+            "node": "Responder sin guía",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia · generaltrack (una guía)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · generaltrack (una guía)": {
+      "main": [
+        [
+          {
+            "node": "Estatus en palabras",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estatus en palabras": {
+      "main": [
+        [
+          {
+            "node": "Responder rastreo",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
