@@ -15,7 +15,9 @@
 ya tiene el esqueleto de GHL de pie**: pipeline, campos y custom values. Falta el
 motor —n8n, workflows y el agente— y los datos que el cliente todavía no manda. **El 25
 de sep cambió la pasarela: se cobra con el Stripe del cliente, no con Mercado Pago**, y
-la primera pieza que hace falta es que él lo conecte en Greentex.
+la primera pieza que hace falta es que él lo conecte en Greentex. Mientras, el 25 de sep se probaron
+las dos piezas del cobro que no dependen de él: la factura por API ya se crea y su liga abre
+el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
 
 ## 2. Hecho
 
@@ -48,15 +50,17 @@ la primera pieza que hace falta es que él lo conecte en Greentex.
 
 ## 3. Lo siguiente, y nada de esto espera a nadie
 
-Son los tres eslabones raíz de `docs/13-accesos.md` §2. Todo lo demás cuelga de ellos.
+Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 
 | # | Qué | Quién |
 |---|---|---|
-| `0.1` | **Rotar el PIT de Korvance.** Se compartió en texto plano por chat | 786 |
-| `0.3` | **Levantar la instancia de n8n**, importar los 5 flujos de `n8n/` y dejar sus URLs en los custom values. Ojo: `N1` va con **concurrencia 1** | 786 |
-| — | **Conseguir las credenciales de Envia** y hacer una guía de prueba. Destraba tres de los seis supuestos de `n8n/README.md` | 786 |
+| — | **Decidir dónde vive el asistente: Conversation AI o Agent Studio.** La acción Custom API de Conversation AI ya hace lo que se le pedía a Agent Studio, y se probó el 25 sep. Lo que pesa es que el agente de 23 nodos está cotizado | 786 |
+| `0.2c` | **Pasar Greentex a MXN** y renombrar el campo `mp_preference_id` a `invoice_id` («Factura de GHL · ID»). Dos cambios de interfaz | 786 |
+| `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
+| `0.3` | **Importar los 5 flujos a la instancia de n8n** (la de Germán, prestada), llenar las variables de entorno de `n8n/README.md` y dejar las URLs en los custom values. `N1` con **concurrencia 1**. Al conectarlo al asistente, **medir que responda en menos de 10 s**: es el límite de la acción Custom API y lo que falta de la validación 3 | 786 |
+| — | **Conseguir las credenciales de Envia** y hacer una guía de prueba. Destraba tres de los supuestos de `n8n/README.md` | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
-| — | **Agendar la sesión de mapeo** con el cliente | 786 |
+| — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
 
 ## 4. Bloqueado, y por quién
