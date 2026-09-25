@@ -91,7 +91,7 @@ publicidad, porque no tienen Instagram ni TikTok.
 | Requerimiento del cliente | Cómo se resuelve |
 |---|---|
 | Atender leads por WhatsApp, Instagram, Facebook, TikTok | Canales nativos de GHL + Inbox unificado |
-| Bot que conversa, entiende y vende | **Agent Studio** — agente con Router AI, KB del catálogo y nodos de captura |
+| Bot que conversa, entiende y vende | **Conversation AI** — un prompt, la KB del catálogo y tres acciones Custom API contra n8n |
 | Que el bot conozca el catálogo (calidades, tallas, contenido) | **Knowledge Base** cargada desde `data/catalogo.csv` |
 | Seguimiento de cada venta por etapas | Pipeline `SP · Menudeo` (8 etapas) |
 | Temporizador del apartado + recordatorios | Workflow con `Wait` + `Goal Event` |
@@ -242,7 +242,7 @@ artículos e inventario en vivo, apartado de 24 h con reloj, cobro por liga de p
 (tarjeta; OXXO y SPEI por validar), guía y recolección automáticas, rastreo hasta la sucursal, buscador de
 sucursal por código postal y escalamiento a humano.
 
-1 pipeline de 8 etapas · 8 workflows · 1 agente de 19 nodos · 2 integraciones ·
+1 pipeline de 8 etapas · 8 workflows · 1 bot de Conversation AI con 3 acciones · 2 integraciones ·
 6 plantillas · catálogo público de 6 secciones · 2 capacitaciones · soporte.
 
 ### Esencial — $2,899 setup / $437 al mes · 2 semanas

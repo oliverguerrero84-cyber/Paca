@@ -73,7 +73,7 @@ habilita a qué. Esta tabla sigue esa cadena, no al revés.
 | **Validación 1** — la factura creada por API cobra con Stripe | 786 | `B3`. Con tarjeta de prueba de Stripe |
 | **Validación 2** — pagar la liga no descuenta stock solo | 786 | `B4`. Si lo descontara, vuelve el doble descuento |
 | **Validación 4** — ¿el checkout de GHL muestra OXXO y SPEI? | 786 | `B5`. Si no los muestra, es tarjeta + transferencia manual (`AP03`) |
-| **Validación 5** — Agent Studio soporta los nodos diseñados | 786 | `D1`. Prueba de humo en la subcuenta Greentex. Si no puede, se rediseña el carril del agente entero |
+| **Validación 5** — Conversation AI con Custom API funciona por WhatsApp y la KB responde del catálogo | 786 | `D1`. Prueba de humo en Greentex. En el probador del bot ya pasó el 25 sep; falta por WhatsApp |
 | Abrir cuenta de Envia.com y fondearla | Cliente | `C1` y `C2`. Prepago, sin mensualidad ni comisión |
 | Cargar los 30 SKUs con nombre y las 24 descripciones que sí existen | 786 | Precio y stock se llenan después |
 
@@ -86,8 +86,8 @@ las validaciones 1, 2 y 4 respondidas con sí o no.
 > esperan a que el cliente conecte su Stripe (`B1`). La subcuenta pasa a **MXN**.
 > Detalle en `docs/13-accesos.md` §4.
 
-> **La validación 3 se movió a la semana 2.** Mide cuánto tarda el nodo `API Call` en
-> recibir respuesta de `N1`, y `N1` no existe hasta la semana 2. Probarla antes es
+> **La validación 3 se movió a la semana 2.** Mide cuánto tarda la acción Custom API en
+> recibir respuesta de `N1` —el límite es 10 s—, y `N1` no existe hasta la semana 2. Probarla antes es
 > medir contra nada.
 
 ---
@@ -100,7 +100,7 @@ más."*
 | Qué | Nota |
 |---|---|
 | `N1` apartar — serializado, concurrencia 1 | El que evita que dos clientes aparten la última paca |
-| **Validación 3** — el nodo `API Call` responde a tiempo | Va aquí y no en la semana 1: necesita `N1` vivo para medir contra algo |
+| **Validación 3** — `N1` responde en menos de 10 s | Va aquí y no en la semana 1: necesita `N1` vivo para medir contra algo |
 | `N2` liberar vencidos — cron cada 15 min | El reloj que suelta lo que no se pagó |
 | `SP02` apartado de 24 h, recordatorios y liberación | 16 nodos. El más grande de los 8 |
 | `N1` también crea la factura por la API de Invoices y devuelve la liga al agente | Va dentro de `N1`, no en un workflow. `SP03` se cayó el 25 sep |
@@ -119,7 +119,7 @@ bot cotice y genere liga, y eso se prueba de verdad hasta la semana 4.
 
 | Qué | Nota |
 |---|---|
-| **Agente de Agent Studio, 19 nodos** | A mano: los bots no tienen API. Es el bloque más lento de la semana |
+| **Bot de Conversation AI: prompt, KB y 3 acciones Custom API** | A mano: los bots no tienen API. Ya no se mide en nodos; sigue siendo el bloque más lento de la semana |
 | Knowledge Base: subir **y asociar** al agente | Son dos pasos. Subir no es asociar |
 | Campo de texto gemelo + workflow normalizador | Un bot no escribe en listas desplegables (`SINGLE_OPTIONS`) |
 | `LS01` entrada de lead · `SP01` handoff y bot on/off · `AP02` escalamiento a humano | 26 nodos entre los tres |

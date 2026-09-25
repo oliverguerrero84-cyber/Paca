@@ -131,8 +131,8 @@ sistema le va a decir cuál es la sucursal más cercana."* Es la solución corre
 
 ## 4. Dónde se pide el código postal
 
-**Conversando, en el nodo 15 del agente.** Y en el 16 se consulta a n8n `N3`, que
-devuelve 2 o 3 sucursales para que el cliente elija.
+**Conversando.** El bot pide el código postal y con la acción «Sucursal por código
+postal» consulta a n8n `N3`, que devuelve 2 o 3 sucursales para que el cliente elija.
 
 > ⚠️ **Esta sección decía lo contrario hasta hoy.** Decía "en el checkout, no
 > conversando", con el argumento de obligar a llenar el formulario antes de activar el

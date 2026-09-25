@@ -40,7 +40,7 @@ y el resto del proyecto cuelga de ello.
 | **0.1** | **Rotar el PIT de Korvance** | 786 | Va primero por higiene: todo lo demás usa ese token |
 | ~~**0.2a**~~ | ~~**Crear la subcuenta**~~ — **HECHA el 24 sep**: **Greentex Clothing LLC** (`c9jj5uu1WZOIkwi6Vfj5`) — McAllen, Texas, zona horaria `America/Chicago` | 786 | — |
 | ~~**0.2b**~~ | ~~**Levantar el esqueleto dentro**~~ — **HECHO el 24 sep**: pipeline de 8 etapas, 4 carpetas con sus 19 campos y los 8 custom values, verificados releyendo la cuenta | 786 | — |
-| **0.2c** | **Pasar la subcuenta a MXN.** Hoy está en ARS por las pruebas con Mercado Pago | 786 | GHL **no convierte** moneda (probado el 24 sep): la liga sale en la moneda de la subcuenta. Stripe US la presenta en MXN y liquida en USD |
+| ~~0.2c~~ | ~~Pasar la subcuenta a MXN~~ — **HECHO el 25 sep** | 786 | GHL **no convierte** moneda (probado el 24 sep): la liga sale en la moneda de la subcuenta. Stripe US la presenta en MXN y liquida en USD |
 | **0.2d** | **Generar un PIT de la subcuenta Greentex** | 786 | El MCP de GHL hoy sólo ve Korvance: todo lo de Greentex por API da `403` |
 | **0.3** | **Levantar la instancia de n8n** y **volver a llenar las 5 URLs**, que hoy están en `PENDIENTE` | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
@@ -167,10 +167,11 @@ la hora de vencimiento en palabras. El mecanismo «el asistente consulta a n8n e
 mismo turno y manda la liga» queda probado sin n8n; lo que falta de la validación 3 es
 medir el tiempo con `N1` real, contra el límite de **10 segundos** de esa acción. La
 acción recoge los campos con un esquema JSON (`sku`, `cantidad`, `contactId`) y mapea
-la respuesta (`ok`, `articulo`, `expira_texto`, `liga_pago`). Abre una decisión: el
-asistente puede vivir en Conversation AI con esta acción en vez de en Agent Studio;
-la razón por la que se eligió Agent Studio —que sólo él podía llamar APIs a mitad de
-turno— ya no aplica desde esta semana.
+la respuesta (`ok`, `articulo`, `expira_texto`, `liga_pago`). **Con eso se decidió, el
+mismo día, que el asistente vive en Conversation AI y no en Agent Studio**: la razón
+por la que se eligió Agent Studio —que sólo él podía llamar APIs a mitad de turno— ya
+no aplica, y el bot se arma con un prompt, la Knowledge Base y tres acciones en vez de
+23 nodos.
 
 B3 necesita un producto con precio dentro de la subcuenta, así que va después del
 eslabón 0 — pero con **un producto de prueba**, no con el catálogo real. El Excel del
@@ -239,9 +240,9 @@ es trabajo manual de principio a fin: los bots de GHL no tienen API.
 Y en orden, una vez que esas piezas existen:
 
 ```
-D1  VALIDACIÓN 5 — Agent Studio soporta los nodos diseñados 786  <- va en la semana 1
-D2  VALIDACIÓN 3 — el nodo API Call responde a tiempo       786  <- necesita N1 vivo
-D3  Construir los 19 nodos del agente                       786  <- a mano, sin API
+D1  VALIDACIÓN 5 — Custom API y la KB funcionan en el canal de WhatsApp  786  <- la mitad ya probada el 25 sep en el chat de prueba
+D2  VALIDACIÓN 3 — N1 responde en menos de 10 s                          786  <- necesita N1 vivo
+D3  Escribir el prompt y las 3 acciones Custom API del bot                786  <- a mano, sin API
 D4  Enganchar el canal de WhatsApp al agente                786
 D5  Subir la Knowledge Base y asociarla                     786
 ```

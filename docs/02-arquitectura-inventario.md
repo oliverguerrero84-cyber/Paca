@@ -15,7 +15,7 @@
                                       ▼
   ┌──────────────────────────────────────────────────────────────┐
   │  GHL                                                          │
-  │  CRM · Agente (Agent Studio) · Productos con inventario        │
+  │  CRM · Bot (Conversation AI) · Productos con inventario        │
   │  Facturas cobradas con Stripe · Workflows                      │
   └──────────────────────────────────────────────────────────────┘
         │  webhook                          ▲  inbound webhook
@@ -133,9 +133,9 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 
 | Flujo | Entrada | Qué hace |
 |---|---|---|
-| `N1 · Apartar` | API Call del agente | Lee `availableQuantity`; si hay, descuenta 1, crea la factura en GHL por la API de Invoices y devuelve `liga_pago` e `invoice_id`. Si no, devuelve agotado |
+| `N1 · Apartar` | Acción Custom API del bot | Lee `availableQuantity`; si hay, descuenta 1, crea la factura en GHL por la API de Invoices y devuelve `liga_pago` e `invoice_id`. Si no, devuelve agotado |
 | `N2 · Liberar vencidos` | Webhook desde `SP02`, **más** un cron de respaldo cada 15 min | Devuelve el stock con `Update Inventory`. Son dos caminos, no uno — ver abajo |
-| `N3 · Buscar sucursal` | API Call del agente | Código postal → 2-3 sucursales cercanas (ver `06-logistica-envia.md`) |
+| `N3 · Buscar sucursal` | Acción Custom API del bot | Código postal → 2-3 sucursales cercanas (ver `06-logistica-envia.md`) |
 | `N4 · Generar guía` | Webhook al confirmarse el pago | Crea la guía en Envia, devuelve PDF y número de rastreo |
 | `N5 · Rastrear` | Cron / webhook de Envia | Actualiza el estatus y dispara el aviso al cliente |
 
@@ -240,13 +240,13 @@ dar por bueno el flujo. La numeración es la misma que en `docs/11-cronograma.md
    formato de la liga que devuelve: es el supuesto que sostiene todo el diseño.
 2. Que **pagar una liga no descuente stock solo.** Si lo hiciera, vuelve el doble
    descuento y n8n dejaría de ser dueño único del contador.
-3. Que el nodo **`API Call` de Agent Studio responda a tiempo**, para que la
-   conversación no se sienta trabada. Necesita `N1` vivo, así que va en la semana 2.
+3. Que **`N1` responda en menos de 10 s**, el límite de la acción Custom API de
+   Conversation AI. Necesita `N1` vivo, así que va en la semana 2.
 4. Que el checkout de GHL **muestre OXXO y SPEI**, y que `Payment Received` dispare
    igual con cada método que muestre.
-5. Que **Agent Studio soporte los nodos que diseñamos** — `API Call`, `Single Choice`,
-   `Capture`. Prueba de humo con tres o cuatro nodos sueltos, en la semana 1: si no
-   puede, no es un ajuste, es rediseñar el carril del agente entero.
+5. Que **Conversation AI con Custom API funcione en el canal de WhatsApp** y que la KB
+   responda del catálogo. Prueba de humo en la semana 1. La mitad ya se vio el 25 sep
+   en el probador del bot con un endpoint falso; falta verlo por WhatsApp.
 
 **Plan B si falla la prueba 1:** cobrar por el checkout de la tienda y renunciar al
 apartado de 24 h, porque ahí sí chocan. Conviene saberlo antes de prometer el

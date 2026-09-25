@@ -48,14 +48,15 @@ es exactamente lo que pidieron en la junta. La tienda sale del camino de venta.
 
 ## 3. Quién hace qué
 
-### El asistente — uno solo, en GHL Agent Studio
+### El asistente — uno solo, en Conversation AI de GHL
 
-No dos asistentes, y ninguno en n8n.
+No dos asistentes, y ninguno en n8n. Hasta el 25 sep era Agent Studio; ese día se
+cambió a Conversation AI, y la razón está en la primera fila.
 
-| Por qué Agent Studio | |
+| Por qué Conversation AI | |
 |---|---|
-| **Tiene nodo `API Call`** | Puede preguntarle a n8n *dentro del mismo turno*. El cliente pregunta "¿tienes mujer verano premium?" y le contestan al momento |
-| Conversation AI clásico **no lo tiene** | Iría por workflow y webhook, que es asíncrono: el cliente escribe y el bot tarda en saber si hay stock |
+| **Tiene la acción Custom API** | Le pregunta a n8n *dentro del mismo turno*, con 10 s de límite. Se probó el 25 sep. Era lo único que sólo Agent Studio podía hacer, y ya no |
+| **Es más simple** | Un prompt, la KB y tres acciones, en vez de 19 nodos con router y capturas. Menos que construir a mano y menos que se rompa |
 | **Dos asistentes se estorban** | El playbook lo documenta: un Transfer Bot con condición agresiva **roba el primer turno** y las capturas no se ejecutan |
 
 ### n8n — tres trabajos, ninguno conversacional
@@ -79,7 +80,7 @@ plantilla fija, así que no sirve por SKU y cantidad; la API de Invoices sí:
 ```
   Agente captura SKU y cantidad
         │
-        ├─► API Call → n8n N1: ¿hay stock?  →  n8n lee GHL, aparta, y crea la
+        ├─► Custom API → n8n N1: ¿hay stock? → n8n lee GHL, aparta, y crea la
         │                                       factura con la API de Invoices
         │                                       (producto, cantidad, contacto, MXN)
         ▼
@@ -121,9 +122,9 @@ elimina los dos de raíz.
  1. Llega por WhatsApp (campañas de Meta e Instagram)
  2. El agente atiende: calidades, tallas, qué trae, peso, fotos y videos
  3. Detecta intención de compra → captura SKU y cantidad
- 4. API Call → n8n valida stock contra GHL                    ── n8n
+ 4. Custom API → n8n valida stock contra GHL                  ── n8n
  5. El agente pide CÓDIGO POSTAL — cinco dígitos
- 6. API Call → n8n devuelve 2-3 sucursales cercanas           ── n8n + Envia
+ 6. Custom API → n8n devuelve 2-3 sucursales cercanas         ── n8n + Envia
  7. El cliente elige de la lista (nunca escribe la sucursal)
  8. n8n APARTA: availableQuantity −1 · arranca el reloj de 24 h
  9. n8n crea la factura en GHL; el agente manda la liga      ── n8n + GHL
@@ -147,7 +148,7 @@ cuenta real antes de comprometer esto con el cliente:
 |---|---|---|
 | 1 | Que una **factura creada por API cobre con Stripe** | Es el supuesto que sostiene todo el diseño. Hay que verla cobrar y ver el formato de la liga |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo descontara, vuelve el doble descuento |
-| 3 | Que el nodo **`API Call` de Agent Studio responda a tiempo** | Si tarda, la conversación se siente trabada y se pierde la ventaja sobre el camino asíncrono |
+| 3 | Que **`N1` responda en menos de 10 s**, el límite de la acción Custom API | Si tarda, la acción falla y la conversación se siente trabada |
 
 ### Plan B si falla la prueba 1
 

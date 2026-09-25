@@ -88,7 +88,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 | `docs/13-accesos.md` | **El orden de las altas.** Qué habilita a qué, y quién lo hace — **interno** |
 | `docs/08-traspaso.md` | Tu tarea concreta y cómo arrancar la sesión |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué lleva cada paquete |
-| `docs/01-mapa-ghl.md` | Pipeline, workflows, agente de Agent Studio y landing |
+| `docs/01-mapa-ghl.md` | Pipeline, workflows, bot de Conversation AI y landing |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |
 | `docs/03-catalogo-productos.md` | Los 30 SKUs — fuente de la Knowledge Base |
 | `docs/04-precotizacion.md` | Números, margen y piso — **interno** |
@@ -110,9 +110,11 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 
 1. **La venta vive en la conversación de WhatsApp; el cobro sale por liga de pago.**
    No por el checkout de la tienda. Ver `docs/07-decision-checkout.md`.
-2. **El asistente es uno solo, en Agent Studio de GHL.** Su nodo `API Call` le permite
-   consultar a n8n dentro del mismo turno. Dos bots en el mismo WhatsApp se pelean el
-   primer turno.
+2. **El asistente es uno solo, en Conversation AI de GHL, con acciones Custom API.**
+   Esas acciones le permiten consultar a n8n dentro del mismo turno (probado el 25 sep
+   2026, límite de 10 s por llamada). Se eligió sobre Agent Studio el 25 de septiembre
+   porque hace lo mismo con un prompt y tres acciones en vez de 23 nodos. Dos bots en
+   el mismo WhatsApp se pelean el primer turno.
 3. **n8n nunca habla con el cliente y nunca toca Stripe.** Valida y aparta stock, crea
    la factura en GHL por la API de Invoices y devuelve la liga al agente, busca
    sucursal por código postal, y genera guías y rastrea. Quien cobra es GHL con la

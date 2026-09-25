@@ -147,7 +147,7 @@ envíos al mes, va a pasar seguido. Y es justo el dolor que describió Pamela:
 
 > *"Oye, no me llegó y que no sé qué. Y ahí, órale, a rastrear."*
 
-**Qué costaría agregarlo:** un `API Call` más en el agente y un flujo de n8n que
+**Qué costaría agregarlo:** una acción Custom API más en el bot y un flujo de n8n que
 consulte `ship/track` por número de orden — reaprovecha lo que `N5` ya hace contra
 Envia. No es alcance contratado, así que se cotiza aparte.
 

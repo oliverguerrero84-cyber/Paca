@@ -139,7 +139,7 @@ regla de diseño, no una preferencia.
 
 | Pieza | Responsabilidad |
 |---|---|
-| **Agent Studio de GHL** | Toda la conversación. Es el único que le habla al cliente |
+| **Conversation AI de GHL** | Toda la conversación. Es el único que le habla al cliente |
 | **Workflows de GHL** | El tablero, el reloj del apartado, confirmar el pago, avisar al almacén |
 | **Stripe** (del cliente) | Cobra las facturas de GHL. Conectado en Greentex; la subcuenta va en MXN |
 | **n8n** | Valida y aparta stock y crea la factura en GHL por API · busca sucursal por código postal · genera guías y rastrea |
@@ -187,10 +187,12 @@ Enviado, Guía Generada → Entregado.
 | `AP02` | Escalamiento a un humano | 8 |
 | `AP03` | Registro manual de pagos por transferencia | 7 |
 
-**Agente de Agent Studio, 19 nodos.** Saluda y califica (menudeo o mayoreo), resuelve
-dudas contra la Knowledge Base, captura temporada, categoría y calidad, **manda foto
-y video**, consulta stock a n8n, pide el código postal, ofrece las sucursales, y
-cierra dejando el pedido armado con el aviso de que no hay devoluciones.
+**Bot de Conversation AI: un prompt, la Knowledge Base y tres acciones Custom API.**
+Saluda y califica (menudeo o mayoreo), resuelve dudas contra la KB, ayuda a elegir
+temporada, categoría y calidad, **manda foto y video**, pide el código postal y ofrece
+las sucursales (`N3`), da el resumen con el aviso de que no hay devoluciones, y al
+confirmar aparta y manda la liga (`N1`). Rastrea si le preguntan (`N5`). Hasta el 25
+sep era un agente de Agent Studio de 19 nodos; ya no se mide en nodos y no se recotiza.
 
 **5 flujos de n8n:** `N1` apartar (serializado, concurrencia 1) · `N2` liberar
 vencidos (cron cada 15 min) · `N3` buscar sucursal · `N4` generar guía · `N5`
@@ -210,9 +212,9 @@ escribir bien, no sabe usar muy bien el teléfono"*. Además el carrito abandona
 nativo manda **una sola** notificación y exige que el cliente haya escrito su correo,
 así que no sirve para la cadencia del apartado. → `docs/07-decision-checkout.md`
 
-**Un solo asistente, en Agent Studio.** Su nodo `API Call` le permite preguntarle a
-n8n *dentro del mismo turno*: el cliente pregunta si hay existencia y le contestan al
-momento. Conversation AI clásico no tiene ese nodo e iría por webhook asíncrono. Y
+**Un solo asistente, en Conversation AI.** Su acción Custom API le permite preguntarle
+a n8n *dentro del mismo turno*, con 10 s de límite: el cliente confirma su paca y
+recibe la liga al momento. Hasta el 25 sep esto sólo lo hacía Agent Studio; ya no. Y
 dos bots en el mismo WhatsApp se pelean el primer turno.
 
 **El inventario vive en los productos de GHL, con n8n como dueño único del
@@ -286,7 +288,7 @@ Regla del toolkit: *"se guardó" no es "funciona"*.
 |---|---|---|
 | 1 | Que una factura creada por API **cobre con Stripe** | Sostiene todo el diseño |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo hiciera, vuelve el doble descuento |
-| 3 | Que el nodo **`API Call` responda a tiempo** | Si tarda, la conversación se siente trabada |
+| 3 | Que **`N1` responda en menos de 10 s**, el límite de la acción Custom API | Si tarda, la acción falla y la conversación se siente trabada |
 
 **Plan B si falla la 1:** cobrar por el checkout de la tienda y renunciar al apartado
 de 24 h, porque ahí sí chocan.
@@ -401,7 +403,7 @@ el reparto con 786, el total del primer año ni datos de contacto.
 | `docs/13-accesos.md` | La cadena de altas y accesos, ordenada por dependencias — **interno** |
 | `docs/14-estado.md` | **En qué va todo hoy** — hecho, en curso y bloqueado |
 | `docs/00-alcance-tecnico.md` | Qué se puede construir y qué no es nativo en GHL |
-| `docs/01-mapa-ghl.md` | Pipeline, workflows, los 19 nodos del agente, plantillas |
+| `docs/01-mapa-ghl.md` | Pipeline, workflows, el bot de Conversation AI y sus 3 acciones, plantillas |
 | `docs/02-arquitectura-inventario.md` | Inventario, apartado de 24 h, concurrencia |
 | `docs/03-catalogo-productos.md` | Los 30 SKUs y las tres calidades |
 | `docs/04-precotizacion.md` | Números, margen y piso — **interno, no sale del equipo** |

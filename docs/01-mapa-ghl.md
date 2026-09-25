@@ -124,8 +124,8 @@ La pregunta que más se repite. La respuesta cabe en una regla:
   mensaje del cliente
          │
          ▼
-      AGENTE ───► API Call ───► n8n            SÍNCRONO
-         │          (espera la respuesta en el mismo turno)
+      BOT ───► Custom API ───► n8n             SÍNCRONO
+         │       (espera la respuesta en el mismo turno, 10 s máx.)
          │
          └─► tag ───► WORKFLOW ───► webhook ───► n8n     ASÍNCRONO
                           ▲                        │
@@ -133,8 +133,7 @@ La pregunta que más se repite. La respuesta cabe en una regla:
                               (otro workflow continúa)
 ```
 
-**Ningún workflow invoca al agente.** El agente arranca por mensaje entrante —nodo 1,
-`Start Trigger — Chat Message`— y punto. Lo único que un workflow puede hacerle es
+**Ningún workflow invoca al bot.** El bot arranca por mensaje entrante y punto. Lo único que un workflow puede hacerle es
 **prenderlo o apagarlo** con `Update Conversation AI Bot Status`. Un bot tampoco puede
 mandar mensajes desde un workflow: para eso está `Send Message`.
 
@@ -143,10 +142,10 @@ de GHL no espera respuesta, así que todo ida y vuelta con n8n se cierra con n8n
 disparando un Inbound Webhook y un segundo workflow continuando. Por eso `SP02` y
 `AP01` tienen ese trigger.
 
-**El carril síncrono es la razón entera de usar Agent Studio.** Su nodo `API Call` sí
-espera dentro del turno. Se usa tres veces, las tres con el cliente mirando la
-pantalla: stock (nodo 11), sucursal (nodo 16) y apartado con liga de pago (nodo 19).
-Nada más.
+**El carril síncrono lo cubre la acción Custom API de Conversation AI.** Llama a n8n y
+espera la respuesta dentro del turno, con **10 s de límite**. Se usa tres veces, las
+tres con el cliente mirando la pantalla: apartado con liga de pago (`N1`), sucursal
+(`N3`) y rastreo (`N5`). Nada más.
 
 De ahí se sigue lo que más se pregunta: **no hace falta un asistente para llamar a una
 API.** Un asistente sirve para conversar. Confirmar el pago, crear la guía o rastrear
@@ -154,15 +153,15 @@ ocurren cuando nadie conversa, así que los hace un workflow llamando a n8n. Y u
 asistente no sobra: estorba, porque dos bots en el mismo WhatsApp se pelean el primer
 turno.
 
-### El eslabón entre el nodo 19 y `SP02` — cerrado con el cambio a Stripe
+### El eslabón entre el bot y `SP02` — cerrado con el cambio a Stripe
 
-Antes el nodo 19 sólo marcaba `pedido-listo` y nadie llamaba a
-`url_n8n_crear_apartado`. Desde el 25 sep el propio nodo 19 hace la llamada: `API Call
-→ N1` aparta, crea la factura y devuelve la liga en el mismo turno, y `N1` dispara el
+Antes el agente sólo marcaba `pedido-listo` y nadie llamaba a
+`url_n8n_crear_apartado`. Desde el 25 sep la acción **Apartar paca y liga de pago** hace la
+llamada: `N1` aparta, crea la factura y devuelve la liga en el mismo turno, y `N1` dispara el
 Inbound Webhook con el que arranca `SP02`:
 
 ```
-nodo 19: API Call → url_n8n_crear_apartado
+acción «Apartar paca y liga de pago» → url_n8n_crear_apartado
    → n8n N1 descuenta el stock y crea la factura por la API de Invoices
    → N1 responde liga_pago e invoice_id; el agente manda la liga
    → N1 dispara el Inbound Webhook
@@ -193,54 +192,78 @@ trabajo limpio:
 
 ---
 
-## 3. Agente de Agent Studio — `Agente Ventas Menudeo`
+## 3. Bot de Conversation AI — `Agente Ventas Menudeo`
 
-**Completo: 19 nodos.** Con IA generativa avanzada.
+**Decidido el 25 sep 2026.** El asistente vive en **Conversation AI**, no en Agent
+Studio. Lo que antes eran 19 nodos con Router AI y capturas es ahora **un prompt, la
+Knowledge Base del catálogo y tres acciones Custom API** contra n8n. Se probó ese
+mismo día con un endpoint falso: el bot pidió cantidad, pidió confirmación, llamó una
+sola vez y mandó la liga. Ya no se mide en nodos y **no se recotiza**: la partida de
+«agente de 19 nodos» cubre este bot.
 
-La conversación es el catálogo: el agente muestra, resuelve y arma el pedido
-completo sin que el cliente salga de WhatsApp.
+La conversación es el catálogo: el bot muestra, resuelve y arma el pedido completo
+sin que el cliente salga de WhatsApp. **Sale una sola vez: para pagar.**
 
-| # | Nodo | Función |
-|---:|---|---|
-| 1 | Start Trigger — Chat Message | Cualquier mensaje entrante |
-| 2 | AI Agent | Saluda y califica: ¿menudeo o mayoreo? |
-| 3 | Router AI | mayoreo → escalar · menudeo → seguir · duda general → KB |
-| 4 | Search KB | Catálogo de las 30 pacas |
-| 5 | AI Agent | Resuelve dudas de tallas, calidades, contenido y peso |
-| 6 | Text Input | Temporada (campo gemelo, ver gotchas) |
-| 7 | Text Input | Categoría: mujer / hombre / niño / especiales |
-| 8 | Text Input | Calidad: Boutique / Premium / Especial |
-| 9 | Text Gen | **Manda foto y video** del artículo elegido |
-| 10 | Text Input | Cantidad de pacas |
-| 11 | API Call → n8n `N1` | Consulta de disponibilidad real en GHL |
-| 12 | Router Condicional | ¿Hay stock suficiente? |
-| 13 | AI Agent | Ofrece alternativas si no hay |
-| 14 | Capture | Nombre y teléfono |
-| 15 | Text Input | **Código postal** — 5 dígitos |
-| 16 | API Call → n8n `N3` | Buscador de sucursal: devuelve 2-3 opciones cercanas |
-| 17 | Single Choice | El cliente **elige** sucursal de la lista |
-| 18 | Text Gen | Resumen del pedido + aviso de que no hay devoluciones |
-| 19 | API Call → n8n `N1` + End Node | Aparta y crea la factura; recibe `liga_pago` y la manda. `N1` dispara `SP02` |
+### El prompt — qué hace
 
-**Qué cambió en la revisión 5:** el agente ya no manda a la tienda. Absorbe el
-catálogo (fotos y videos por WhatsApp, como pidieron en la junta) y el buscador de
-sucursal, y cierra dejando el pedido armado. **El cliente sale de WhatsApp una sola
-vez: para pagar.**
+1. Saluda y **califica**: menudeo sigue; cualquier señal de mayoreo → tag
+   `escalar-humano` y se despide. El mayoreo está fuera del sistema.
+2. Resuelve dudas de tallas, calidades, contenido y peso **desde la KB**.
+3. Ayuda a elegir: temporada, categoría (mujer / hombre / niño / especiales) y calidad
+   (Boutique / Premium / Especial). **Manda foto y video** del artículo elegido.
+4. Antes de apartar, se asegura de tener **clave de la paca, cantidad, nombre, correo
+   y teléfono** del contacto. La API de facturas exige correo y teléfono: sin ellos
+   la factura no se crea.
+5. Pide el **código postal** y ofrece las sucursales que devuelva n8n; el cliente elige.
+6. Da el resumen del pedido, avisa que **no hay devoluciones**, pide confirmación y
+   sólo entonces aparta y manda la liga.
 
-### Esencial — 12 nodos
+Guarda en el contacto: `temporada`, `categoria`, `calidad`, `sku_elegido`,
+`cantidad`, `codigo_postal`, `sucursal_elegida` (ver §4 y las gotchas de los campos
+gemelos).
 
-Atiende y arma el pedido igual, pero **sin consultar nada**: no lleva las llamadas
-API a n8n, ni el router de stock, ni el nodo de alternativas, ni el buscador de
-sucursal. Cierra derivando a un asesor:
+### Las tres acciones Custom API
 
-| # | Nodo | Función |
-|---:|---|---|
-| 9 | Capture | Nombre y teléfono |
-| 10 | Text Input | Ciudad y estado |
-| 11 | Text Gen | Resumen del pedido + aviso de que un asesor confirma disponibilidad y cobra |
-| 12 | End Node | Marca `pedido-armado`, que dispara `SP02` |
+Todas `POST`, JSON, **10 s de timeout**, sin reintento. Los campos de entrada se
+recogen con esquema JSON (pestaña *AI - JSON Schema*); `contactId` va siempre.
 
-### Global Prompt — reglas permanentes
+| Acción | Llama a | Entrada | Salida que se mapea |
+|---|---|---|---|
+| **Apartar paca y liga de pago** | `N1` · `url_n8n_crear_apartado` | `sku`, `cantidad`, `contactId` | `ok`, `articulo`, `expira_texto`, `liga_pago` |
+| **Sucursal por código postal** | `N3` · `url_n8n_buscar_sucursal` | `codigo_postal`, `contactId` | `sucursales` (2-3 opciones con nombre y dirección) |
+| **Rastrear envío** | `N5` · `url_n8n_rastrear` | `contactId` | `estatus`, `estatus_texto` |
+
+**Apartar paca y liga de pago**
+- *When:* «Cuando el cliente ya dijo qué paca quiere y cuántas, ya eligió sucursal, y
+  confirmó que quiere apartarla. Antes de llamar, asegúrate de tener la clave de la
+  paca, la cantidad, y que el contacto tenga correo y teléfono.»
+- *What to say:* «Si `ok` es true, dile que su paca quedó apartada hasta
+  `expira_texto` y mándale `liga_pago` tal cual para pagar. Si `ok` es false, dile que
+  ya no hay de esa paca y ofrécele otra. No menciones que consultaste un sistema.»
+
+**Sucursal por código postal**
+- *When:* «Cuando el cliente ya eligió su paca y te dio su código postal de 5 dígitos.
+  Nunca adivines la sucursal.»
+- *What to say:* «Enlista las sucursales que vinieron, con nombre y dirección, y pídele
+  que elija una. Si no vino ninguna, pídele que confirme el código postal.»
+
+**Rastrear envío**
+- *When:* «Cuando el cliente pregunta dónde va su paquete o cuándo llega, y ya tiene
+  una guía.»
+- *What to say:* «Dile `estatus_texto` tal cual. Si no hay guía todavía, dile que su
+  pedido está en preparación.»
+
+> `N1` aparta, crea la factura y **dispara el Inbound Webhook** con el que arranca
+> `SP02`. El bot no marca tags ni etapas para eso.
+
+### Esencial
+
+El mismo prompt y la misma KB, **sin las tres acciones**: no consulta stock, no busca
+sucursal ni rastrea. Pide nombre, teléfono, ciudad y estado, da el resumen con el
+aviso de que un asesor confirma disponibilidad y cobra, y marca `pedido-armado`, que
+dispara `SP02`.
+
+### Reglas permanentes del prompt
 
 1. **Nunca inventar stock, precios ni cantidad de piezas.** Siempre leerlos de la KB o de la API. Si el dato no está, decirlo.
 2. **Nunca decir "económica"** para la calidad baja. Se llama **Especial**. Regla explícita del cliente.
@@ -250,7 +273,7 @@ sucursal. Cierra derivando a un asesor:
 6. Tono: cercano y mexicano, sin tecnicismos.
 7. **No hay devoluciones.** Política explícita del cliente: *"tratamos que la venta
    sea sincera y directa: es esto, trae esto, y no hay devolución"*. El bot debe
-   decirlo antes de mandar al checkout, nunca después de cobrar.
+   decirlo antes de mandar la liga, nunca después de cobrar.
 8. **Nunca adivinar la sucursal ni la ubicación.** Siempre pedir el código postal y
    dejar que el buscador devuelva las opciones.
 9. **Sólo en el Esencial:** nunca afirmar disponibilidad. El bot arma el pedido y
@@ -396,8 +419,8 @@ scripte.
 
 ### Reglas que cambian el diseño del agente
 
-- **Los bots no pueden escribir en dropdowns** (`SINGLE_OPTIONS`). Por eso los
-  nodos 6, 7 y 8 —temporada, categoría y calidad— son campos de texto gemelos + un
+- **Los bots no pueden escribir en dropdowns** (`SINGLE_OPTIONS`). Por eso
+  temporada, categoría y calidad son campos de texto gemelos + un
   workflow normalizador que los pasa al dropdown real. Si se diseñan como Single
   Choice, no guardan nada.
 - **Las acciones tienen límite de 500 caracteres.** El prompt no, pero las acciones

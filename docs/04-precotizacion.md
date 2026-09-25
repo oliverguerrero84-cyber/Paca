@@ -97,7 +97,7 @@ Los precios de venta son **decisión comercial del equipo**, no salida del cotiz
 | Setup de subcuenta (DNS, dominio, WhatsApp API, correos) | $250 | — |
 | CRM & Pipelines — 1 pipeline de 8 etapas + 3 vistas | $320 | — |
 | Automatizaciones & Workflows — 9 workflows | $1,034 | — |
-| Chatbot / AI Chat — agente de 19 nodos con IA avanzada | $685 | $80 |
+| Chatbot / AI Chat — bot de Conversation AI con KB y 3 acciones (cotizado como agente de 19 nodos; no se recotiza) | $685 | $80 |
 | Integraciones — Envia.com + motor de apartado (n8n) | $600 | $100 |
 | Documentos & Templates — 6 plantillas | $400 | — |
 | Catálogo público — 6 secciones | $490 | — |

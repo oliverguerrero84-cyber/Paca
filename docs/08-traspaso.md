@@ -71,10 +71,10 @@ carrito abandonado nativo manda **una sola** notificación y exige que el client
 escrito su correo, así que no sirve para la cadencia del apartado.
 → `docs/07-decision-checkout.md`
 
-**Un solo asistente, en Agent Studio de GHL.** Su nodo `API Call` le permite
-preguntarle a n8n *dentro del mismo turno*: el cliente pregunta si hay existencia y
-le contestan al momento. Conversation AI clásico no tiene ese nodo e iría por webhook
-asíncrono. Y dos bots en el mismo WhatsApp se pelean el primer turno.
+**Un solo asistente, en Conversation AI de GHL.** Su acción Custom API le permite
+preguntarle a n8n *dentro del mismo turno*, con 10 s de límite: el cliente confirma su
+paca y recibe la liga al momento. Hasta el 25 sep esto sólo lo hacía Agent Studio; ya
+no. Y dos bots en el mismo WhatsApp se pelean el primer turno.
 → `docs/01-mapa-ghl.md`
 
 **n8n hace tres cosas y ninguna es conversacional:** valida y aparta stock, busca
@@ -109,7 +109,7 @@ como supuestos en todos los documentos. **No las presentes al cliente como hecho
 |---|---|---|
 | 1 | Que una factura creada por API **cobre con Stripe** | Sostiene todo el diseño. Hay que verla cobrar y ver el formato de la liga |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo descontara, vuelve el doble descuento |
-| 3 | Que el nodo **`API Call` responda a tiempo** | Si tarda, la conversación se siente trabada |
+| 3 | Que **`N1` responda en menos de 10 s**, el límite de la acción Custom API | Si tarda, la acción falla y la conversación se siente trabada |
 
 **Plan B si falla la 1:** cobrar por el checkout de la tienda y renunciar al apartado
 de 24 h, porque ahí sí chocan. Conviene saberlo antes de prometer el apartado.
