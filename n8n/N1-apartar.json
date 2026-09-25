@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N1 · Apartar\n\nGHL pregunta si hay existencia de un SKU. Si hay, descuenta 1 y responde OK.\nSi no, responde agotado y el agente ofrece alternativas.\n\n**ESTE FLUJO CORRE SERIALIZADO — concurrencia 1.**\nSe configura en Settings del flujo, no se ve en este JSON. Sin eso, dos clientes\napartando la última paca en el mismo segundo la dejan en negativo.\n\nNo toca Mercado Pago. No le habla al cliente.",
+        "content": "## N1 · Apartar\n\nGHL pregunta si hay existencia de un SKU. Si hay, descuenta, crea la factura en GHL\ny responde con la liga de pago.\nSi no, responde agotado y el agente ofrece alternativas.\n\n**ESTE FLUJO CORRE SERIALIZADO — concurrencia 1.**\nSe configura en Settings del flujo, no se ve en este JSON. Sin eso, dos clientes\napartando la última paca en el mismo segundo la dejan en negativo.\n\nNo toca Stripe: la factura es de GHL y quien cobra es GHL. No le habla al cliente.",
         "height": 320,
         "width": 460
       },
@@ -11,7 +11,10 @@
       "name": "Qué hace",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-380, -40]
+      "position": [
+        -380,
+        -40
+      ]
     },
     {
       "parameters": {
@@ -24,7 +27,10 @@
       "name": "Webhook · apartar",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [140, 140],
+      "position": [
+        140,
+        140
+      ],
       "notes": "Body esperado: { \"sku\": \"PV-MUJ-BOU\", \"cantidad\": 1, \"contactId\": \"...\" }"
     },
     {
@@ -35,8 +41,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Accept", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
           ]
         },
         "options": {}
@@ -45,32 +57,48 @@
       "name": "GHL · listar productos",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [360, 140],
+      "position": [
+        360,
+        140
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       },
       "notes": "SUPUESTO: availableQuantity vive en el objeto price, no en el product. Verificar al cargar los 30 productos."
     },
     {
       "parameters": {
-        "jsCode": "// Resuelve SKU -> price, y decide si alcanza el stock.\n// El SKU se guarda en el campo `sku` del price del producto en GHL.\nconst pedido = $('Webhook · apartar').first().json.body;\nconst sku = (pedido.sku || '').trim();\nconst cantidad = Number(pedido.cantidad || 1);\n\nconst productos = $input.first().json.products || [];\nlet encontrado = null;\n\nfor (const p of productos) {\n  for (const precio of (p.prices || [])) {\n    if ((precio.sku || '').trim() === sku) {\n      encontrado = { productId: p._id || p.id, priceId: precio._id || precio.id,\n                     nombre: p.name, disponible: Number(precio.availableQuantity ?? 0) };\n    }\n  }\n}\n\nif (!encontrado) {\n  return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad } }];\n}\n\nconst alcanza = encontrado.disponible >= cantidad;\nreturn [{ json: { ...encontrado, sku, cantidad, alcanza,\n                  nuevoStock: encontrado.disponible - cantidad,\n                  ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
+        "jsCode": "// Resuelve SKU -> price, y decide si alcanza el stock.\n// El SKU se guarda en el campo `sku` del price del producto en GHL.\nconst pedido = $('Webhook · apartar').first().json.body;\nconst sku = (pedido.sku || '').trim();\nconst cantidad = Number(pedido.cantidad || 1);\n\nconst productos = $input.first().json.products || [];\nlet encontrado = null;\n\nfor (const p of productos) {\n  for (const precio of (p.prices || [])) {\n    if ((precio.sku || '').trim() === sku) {\n      encontrado = { productId: p._id || p.id, priceId: precio._id || precio.id,\n                     nombre: p.name, monto: Number(precio.amount ?? 0),\n                     disponible: Number(precio.availableQuantity ?? 0) };\n    }\n  }\n}\n\nif (!encontrado) {\n  return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad } }];\n}\n\nconst alcanza = encontrado.disponible >= cantidad;\nreturn [{ json: { ...encontrado, sku, cantidad, alcanza,\n                  nuevoStock: encontrado.disponible - cantidad,\n                  ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
       },
       "id": "resolver-sku",
       "name": "Resolver SKU y stock",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [580, 140]
+      "position": [
+        580,
+        140
+      ]
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "version": 2 },
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
           "conditions": [
             {
               "id": "hay-stock",
               "leftValue": "={{ $json.alcanza }}",
               "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -81,7 +109,10 @@
       "name": "¿Alcanza?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [800, 140]
+      "position": [
+        800,
+        140
+      ]
     },
     {
       "parameters": {
@@ -92,8 +123,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -105,20 +142,29 @@
       "name": "GHL · descontar stock",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1020, 40],
+      "position": [
+        1020,
+        40
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       }
     },
     {
       "parameters": {
-        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString()\n} }];"
+        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: datos.monto,\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString()\n} }];"
       },
       "id": "reloj",
       "name": "Arrancar reloj de 24 h",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1240, 40]
+      "position": [
+        1240,
+        40
+      ]
     },
     {
       "parameters": {
@@ -130,34 +176,231 @@
       "name": "Responder apartado",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1460, 40]
+      "position": [
+        2120,
+        40
+      ]
     },
     {
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify({ ok: false, motivo: $json.motivo, sku: $json.sku, disponible: $json.disponible ?? 0 }) }}",
-        "options": { "responseCode": 200 }
+        "options": {
+          "responseCode": 200
+        }
       },
       "id": "resp-no",
       "name": "Responder agotado",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1020, 260],
+      "position": [
+        1020,
+        260
+      ],
       "notes": "Responde 200, no error: el agente necesita leer el motivo para ofrecer alternativas."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/invoices/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  altId: $env.GHL_LOCATION_ID, altType: 'location',\n  name: 'Paca ' + $json.sku,\n  currency: 'MXN',\n  liveMode: true,\n  contactDetails: { id: $json.contactId },\n  items: [{ name: $json.articulo, currency: 'MXN', amount: $json.monto, qty: $json.cantidad,\n            productId: $json.productId, priceId: $json.priceId }],\n  issueDate: new Date().toISOString().slice(0,10),\n  dueDate: $json.expira_en.slice(0,10)\n}) }}",
+        "options": {}
+      },
+      "id": "crear-factura",
+      "name": "GHL · crear factura",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "SUPUESTO: POST /invoices/ acepta contactDetails sólo con id y no exige businessDetails. Se confirma en la validación 1. El monto sale del price de GHL, nunca del agente."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/invoices/{{$json._id}}/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ altId: $env.GHL_LOCATION_ID, altType: 'location', userId: $env.GHL_USER_ID, action: 'send_manually', liveMode: true, autoPayment: false }) }}",
+        "options": {}
+      },
+      "id": "enviar-factura",
+      "name": "GHL · enviar factura",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "action 'send_manually': la factura queda pagable pero GHL NO manda correo ni SMS. La liga la manda el agente por WhatsApp. GHL_USER_ID = usuario de 786 en Greentex (sentBy)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Junta el apartado con la factura. La liga es la que el agente manda por WhatsApp.\n// ponytail: la URL se arma a mano; si /invoices/ devuelve la liga, usar esa.\nconst apartado = $('Arrancar reloj de 24 h').first().json;\nconst factura = $('GHL · crear factura').first().json;\nconst invoice_id = factura._id || factura.id;\nreturn [{ json: { ...apartado, invoice_id,\n  liga_pago: `${$env.GHL_INVOICE_URL_BASE}/invoice/${invoice_id}` } }];"
+      },
+      "id": "armar-resp",
+      "name": "Armar respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        40
+      ],
+      "notes": "GHL_INVOICE_URL_BASE = dominio de pagos de la subcuenta, sin barra final. SUPUESTO: el formato /invoice/{id} se confirma en la validación 1."
     }
   ],
   "connections": {
-    "Webhook · apartar": { "main": [[{ "node": "GHL · listar productos", "type": "main", "index": 0 }]] },
-    "GHL · listar productos": { "main": [[{ "node": "Resolver SKU y stock", "type": "main", "index": 0 }]] },
-    "Resolver SKU y stock": { "main": [[{ "node": "¿Alcanza?", "type": "main", "index": 0 }]] },
-    "¿Alcanza?": {
+    "Webhook · apartar": {
       "main": [
-        [{ "node": "GHL · descontar stock", "type": "main", "index": 0 }],
-        [{ "node": "Responder agotado", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "GHL · listar productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "GHL · descontar stock": { "main": [[{ "node": "Arrancar reloj de 24 h", "type": "main", "index": 0 }]] },
-    "Arrancar reloj de 24 h": { "main": [[{ "node": "Responder apartado", "type": "main", "index": 0 }]] }
+    "GHL · listar productos": {
+      "main": [
+        [
+          {
+            "node": "Resolver SKU y stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolver SKU y stock": {
+      "main": [
+        [
+          {
+            "node": "¿Alcanza?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Alcanza?": {
+      "main": [
+        [
+          {
+            "node": "GHL · descontar stock",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder agotado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · descontar stock": {
+      "main": [
+        [
+          {
+            "node": "Arrancar reloj de 24 h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Arrancar reloj de 24 h": {
+      "main": [
+        [
+          {
+            "node": "GHL · crear factura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · crear factura": {
+      "main": [
+        [
+          {
+            "node": "GHL · enviar factura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · enviar factura": {
+      "main": [
+        [
+          {
+            "node": "Armar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Responder apartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
   "settings": {
     "executionOrder": "v1",

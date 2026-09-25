@@ -102,16 +102,17 @@ Quedan dos cabos, los dos nuestros y los dos de la semana 1:
 > plazo más largo del proyecto. Por eso subió a la semana 1 en
 > `docs/11-cronograma.md`.
 
-### 12. Cuenta de Mercado Pago
-¿Ya la tienen abierta y **verificada**? Sin las verificaciones de identidad y
-fiscales, Mercado Pago retiene fondos según el flujo recibido. Ya salió en la
-llamada; quedamos de enviarles los requisitos.
+### 12. Cuenta de Stripe
+**Cambió el 25 de septiembre:** el cobro va por Stripe, con la cuenta de EE.UU. del
+cliente, no por Mercado Pago. Dos cosas que sólo ellos pueden hacer:
 
-**Subió de urgencia el 24 de septiembre.** La cuenta de Mercado Pago con la que 786
-está probando es de Argentina, y ahí no existen OXXO ni SPEI. Para probar los tres
-métodos hace falta una cuenta de **México**, y para eso **bastan sus credenciales de
-prueba**, que se sacan del panel de desarrolladores sin esperar la verificación fiscal.
-Si el cliente ya tiene la cuenta abierta, aunque no esté verificada, ya sirve para esto.
+- **¿Quién conecta Stripe en Greentex?** Se hace desde Pagos → Integraciones con su
+  propio inicio de sesión de Stripe; 786 no necesita sus llaves. Sin esto no corren
+  las validaciones 1, 2 y 4.
+- **¿Quién activa OXXO y transferencia bancaria de México en su panel de Stripe?**
+  Stripe los permite a cuentas de EE.UU. cobrando en pesos. Que aparezcan en el
+  checkout de GHL es lo que se prueba en la validación 4; si no aparecen, el menudeo
+  cobra con tarjeta por la liga y las transferencias se registran a mano.
 
 ---
 

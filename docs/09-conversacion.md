@@ -1307,3 +1307,4 @@ Necesito afinar el filtro: se perdían las decisiones que tomaste en los cuadros
 
 ---
 
+**25 sep 2026.** El cliente decidió cobrar con Stripe (su cuenta de EE.UU.) en lugar de Mercado Pago. La liga por venta la crea `N1` con la API de Invoices de GHL. Ver `docs/13-accesos.md` §4.

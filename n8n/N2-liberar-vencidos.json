@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N2 · Liberar vencidos\n\nCada 15 minutos busca apartados cuyo reloj ya pasó y devuelve el stock.\n\nCompara `expira_en` —que escribe N1 en ISO 8601 con offset— contra la hora actual.\nSi ya venció: stock +1 y el apartado pasa a `vencido`.\n\n**El cliente NO se entera por aquí.** El aviso lo manda GHL con su plantilla 4,\ndisparada por el cambio de `estado_apartado`.\n\n**Excepción del efectivo:** si el pago es OXXO o Paycash, el apartado se extiende\nhasta que venza la referencia de Mercado Pago. Esos apartados llevan `expira_en`\nmás largo desde el principio, así que este flujo no necesita saber nada especial.",
+        "content": "## N2 · Liberar vencidos\n\nCada 15 minutos busca apartados cuyo reloj ya pasó y devuelve el stock.\n\nCompara `expira_en` —que escribe N1 en ISO 8601 con offset— contra la hora actual.\nSi ya venció: stock +1 y el apartado pasa a `vencido`.\n\n**El cliente NO se entera por aquí.** El aviso lo manda GHL con su plantilla 4,\ndisparada por el cambio de `estado_apartado`.\n\n**Excepción del efectivo:** si el pago es OXXO o Paycash, el apartado se extiende\nhasta que venza el voucher de Stripe (5 días por defecto). Esos apartados llevan `expira_en`\nmás largo desde el principio, así que este flujo no necesita saber nada especial.",
         "height": 340,
         "width": 480
       },

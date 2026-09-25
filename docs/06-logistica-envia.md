@@ -23,7 +23,7 @@ sí lo hace, y cubre de un golpe todo lo que el proyecto necesita.
 
 **Costo: prepago, sin mensualidad y sin comisión.** Se carga saldo a la cuenta y se
 paga por guía generada. Es un costo del cliente y va en la lista de terceros, junto
-con WhatsApp API y las comisiones de Mercado Pago.
+con WhatsApp API y las comisiones de Stripe.
 
 > Se evaluó también **pkge.net**, que sólo rastrea. Envia hace eso y además genera
 > guías y programa recolecciones, así que lo reemplaza por completo.

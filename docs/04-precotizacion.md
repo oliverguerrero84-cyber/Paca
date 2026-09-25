@@ -58,14 +58,14 @@ poco —de $4,065 a **$4,179**— pero **lo que el cliente ve crecer es mucho m�
 | **Guía generada sola** (Envia.com) | El almacén deja de ir por guías y de capturarlas en Excel |
 | **Rastreo hasta "llegó a tu sucursal"** | Con servicio a ocurre, es el aviso más valioso del flujo |
 | **Buscador de sucursal por código postal** | Ataca la razón de fondo por la que apagaron el menudeo |
-| **Tarjeta, OXXO y SPEI en una sola liga** | Los tres métodos que pidieron, sin desarrollo extra |
+| **Liga de pago con Stripe** | Tarjeta confirmada; OXXO y SPEI sólo si el checkout de GHL los muestra (validación 4) |
 | **Registro manual de transferencias** | Para los pagos que llegan a su banco |
 
 Y **desaparece el último paso manual**: las revisiones anteriores decían que
 capturar el número de guía era inevitable. Ya no lo es.
 
 **El Esencial no se mueve** porque nada de esto le toca: no lleva tienda, ni Envia,
-ni Mercado Pago, ni inventario. Subirlo sería cobrar por algo que no recibe.
+ni Stripe, ni inventario. Subirlo sería cobrar por algo que no recibe.
 
 **La mensualidad tampoco se movió en ese momento**, por no subir setup y mensual a
 la vez. Subió después, con el margen de 786 encima: quedó en $637 contra los $330
@@ -105,7 +105,7 @@ Los precios de venta son **decisión comercial del equipo**, no salida del cotiz
 | Soporte post-implementación | — | $150 |
 | **Total calculado** | **$4,179** | **$330** |
 
-> **Mercado Pago e inventario ya no aparecen como integraciones** porque son nativos
+> **La pasarela y el inventario ya no aparecen como integraciones** porque son nativos
 > de GHL. Antes pesaban $600 de setup y $100 al mes ellos solos.
 
 ## Desglose del Esencial · calculado $2,044 / $230
@@ -133,7 +133,7 @@ atención; el Completo es la operación.**
 | Catálogo con fotos y videos | — | ● |
 | Inventario en vivo | — | ● GHL nativo |
 | Apartado de 24 h con reloj | — | ● n8n + `Update Inventory` |
-| Cobro (tarjeta, OXXO, SPEI) | — | ● Mercado Pago nativo |
+| Cobro por liga de pago | — | ● Stripe nativo |
 | Guía y recolección automáticas | — | ● Envia.com |
 | Rastreo hasta la sucursal | — | ● |
 | Buscador de sucursal por CP | — | ● |
@@ -161,7 +161,7 @@ disponibilidad y cobra.
 | **Fotografía y video de producto** | **No cotizado** — los entrega el cliente |
 | Devoluciones | **No hay**, es política del cliente. No se construye flujo |
 | Pauta publicitaria | Gasto del cliente, aparte |
-| Costos de terceros | WhatsApp API por conversación, comisiones de Mercado Pago, **saldo de Envia.com por guía**, n8n si es alojado, Google Workspace |
+| Costos de terceros | WhatsApp API por conversación, comisiones de Stripe (incluida la conversión MXN a USD), **saldo de Envia.com por guía**, n8n si es alojado, Google Workspace |
 
 > **Envia.com es prepago, sin mensualidad ni comisión**: se carga saldo y se paga
 > por guía. Con 500–800 envíos al mes, conviene pedirles tarifa por volumen.

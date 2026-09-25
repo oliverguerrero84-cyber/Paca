@@ -54,7 +54,7 @@ CARPETAS = [
         ("expira_en",          "Expira en",           "TEXT",           None),
     ]),
     ("Pago", [
-        ("mp_preference_id",   "Mercado Pago · preference ID", "TEXT", None),
+        ("invoice_id",         "Factura de GHL · ID",          "TEXT", None),
         ("liga_pago",          "Liga de pago",                 "TEXT", None),
         ("fecha_pago",         "Fecha de pago",                "TEXT", None),
     ]),

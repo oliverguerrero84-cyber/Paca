@@ -29,7 +29,7 @@ no se entromete con mi menudeo"*.
 > la cotización.
 
 El corte: **el Esencial es la atención; el Completo es la operación.** El Completo
-agrega tienda con inventario en vivo, apartado de 24 h, cobro con tarjeta/OXXO/SPEI,
+agrega tienda con inventario en vivo, apartado de 24 h, cobro por liga de pago con Stripe,
 y guía, recolección y rastreo automáticos vía Envia.com.
 
 > ⚠️ El Esencial resuelve **la atención**, no **la operación**. El cliente dijo que
@@ -60,7 +60,7 @@ y de la carga de productos en la tienda.
 
 ## Lo que hay que saber en una línea
 
-**Mercado Pago y el inventario ya son nativos de GHL** — las revisiones 2 y 3 de
+**La pasarela de pago y el inventario ya son nativos de GHL** — las revisiones 2 y 3 de
 estos documentos decían lo contrario y estaban equivocadas. Lo único que GHL no sabe
 hacer es **apartar sin cobrar**, y ahí es donde queda n8n: como reloj del apartado,
 no como motor del sistema. La logística la resuelve **Envia.com**, que genera guías,

@@ -45,7 +45,7 @@ go-live en la 4. Está marcado como riesgo vivo en `docs/10-contexto-completo.md
 > agente armado. Si no, las plantillas se mandan desde Business Manager directo — pero
 > el alta sigue siendo de la semana 1.
 
-**La validación 1 — que la liga de pago cobre con Mercado Pago.** Sostiene todo el
+**La validación 1 — que una factura creada por API cobre con Stripe.** Sostiene todo el
 diseño. Si falla, el Plan B es cobrar por el checkout de la tienda y **renunciar al
 apartado de 24 h**, que es justo lo que el cliente pidió como un boleto de concierto.
 Hay que saberlo antes de prometerlo en la reunión de onboarding, no después.
@@ -69,25 +69,22 @@ habilita a qué. Esta tabla sigue esa cadena, no al revés.
 | Redactar las 6 plantillas | 786 | `A5`. Tampoco espera a nadie: se adelanta |
 | **Dar de alta el número en Meta y crear la WhatsApp Business Account** | 786 | `A4`. Necesita `A2` |
 | **Mandar las 4 plantillas a Meta** | 786 | `A6`. Necesita `A4`. Cuello de botella: 24 a 48 h y puede rechazar |
-| Conectar Mercado Pago con las credenciales de 786 | 786 | `B1` y `B2`. En la subcuenta Greentex, sin esperar al cliente. **Hechos el 24 sep, en modo test** |
-| **Validación 1** — la liga cobra con Mercado Pago | 786 | `B3`. Con monto mínimo real, no en papel |
+| **El cliente conecta su Stripe en Greentex** y activa OXXO y transferencia MX en su panel | Cliente | `B1` y `B2`. Sin esto no corre ninguna validación de cobro |
+| **Validación 1** — la factura creada por API cobra con Stripe | 786 | `B3`. Con tarjeta de prueba de Stripe |
 | **Validación 2** — pagar la liga no descuenta stock solo | 786 | `B4`. Si lo descontara, vuelve el doble descuento |
-| **Validación 4** — `Payment Received` dispara con los tres métodos | 786 | `B5`. Arrancar la de efectivo ya: OXXO tarda hasta 72 h hábiles |
+| **Validación 4** — ¿el checkout de GHL muestra OXXO y SPEI? | 786 | `B5`. Si no los muestra, es tarjeta + transferencia manual (`AP03`) |
 | **Validación 5** — Agent Studio soporta los nodos diseñados | 786 | `D1`. Prueba de humo en la subcuenta Greentex. Si no puede, se rediseña el carril del agente entero |
-| Arrancar verificación de identidad y fiscal en Mercado Pago | Cliente | `B6`. Ya no bloquea el diseño, pero sí el cobro real |
 | Abrir cuenta de Envia.com y fondearla | Cliente | `C1` y `C2`. Prepago, sin mensualidad ni comisión |
 | Cargar los 30 SKUs con nombre y las 24 descripciones que sí existen | 786 | Precio y stock se llenan después |
 
 **Cierre de la semana:** la subcuenta y n8n de pie, las plantillas en cola de Meta, y
 las validaciones 1, 2 y 4 respondidas con sí o no.
 
-> **Estado al jueves 24 de septiembre.** La subcuenta existe (*Greentex Clothing LLC*,
-> `c9jj5uu1WZOIkwi6Vfj5`) y Mercado Pago está conectado en modo test como proveedor por
-> defecto: `0.2` a medias, `B1` y `B2` hechos. La **validación 1** tiene liga creada y el
-> checkout de Mercado Pago sí levanta; falta el pago de prueba. Pero las credenciales
-> son de una cuenta **argentina** y el checkout sólo ofrece tarjeta: la **validación 4 no
-> se puede correr** hasta tener credenciales de México, y la subcuenta está en **USD** y
-> hay que pasarla a MXN. Detalle en `docs/13-accesos.md` §4.
+> **Estado al jueves 25 de septiembre.** La subcuenta existe (*Greentex Clothing LLC*,
+> `c9jj5uu1WZOIkwi6Vfj5`). El cliente decidió cobrar con **Stripe** en lugar de Mercado
+> Pago; lo probado con Mercado Pago se cierra sin resultado. Las validaciones 1, 2 y 4
+> esperan a que el cliente conecte su Stripe (`B1`). La subcuenta pasa a **MXN**.
+> Detalle en `docs/13-accesos.md` §4.
 
 > **La validación 3 se movió a la semana 2.** Mide cuánto tarda el nodo `API Call` en
 > recibir respuesta de `N1`, y `N1` no existe hasta la semana 2. Probarla antes es
@@ -105,11 +102,11 @@ más."*
 | `N1` apartar — serializado, concurrencia 1 | El que evita que dos clientes aparten la última paca |
 | **Validación 3** — el nodo `API Call` responde a tiempo | Va aquí y no en la semana 1: necesita `N1` vivo para medir contra algo |
 | `N2` liberar vencidos — cron cada 15 min | El reloj que suelta lo que no se pagó |
-| `SP02` apartado de 24 h, recordatorios y liberación | 16 nodos. El más grande de los 9 |
-| `SP03` crea la liga de pago por la API de Invoices | 12 nodos |
+| `SP02` apartado de 24 h, recordatorios y liberación | 16 nodos. El más grande de los 8 |
+| `N1` también crea la factura por la API de Invoices y devuelve la liga al agente | Va dentro de `N1`, no en un workflow. `SP03` se cayó el 25 sep |
 | `SP04` pago confirmado → número de orden | Goal Event `Payment Received` |
 | **Prueba de concurrencia** | Dos apartados simultáneos de la última paca. Una tiene que perder limpio |
-| Recoger el resultado de la prueba de OXXO | Se lanzó en la semana 1 con la validación 4. Acredita en hasta 72 h hábiles |
+| Recoger el resultado de la prueba de OXXO, si el checkout lo mostró | Stripe confirma el pago al siguiente día hábil |
 | Cargar precios, piezas y stock inicial | **Sólo si ya llegó el Excel** |
 
 **El Excel bloquea el contenido, no la plomería.** Los 9 workflows, los 5 flujos de
@@ -142,8 +139,8 @@ capturas nunca corren. Se prueba turno por turno, no se da por bueno porque se g
 
 | Qué | Nota |
 |---|---|
-| **Recorrido completo, 3 pedidos de prueba** | Uno con tarjeta, uno con OXXO, uno con SPEI |
-| Probar que el apartado se extiende con efectivo | El choque conocido: OXXO 72 h contra apartado de 24 h |
+| **Recorrido completo, pedidos de prueba** | Uno con tarjeta, y uno por cada método extra que el checkout haya mostrado |
+| Probar que el apartado se extiende con efectivo | Sólo si hay OXXO: el voucher de Stripe dura 5 días contra apartado de 24 h |
 | Probar que el aviso al almacén **no lleva monto** | Regla de diseño de Miguel: *"ellos no tienen por qué enterarse"* |
 | Probar que el bot avisa que **no hay devoluciones antes de cobrar** | Nunca después |
 | `AP03` registro manual de pagos por transferencia | 7 nodos. El último |
@@ -161,7 +158,7 @@ muestra nodos mal formados que después no ejecutan, sin dar ningún error.
 | Qué | Límite | Qué se cae si llega tarde |
 |---|---|---|
 | Meta Business Manager verificado | 29 sep | Sin esto no hay WABA, y sin WABA no salen las plantillas |
-| Verificación de Mercado Pago iniciada | 29 sep | Retiene fondos al go-live |
+| **El cliente conecta su Stripe en Greentex** | 29 sep | Sin esto no corren las validaciones 1, 2 y 4 |
 | **Excel lleno: precios, piezas y stock** | **5 oct** | Después de esta fecha, la entrega del 20 se mueve |
 | Las 6 descripciones que faltan | 5 oct | `CORSE VERANO BOUTIQUE`, `CORSE VERANO PREMIUM`, `PLAYERA COMERCIAL`, `CHAMARRA BOUTIQUE`, `CHAMARRA PREMIUM`, `SUÉTER NAVIDEÑO` |
 | Cuenta de Envia.com con saldo | 5 oct | `N4` no puede generar guías |
@@ -183,9 +180,9 @@ cosas que compró.
 **El Excel llegó después del 5 de octubre.** La entrega se recorre día por día. No se
 absorbe: la semana 4 son pruebas de punta a punta, y sin precios no hay qué probar.
 
-**Mercado Pago sigue sin verificar al 13 de octubre.** Se puede entregar, pero el
-dinero se queda retenido y el cliente lo va a sentir como una falla del sistema.
-Conviene avisarlo por escrito antes.
+**El checkout de GHL no muestra OXXO ni SPEI.** Se entrega con tarjeta por la liga y
+transferencias registradas a mano con `AP03`. Conviene avisarlo por escrito en cuanto
+lo diga la validación 4, no en la entrega.
 
 ---
 

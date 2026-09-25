@@ -35,6 +35,8 @@ GHL_STAGE_APARTADO    = 4e1d2753-b967-4817-b3b2-2b0a42efa5c6
 GHL_STAGE_ENVIADO     = 352335f2-4150-43a0-8067-737cbcd8695e
 GHL_STAGE_ENTREGADO   = ba84ff53-246f-4f04-9547-acd6f6210292
 GHL_WEBHOOK_RASTREO   = (el id del Inbound Webhook de AP01, cuando exista)
+GHL_USER_ID           = (el usuario de GHL que firma la factura al mandarla; N1)
+GHL_INVOICE_URL_BASE  = (dominio de la subcuenta para armar la liga de la factura; N1)
 HORAS_APARTADO        = 24
 
 ALMACEN_NOMBRE   ALMACEN_CALLE   ALMACEN_NUMERO   ALMACEN_COLONIA
@@ -55,8 +57,9 @@ envíos al mes, serializar `N1` no cuesta nada.
 
 ## Lo que respetan, y por qué
 
-**Ninguno toca Mercado Pago.** El cobro lo hace GHL con la API de Invoices. n8n valida
-stock, busca sucursales y mueve guías. Es decisión cerrada.
+**Ninguno toca Stripe.** `N1` crea la factura en GHL por su API de Invoices y devuelve
+la liga; quien cobra es GHL con la pasarela conectada. n8n valida stock, busca
+sucursales y mueve guías. Es decisión cerrada.
 
 **Ninguno le habla al cliente.** Los mensajes salen de GHL con sus plantillas
 aprobadas. `N5` sólo empuja el estatus para que `AP01` decida qué mandar. Si n8n

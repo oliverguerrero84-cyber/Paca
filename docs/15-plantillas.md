@@ -15,7 +15,7 @@
 WhatsApp sólo deja escribirle libremente a alguien **dentro de las 24 horas** desde su
 último mensaje. Fuera de esa ventana hace falta una plantilla aprobada. Y casi todo lo
 que manda este sistema cae fuera: el recordatorio del apartado llega horas después, el
-pago se acredita cuando el cliente va al OXXO, la guía se genera al día siguiente.
+pago con tarjeta puede llegar horas después, la guía se genera al día siguiente.
 
 Por eso **son plantillas y no mensajes normales**.
 
@@ -50,7 +50,7 @@ Si sí, aquí está tu liga para pagar: {{4}}
 | `{{1}}` | nombre del contacto | Laura |
 | `{{2}}` | `articulo_apartado` | MUJER VERANO BOUTIQUE |
 | `{{3}}` | `expira_en` | 6:30 p.m. |
-| `{{4}}` | `liga_pago` | (la liga que crea `SP03`) |
+| `{{4}}` | `liga_pago` | (la liga de la factura que crea `N1`) |
 
 > **«No hagas nada y no hay ningún cargo» va a propósito.** Quita la ansiedad de que
 > apartar comprometa a algo, que es justo lo que frena a un comprador primerizo. Y de
@@ -177,7 +177,7 @@ Etiqueta adjunta. Imprimir y pegar.
 
 **La liga de pago va en el cuerpo, no en un botón.** Meta permite botones de URL
 dinámica, pero sólo dejan variar el **final** de una dirección fija. La liga la genera
-Mercado Pago o GHL con su propio dominio y su propio identificador, así que no encaja
+GHL con su propio dominio y su propio identificador, así que no encaja
 en ese molde. Como variable de texto funciona siempre.
 
 **Dos campos que no existían y se crearon para esto** (24 sep): `articulo_apartado` y
