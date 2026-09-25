@@ -3,3 +3,5 @@
 
 # Basura de herramientas
 excalidraw.log
+image*.png
+__pycache__/
