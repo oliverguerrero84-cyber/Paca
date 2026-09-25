@@ -35,8 +35,8 @@ GHL_STAGE_APARTADO    = 4e1d2753-b967-4817-b3b2-2b0a42efa5c6
 GHL_STAGE_ENVIADO     = 352335f2-4150-43a0-8067-737cbcd8695e
 GHL_STAGE_ENTREGADO   = ba84ff53-246f-4f04-9547-acd6f6210292
 GHL_WEBHOOK_RASTREO   = (el id del Inbound Webhook de AP01, cuando exista)
-GHL_USER_ID           = (el usuario de GHL que firma la factura al mandarla; N1)
-GHL_INVOICE_URL_BASE  = (dominio de la subcuenta para armar la liga de la factura; N1)
+GHL_USER_ID           = 3gkfNTQTfUHvcUlxwLEs   # Oliver en Greentex; firma la factura al mandarla (N1)
+GHL_INVOICE_URL_BASE  = https://link.korvance.com   # dominio de ligas de la agencia; Greentex no tiene dominio propio. Se confirma en la validación 1
 HORAS_APARTADO        = 24
 
 ENVIA_API_URL         = https://api-test.envia.com        # producción: https://api.envia.com
