@@ -291,7 +291,7 @@ teóricas. Tres se resuelven preguntando en el onboarding; el segundo es nuestro
 
 | # | Hueco | Bloquea |
 |---|---|---|
-| 1 | **Cómo se obtienen las credenciales de API de Envia**, y si hay ambiente de pruebas | `C3`, y con él `N3`, `N4` y `N5` |
+| ~~1~~ | ~~Cómo se obtienen las credenciales de API de Envia~~ — **RESUELTO el 25 sep**: hay sandbox con llaves propias (`shipping-test.envia.com` → Developers → API Keys) y ya se probaron cotización, guía y rastreo | — |
 | 2 | ~~Dónde corre n8n~~ — **resuelto**: la instancia de Germán, prestada. Falta quién la opera y qué pasa en el traspaso | Ya no bloquea `0.3` |
 | ~~3~~ | ~~**Qué es Korvance y de quién es**~~ — **RESUELTO el 23 sep**: es la cuenta de trabajo de Germán, un ambiente de pruebas | — |
 | 4 | **Roles y permisos** de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |

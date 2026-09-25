@@ -41,6 +41,7 @@ el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
 | Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | 786 | 24 – 25 sep |
 | **Ensayo del asistente con Custom API de Conversation AI**: con un endpoint falso, el bot recogió los datos, llamó una vez y mandó la liga. Mecanismo probado sin n8n | 786 | 25 sep |
 | **Ensayo de la factura por API en Korvance**: 201, queda enviada con Stripe, liga `{dominio}/invoice/{id}` confirmada. `N1` corregido con lo que la API exige | 786 | 25 sep |
+| **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | 786 | 25 sep |
 | **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | 786 | 25 sep |
 | **Greentex en MXN** (`0.2c`) | 786 | 25 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / 786 | 25 sep |
@@ -59,7 +60,6 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | — | **Renombrar el campo `mp_preference_id` a `invoice_id`** («Factura de GHL · ID») en Greentex. Un cambio de interfaz | 786 |
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | `0.3` | **Importar los 5 flujos a la instancia de n8n** (la de Germán, prestada), llenar las variables de entorno de `n8n/README.md` y dejar las URLs en los custom values. `N1` con **concurrencia 1**. Al conectarlo al asistente, **medir que responda en menos de 10 s**: es el límite de la acción Custom API y lo que falta de la validación 3 | 786 |
-| — | **Conseguir las credenciales de Envia** y hacer una guía de prueba. Destraba tres de los supuestos de `n8n/README.md` | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
@@ -93,13 +93,12 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 
 ## 5. Sin dueño todavía
 
-De los cinco huecos de `docs/13-accesos.md` §8, **dos ya se cerraron**: Korvance es la
-cuenta de trabajo de Germán, y n8n corre en la instancia de Germán, prestada. Quedan
-tres:
+De los cinco huecos de `docs/13-accesos.md` §8, **tres ya se cerraron**: Korvance es la
+cuenta de trabajo de Germán, n8n corre en la instancia de Germán, prestada, y Envia ya
+tiene sandbox probado. Quedan dos:
 
 | # | Hueco | Bloquea |
 |---|---|---|
-| 1 | Cómo se obtienen las credenciales de API de Envia, y si hay ambiente de pruebas | `C3`, y con él los flujos `N3`, `N4` y `N5` |
 | 4 | Roles y permisos de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |
 | 5 | Quién activa OXXO y transferencia MX en el Stripe del cliente: él, o 786 con acceso | `B2`, y con él la validación 4 |
 

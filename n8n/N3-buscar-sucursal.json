@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N3 · Buscar sucursal\n\nEl agente manda un código postal de 5 dígitos y recibe 2 o 3 sucursales de\nPaquete Express para que el cliente ELIJA DE UNA LISTA.\n\n**Regla dura: esto es consulta a tabla, NUNCA IA.** Un modelo adivinando\ncoordenadas manda el paquete a tres horas del cliente.\n\nSi no hay sucursal en cobertura, responde `sin_cobertura` y el agente descalifica\namablemente — para este cliente eso es una ventaja, no una pérdida.",
+        "content": "## N3 · Buscar sucursal\n\nEl agente manda un código postal de 5 dígitos y recibe 2 o 3 sucursales de\nPaquete Express para que el cliente ELIJA DE UNA LISTA.\n\n**Regla dura: esto es consulta a tabla, NUNCA IA.** Un modelo adivinando\ncoordenadas manda el paquete a tres horas del cliente.\n\nRespuesta: `{ ok, ciudad, estado, sucursales: [{ branch_code, nombre, direccion,\ndistancia_km, mapa }] }`. El bot guarda el `branch_code` elegido: N4 lo necesita.\n\nSi no hay sucursal en cobertura, responde `sin_cobertura` y el agente descalifica\namablemente — para este cliente eso es una ventaja, no una pérdida.",
         "height": 300,
         "width": 470
       },
@@ -11,7 +11,10 @@
       "name": "Qué hace",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-400, -40]
+      "position": [
+        -400,
+        -40
+      ]
     },
     {
       "parameters": {
@@ -24,7 +27,10 @@
       "name": "Webhook · buscar-sucursal",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [140, 160],
+      "position": [
+        140,
+        160
+      ],
       "notes": "Body: { \"codigo_postal\": \"97000\" }"
     },
     {
@@ -35,18 +41,28 @@
       "name": "¿5 dígitos?",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [360, 160]
+      "position": [
+        360,
+        160
+      ]
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "version": 2 },
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
           "conditions": [
             {
               "id": "c1",
               "leftValue": "={{ $json.valido }}",
               "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -57,52 +73,70 @@
       "name": "¿Formato OK?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [580, 160]
+      "position": [
+        580,
+        160
+      ]
     },
     {
       "parameters": {
-        "url": "=https://api.envia.com/validate-zip-code?country_code=MX&postal_code={{$json.codigo_postal}}",
+        "url": "=https://geocodes.envia.com/zipcode/MX/{{ $json.codigo_postal }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
       },
       "id": "validar-cp",
-      "name": "Envia · validate-zip-code",
+      "name": "Envia · geocodes",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [800, 60],
+      "position": [
+        800,
+        60
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "Envia · API" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
       },
-      "notes": "SUPUESTO: la URL base y el nombre de los parámetros. Confirmar contra docs.envia.com — es el hueco 1 de 13-accesos §8."
+      "notes": "Probado el 25 sep. Devuelve una LISTA; [0] trae locality, state.code.2digit, suburbs[] y coordinates. Mismo dominio en sandbox y producción."
     },
     {
       "parameters": {
-        "url": "https://api.envia.com/carrier-branches?country_code=MX&carrier=paquetexpress",
+        "url": "={{ $env.ENVIA_QUERIES_URL }}/branches/paquetexpress/MX?zipcode={{ $('¿5 dígitos?').first().json.codigo_postal }}&limitBranches=5",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
       },
       "id": "sucursales",
-      "name": "Envia · carrier-branches",
+      "name": "Envia · branches",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1020, 60],
+      "position": [
+        1020,
+        60
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "Envia · API" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
       },
-      "notes": "Son ~146 sucursales y casi no cambian: conviene cachearlas y refrescarlas cada tanto, no pedirlas en cada consulta."
+      "notes": "Probado el 25 sep: devuelve un ARRAY ya ordenado por distance (km) al CP, con branch_code, reference, branch_rules y address con coordenadas. No hace falta cachear ni calcular nada."
     },
     {
       "parameters": {
-        "jsCode": "// Filtra por ciudad y estado; si hay coordenadas, ordena por distancia real.\n// Devuelve 3 como máximo, porque el cliente elige de una lista corta.\nconst zip = $('Envia · validate-zip-code').first().json;\nconst datos = zip.data || zip;\nconst ciudad = (datos.city || datos.locality || '').toString().toLowerCase();\nconst estado = (datos.state || '').toString().toLowerCase();\nconst lat = Number(datos.latitude ?? datos.lat);\nconst lon = Number(datos.longitude ?? datos.lng);\nconst cp = $('¿5 dígitos?').first().json.codigo_postal;\n\nconst crudas = $input.first().json;\nconst sucursales = crudas.data || crudas.branches || [];\n\nconst norm = s => (s || '').toString().toLowerCase().trim();\nconst km = (a1, o1, a2, o2) => {\n  const R = 6371, r = Math.PI / 180;\n  const d1 = (a2 - a1) * r, d2 = (o2 - o1) * r;\n  const x = Math.sin(d1/2)**2 + Math.cos(a1*r) * Math.cos(a2*r) * Math.sin(d2/2)**2;\n  return 2 * R * Math.asin(Math.sqrt(x));\n};\n\nlet candidatas = sucursales.filter(s => norm(s.city) === ciudad && (!estado || norm(s.state) === estado));\nif (!candidatas.length) candidatas = sucursales.filter(s => norm(s.state) === estado);\n\nconst hayCoords = Number.isFinite(lat) && Number.isFinite(lon)\n  && candidatas.some(s => Number.isFinite(Number(s.latitude ?? s.lat)));\n\nif (hayCoords) {\n  candidatas = candidatas\n    .map(s => ({ s, d: km(lat, lon, Number(s.latitude ?? s.lat), Number(s.longitude ?? s.lng)) }))\n    .filter(x => Number.isFinite(x.d))\n    .sort((a, b) => a.d - b.d)\n    .map(x => ({ ...x.s, distancia_km: Math.round(x.d * 10) / 10 }));\n}\n\nconst tres = candidatas.slice(0, 3).map(s => ({\n  nombre: s.name || s.branch_name,\n  direccion: [s.street, s.number, s.district, s.city, s.state].filter(Boolean).join(', '),\n  codigo_postal: s.postal_code,\n  distancia_km: s.distancia_km ?? null,\n  mapa: (s.latitude && s.longitude)\n    ? `https://www.google.com/maps/search/?api=1&query=${s.latitude},${s.longitude}`\n    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((s.name || '') + ' ' + (s.city || ''))}`\n}));\n\nreturn [{ json: tres.length\n  ? { ok: true, codigo_postal: cp, ciudad: datos.city, estado: datos.state, ordenadas_por: hayCoords ? 'distancia' : 'ciudad', sucursales: tres }\n  : { ok: false, motivo: 'sin_cobertura', codigo_postal: cp, ciudad: datos.city, estado: datos.state } }];"
+        "jsCode": "// Envia ya manda las sucursales ordenadas por distancia al CP. Sólo se recortan a 3\n// y se arma lo que el bot le lee al cliente. branch_code es lo que N4 necesita.\nconst errorEnvia = x => x && x.meta === 'error';\n\nconst g = $('Envia · geocodes').first().json;\nconst datos = Array.isArray(g) ? g[0] : g;\nif (errorEnvia(datos)) {\n  return [{ json: { ok: false, motivo: 'envia_error', detalle: datos.error } }];\n}\nconst ciudad = (datos && datos.locality) || '';\nconst estado = (datos && datos.state && datos.state.code && datos.state.code['2digit']) || '';\nconst cp = $('¿5 dígitos?').first().json.codigo_postal;\n\n// El nodo HTTP parte el array en items; si llegara entero, se aplana igual.\nconst items = $input.all().map(i => i.json).flat();\nif (items.some(errorEnvia)) {\n  return [{ json: { ok: false, motivo: 'envia_error', detalle: items.find(errorEnvia).error, codigo_postal: cp } }];\n}\n\nconst tres = items.filter(s => s && s.branch_code).slice(0, 3).map(s => {\n  const a = s.address || {};\n  return {\n    branch_code: s.branch_code,\n    nombre: s.reference,\n    direccion: [a.street, a.number, a.city, a.state, a.postalCode].filter(Boolean).join(', '),\n    distancia_km: s.distance ?? null,\n    mapa: (a.latitude && a.longitude)\n      ? `https://www.google.com/maps/search/?api=1&query=${a.latitude},${a.longitude}`\n      : null\n  };\n});\n\nreturn [{ json: tres.length\n  ? { ok: true, codigo_postal: cp, ciudad, estado, sucursales: tres }\n  : { ok: false, motivo: 'sin_cobertura', codigo_postal: cp, ciudad, estado } }];"
       },
       "id": "elegir",
-      "name": "Filtrar y ordenar",
+      "name": "Elegir las 3 más cercanas",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1240, 60],
-      "notes": "SUPUESTO: que carrier-branches traiga coordenadas. Si no, el filtro por ciudad cubre la mayoría y queda anotado en el resultado (`ordenadas_por`)."
+      "position": [
+        1240,
+        60
+      ],
+      "notes": "Probado el 25 sep en el sandbox: 5 de 5 sucursales traen coordenadas y distance. El bot guarda branch_code y servicio en el contacto para N4."
     },
     {
       "parameters": {
@@ -114,34 +148,107 @@
       "name": "Responder sucursales",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1460, 60]
+      "position": [
+        1460,
+        60
+      ]
     },
     {
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify({ ok: false, motivo: 'cp_invalido', codigo_postal: $json.codigo_postal }) }}",
-        "options": { "responseCode": 200 }
+        "options": {
+          "responseCode": 200
+        }
       },
       "id": "resp-mal",
       "name": "Responder CP inválido",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [800, 280]
+      "position": [
+        800,
+        280
+      ]
     }
   ],
   "connections": {
-    "Webhook · buscar-sucursal": { "main": [[{ "node": "¿5 dígitos?", "type": "main", "index": 0 }]] },
-    "¿5 dígitos?": { "main": [[{ "node": "¿Formato OK?", "type": "main", "index": 0 }]] },
-    "¿Formato OK?": {
+    "Webhook · buscar-sucursal": {
       "main": [
-        [{ "node": "Envia · validate-zip-code", "type": "main", "index": 0 }],
-        [{ "node": "Responder CP inválido", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "¿5 dígitos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Envia · validate-zip-code": { "main": [[{ "node": "Envia · carrier-branches", "type": "main", "index": 0 }]] },
-    "Envia · carrier-branches": { "main": [[{ "node": "Filtrar y ordenar", "type": "main", "index": 0 }]] },
-    "Filtrar y ordenar": { "main": [[{ "node": "Responder sucursales", "type": "main", "index": 0 }]] }
+    "¿5 dígitos?": {
+      "main": [
+        [
+          {
+            "node": "¿Formato OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Formato OK?": {
+      "main": [
+        [
+          {
+            "node": "Envia · geocodes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder CP inválido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · geocodes": {
+      "main": [
+        [
+          {
+            "node": "Envia · branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · branches": {
+      "main": [
+        [
+          {
+            "node": "Elegir las 3 más cercanas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir las 3 más cercanas": {
+      "main": [
+        [
+          {
+            "node": "Responder sucursales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
   "pinData": {}
 }

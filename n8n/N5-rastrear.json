@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N5 · Rastrear\n\nCada hora revisa los envíos en curso y empuja el estatus de vuelta a GHL.\n\nEl aviso que de verdad importa es **«ya llegó a tu sucursal, puedes recogerlo»**:\ncon servicio a ocurre, ése es el mensaje que evita el «oye, no me llegó».\n\n**Este flujo no le escribe al cliente.** Sólo mueve la oportunidad de etapa y\nactualiza el campo; el mensaje lo manda GHL con la plantilla 3 o con AP01.",
+        "content": "## N5 · Rastrear\n\nCada hora revisa los envíos en curso y empuja el estatus de vuelta a GHL.\n\nEl aviso que de verdad importa es **«ya llegó a tu sucursal, puedes recogerlo»**:\ncon servicio a ocurre, ése es el mensaje que evita el «oye, no me llegó».\n\n**Una sola llamada por corrida:** `POST /ship/generaltrack/` acepta todas las guías\nen un arreglo (probado el 25 sep). El `status` viene de un catálogo en inglés.\n\n**Este flujo no le escribe al cliente.** Sólo mueve la oportunidad de etapa y\nactualiza el campo; el mensaje lo manda GHL con la plantilla 3 o con AP01.",
         "height": 300,
         "width": 470
       },
@@ -11,17 +11,30 @@
       "name": "Qué hace",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-400, -40]
+      "position": [
+        -400,
+        -40
+      ]
     },
     {
       "parameters": {
-        "rule": { "interval": [{ "field": "hours", "hoursInterval": 1 }] }
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
       },
       "id": "cron",
       "name": "Cada hora",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [140, 160]
+      "position": [
+        140,
+        160
+      ]
     },
     {
       "parameters": {
@@ -32,8 +45,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -45,9 +64,15 @@
       "name": "GHL · envíos en curso",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [360, 160],
+      "position": [
+        360,
+        160
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       },
       "notes": "Sólo la etapa «Enviado — Guía Generada». Los entregados ya salieron de ahí."
     },
@@ -59,47 +84,92 @@
       "name": "Los que tienen guía",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [580, 160]
+      "position": [
+        580,
+        160
+      ]
     },
     {
       "parameters": {
-        "url": "=https://api.envia.com/ship/track/?carrier=paquetexpress&trackingNumber={{ $json.numero_guia }}",
+        "jsCode": "// Todas las guías en una sola llamada a Envia.\nconst guias = $input.all().map(i => i.json.numero_guia).filter(Boolean);\nreturn guias.length ? [{ json: { trackingNumbers: guias } }] : [];"
+      },
+      "id": "juntar",
+      "name": "Juntar guías",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ENVIA_API_URL }}/ship/generaltrack/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ trackingNumbers: $json.trackingNumbers }) }}",
         "options": {}
       },
       "id": "track",
-      "name": "Envia · ship/track",
+      "name": "Envia · generaltrack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [800, 160],
+      "position": [
+        1020,
+        160
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "Envia · API" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
       },
       "onError": "continueRegularOutput",
-      "notes": "Si una guía falla, las demás siguen. Un rastreo caído no debe tumbar la corrida entera."
+      "notes": "Probado el 25 sep: { meta: 'generaltrack', data: [{ trackingNumber, status, statusColor, estimatedDelivery, shippedAt, deliveredAt, signedBy, trackUrl, trackUrlSite }] }. Error: HTTP 200 con meta: 'error'."
     },
     {
       "parameters": {
-        "jsCode": "// Traduce el estatus de Envia a las dos cosas que nos importan:\n// ¿llegó a la sucursal? ¿ya lo recogieron?\nconst r = $json.data || $json;\nconst primero = Array.isArray(r) ? r[0] : r;\nconst eventos = primero.events || primero.history || [];\nconst crudo = (primero.status || (eventos[0] && eventos[0].status) || '').toString().toLowerCase();\n\nconst dice = (...palabras) => palabras.some(p => crudo.includes(p));\n\nlet estado = 'en_transito';\nif (dice('delivered', 'entregado')) estado = 'entregado';\nelse if (dice('ready for pickup', 'disponible', 'en sucursal', 'office', 'ocurre')) estado = 'en_sucursal';\n\nconst entrada = $('Los que tienen guía').all().map(i => i.json)\n  .find(x => x.numero_guia === (primero.trackingNumber || primero.tracking_number)) || {};\n\nreturn [{ json: { ...entrada, estado, estado_crudo: crudo,\n                  mover_a: estado === 'entregado' ? $env.GHL_STAGE_ENTREGADO : null } }];"
+        "jsCode": "// Traduce el catálogo de estatus de Envia (28 valores en inglés, probado el 25 sep)\n// a lo que nos importa: ¿llegó a sucursal? ¿ya lo entregaron? ¿se canceló o hay problema?\nconst r = $json;\nif (r.meta === 'error') {\n  // ponytail: si Envia falla, esta corrida no avisa nada; la siguiente hora lo reintenta.\n  return [];\n}\nconst entradas = $('Los que tienen guía').all().map(i => i.json);\n\n// ponytail: sólo los estatus que vimos o que la referencia nombra; lo demás cae en en_transito.\nconst mapa = {\n  created: 'creada',\n  pickedup: 'en_transito', collected: 'en_transito', shipped: 'en_transito', intransit: 'en_transito',\n  outfordelivery: 'en_reparto',\n  readyforpickup: 'en_sucursal', availableforpickup: 'en_sucursal', atbranch: 'en_sucursal',\n  delivered: 'entregado',\n  canceled: 'cancelado', cancelled: 'cancelado',\n  exception: 'incidencia', returned: 'incidencia', returntosender: 'incidencia'\n};\n\nreturn (r.data || []).map(t => {\n  const crudo = String(t.status || '');\n  const clave = crudo.toLowerCase().replace(/[^a-z]/g, '');\n  const estado = mapa[clave] || 'en_transito';\n  const entrada = entradas.find(x => x.numero_guia === t.trackingNumber) || {};\n  return { json: { ...entrada, estado, estado_crudo: crudo,\n                   entrega_estimada: t.estimatedDelivery || null, entregado_el: t.deliveredAt || null,\n                   track_url: t.trackUrl || null,\n                   avisar: !['creada', 'en_transito'].includes(estado),\n                   mover_a: estado === 'entregado' ? $env.GHL_STAGE_ENTREGADO : null } };\n});"
       },
       "id": "traducir",
       "name": "Traducir estatus",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1020, 160],
-      "notes": "SUPUESTO: los textos de estatus de Paquete Express vía Envia. Hay que verlos de verdad y afinar esta lista con la primera guía real."
+      "position": [
+        1240,
+        160
+      ],
+      "notes": "Catálogo visto el 25 sep: 'Created' al generar. Los nombres exactos de los otros 27 se afinan con la primera guía real que se mueva; mientras, cualquier estatus desconocido queda como en_transito y no avisa."
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "version": 2 },
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
           "conditions": [
             {
               "id": "c1",
-              "leftValue": "={{ $json.estado }}",
-              "rightValue": "en_transito",
-              "operator": { "type": "string", "operation": "notEquals" }
+              "leftValue": "={{ $json.avisar }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -110,7 +180,10 @@
       "name": "¿Cambió algo?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [1240, 160]
+      "position": [
+        1460,
+        160
+      ]
     },
     {
       "parameters": {
@@ -118,25 +191,103 @@
         "url": "=https://services.leadconnectorhq.com/hooks/inbound/{{ $env.GHL_WEBHOOK_RASTREO }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ contactId: $json.contactId, opportunityId: $json.opportunityId, numero_guia: $json.numero_guia, estado: $json.estado }) }}",
+        "jsonBody": "={{ JSON.stringify({ contactId: $json.contactId, opportunityId: $json.opportunityId, numero_guia: $json.numero_guia, estado: $json.estado, estado_crudo: $json.estado_crudo, entrega_estimada: $json.entrega_estimada, track_url: $json.track_url }) }}",
         "options": {}
       },
       "id": "avisar",
       "name": "GHL · avisar a AP01",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1460, 160],
+      "position": [
+        1680,
+        160
+      ],
       "notes": "AP01 recibe esto y decide qué plantilla mandar. n8n no le escribe al cliente."
     }
   ],
   "connections": {
-    "Cada hora": { "main": [[{ "node": "GHL · envíos en curso", "type": "main", "index": 0 }]] },
-    "GHL · envíos en curso": { "main": [[{ "node": "Los que tienen guía", "type": "main", "index": 0 }]] },
-    "Los que tienen guía": { "main": [[{ "node": "Envia · ship/track", "type": "main", "index": 0 }]] },
-    "Envia · ship/track": { "main": [[{ "node": "Traducir estatus", "type": "main", "index": 0 }]] },
-    "Traducir estatus": { "main": [[{ "node": "¿Cambió algo?", "type": "main", "index": 0 }]] },
-    "¿Cambió algo?": { "main": [[{ "node": "GHL · avisar a AP01", "type": "main", "index": 0 }], []] }
+    "Cada hora": {
+      "main": [
+        [
+          {
+            "node": "GHL · envíos en curso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · envíos en curso": {
+      "main": [
+        [
+          {
+            "node": "Los que tienen guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Los que tienen guía": {
+      "main": [
+        [
+          {
+            "node": "Juntar guías",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar guías": {
+      "main": [
+        [
+          {
+            "node": "Envia · generaltrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · generaltrack": {
+      "main": [
+        [
+          {
+            "node": "Traducir estatus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traducir estatus": {
+      "main": [
+        [
+          {
+            "node": "¿Cambió algo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cambió algo?": {
+      "main": [
+        [
+          {
+            "node": "GHL · avisar a AP01",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
   "pinData": {}
 }

@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## N4 · Generar guía\n\nGHL avisa que se confirmó el pago. Este flujo genera la guía en Envia, programa\nla recolección en el almacén y devuelve el número de rastreo y el PDF.\n\n**Servicio a ocurre, siempre.** El paquete va a una sucursal de Paquete Express,\nnunca a domicilio: por eso el destino es la sucursal que el cliente eligió en N3,\nno su casa.\n\n**Este flujo no le habla al cliente ni al almacén.** Devuelve los datos y SP05\nmanda los mensajes con las plantillas — y al almacén NUNCA le va el monto.",
+        "content": "## N4 · Generar guía\n\nGHL avisa que se confirmó el pago. Este flujo genera la guía en Envia, programa\nla recolección en el almacén y devuelve el número de rastreo y el PDF.\n\n**Dos servicios de Paquete Express, probados el 25 sep:** `ground_do` (del almacén a\nla sucursal que el cliente eligió en N3, «ocurre»; exige `branchCode`) y `ground`\n(a domicilio). El bot deja `servicio` y `branch_code` en el contacto.\n\n**Envia devuelve errores con HTTP 200** y `meta: \"error\"`. Por eso hay un IF después\nde generar.\n\n**Este flujo no le habla al cliente ni al almacén.** Devuelve los datos y SP05\nmanda los mensajes con las plantillas — y al almacén NUNCA le va el monto.",
         "height": 320,
         "width": 480
       },
@@ -11,7 +11,10 @@
       "name": "Qué hace",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-400, -60]
+      "position": [
+        -400,
+        -60
+      ]
     },
     {
       "parameters": {
@@ -24,30 +27,43 @@
       "name": "Webhook · generar-guia",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [140, 160],
-      "notes": "Body: { orden_id, contactId, nombre, telefono, articulo, cantidad, codigo_postal, ciudad, estado_mx, sucursal_ocurre }"
+      "position": [
+        140,
+        160
+      ],
+      "notes": "Body: { orden_id, contactId, nombre, telefono, email, calle, numero, colonia, ciudad, estado_mx, codigo_postal, cantidad, servicio ('ground_do' | 'ground'), branch_code (obligatorio con ground_do) }"
     },
     {
       "parameters": {
-        "jsCode": "// Arma el cuerpo del envío. Peso fijo: cada paca son 100 lb / 45 kg.\n// Si piden más de una, se multiplica.\nconst p = $json.body || {};\nconst faltan = ['orden_id', 'nombre', 'telefono', 'codigo_postal', 'sucursal_ocurre']\n  .filter(k => !p[k]);\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  envio: {\n    origin: {\n      name: $env.ALMACEN_NOMBRE,\n      street: $env.ALMACEN_CALLE,\n      number: $env.ALMACEN_NUMERO,\n      district: $env.ALMACEN_COLONIA,\n      city: $env.ALMACEN_CIUDAD,\n      state: $env.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $env.ALMACEN_CP,\n      phone: $env.ALMACEN_TELEFONO,\n      email: $env.ALMACEN_EMAIL\n    },\n    destination: {\n      name: p.nombre,\n      phone: p.telefono,\n      country: 'MX',\n      postalCode: p.codigo_postal,\n      city: p.ciudad,\n      state: p.estado_mx,\n      reference: p.sucursal_ocurre\n    },\n    packages: [{\n      content: 'Ropa',\n      amount: cantidad,\n      type: 'box',\n      weight: 45 * cantidad,\n      weightUnit: 'KG',\n      lengthUnit: 'CM',\n      dimensions: { length: 60, width: 45, height: 45 }\n    }],\n    shipment: { carrier: 'paquetexpress', type: 1 },\n    settings: { printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
+        "jsCode": "// Arma el cuerpo de ship/generate con el esquema probado el 25 sep en el sandbox.\n// Peso fijo: cada paca son 100 lb / 45 kg. Si piden más de una, se multiplica.\nconst p = $json.body || {};\nconst servicio = p.servicio === 'ground' ? 'ground' : 'ground_do';   // a sucursal por defecto\nconst faltan = ['orden_id', 'nombre', 'telefono', 'codigo_postal', 'ciudad', 'estado_mx']\n  .filter(k => !p[k]);\nif (servicio === 'ground_do' && !p.branch_code) faltan.push('branch_code');\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nconst peso = 45 * cantidad;\nconst destination = {\n  name: p.nombre,\n  company: '',\n  email: p.email || '',\n  phone: p.telefono,\n  // ponytail: con ground_do la dirección es la de la sucursal, pero Envia igual pide\n  // calle; si el bot no la capturó va un texto fijo.\n  street: p.calle || 'Ocurre Paquete Express',\n  number: p.numero || 'S/N',\n  district: p.colonia || '',\n  city: p.ciudad,\n  state: p.estado_mx,\n  country: 'MX',\n  postalCode: p.codigo_postal\n};\nif (servicio === 'ground_do') destination.branchCode = p.branch_code;\n\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  cantidad,\n  peso,\n  envio: {\n    origin: {\n      name: $env.ALMACEN_NOMBRE,\n      company: $env.ALMACEN_NOMBRE,\n      email: $env.ALMACEN_EMAIL,\n      phone: $env.ALMACEN_TELEFONO,\n      street: $env.ALMACEN_CALLE,\n      number: $env.ALMACEN_NUMERO,\n      district: $env.ALMACEN_COLONIA,\n      city: $env.ALMACEN_CIUDAD,\n      state: $env.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $env.ALMACEN_CP\n    },\n    destination,\n    packages: [{\n      type: 'box',\n      content: 'Ropa usada',\n      amount: 1,\n      name: `Paca x${cantidad}`,\n      // ponytail: valor declarado fijo por paca, para el seguro; no es el precio de venta.\n      declaredValue: 1000 * cantidad,\n      lengthUnit: 'CM',\n      weightUnit: 'KG',\n      weight: peso,\n      dimensions: { length: 80, width: 50, height: 50 }\n    }],\n    shipment: { carrier: 'paquetexpress', service: servicio, type: 1, reverse_pickup: 0, import: 0 },\n    settings: { currency: 'MXN', printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
       },
       "id": "armar",
       "name": "Armar el envío",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [360, 160],
-      "notes": "SUPUESTO: el esquema de ship/generate. Confirmar contra docs.envia.com antes de la primera guía real."
+      "position": [
+        360,
+        160
+      ],
+      "notes": "Esquema confirmado el 25 sep con scripts/probar-envia.py --guia: ground y ground_do generan guía en el sandbox. Ojo: branch_rules de las sucursales marca max_weight 50 kg; dos pacas en una caja no caben en ocurre."
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "version": 2 },
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
           "conditions": [
             {
               "id": "c1",
               "leftValue": "={{ $json.ok }}",
               "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -58,17 +74,25 @@
       "name": "¿Datos completos?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [580, 160]
+      "position": [
+        580,
+        160
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.envia.com/ship/generate/",
+        "url": "={{ $env.ENVIA_API_URL }}/ship/generate/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "Content-Type", "value": "application/json" }]
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
         },
         "sendBody": true,
         "specifyBody": "json",
@@ -79,46 +103,117 @@
       "name": "Envia · ship/generate",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [800, 60],
+      "position": [
+        800,
+        60
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "Envia · API" }
-      }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
+      },
+      "notes": "Probado el 25 sep. Respuesta OK: { meta: 'generate', data: [{ trackingNumber, label, trackUrl, folio, totalPrice, currency }] }. Error: HTTP 200 con meta: 'error'."
     },
     {
       "parameters": {
-        "jsCode": "// Saca el número de rastreo y la etiqueta de la respuesta.\nconst r = $json.data || $json;\nconst primero = Array.isArray(r) ? r[0] : r;\nconst guia = primero.trackingNumber || primero.tracking_number;\nconst etiqueta = primero.label || primero.trackUrl || primero.labelUrl;\nconst previo = $('Armar el envío').first().json;\n\nif (!guia) {\n  return [{ json: { ok: false, motivo: 'envia_sin_guia', respuesta: primero, orden_id: previo.orden_id } }];\n}\nreturn [{ json: { ok: true, orden_id: previo.orden_id, contactId: previo.contactId,\n                  numero_guia: guia, etiqueta_pdf: etiqueta,\n                  fecha_envio: new Date().toISOString() } }];"
+        "jsCode": "// Saca el número de rastreo y la etiqueta de la respuesta probada el 25 sep.\n// Envia devuelve errores con HTTP 200 y meta: 'error', así que se revisa aquí.\nconst r = $json;\nconst previo = $('Armar el envío').first().json;\nif (r.meta === 'error') {\n  return [{ json: { ok: false, motivo: 'envia_error', detalle: r.error, orden_id: previo.orden_id } }];\n}\nconst g = (r.data || [])[0] || {};\nif (!g.trackingNumber) {\n  return [{ json: { ok: false, motivo: 'envia_sin_guia', respuesta: r, orden_id: previo.orden_id } }];\n}\nreturn [{ json: { ok: true, orden_id: previo.orden_id, contactId: previo.contactId,\n                  cantidad: previo.cantidad, peso: previo.peso,\n                  numero_guia: g.trackingNumber, etiqueta_pdf: g.label, track_url: g.trackUrl,\n                  folio: g.folio, costo_guia: g.totalPrice,\n                  fecha_envio: new Date().toISOString() } }];"
       },
       "id": "leer-guia",
       "name": "Leer número de guía",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1020, 60]
+      "position": [
+        1020,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-guia",
+      "name": "¿Guía generada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: $json.motivo, detalle: $json.detalle || $json.respuesta, orden_id: $json.orden_id }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "resp-envia",
+      "name": "Responder error de Envia",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        280
+      ],
+      "notes": "La guía no existe. SP05 no manda nada al cliente; los dueños la generan a mano y se registra con AP02."
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.envia.com/ship/pickup/",
+        "url": "={{ $env.ENVIA_API_URL }}/ship/pickup/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "Content-Type", "value": "application/json" }]
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ carrier: 'paquetexpress', trackingNumbers: [$json.numero_guia] }) }}",
+        "jsonBody": "={{ JSON.stringify((() => {\n  // Recolección mañana, de 9 a 18. Esquema de docs.envia.com/reference/schedule-pickup.\n  const g = $json;\n  const d = new Date(Date.now() + 24 * 3600 * 1000);\n  return {\n    origin: {\n      name: $env.ALMACEN_NOMBRE, company: $env.ALMACEN_NOMBRE, email: $env.ALMACEN_EMAIL, phone: $env.ALMACEN_TELEFONO,\n      street: $env.ALMACEN_CALLE, number: $env.ALMACEN_NUMERO, district: $env.ALMACEN_COLONIA,\n      city: $env.ALMACEN_CIUDAD, state: $env.ALMACEN_ESTADO, country: 'MX', postalCode: $env.ALMACEN_CP\n    },\n    shipment: {\n      type: 1, carrier: 'paquetexpress',\n      pickup: { weightUnit: 'KG', totalWeight: g.peso, totalPackages: 1, date: d.toISOString().slice(0, 10),\n                timeFrom: 9, timeTo: 18, carrier: 'paquetexpress', trackingNumbers: [g.numero_guia] }\n    }\n  };\n})()) }}",
         "options": {}
       },
       "id": "recoleccion",
       "name": "Envia · programar recolección",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1240, 60],
+      "position": [
+        1460,
+        60
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "Envia · API" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "Envia · API"
+        }
       },
       "onError": "continueRegularOutput",
-      "notes": "Si la recolección falla, la guía YA existe y sirve. No se aborta: se sigue y se reporta."
+      "notes": "Cuerpo según la referencia oficial (origin + shipment.pickup). No se probó en el sandbox. Si falla, la guía YA existe y sirve: se sigue y se reporta."
     },
     {
       "parameters": {
@@ -129,63 +224,177 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ customFields: [ { key: 'numero_guia', field_value: $('Leer número de guía').first().json.numero_guia }, { key: 'fecha_envio', field_value: $('Leer número de guía').first().json.fecha_envio } ] }) }}",
+        "jsonBody": "={{ JSON.stringify((() => { const g = $('Leer número de guía').first().json; return { customFields: [ { key: 'numero_guia', field_value: g.numero_guia }, { key: 'fecha_envio', field_value: g.fecha_envio }, { key: 'etiqueta_pdf', field_value: g.etiqueta_pdf }, { key: 'track_url', field_value: g.track_url } ] }; })()) }}",
         "options": {}
       },
       "id": "guardar",
       "name": "GHL · guardar guía",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1460, 60],
+      "position": [
+        1680,
+        60
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
-      }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "etiqueta_pdf y track_url son campos NUEVOS del contacto: hay que crearlos en Greentex (carpeta Envío) antes de importar."
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($('Leer número de guía').first().json) }}",
+        "responseBody": "={{ JSON.stringify({ ...$('Leer número de guía').first().json, pickup: (($json.data || [{}])[0] || {}).pickupNumber || null }) }}",
         "options": {}
       },
       "id": "resp",
       "name": "Responder guía",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1680, 60]
+      "position": [
+        1900,
+        60
+      ]
     },
     {
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify({ ok: false, motivo: $json.motivo, faltan: $json.faltan }) }}",
-        "options": { "responseCode": 200 }
+        "options": {
+          "responseCode": 200
+        }
       },
       "id": "resp-mal",
       "name": "Responder faltan datos",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [800, 280]
+      "position": [
+        800,
+        280
+      ]
     }
   ],
   "connections": {
-    "Webhook · generar-guia": { "main": [[{ "node": "Armar el envío", "type": "main", "index": 0 }]] },
-    "Armar el envío": { "main": [[{ "node": "¿Datos completos?", "type": "main", "index": 0 }]] },
-    "¿Datos completos?": {
+    "Webhook · generar-guia": {
       "main": [
-        [{ "node": "Envia · ship/generate", "type": "main", "index": 0 }],
-        [{ "node": "Responder faltan datos", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Armar el envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Envia · ship/generate": { "main": [[{ "node": "Leer número de guía", "type": "main", "index": 0 }]] },
-    "Leer número de guía": { "main": [[{ "node": "Envia · programar recolección", "type": "main", "index": 0 }]] },
-    "Envia · programar recolección": { "main": [[{ "node": "GHL · guardar guía", "type": "main", "index": 0 }]] },
-    "GHL · guardar guía": { "main": [[{ "node": "Responder guía", "type": "main", "index": 0 }]] }
+    "Armar el envío": {
+      "main": [
+        [
+          {
+            "node": "¿Datos completos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos completos?": {
+      "main": [
+        [
+          {
+            "node": "Envia · ship/generate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder faltan datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · ship/generate": {
+      "main": [
+        [
+          {
+            "node": "Leer número de guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer número de guía": {
+      "main": [
+        [
+          {
+            "node": "¿Guía generada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Guía generada?": {
+      "main": [
+        [
+          {
+            "node": "Envia · programar recolección",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder error de Envia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia · programar recolección": {
+      "main": [
+        [
+          {
+            "node": "GHL · guardar guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · guardar guía": {
+      "main": [
+        [
+          {
+            "node": "Responder guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
   "pinData": {}
 }

@@ -53,7 +53,12 @@ def paso(n, que, r):
     if r.status_code >= 400:
         print(r.text[:1500])
         sys.exit(f"paso {n} falló")
-    return r.json()
+    d = r.json()
+    # Envia devuelve errores con HTTP 200 y meta = "error"
+    if isinstance(d, dict) and d.get("meta") == "error":
+        print("   ", json.dumps(d.get("error"), ensure_ascii=False))
+        sys.exit(f"paso {n} falló")
+    return d
 
 
 def main():
@@ -63,12 +68,17 @@ def main():
     if CARRIER not in nombres:
         sys.exit(f"'{CARRIER}' no está en la lista: elige uno de arriba y ponlo en ENVIA_CARRIER")
 
-    d = paso(2, f"servicios de {CARRIER}", requests.get(f"{QUERIES}/service", headers=H, params={"country_code": "MX", "carrier": CARRIER}, timeout=30))
-    servicios = [s.get("name") for s in d.get("data", [])]
+    # /service no acepta ?carrier= (422 "carrier is not allowed"); se filtra aquí.
+    d = paso(2, f"servicios de {CARRIER}", requests.get(f"{QUERIES}/service", headers=H, params={"country_code": "MX"}, timeout=30))
+    servicios = [f"{s.get('name')} ({s.get('description')}, {s.get('delivery_estimate')})" for s in d.get("data", []) if s.get("carrier_name") == CARRIER]
     print("   servicios:", ", ".join(servicios))
 
-    geo = paso(3, f"geocodes del CP {CP}", requests.get(f"{GEO}/zipcode/MX/{CP}", headers=H, timeout=30)).get("data", {})
-    print("   ", json.dumps(geo, ensure_ascii=False)[:300], "  <- pendiente 2 de docs/06 §5")
+    # geocodes devuelve una LISTA: [{zip_code, locality, state:{code:{2digit}}, suburbs, coordinates}]
+    g = paso(3, f"geocodes del CP {CP}", requests.get(f"{GEO}/zipcode/MX/{CP}", headers=H, timeout=30))
+    g = g[0] if isinstance(g, list) and g else {}
+    geo = {"city": g.get("locality", ""), "state": ((g.get("state") or {}).get("code") or {}).get("2digit", ""),
+           "coordinates": g.get("coordinates"), "suburbs": g.get("suburbs")}
+    print("   ", json.dumps(geo, ensure_ascii=False)[:300], "  <- pendiente 2 de docs/06 §5: SÍ trae coordenadas")
 
     d = paso(4, f"sucursales de {CARRIER} cerca de {CP}",
              requests.get(f"{QUERIES}/branches/{CARRIER}/MX", headers=H, params={"zipcode": CP, "limitBranches": 5}, timeout=30))
@@ -93,7 +103,12 @@ def main():
         print("\nConsultas OK. Para generar una guía de prueba en el sandbox, vuelve a correr con --guia.")
         return
 
-    servicio = min(tarifas, key=lambda t: t.get("totalPrice", 1e9)).get("service")
+    # ground = domicilio a domicilio. ground_do (domicilio -> sucursal) exige el código de
+    # sucursal de destino, el que devuelve el paso 4; ground_od es al revés y no aplica.
+    servicio = os.environ.get("ENVIA_SERVICIO", "ground")
+    if servicio == "ground_do" and sucursales:
+        cuerpo["destination"]["branchCode"] = sucursales[0]["branch_code"]   # la más cercana
+        print(f"   sucursal de destino: {sucursales[0]['branch_code']} ({sucursales[0].get('reference')}, {sucursales[0].get('distance')} km)")
     cuerpo["shipment"] = {"carrier": CARRIER, "service": servicio, "type": 1, "reverse_pickup": 0, "import": 0}
     cuerpo["settings"] = {"currency": "MXN", "printFormat": "PDF", "printSize": "STOCK_4X6"}
     d = paso(6, f"guía {CARRIER}/{servicio}", requests.post(f"{API}/ship/generate/", headers=H, json=cuerpo, timeout=60))

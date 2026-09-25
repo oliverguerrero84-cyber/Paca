@@ -9,7 +9,7 @@
 |---|---|---|
 | `N1-apartar` | Webhook `POST /apartar` | Lee el stock del SKU; si alcanza, descuenta y arranca el reloj |
 | `N2-liberar-vencidos` | Cron 15 min | Devuelve el stock de los apartados vencidos |
-| `N3-buscar-sucursal` | Webhook `POST /buscar-sucursal` | Código postal → 2 o 3 sucursales |
+| `N3-buscar-sucursal` | Webhook `POST /buscar-sucursal` | Código postal → las 3 sucursales más cercanas, con `branch_code` |
 | `N4-generar-guia` | Webhook `POST /generar-guia` | Genera la guía y programa la recolección |
 | `N5-rastrear` | Cron 1 h | Empuja el estatus de vuelta a GHL |
 
@@ -24,7 +24,7 @@ dice `REEMPLAZAR`.
 | Nombre exacto | Header | Valor |
 |---|---|---|
 | `GHL · PIT Greentex` | `Authorization` | `Bearer pit-…` de la subcuenta |
-| `Envia · API` | `Authorization` | `Bearer …` de la cuenta de Envia |
+| `Envia · API` | `Authorization` | `Bearer …` de Envia. **Sandbox y producción tienen llaves distintas** y cada una sólo sirve en su ambiente: se crean en `shipping-test.envia.com/settings/developers` o en `shipping.envia.com/settings/developers` |
 
 ### 2. Las variables de entorno
 
@@ -38,6 +38,9 @@ GHL_WEBHOOK_RASTREO   = (el id del Inbound Webhook de AP01, cuando exista)
 GHL_USER_ID           = (el usuario de GHL que firma la factura al mandarla; N1)
 GHL_INVOICE_URL_BASE  = (dominio de la subcuenta para armar la liga de la factura; N1)
 HORAS_APARTADO        = 24
+
+ENVIA_API_URL         = https://api-test.envia.com        # producción: https://api.envia.com
+ENVIA_QUERIES_URL     = https://queries.test.envia.com   # producción: https://queries.envia.com
 
 ALMACEN_NOMBRE   ALMACEN_CALLE   ALMACEN_NUMERO   ALMACEN_COLONIA
 ALMACEN_CIUDAD   ALMACEN_ESTADO  ALMACEN_CP       ALMACEN_TELEFONO   ALMACEN_EMAIL
@@ -83,14 +86,21 @@ dentro de cada flujo:
 |---|---|---|---|
 | 1 | **`availableQuantity` vive en el `price`, no en el `product`** | `N1`, `N2` | Cambia la URL del PUT. Se confirma al cargar los 30 productos |
 | 2 | **El SKU se guarda en el campo `sku` del price** | `N1`, `N2` | Si no, hay que resolver por nombre de producto |
-| 3 | **La URL base de Envia y sus parámetros** | `N3`, `N4`, `N5` | Es el hueco 1 de `docs/13-accesos.md` §8: nadie ha visto la documentación con credenciales en mano |
-| 4 | **Que `carrier-branches` traiga coordenadas** | `N3` | Sin ellas se filtra por ciudad. El flujo ya lo maneja y lo reporta en `ordenadas_por` |
-| 5 | **El esquema de `ship/generate`** | `N4` | Hay que confirmarlo contra docs.envia.com antes de la primera guía real |
-| 6 | **Los textos de estatus de Paquete Express** | `N5` | La lista de palabras hay que afinarla con la primera guía real |
+| ~~3~~ | ~~La URL base de Envia y sus parámetros~~ — **resuelto el 25 sep** con `scripts/probar-envia.py`: envíos en `api[-test].envia.com`, consultas en `queries[.test].envia.com`, códigos postales en `geocodes.envia.com`; la paquetería se llama `paquetexpress` | `N3`, `N4`, `N5` | — |
+| ~~4~~ | ~~Que las sucursales traigan coordenadas~~ — **resuelto el 25 sep**: `branches/paquetexpress/MX?zipcode=` trae 5 de 5 con coordenadas, ya ordenadas por `distance` en km. Se quitó el cálculo de distancia | `N3` | — |
+| ~~5~~ | ~~El esquema de `ship/generate`~~ — **resuelto el 25 sep**: guía generada en el sandbox con `ground` y con `ground_do` (a sucursal, exige `destination.branchCode`). Los errores llegan con HTTP 200 y `meta: "error"` | `N4` | — |
+| ~~6~~ | ~~Los textos de estatus~~ — **resuelto a medias el 25 sep**: `generaltrack` devuelve un catálogo de 28 estatus en inglés (`Created` al generar). El mapa de `N5` cubre los nombres de la referencia; los que no reconozca quedan como `en_transito` y se afinan con la primera guía real | `N5` | — |
 | ~~7~~ | ~~Qué exige `POST /invoices/` y el formato de la liga~~ — **resuelto el 25 sep** con `scripts/probar-factura.py`: pide `businessDetails` y el contacto completo; la liga es `{dominio}/invoice/{id}` | `N1` | — |
 
-Los supuestos 3, 5 y 6 se resuelven con lo mismo: **conseguir las credenciales de
-Envia y hacer una guía de prueba.** Es lo que más destraba de esta carpeta.
+**Lo que se vio del sandbox de Envia el 25 sep**: cotiza y factura en **ARS** aunque el
+envío sea dentro de México —es una rareza del ambiente de prueba, no del flujo; en
+producción la cuenta va en MXN—. Tarifas de referencia Nuevo Laredo → Monterrey, 45 kg:
+`ground_do` 600, `ground` 770 MXN. Las sucursales traen `branch_rules` con
+`max_weight: 50` kg: una paca por guía si va a ocurre. **La recolección
+(`ship/pickup/`) no se probó**: el cuerpo de `N4` sigue la referencia oficial.
+
+**Campos nuevos que `N4` escribe en el contacto y todavía no existen en Greentex:**
+`etiqueta_pdf` y `track_url`. Hay que crearlos en la carpeta Envío antes de importar.
 
 ## Orden de importación
 

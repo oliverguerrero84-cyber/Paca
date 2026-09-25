@@ -147,16 +147,35 @@ no después de cobrarle.
 
 ---
 
-## 5. Pendientes por validar contra la API real
+## 5. Lo que se validó contra la API real — 25 sep 2026
 
-Nada de esto bloquea la propuesta, pero hay que probarlo antes de construir:
+Se corrió `scripts/probar-envia.py` contra el **sandbox** de Envia (ambiente de prueba
+con llaves propias, sin cargos). Resultado, punto por punto de lo que estaba pendiente:
 
-1. Que `GET /carrier-branches` devuelva Paquete Express con **coordenadas**. Si sólo
-   trae ciudad y estado, el filtro por ciudad cubre la mayoría de los casos y la
-   distancia se calcula con el centroide del código postal.
-2. Si `GET /validate-zip-code` devuelve coordenadas. Si no, hay un dataset público
-   de dominio público con los 36,182 códigos postales de México y sus centroides,
-   publicado por Correos de México en datos.gob.mx.
-3. El costo real por guía a su volumen (500–800 al mes) — hay que pedir tarifas.
-4. Que la cuenta de Envia permita **filtrar paqueterías** para mostrar sólo Paquete
-   Express, como Oliver lo hizo en su proyecto anterior de Squarespace.
+1. **Sucursales con coordenadas: sí.** `branches/paquetexpress/MX?zipcode=…` devuelve
+   las sucursales **ya ordenadas por distancia en kilómetros**, con latitud, longitud,
+   dirección, si admiten paquetes y sus límites (peso máximo 50 kg por sucursal, y la
+   paca de 100 lb pesa 45). Ya no hay que calcular distancias ni filtrar por ciudad.
+2. **El código postal sí trae coordenadas**, más ciudad, estado y colonias. No hace
+   falta el dataset de Correos.
+3. **Costo por guía**, cotizado en el sandbox de Nuevo Laredo a Monterrey con 45 kg:
+   a sucursal **~600 MXN**, a domicilio **~770 MXN**, entrega en 1 a 3 días. Son
+   tarifas de prueba; las reales dependen del contrato de la cuenta.
+4. **Filtrar paqueterías: sí.** Todo se pide por paquetería en la propia URL, así que
+   sólo aparece Paquete Express. Se llama `paquetexpress` en Envia.
+
+Y tres cosas que no se sabían:
+
+- Hay **dos formas de entregar**: a domicilio (`ground`) y **a sucursal para que el
+  cliente lo recoja** (`ground_do`), que es la que pidió el cliente. La segunda
+  necesita el código de la sucursal elegida, que es justo lo que devuelve la búsqueda
+  por código postal.
+- **Se generó una guía de cada tipo en el sandbox**: sale el PDF de la etiqueta, el
+  número de rastreo y la liga de rastreo de Paquete Express. El rastreo devuelve el
+  estatus de un catálogo fijo de 28 estados y la fecha estimada de entrega, y acepta
+  varias guías en una sola consulta.
+- Envia responde los errores con código 200 y un aviso adentro, así que los flujos
+  tienen que leer la respuesta, no sólo el código.
+
+Lo único que sigue pendiente es del lado del cliente: **su cuenta de producción con
+saldo** y los datos exactos del almacén de Nuevo Laredo.
