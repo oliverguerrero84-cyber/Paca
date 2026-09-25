@@ -34,13 +34,15 @@ el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
 | Mapa de desarrollo en una página para el equipo | Germán | 23 sep |
 | Condiciones de pago corregidas en la propuesta | 786 | 23 sep |
 | **Subcuenta del cliente creada** — Greentex Clothing LLC, y es donde se trabaja de aquí en adelante | 786 | 24 sep |
-| **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, **21** campos custom en 4 carpetas y los 8 custom values | 786 | 24 sep |
+| **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, **25** campos custom en 4 carpetas y los 8 custom values | 786 | 24 sep |
 | **Los 3 usuarios del cliente**, dados de alta a mano | 786 | 24 sep |
 | **Las 6 plantillas de mensaje redactadas** (`A5`), listas para mandar a Meta | 786 | 24 sep |
 | **Los 5 flujos de n8n escritos** como JSON importable — **sin probar**, no hay instancia donde correrlos | 786 | 24 sep |
 | Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | 786 | 24 – 25 sep |
 | **Ensayo del asistente con Custom API de Conversation AI**: con un endpoint falso, el bot recogió los datos, llamó una vez y mandó la liga. Mecanismo probado sin n8n | 786 | 25 sep |
 | **Ensayo de la factura por API en Korvance**: 201, queda enviada con Stripe, liga `{dominio}/invoice/{id}` confirmada. `N1` corregido con lo que la API exige | 786 | 25 sep |
+| **PIT de Greentex creado (`0.2d`) y los 5 campos nuevos en la subcuenta**: `invoice_id`, `servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`; `mp_preference_id` borrado. 25 campos en total | 786 | 25 sep |
+| **Los 5 flujos importados en el n8n de Germán** (`0.3` a medias: faltan variables, credenciales y las URLs en los custom values) | Germán | 25 sep |
 | **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | 786 | 25 sep |
 | **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | 786 | 25 sep |
 | **Greentex en MXN** (`0.2c`) | 786 | 25 sep |
@@ -57,8 +59,6 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 
 | # | Qué | Quién |
 |---|---|---|
-| — | **Crear los 4 campos nuevos de Envío en Greentex** (`servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`): correr `scripts/crear-esqueleto-menudeo.py` con un PIT de Greentex; es idempotente | 786 |
-| — | **Renombrar el campo `mp_preference_id` a `invoice_id`** («Factura de GHL · ID») en Greentex. Un cambio de interfaz | 786 |
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | `0.3` | **Importar los 5 flujos a la instancia de n8n** (la de Germán, prestada), llenar las variables de entorno de `n8n/README.md` y dejar las URLs en los custom values. `N1` con **concurrencia 1**. Al conectarlo al asistente, **medir que responda en menos de 10 s**: es el límite de la acción Custom API y lo que falta de la validación 3 | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |

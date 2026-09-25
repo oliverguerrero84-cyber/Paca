@@ -301,8 +301,8 @@ ningún mensaje al cliente puede decir «tu apartado de PV-MUJ-BOU») ·
 (dropdown: apartado / pagado / vencido / cancelado) · `expira_en` (texto — **no**
 Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 
-**Carpeta `Pago`:** `invoice_id` (texto — el campo se creó el 24 sep como
-`mp_preference_id`; se le renombra la etiqueta en Greentex, no se crea otro) ·
+**Carpeta `Pago`:** `invoice_id` (texto — creado el 25 sep; el `mp_preference_id` del 24 se
+borró porque GHL no deja cambiar la clave de un campo) ·
 `liga_pago` (texto) ·
 `fecha_pago` (texto — **no** Date: los Date de GHL no guardan hora)
 
@@ -310,8 +310,8 @@ Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 Global Prompt y `SP05` lo manda al almacén) · `sucursal_ocurre` (nombre para humanos) ·
 `servicio_envio` (`ground` a domicilio o `ground_do` a sucursal) · `branch_code` (el código
 de sucursal que devuelve `N3` y exige `N4`) · `numero_guia` · `etiqueta_pdf` · `track_url`
-(los tres los escribe `N4`) · `fecha_envio`. Los cuatro nuevos son del 25 sep: se crean
-corriendo otra vez `scripts/crear-esqueleto-menudeo.py`, que es idempotente
+(los tres los escribe `N4`) · `fecha_envio`. Los cuatro nuevos se crearon el 25 sep con
+`scripts/crear-esqueleto-menudeo.py`; la subcuenta tiene ahora 25 campos
 
 **Carpeta `Atribución`:** `canal_origen` · `utm_source` · `utm_medium` ·
 `utm_campaign` · `fecha_primer_contacto`

@@ -41,7 +41,7 @@ y el resto del proyecto cuelga de ello.
 | ~~**0.2a**~~ | ~~**Crear la subcuenta**~~ — **HECHA el 24 sep**: **Greentex Clothing LLC** (`c9jj5uu1WZOIkwi6Vfj5`) — McAllen, Texas, zona horaria `America/Chicago` | 786 | — |
 | ~~**0.2b**~~ | ~~**Levantar el esqueleto dentro**~~ — **HECHO el 24 sep**: pipeline de 8 etapas, 4 carpetas con sus 19 campos y los 8 custom values, verificados releyendo la cuenta | 786 | — |
 | ~~0.2c~~ | ~~Pasar la subcuenta a MXN~~ — **HECHO el 25 sep** | 786 | GHL **no convierte** moneda (probado el 24 sep): la liga sale en la moneda de la subcuenta. Stripe US la presenta en MXN y liquida en USD |
-| **0.2d** | **Generar un PIT de la subcuenta Greentex** | 786 | El MCP de GHL hoy sólo ve Korvance: todo lo de Greentex por API da `403` |
+| ~~0.2d~~ | ~~Generar un PIT de la subcuenta Greentex~~ — **HECHO el 25 sep**; con él se crearon los campos nuevos. Vive sólo en el entorno de quien lo usa | 786 | El MCP de GHL sigue viendo sólo Korvance; para Greentex se usa el PIT con los scripts |
 | **0.3** | **Levantar la instancia de n8n** y **volver a llenar las 5 URLs**, que hoy están en `PENDIENTE` | 786 | Los 5 flujos `N1`–`N5`, y con ellos la validación 3 |
 
 **La instancia de n8n ya tiene dueño.** Corre en la de Germán, prestada al proyecto.
