@@ -57,6 +57,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 
 | # | Qué | Quién |
 |---|---|---|
+| — | **Crear los 4 campos nuevos de Envío en Greentex** (`servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`): correr `scripts/crear-esqueleto-menudeo.py` con un PIT de Greentex; es idempotente | 786 |
 | — | **Renombrar el campo `mp_preference_id` a `invoice_id`** («Factura de GHL · ID») en Greentex. Un cambio de interfaz | 786 |
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | `0.3` | **Importar los 5 flujos a la instancia de n8n** (la de Germán, prestada), llenar las variables de entorno de `n8n/README.md` y dejar las URLs en los custom values. `N1` con **concurrencia 1**. Al conectarlo al asistente, **medir que responda en menos de 10 s**: es el límite de la acción Custom API y lo que falta de la validación 3 | 786 |

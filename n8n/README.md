@@ -102,6 +102,10 @@ producción la cuenta va en MXN—. Tarifas de referencia Nuevo Laredo → Monte
 **Campos nuevos que `N4` escribe en el contacto y todavía no existen en Greentex:**
 `etiqueta_pdf` y `track_url`. Hay que crearlos en la carpeta Envío antes de importar.
 
+**Pendiente nuevo (25 sep):** `N4` manda una sola caja de `45 × cantidad` kg. Las
+sucursales aceptan máximo 50 kg por paquete, así que un pedido de varias pacas a
+`ground_do` necesita una guía por paca. Falta ese ciclo en `N4`.
+
 ## Orden de importación
 
 Da igual: no dependen entre sí. Pero para probar conviene `N3` primero —es el único
