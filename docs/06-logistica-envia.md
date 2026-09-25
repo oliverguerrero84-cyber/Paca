@@ -177,5 +177,10 @@ Y tres cosas que no se sabían:
 - Envia responde los errores con código 200 y un aviso adentro, así que los flujos
   tienen que leer la respuesta, no sólo el código.
 
+Un límite que sí cambia el diseño: **cada sucursal acepta máximo 50 kg por paquete**, y
+una paca pesa 45. Un pedido de dos o más pacas a sucursal lleva **una guía por paca**;
+a domicilio no hay ese tope. `N4` todavía manda una sola caja: queda anotado en el
+README de n8n como pendiente.
+
 Lo único que sigue pendiente es del lado del cliente: **su cuenta de producción con
 saldo** y los datos exactos del almacén de Nuevo Laredo.

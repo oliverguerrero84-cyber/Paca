@@ -65,7 +65,12 @@ CARPETAS = [
         # del Global Prompt obliga a pedir el código postal. Necesita dónde vivir.
         ("codigo_postal",      "Código postal",     "TEXT", None),
         ("sucursal_ocurre",    "Sucursal a ocurre", "TEXT", None),
+        # 25 sep: lo que N3 devuelve y N4 necesita (Envia probado en sandbox)
+        ("servicio_envio",     "Servicio de envío (ground / ground_do)", "TEXT", None),
+        ("branch_code",        "Código de sucursal Envia", "TEXT", None),
         ("numero_guia",        "Número de guía",    "TEXT", None),
+        ("etiqueta_pdf",       "Etiqueta PDF",      "TEXT", None),
+        ("track_url",          "Liga de rastreo",   "TEXT", None),
         ("fecha_envio",        "Fecha de envío",    "TEXT", None),
     ]),
     ("Atribución", [

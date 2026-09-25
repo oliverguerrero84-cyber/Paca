@@ -307,8 +307,11 @@ Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 `fecha_pago` (texto — **no** Date: los Date de GHL no guardan hora)
 
 **Carpeta `Envío`:** `ciudad` · `estado_mx` · `codigo_postal` (lo pide la regla 8 del
-Global Prompt y `SP05` lo manda al almacén) · `sucursal_ocurre` · `numero_guia` ·
-`fecha_envio`
+Global Prompt y `SP05` lo manda al almacén) · `sucursal_ocurre` (nombre para humanos) ·
+`servicio_envio` (`ground` a domicilio o `ground_do` a sucursal) · `branch_code` (el código
+de sucursal que devuelve `N3` y exige `N4`) · `numero_guia` · `etiqueta_pdf` · `track_url`
+(los tres los escribe `N4`) · `fecha_envio`. Los cuatro nuevos son del 25 sep: se crean
+corriendo otra vez `scripts/crear-esqueleto-menudeo.py`, que es idempotente
 
 **Carpeta `Atribución`:** `canal_origen` · `utm_source` · `utm_medium` ·
 `utm_campaign` · `fecha_primer_contacto`
