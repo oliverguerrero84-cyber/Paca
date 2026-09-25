@@ -42,7 +42,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        360,
+        580,
         160
       ]
     },
@@ -74,7 +74,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        580,
+        800,
         160
       ]
     },
@@ -90,7 +90,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        800,
+        1020,
         60
       ],
       "credentials": {
@@ -103,7 +103,7 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.ENVIA_QUERIES_URL }}/branches/paquetexpress/MX?zipcode={{ $('¿5 dígitos?').first().json.codigo_postal }}&limitBranches=5",
+        "url": "={{ $('Config').first().json.ENVIA_QUERIES_URL }}/branches/paquetexpress/MX?zipcode={{ $('¿5 dígitos?').first().json.codigo_postal }}&limitBranches=5",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
@@ -113,7 +113,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
+        1240,
         60
       ],
       "credentials": {
@@ -133,7 +133,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1240,
+        1460,
         60
       ],
       "notes": "Probado el 25 sep en el sandbox: 5 de 5 sucursales traen coordenadas y distance. El bot guarda branch_code y servicio en el contacto para N4."
@@ -149,7 +149,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1460,
+        1680,
         60
       ]
     },
@@ -166,9 +166,34 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        800,
+        1020,
         280
       ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-envia_queries_url",
+              "name": "ENVIA_QUERIES_URL",
+              "value": "https://queries.test.envia.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "config-config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        160
+      ],
+      "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
     }
   ],
   "connections": {
@@ -176,7 +201,7 @@
       "main": [
         [
           {
-            "node": "¿5 dígitos?",
+            "node": "Config",
             "type": "main",
             "index": 0
           }
@@ -239,6 +264,17 @@
         [
           {
             "node": "Responder sucursales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "¿5 dígitos?",
             "type": "main",
             "index": 0
           }

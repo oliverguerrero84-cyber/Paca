@@ -26,28 +26,25 @@ dice `REEMPLAZAR`.
 | `GHL · PIT Greentex` | `Authorization` | `Bearer pit-…` de la subcuenta |
 | `Envia · API` | `Authorization` | `Bearer …` de Envia. **Sandbox y producción tienen llaves distintas** y cada una sólo sirve en su ambiente: se crean en `shipping-test.envia.com/settings/developers` o en `shipping.envia.com/settings/developers` |
 
-### 2. Las variables de entorno
+### 2. La configuración: un nodo `Config` en cada flujo
+
+Los valores que antes iban en variables de entorno viven ahora en un nodo **Config** (un
+*Set*) justo después del disparador de cada flujo, porque la instancia bloquea `$env`
+en los nodos y no vale la pena tocar el stack de Portainer por eso. Los demás nodos leen
+`$('Config').first().json.NOMBRE`. `N5` tiene dos: `Config` para el cron y `Config
+rastreo` para el webhook.
+
+Los valores ya vienen cargados en los JSON. Los que dicen `PENDIENTE` hay que llenarlos
+al importar, y son los mismos en todos los flujos donde aparecen:
 
 ```
-GHL_LOCATION_ID       = c9jj5uu1WZOIkwi6Vfj5
-GHL_PIPELINE_ID       = 80QTHEK406nT2KJhQ6TZ
-GHL_STAGE_APARTADO    = 4e1d2753-b967-4817-b3b2-2b0a42efa5c6
-GHL_STAGE_ENVIADO     = 352335f2-4150-43a0-8067-737cbcd8695e
-GHL_STAGE_ENTREGADO   = ba84ff53-246f-4f04-9547-acd6f6210292
-GHL_WEBHOOK_RASTREO   = (el id del Inbound Webhook de AP01, cuando exista)
-GHL_USER_ID           = 3gkfNTQTfUHvcUlxwLEs   # Oliver en Greentex; firma la factura al mandarla (N1)
-GHL_INVOICE_URL_BASE  = https://link.korvance.com   # dominio de ligas de la agencia; Greentex no tiene dominio propio. Se confirma en la validación 1
-HORAS_APARTADO        = 24
-
-ENVIA_API_URL         = https://api-test.envia.com        # producción: https://api.envia.com
-ENVIA_QUERIES_URL     = https://queries.test.envia.com   # producción: https://queries.envia.com
-
-ALMACEN_NOMBRE   ALMACEN_CALLE   ALMACEN_NUMERO   ALMACEN_COLONIA
-ALMACEN_CIUDAD   ALMACEN_ESTADO  ALMACEN_CP       ALMACEN_TELEFONO   ALMACEN_EMAIL
+GHL_WEBHOOK_RASTREO   = id del Inbound Webhook de AP01, cuando exista     (N5)
+ALMACEN_*             = nombre, calle, número, colonia, CP, teléfono y correo del
+                        almacén de Nuevo Laredo; los manda el cliente     (N4)
 ```
 
-Los `ALMACEN_*` son el origen de los envíos: **Nuevo Laredo, Tamaulipas**. Los datos
-exactos todavía no los tenemos.
+Para pasar Envia a producción se cambian `ENVIA_API_URL` y `ENVIA_QUERIES_URL` en el
+`Config` de `N3`, `N4` y `N5`, junto con la credencial.
 
 ### 3. `N1` corre serializado — concurrencia 1
 
@@ -110,11 +107,6 @@ sucursales aceptan máximo 50 kg por paquete, así que un pedido de varias pacas
 webhook `rastrear` que la acción «Rastrear envío» del bot llama con `{ contactId }` y
 que contesta `estatus`, `estatus_texto`, `entrega_estimada` y `track_url` en el mismo
 turno. Su URL va en el custom value `url_n8n_rastrear`.
-
-**La instancia tiene que permitir `$env` en los nodos.** Los cinco flujos leen las variables
-con `$env.…`; si n8n contesta *«access to env vars denied»*, hay que poner
-`N8N_BLOCK_ENV_ACCESS_IN_NODE=false` en el entorno del contenedor y reiniciarlo. Salió en la
-primera prueba del 25 sep.
 
 ## Orden de importación
 

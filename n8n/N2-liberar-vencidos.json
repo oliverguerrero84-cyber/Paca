@@ -57,7 +57,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ location_id: $env.GHL_LOCATION_ID, pipeline_id: $env.GHL_PIPELINE_ID, pipeline_stage_id: $env.GHL_STAGE_APARTADO, status: 'open', limit: 100 }) }}",
+        "jsonBody": "={{ JSON.stringify({ location_id: $('Config').first().json.GHL_LOCATION_ID, pipeline_id: $('Config').first().json.GHL_PIPELINE_ID, pipeline_stage_id: $('Config').first().json.GHL_STAGE_APARTADO, status: 'open', limit: 100 }) }}",
         "options": {}
       },
       "id": "buscar",
@@ -65,7 +65,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        360,
+        580,
         140
       ],
       "credentials": {
@@ -85,13 +85,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        580,
+        800,
         140
       ]
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/products/inventory?altId={{$env.GHL_LOCATION_ID}}&altType=location&limit=100",
+        "url": "=https://services.leadconnectorhq.com/products/inventory?altId={{$('Config').first().json.GHL_LOCATION_ID}}&altType=location&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -114,7 +114,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        800,
+        1020,
         140
       ],
       "credentials": {
@@ -134,13 +134,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1020,
+        1240,
         140
       ]
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/products/{{ $json.productId }}/price/{{ $json.priceId }}?locationId={{$env.GHL_LOCATION_ID}}",
+        "url": "=https://services.leadconnectorhq.com/products/{{ $json.productId }}/price/{{ $json.priceId }}?locationId={{$('Config').first().json.GHL_LOCATION_ID}}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -159,7 +159,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1240,
+        1460,
         140
       ],
       "credentials": {
@@ -191,7 +191,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, product: $json.product, name: $json.name, type: $json.type, currency: $json.currency, amount: $json.amount, sku: $json.sku, trackInventory: true, allowOutOfStockPurchases: false, availableQuantity: $('Calcular stock devuelto').item.json.nuevoStock }) }}",
+        "jsonBody": "={{ JSON.stringify({ locationId: $('Config').first().json.GHL_LOCATION_ID, product: $json.product, name: $json.name, type: $json.type, currency: $json.currency, amount: $json.amount, sku: $json.sku, trackInventory: true, allowOutOfStockPurchases: false, availableQuantity: $('Calcular stock devuelto').item.json.nuevoStock }) }}",
         "options": {}
       },
       "id": "devolver",
@@ -199,7 +199,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        1680,
         140
       ],
       "credentials": {
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        1680,
         140
       ],
       "credentials": {
@@ -248,6 +248,43 @@
         }
       },
       "notes": "Los campos del contacto se ESCRIBEN por key y se LEEN por id. Esto dispara la plantilla 4 desde GHL."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-ghl_location_id",
+              "name": "GHL_LOCATION_ID",
+              "value": "c9jj5uu1WZOIkwi6Vfj5",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_pipeline_id",
+              "name": "GHL_PIPELINE_ID",
+              "value": "80QTHEK406nT2KJhQ6TZ",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_apartado",
+              "name": "GHL_STAGE_APARTADO",
+              "value": "4e1d2753-b967-4817-b3b2-2b0a42efa5c6",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "config-config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        140
+      ],
+      "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
     }
   ],
   "connections": {
@@ -255,7 +292,7 @@
       "main": [
         [
           {
-            "node": "GHL · apartados abiertos",
+            "node": "Config",
             "type": "main",
             "index": 0
           }
@@ -322,6 +359,17 @@
         [
           {
             "node": "GHL · devolver stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "GHL · apartados abiertos",
             "type": "main",
             "index": 0
           }

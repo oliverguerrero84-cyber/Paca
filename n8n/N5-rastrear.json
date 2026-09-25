@@ -57,7 +57,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ location_id: $env.GHL_LOCATION_ID, pipeline_id: $env.GHL_PIPELINE_ID, pipeline_stage_id: $env.GHL_STAGE_ENVIADO, status: 'open', limit: 100 }) }}",
+        "jsonBody": "={{ JSON.stringify({ location_id: $('Config').first().json.GHL_LOCATION_ID, pipeline_id: $('Config').first().json.GHL_PIPELINE_ID, pipeline_stage_id: $('Config').first().json.GHL_STAGE_ENVIADO, status: 'open', limit: 100 }) }}",
         "options": {}
       },
       "id": "buscar",
@@ -65,7 +65,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        360,
+        580,
         160
       ],
       "credentials": {
@@ -85,7 +85,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        580,
+        800,
         160
       ]
     },
@@ -98,14 +98,14 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
+        1020,
         160
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.ENVIA_API_URL }}/ship/generaltrack/",
+        "url": "={{ $('Config').first().json.ENVIA_API_URL }}/ship/generaltrack/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -127,7 +127,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
+        1240,
         160
       ],
       "credentials": {
@@ -141,14 +141,14 @@
     },
     {
       "parameters": {
-        "jsCode": "// Traduce el catálogo de estatus de Envia (28 valores en inglés, probado el 25 sep)\n// a lo que nos importa: ¿llegó a sucursal? ¿ya lo entregaron? ¿se canceló o hay problema?\nconst r = $json;\nif (r.meta === 'error') {\n  // ponytail: si Envia falla, esta corrida no avisa nada; la siguiente hora lo reintenta.\n  return [];\n}\nconst entradas = $('Los que tienen guía').all().map(i => i.json);\n\n// ponytail: sólo los estatus que vimos o que la referencia nombra; lo demás cae en en_transito.\nconst mapa = {\n  created: 'creada',\n  pickedup: 'en_transito', collected: 'en_transito', shipped: 'en_transito', intransit: 'en_transito',\n  outfordelivery: 'en_reparto',\n  readyforpickup: 'en_sucursal', availableforpickup: 'en_sucursal', atbranch: 'en_sucursal',\n  delivered: 'entregado',\n  canceled: 'cancelado', cancelled: 'cancelado',\n  exception: 'incidencia', returned: 'incidencia', returntosender: 'incidencia'\n};\n\nreturn (r.data || []).map(t => {\n  const crudo = String(t.status || '');\n  const clave = crudo.toLowerCase().replace(/[^a-z]/g, '');\n  const estado = mapa[clave] || 'en_transito';\n  const entrada = entradas.find(x => x.numero_guia === t.trackingNumber) || {};\n  return { json: { ...entrada, estado, estado_crudo: crudo,\n                   entrega_estimada: t.estimatedDelivery || null, entregado_el: t.deliveredAt || null,\n                   track_url: t.trackUrl || null,\n                   avisar: !['creada', 'en_transito'].includes(estado),\n                   mover_a: estado === 'entregado' ? $env.GHL_STAGE_ENTREGADO : null } };\n});"
+        "jsCode": "// Traduce el catálogo de estatus de Envia (28 valores en inglés, probado el 25 sep)\n// a lo que nos importa: ¿llegó a sucursal? ¿ya lo entregaron? ¿se canceló o hay problema?\nconst r = $json;\nif (r.meta === 'error') {\n  // ponytail: si Envia falla, esta corrida no avisa nada; la siguiente hora lo reintenta.\n  return [];\n}\nconst entradas = $('Los que tienen guía').all().map(i => i.json);\n\n// ponytail: sólo los estatus que vimos o que la referencia nombra; lo demás cae en en_transito.\nconst mapa = {\n  created: 'creada',\n  pickedup: 'en_transito', collected: 'en_transito', shipped: 'en_transito', intransit: 'en_transito',\n  outfordelivery: 'en_reparto',\n  readyforpickup: 'en_sucursal', availableforpickup: 'en_sucursal', atbranch: 'en_sucursal',\n  delivered: 'entregado',\n  canceled: 'cancelado', cancelled: 'cancelado',\n  exception: 'incidencia', returned: 'incidencia', returntosender: 'incidencia'\n};\n\nreturn (r.data || []).map(t => {\n  const crudo = String(t.status || '');\n  const clave = crudo.toLowerCase().replace(/[^a-z]/g, '');\n  const estado = mapa[clave] || 'en_transito';\n  const entrada = entradas.find(x => x.numero_guia === t.trackingNumber) || {};\n  return { json: { ...entrada, estado, estado_crudo: crudo,\n                   entrega_estimada: t.estimatedDelivery || null, entregado_el: t.deliveredAt || null,\n                   track_url: t.trackUrl || null,\n                   avisar: !['creada', 'en_transito'].includes(estado),\n                   mover_a: estado === 'entregado' ? $('Config').first().json.GHL_STAGE_ENTREGADO : null } };\n});"
       },
       "id": "traducir",
       "name": "Traducir estatus",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1240,
+        1460,
         160
       ],
       "notes": "Catálogo visto el 25 sep: 'Created' al generar. Los nombres exactos de los otros 27 se afinan con la primera guía real que se mueva; mientras, cualquier estatus desconocido queda como en_transito y no avisa."
@@ -181,14 +181,14 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1460,
+        1680,
         160
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://services.leadconnectorhq.com/hooks/inbound/{{ $env.GHL_WEBHOOK_RASTREO }}",
+        "url": "=https://services.leadconnectorhq.com/hooks/inbound/{{ $('Config').first().json.GHL_WEBHOOK_RASTREO }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ contactId: $json.contactId, opportunityId: $json.opportunityId, numero_guia: $json.numero_guia, estado: $json.estado, estado_crudo: $json.estado_crudo, entrega_estimada: $json.entrega_estimada, track_url: $json.track_url }) }}",
@@ -199,7 +199,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1680,
+        1900,
         160
       ],
       "notes": "AP01 recibe esto y decide qué plantilla mandar. n8n no le escribe al cliente."
@@ -243,7 +243,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        360,
+        580,
         420
       ],
       "credentials": {
@@ -263,7 +263,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        580,
+        800,
         420
       ]
     },
@@ -295,7 +295,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        800,
+        1020,
         420
       ]
     },
@@ -310,14 +310,14 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1020,
+        1240,
         280
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.ENVIA_API_URL }}/ship/generaltrack/",
+        "url": "={{ $('Config rastreo').first().json.ENVIA_API_URL }}/ship/generaltrack/",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ trackingNumbers: [$json.numero_guia] }) }}",
@@ -330,7 +330,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
+        1240,
         480
       ],
       "credentials": {
@@ -349,7 +349,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1240,
+        1460,
         480
       ]
     },
@@ -364,9 +364,89 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1460,
+        1680,
         480
       ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-ghl_location_id",
+              "name": "GHL_LOCATION_ID",
+              "value": "c9jj5uu1WZOIkwi6Vfj5",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_pipeline_id",
+              "name": "GHL_PIPELINE_ID",
+              "value": "80QTHEK406nT2KJhQ6TZ",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_enviado",
+              "name": "GHL_STAGE_ENVIADO",
+              "value": "352335f2-4150-43a0-8067-737cbcd8695e",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_entregado",
+              "name": "GHL_STAGE_ENTREGADO",
+              "value": "ba84ff53-246f-4f04-9547-acd6f6210292",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_webhook_rastreo",
+              "name": "GHL_WEBHOOK_RASTREO",
+              "value": "PENDIENTE: id del Inbound Webhook de AP01",
+              "type": "string"
+            },
+            {
+              "id": "cfg-envia_api_url",
+              "name": "ENVIA_API_URL",
+              "value": "https://api-test.envia.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "config-config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        160
+      ],
+      "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-envia_api_url",
+              "name": "ENVIA_API_URL",
+              "value": "https://api-test.envia.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "config-configrastreo",
+      "name": "Config rastreo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        420
+      ],
+      "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
     }
   ],
   "connections": {
@@ -374,7 +454,7 @@
       "main": [
         [
           {
-            "node": "GHL · envíos en curso",
+            "node": "Config",
             "type": "main",
             "index": 0
           }
@@ -452,7 +532,7 @@
       "main": [
         [
           {
-            "node": "GHL · leer contacto",
+            "node": "Config rastreo",
             "type": "main",
             "index": 0
           }
@@ -515,6 +595,28 @@
         [
           {
             "node": "Responder rastreo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "GHL · envíos en curso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config rastreo": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer contacto",
             "type": "main",
             "index": 0
           }

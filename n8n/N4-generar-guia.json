@@ -35,14 +35,14 @@
     },
     {
       "parameters": {
-        "jsCode": "// Arma el cuerpo de ship/generate con el esquema probado el 25 sep en el sandbox.\n// Peso fijo: cada paca son 100 lb / 45 kg. Si piden más de una, se multiplica.\nconst p = $json.body || {};\nconst servicio = p.servicio === 'ground' ? 'ground' : 'ground_do';   // a sucursal por defecto\nconst faltan = ['orden_id', 'nombre', 'telefono', 'codigo_postal', 'ciudad', 'estado_mx']\n  .filter(k => !p[k]);\nif (servicio === 'ground_do' && !p.branch_code) faltan.push('branch_code');\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nconst peso = 45 * cantidad;\nconst destination = {\n  name: p.nombre,\n  company: '',\n  email: p.email || '',\n  phone: p.telefono,\n  // ponytail: con ground_do la dirección es la de la sucursal, pero Envia igual pide\n  // calle; si el bot no la capturó va un texto fijo.\n  street: p.calle || 'Ocurre Paquete Express',\n  number: p.numero || 'S/N',\n  district: p.colonia || '',\n  city: p.ciudad,\n  state: p.estado_mx,\n  country: 'MX',\n  postalCode: p.codigo_postal\n};\nif (servicio === 'ground_do') destination.branchCode = p.branch_code;\n\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  cantidad,\n  peso,\n  envio: {\n    origin: {\n      name: $env.ALMACEN_NOMBRE,\n      company: $env.ALMACEN_NOMBRE,\n      email: $env.ALMACEN_EMAIL,\n      phone: $env.ALMACEN_TELEFONO,\n      street: $env.ALMACEN_CALLE,\n      number: $env.ALMACEN_NUMERO,\n      district: $env.ALMACEN_COLONIA,\n      city: $env.ALMACEN_CIUDAD,\n      state: $env.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $env.ALMACEN_CP\n    },\n    destination,\n    packages: [{\n      type: 'box',\n      content: 'Ropa usada',\n      amount: 1,\n      name: `Paca x${cantidad}`,\n      // ponytail: valor declarado fijo por paca, para el seguro; no es el precio de venta.\n      declaredValue: 1000 * cantidad,\n      lengthUnit: 'CM',\n      weightUnit: 'KG',\n      weight: peso,\n      dimensions: { length: 80, width: 50, height: 50 }\n    }],\n    shipment: { carrier: 'paquetexpress', service: servicio, type: 1, reverse_pickup: 0, import: 0 },\n    settings: { currency: 'MXN', printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
+        "jsCode": "// Arma el cuerpo de ship/generate con el esquema probado el 25 sep en el sandbox.\n// Peso fijo: cada paca son 100 lb / 45 kg. Si piden más de una, se multiplica.\nconst p = $json.body || {};\nconst servicio = p.servicio === 'ground' ? 'ground' : 'ground_do';   // a sucursal por defecto\nconst faltan = ['orden_id', 'nombre', 'telefono', 'codigo_postal', 'ciudad', 'estado_mx']\n  .filter(k => !p[k]);\nif (servicio === 'ground_do' && !p.branch_code) faltan.push('branch_code');\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nconst peso = 45 * cantidad;\nconst destination = {\n  name: p.nombre,\n  company: '',\n  email: p.email || '',\n  phone: p.telefono,\n  // ponytail: con ground_do la dirección es la de la sucursal, pero Envia igual pide\n  // calle; si el bot no la capturó va un texto fijo.\n  street: p.calle || 'Ocurre Paquete Express',\n  number: p.numero || 'S/N',\n  district: p.colonia || '',\n  city: p.ciudad,\n  state: p.estado_mx,\n  country: 'MX',\n  postalCode: p.codigo_postal\n};\nif (servicio === 'ground_do') destination.branchCode = p.branch_code;\n\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  cantidad,\n  peso,\n  envio: {\n    origin: {\n      name: $('Config').first().json.ALMACEN_NOMBRE,\n      company: $('Config').first().json.ALMACEN_NOMBRE,\n      email: $('Config').first().json.ALMACEN_EMAIL,\n      phone: $('Config').first().json.ALMACEN_TELEFONO,\n      street: $('Config').first().json.ALMACEN_CALLE,\n      number: $('Config').first().json.ALMACEN_NUMERO,\n      district: $('Config').first().json.ALMACEN_COLONIA,\n      city: $('Config').first().json.ALMACEN_CIUDAD,\n      state: $('Config').first().json.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $('Config').first().json.ALMACEN_CP\n    },\n    destination,\n    packages: [{\n      type: 'box',\n      content: 'Ropa usada',\n      amount: 1,\n      name: `Paca x${cantidad}`,\n      // ponytail: valor declarado fijo por paca, para el seguro; no es el precio de venta.\n      declaredValue: 1000 * cantidad,\n      lengthUnit: 'CM',\n      weightUnit: 'KG',\n      weight: peso,\n      dimensions: { length: 80, width: 50, height: 50 }\n    }],\n    shipment: { carrier: 'paquetexpress', service: servicio, type: 1, reverse_pickup: 0, import: 0 },\n    settings: { currency: 'MXN', printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
       },
       "id": "armar",
       "name": "Armar el envío",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        360,
+        580,
         160
       ],
       "notes": "Esquema confirmado el 25 sep con scripts/probar-envia.py --guia: ground y ground_do generan guía en el sandbox. Ojo: branch_rules de las sucursales marca max_weight 50 kg; dos pacas en una caja no caben en ocurre."
@@ -75,14 +75,14 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        580,
+        800,
         160
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.ENVIA_API_URL }}/ship/generate/",
+        "url": "={{ $('Config').first().json.ENVIA_API_URL }}/ship/generate/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -104,7 +104,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        800,
+        1020,
         60
       ],
       "credentials": {
@@ -124,7 +124,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1020,
+        1240,
         60
       ]
     },
@@ -156,7 +156,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1240,
+        1460,
         60
       ]
     },
@@ -173,7 +173,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1460,
+        1680,
         280
       ],
       "notes": "La guía no existe. SP05 no manda nada al cliente; los dueños la generan a mano y se registra con AP02."
@@ -181,7 +181,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.ENVIA_API_URL }}/ship/pickup/",
+        "url": "={{ $('Config').first().json.ENVIA_API_URL }}/ship/pickup/",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -195,7 +195,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify((() => {\n  // Recolección mañana, de 9 a 18. Esquema de docs.envia.com/reference/schedule-pickup.\n  const g = $json;\n  const d = new Date(Date.now() + 24 * 3600 * 1000);\n  return {\n    origin: {\n      name: $env.ALMACEN_NOMBRE, company: $env.ALMACEN_NOMBRE, email: $env.ALMACEN_EMAIL, phone: $env.ALMACEN_TELEFONO,\n      street: $env.ALMACEN_CALLE, number: $env.ALMACEN_NUMERO, district: $env.ALMACEN_COLONIA,\n      city: $env.ALMACEN_CIUDAD, state: $env.ALMACEN_ESTADO, country: 'MX', postalCode: $env.ALMACEN_CP\n    },\n    shipment: {\n      type: 1, carrier: 'paquetexpress',\n      pickup: { weightUnit: 'KG', totalWeight: g.peso, totalPackages: 1, date: d.toISOString().slice(0, 10),\n                timeFrom: 9, timeTo: 18, carrier: 'paquetexpress', trackingNumbers: [g.numero_guia] }\n    }\n  };\n})()) }}",
+        "jsonBody": "={{ JSON.stringify((() => {\n  // Recolección mañana, de 9 a 18. Esquema de docs.envia.com/reference/schedule-pickup.\n  const g = $json;\n  const d = new Date(Date.now() + 24 * 3600 * 1000);\n  return {\n    origin: {\n      name: $('Config').first().json.ALMACEN_NOMBRE, company: $('Config').first().json.ALMACEN_NOMBRE, email: $('Config').first().json.ALMACEN_EMAIL, phone: $('Config').first().json.ALMACEN_TELEFONO,\n      street: $('Config').first().json.ALMACEN_CALLE, number: $('Config').first().json.ALMACEN_NUMERO, district: $('Config').first().json.ALMACEN_COLONIA,\n      city: $('Config').first().json.ALMACEN_CIUDAD, state: $('Config').first().json.ALMACEN_ESTADO, country: 'MX', postalCode: $('Config').first().json.ALMACEN_CP\n    },\n    shipment: {\n      type: 1, carrier: 'paquetexpress',\n      pickup: { weightUnit: 'KG', totalWeight: g.peso, totalPackages: 1, date: d.toISOString().slice(0, 10),\n                timeFrom: 9, timeTo: 18, carrier: 'paquetexpress', trackingNumbers: [g.numero_guia] }\n    }\n  };\n})()) }}",
         "options": {}
       },
       "id": "recoleccion",
@@ -203,7 +203,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        1680,
         60
       ],
       "credentials": {
@@ -244,7 +244,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1680,
+        1900,
         60
       ],
       "credentials": {
@@ -266,7 +266,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1900,
+        2120,
         60
       ]
     },
@@ -283,9 +283,88 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        800,
+        1020,
         280
       ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-envia_api_url",
+              "name": "ENVIA_API_URL",
+              "value": "https://api-test.envia.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_nombre",
+              "name": "ALMACEN_NOMBRE",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_calle",
+              "name": "ALMACEN_CALLE",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_numero",
+              "name": "ALMACEN_NUMERO",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_colonia",
+              "name": "ALMACEN_COLONIA",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_ciudad",
+              "name": "ALMACEN_CIUDAD",
+              "value": "Nuevo Laredo",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_estado",
+              "name": "ALMACEN_ESTADO",
+              "value": "TM",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_cp",
+              "name": "ALMACEN_CP",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_telefono",
+              "name": "ALMACEN_TELEFONO",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-almacen_email",
+              "name": "ALMACEN_EMAIL",
+              "value": "PENDIENTE",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "config-config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        160
+      ],
+      "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
     }
   ],
   "connections": {
@@ -293,7 +372,7 @@
       "main": [
         [
           {
-            "node": "Armar el envío",
+            "node": "Config",
             "type": "main",
             "index": 0
           }
@@ -385,6 +464,17 @@
         [
           {
             "node": "Responder guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Armar el envío",
             "type": "main",
             "index": 0
           }
