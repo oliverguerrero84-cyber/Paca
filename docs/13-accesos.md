@@ -149,6 +149,17 @@ registran con el formulario `AP03 / Registrar Pago Manual`, que ya existe. Hay q
 decírselo al cliente la misma semana en que se sepa, porque la propuesta hablaba de
 tres métodos.
 
+**Ensayo de B3 en Korvance, 25 sep.** Sin esperar el Stripe del cliente, se creó una
+factura por API en Korvance con `scripts/probar-factura.py`, el mismo cuerpo que manda
+`N1`. Resultado: la API **exige** `businessDetails` (con la dirección como objeto) y el
+contacto con nombre, teléfono en E.164 y correo; con eso responde 201 y la factura
+queda «enviada» sin mandar correo, con Stripe como método de pago. La respuesta **no
+trae la liga**: se arma como `{dominio de la subcuenta}/invoice/{id}` y ese formato
+abre la página de la factura con el botón de pago. `N1` ya lee el contacto y la
+subcuenta antes de crear la factura. Consecuencia para el agente: si el contacto no
+tiene correo o teléfono, la factura no se crea; hay que pedirlos antes de apartar. Lo
+que falta de B3 es sólo pagar con tarjeta de prueba, y eso sí espera a `B1`.
+
 B3 necesita un producto con precio dentro de la subcuenta, así que va después del
 eslabón 0 — pero con **un producto de prueba**, no con el catálogo real. El Excel del
 cliente no bloquea esto. `test 1` ya existe, pero **sin inventario activado**: para la

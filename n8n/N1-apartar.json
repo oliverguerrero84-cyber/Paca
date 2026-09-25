@@ -201,6 +201,70 @@
     },
     {
       "parameters": {
+        "url": "=https://services.leadconnectorhq.com/contacts/{{$json.contactId}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "leer-contacto",
+      "name": "GHL · leer contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Probado el 25 sep: /invoices/ exige contactDetails con name, phoneNo (E.164) y email. Se leen del contacto, no se confía en lo que mande el agente."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{$env.GHL_LOCATION_ID}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "leer-subcuenta",
+      "name": "GHL · leer subcuenta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Probado el 25 sep: /invoices/ exige businessDetails con address como OBJETO. Sale de la subcuenta."
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://services.leadconnectorhq.com/invoices/",
         "authentication": "genericCredentialType",
@@ -220,7 +284,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  altId: $env.GHL_LOCATION_ID, altType: 'location',\n  name: 'Paca ' + $json.sku,\n  currency: 'MXN',\n  liveMode: true,\n  contactDetails: { id: $json.contactId },\n  items: [{ name: $json.articulo, currency: 'MXN', amount: $json.monto, qty: $json.cantidad,\n            productId: $json.productId, priceId: $json.priceId }],\n  issueDate: new Date().toISOString().slice(0,10),\n  dueDate: $json.expira_en.slice(0,10)\n}) }}",
+        "jsonBody": "={{ JSON.stringify((() => {\n  const a = $('Arrancar reloj de 24 h').first().json;\n  const c = $('GHL · leer contacto').first().json.contact;\n  const l = $('GHL · leer subcuenta').first().json.location;\n  return {\n    altId: $env.GHL_LOCATION_ID, altType: 'location',\n    name: 'Paca ' + a.sku,\n    currency: 'MXN',\n    liveMode: true,\n    businessDetails: { name: l.name, phoneNo: l.phone,\n      address: { addressLine1: l.address, city: l.city, state: l.state, countryCode: l.country, postalCode: l.postalCode } },\n    contactDetails: { id: a.contactId, name: ((c.firstName || '') + ' ' + (c.lastName || '')).trim(), phoneNo: c.phone, email: c.email },\n    items: [{ name: a.articulo, currency: 'MXN', amount: a.monto, qty: a.cantidad, productId: a.productId, priceId: a.priceId }],\n    issueDate: new Date().toISOString().slice(0,10),\n    dueDate: a.expira_en.slice(0,10)\n  };\n})()) }}",
         "options": {}
       },
       "id": "crear-factura",
@@ -228,7 +292,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        1900,
         40
       ],
       "credentials": {
@@ -237,7 +301,7 @@
           "name": "GHL · PIT Greentex"
         }
       },
-      "notes": "SUPUESTO: POST /invoices/ acepta contactDetails sólo con id y no exige businessDetails. Se confirma en la validación 1. El monto sale del price de GHL, nunca del agente."
+      "notes": "Cuerpo probado el 25 sep en Korvance (scripts/probar-factura.py): 201 y la factura queda «sent» con Stripe como método. El monto sale del price de GHL, nunca del agente. Si el contacto no tiene correo o teléfono, la API da 422: el agente tiene que pedirlos antes."
     },
     {
       "parameters": {
@@ -268,7 +332,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1680,
+        2120,
         40
       ],
       "credentials": {
@@ -281,17 +345,17 @@
     },
     {
       "parameters": {
-        "jsCode": "// Junta el apartado con la factura. La liga es la que el agente manda por WhatsApp.\n// ponytail: la URL se arma a mano; si /invoices/ devuelve la liga, usar esa.\nconst apartado = $('Arrancar reloj de 24 h').first().json;\nconst factura = $('GHL · crear factura').first().json;\nconst invoice_id = factura._id || factura.id;\nreturn [{ json: { ...apartado, invoice_id,\n  liga_pago: `${$env.GHL_INVOICE_URL_BASE}/invoice/${invoice_id}` } }];"
+        "jsCode": "// Junta el apartado con la factura. La liga es la que el agente manda por WhatsApp.\n// /invoices/ NO devuelve la liga; se arma a mano. Formato confirmado el 25 sep.\nconst apartado = $('Arrancar reloj de 24 h').first().json;\nconst factura = $('GHL · crear factura').first().json;\nconst invoice_id = factura._id || factura.id;\nreturn [{ json: { ...apartado, invoice_id,\n  liga_pago: `${$env.GHL_INVOICE_URL_BASE}/invoice/${invoice_id}` } }];"
       },
       "id": "armar-resp",
       "name": "Armar respuesta",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1900,
+        2340,
         40
       ],
-      "notes": "GHL_INVOICE_URL_BASE = dominio de pagos de la subcuenta, sin barra final. SUPUESTO: el formato /invoice/{id} se confirma en la validación 1."
+      "notes": "GHL_INVOICE_URL_BASE = dominio de la subcuenta, sin barra final (Korvance: https://link.korvance.com). Formato /invoice/{id} CONFIRMADO el 25 sep: abre la página de la factura con el botón de pago."
     }
   ],
   "connections": {
@@ -361,7 +425,7 @@
       "main": [
         [
           {
-            "node": "GHL · crear factura",
+            "node": "GHL · leer contacto",
             "type": "main",
             "index": 0
           }
@@ -395,6 +459,28 @@
         [
           {
             "node": "Responder apartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer contacto": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer subcuenta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer subcuenta": {
+      "main": [
+        [
+          {
+            "node": "GHL · crear factura",
             "type": "main",
             "index": 0
           }

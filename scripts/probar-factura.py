@@ -5,7 +5,7 @@ Validación 1: crea una factura por la API de Invoices con el MISMO cuerpo que m
 n8n/N1-apartar.json, la marca como enviada sin correo, y dice qué liga devuelve.
 
 Sirve para confirmar los dos supuestos anotados en N1:
-  1. que POST /invoices/ acepta contactDetails sólo con id
+  1. qué exige POST /invoices/ además del id del contacto (ya se sabe: ver abajo)
   2. cuál es el formato de la liga de pago de la factura
 
 Uso:
@@ -44,6 +44,15 @@ def main():
     loc, moneda = env("GHL_LOCATION_ID"), os.environ.get("GHL_CURRENCY", "MXN")
     hoy = dt.date.today()
 
+    # Probado el 25 sep en Korvance: /invoices/ exige businessDetails y el contacto con
+    # nombre, teléfono E.164 y correo. N1 tiene que leer el contacto y la subcuenta antes.
+    cid = env("GHL_CONTACT_ID")
+    c = requests.get(f"{BASE}/contacts/{cid}", headers=H, timeout=30).json()["contact"]
+    l = requests.get(f"{BASE}/locations/{loc}", headers=H, timeout=30).json()["location"]
+    contacto = {"id": cid, "name": f"{c.get('firstName','')} {c.get('lastName','')}".strip(),
+                "phoneNo": c.get("phone"), "email": c.get("email")}
+    print("contacto:", contacto)
+
     # ponytail: mismo cuerpo que el nodo «GHL · crear factura» de N1; el monto real
     # sale del price, aquí va fijo porque sólo probamos la mecánica.
     cuerpo = {
@@ -51,7 +60,11 @@ def main():
         "name": "Paca PRUEBA",
         "currency": moneda,
         "liveMode": True,
-        "contactDetails": {"id": env("GHL_CONTACT_ID")},
+        "businessDetails": {"name": l.get("name"), "phoneNo": l.get("phone"),
+                            "address": {"addressLine1": l.get("address"), "city": l.get("city"),
+                                        "state": l.get("state"), "countryCode": l.get("country"),
+                                        "postalCode": l.get("postalCode")}},
+        "contactDetails": contacto,
         "items": [{"name": "Paca de prueba", "currency": moneda, "amount": 1, "qty": 1,
                    "productId": env("GHL_PRODUCT_ID"), "priceId": env("GHL_PRICE_ID")}],
         "issueDate": hoy.isoformat(),

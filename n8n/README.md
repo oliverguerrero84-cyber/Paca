@@ -87,6 +87,7 @@ dentro de cada flujo:
 | 4 | **Que `carrier-branches` traiga coordenadas** | `N3` | Sin ellas se filtra por ciudad. El flujo ya lo maneja y lo reporta en `ordenadas_por` |
 | 5 | **El esquema de `ship/generate`** | `N4` | Hay que confirmarlo contra docs.envia.com antes de la primera guía real |
 | 6 | **Los textos de estatus de Paquete Express** | `N5` | La lista de palabras hay que afinarla con la primera guía real |
+| ~~7~~ | ~~Qué exige `POST /invoices/` y el formato de la liga~~ — **resuelto el 25 sep** con `scripts/probar-factura.py`: pide `businessDetails` y el contacto completo; la liga es `{dominio}/invoice/{id}` | `N1` | — |
 
 Los supuestos 3, 5 y 6 se resuelven con lo mismo: **conseguir las credenciales de
 Envia y hacer una guía de prueba.** Es lo que más destraba de esta carpeta.
