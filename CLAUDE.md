@@ -28,10 +28,18 @@ Todo lo que se construya va a la subcuenta del cliente:
 | Subcuenta | **Greentex Clothing LLC** — McAllen, Texas |
 | `GHL_LOCATION_ID` | `c9jj5uu1WZOIkwi6Vfj5` |
 | Zona horaria | `America/Chicago` |
+| Moneda | **MXN** — desde el 25 sep 2026. **GHL no convierte**: la liga sale en la moneda de la subcuenta |
 
 El id no es un secreto —GHL lo muestra en la URL y sin token no sirve de nada— y cada
 corrida del CLI lo necesita. **El token sí lo es**: va en `GHL_API_KEY`, se lee del
-entorno y nunca se escribe a un archivo.
+entorno y nunca se escribe a un archivo. **Ninguna credencial entra al repo**, y
+`docs/09-conversacion.md` **no se regenera** hasta filtrar los tokens que pasaron por
+el chat: tal como está, ese export se llevaría tres PIT y dos tokens de Firebase a
+GitHub.
+
+**El PIT es por subcuenta.** Si la API contesta *"The token does not have access to
+this location"*, el token se creó en la subcuenta equivocada — no le faltan permisos.
+Averiguarlo ya costó una vuelta entera.
 
 **Korvance ya no es la cuenta de trabajo.** Fue el ambiente donde se armó el
 formulario de alta y ahí se queda; nada nuevo va ahí.
@@ -76,6 +84,25 @@ No supongas que el responsivo está bien. Ábrelo en Chromium
 comprueba que `window.scrollX === 0`. Medir `scrollWidth` a secas da falsos positivos:
 ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 
+### Lo que falla en silencio
+
+Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
+
+- **`expira_en` va en ISO 8601 con offset**, siempre — `2026-09-25T18:30:00.000Z`. Es
+  un contrato entre `N1`, `N2` y `SP02`. Si alguien lo escribe «25/09 6:30 pm», `N2` no
+  puede compararlo y **el apartado no se libera nunca**: la paca queda muerta y nadie se
+  entera. Por eso el campo es `TEXT` y no `DATE` — los `DATE` de GHL no guardan hora.
+- **`N1` corre con concurrencia 1.** No se ve en el JSON: es configuración de la
+  instancia (*Settings → Concurrency*). Sin eso, dos clientes apartando la última paca
+  en el mismo segundo dejan el stock en negativo.
+- **Al almacén nunca le va el monto.** Textual de Miguel sobre el almacén: *"ellos no
+  tienen por qué enterarse"*. Ni `monto_apartado`, ni el precio, ni nada que se le
+  parezca.
+- **Las acciones Custom API tienen 10 segundos.** Si `N1` tarda más, el asistente no
+  recibe nada y le contesta al cliente sin la liga.
+- **GHL guarda y muestra nodos malformados que después no ejecutan**, sin avisar. Que
+  un workflow se vea armado en la interfaz no quiere decir que corra.
+
 ---
 
 ## Dónde está cada cosa
@@ -98,6 +125,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 | `docs/09-conversacion.md` | Cómo se llegó a cada decisión — **no es fuente de verdad** |
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
 | `docs/15-plantillas.md` | Las 6 plantillas de mensaje, listas para mandar a Meta |
+| `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
 | `n8n/` | Los 5 flujos de n8n como JSON importable — **escritos, sin probar** |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
@@ -113,7 +141,7 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 2. **El asistente es uno solo, en Conversation AI de GHL, con acciones Custom API.**
    Esas acciones le permiten consultar a n8n dentro del mismo turno (probado el 25 sep
    2026, límite de 10 s por llamada). Se eligió sobre Agent Studio el 25 de septiembre
-   porque hace lo mismo con un prompt y tres acciones en vez de 23 nodos. Dos bots en
+   porque hace lo mismo con un prompt y tres acciones en vez de 19 nodos. Dos bots en
    el mismo WhatsApp se pelean el primer turno.
 3. **n8n nunca habla con el cliente y nunca toca Stripe.** Valida y aparta stock, crea
    la factura en GHL por la API de Invoices y devuelve la liga al agente, busca

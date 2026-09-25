@@ -171,7 +171,7 @@ la respuesta (`ok`, `articulo`, `expira_texto`, `liga_pago`). **Con eso se decid
 mismo día, que el asistente vive en Conversation AI y no en Agent Studio**: la razón
 por la que se eligió Agent Studio —que sólo él podía llamar APIs a mitad de turno— ya
 no aplica, y el bot se arma con un prompt, la Knowledge Base y tres acciones en vez de
-23 nodos.
+19 nodos.
 
 B3 necesita un producto con precio dentro de la subcuenta, así que va después del
 eslabón 0 — pero con **un producto de prueba**, no con el catálogo real. El Excel del
