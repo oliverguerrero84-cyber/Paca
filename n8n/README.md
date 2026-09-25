@@ -84,8 +84,8 @@ dentro de cada flujo:
 
 | # | Supuesto | Dónde | Qué pasa si falla |
 |---|---|---|---|
-| 1 | **`availableQuantity` vive en el `price`, no en el `product`** | `N1`, `N2` | Cambia la URL del PUT. Se confirma al cargar los 30 productos |
-| 2 | **El SKU se guarda en el campo `sku` del price** | `N1`, `N2` | Si no, hay que resolver por nombre de producto |
+| ~~1~~ | ~~`availableQuantity` vive en el `price`~~ — **resuelto el 25 sep**: sí, y se lee con `GET /products/inventory` (una llamada: `sku`, cantidad, price y product). `GET /products/` **no trae precios**. Para escribir, el `PUT` del price exige el cuerpo completo: se lee y se reescribe | `N1`, `N2` | — |
+| ~~2~~ | ~~El SKU se guarda en el campo `sku` del price~~ — **resuelto el 25 sep**, y el inventario lo devuelve | `N1`, `N2` | — |
 | ~~3~~ | ~~La URL base de Envia y sus parámetros~~ — **resuelto el 25 sep** con `scripts/probar-envia.py`: envíos en `api[-test].envia.com`, consultas en `queries[.test].envia.com`, códigos postales en `geocodes.envia.com`; la paquetería se llama `paquetexpress` | `N3`, `N4`, `N5` | — |
 | ~~4~~ | ~~Que las sucursales traigan coordenadas~~ — **resuelto el 25 sep**: `branches/paquetexpress/MX?zipcode=` trae 5 de 5 con coordenadas, ya ordenadas por `distance` en km. Se quitó el cálculo de distancia | `N3` | — |
 | ~~5~~ | ~~El esquema de `ship/generate`~~ — **resuelto el 25 sep**: guía generada en el sandbox con `ground` y con `ground_do` (a sucursal, exige `destination.branchCode`). Los errores llegan con HTTP 200 y `meta: "error"` | `N4` | — |
@@ -110,6 +110,11 @@ sucursales aceptan máximo 50 kg por paquete, así que un pedido de varias pacas
 webhook `rastrear` que la acción «Rastrear envío» del bot llama con `{ contactId }` y
 que contesta `estatus`, `estatus_texto`, `entrega_estimada` y `track_url` en el mismo
 turno. Su URL va en el custom value `url_n8n_rastrear`.
+
+**La instancia tiene que permitir `$env` en los nodos.** Los cinco flujos leen las variables
+con `$env.…`; si n8n contesta *«access to env vars denied»*, hay que poner
+`N8N_BLOCK_ENV_ACCESS_IN_NODE=false` en el entorno del contenedor y reiniciarlo. Salió en la
+primera prueba del 25 sep.
 
 ## Orden de importación
 

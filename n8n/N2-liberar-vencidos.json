@@ -11,17 +11,30 @@
       "name": "Qué hace",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-400, -60]
+      "position": [
+        -400,
+        -60
+      ]
     },
     {
       "parameters": {
-        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] }
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
       },
       "id": "cron",
       "name": "Cada 15 minutos",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [140, 140]
+      "position": [
+        140,
+        140
+      ]
     },
     {
       "parameters": {
@@ -32,8 +45,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -45,9 +64,15 @@
       "name": "GHL · apartados abiertos",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [360, 140],
+      "position": [
+        360,
+        140
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       },
       "notes": "Sólo la etapa «Pedido Apartado (24 h)». Los que ya pagaron están en otra etapa y no se tocan."
     },
@@ -59,66 +84,129 @@
       "name": "¿Cuáles vencieron?",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [580, 140]
+      "position": [
+        580,
+        140
+      ]
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/products/?locationId={{$env.GHL_LOCATION_ID}}&limit=100",
+        "url": "=https://services.leadconnectorhq.com/products/inventory?altId={{$env.GHL_LOCATION_ID}}&altType=location&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Accept", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
           ]
         },
         "options": {}
       },
       "id": "productos",
-      "name": "GHL · listar productos",
+      "name": "GHL · inventario",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [800, 140],
+      "position": [
+        800,
+        140
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
-      }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Probado el 25 sep: /products/ NO trae precios; /products/inventory sí."
     },
     {
       "parameters": {
-        "jsCode": "// Para cada vencido, encuentra su price y calcula el stock devuelto.\nconst productos = $input.first().json.products || [];\nconst vencidos = $('¿Cuáles vencieron?').all().map(i => i.json);\nconst salida = [];\n\nfor (const v of vencidos) {\n  for (const p of productos) {\n    for (const precio of (p.prices || [])) {\n      if ((precio.sku || '').trim() === (v.sku || '').trim()) {\n        salida.push({ json: { ...v,\n          productId: p._id || p.id,\n          priceId: precio._id || precio.id,\n          nuevoStock: Number(precio.availableQuantity ?? 0) + v.cantidad } });\n      }\n    }\n  }\n}\nreturn salida;"
+        "jsCode": "// Para cada vencido, encuentra su price en el inventario y calcula el stock devuelto.\nconst inv = $input.first().json.inventory || [];\nconst vencidos = $('¿Cuáles vencieron?').all().map(i => i.json);\nconst salida = [];\nfor (const v of vencidos) {\n  const i = inv.find(x => (x.sku || '').trim() === (v.sku || '').trim());\n  if (!i) continue;\n  salida.push({ json: { ...v, productId: i.product, priceId: i._id, nuevoStock: Number(i.availableQuantity ?? 0) + Number(v.cantidad || 1) } });\n}\nreturn salida;"
       },
       "id": "calcular",
       "name": "Calcular stock devuelto",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1020, 140]
+      "position": [
+        1020,
+        140
+      ]
     },
     {
       "parameters": {
-        "method": "PUT",
-        "url": "=https://services.leadconnectorhq.com/products/{{$json.productId}}/price/{{$json.priceId}}",
+        "url": "=https://services.leadconnectorhq.com/products/{{ $json.productId }}/price/{{ $json.priceId }}?locationId={{$env.GHL_LOCATION_ID}}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "leer-precio",
+      "name": "GHL · leer precio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Probado el 25 sep: el PUT del precio exige el cuerpo completo (name, type, currency, amount). Se lee y se reescribe con la cantidad nueva."
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/products/{{ $('Calcular stock devuelto').item.json.productId }}/price/{{ $('Calcular stock devuelto').item.json.priceId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, availableQuantity: $json.nuevoStock }) }}",
+        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, product: $json.product, name: $json.name, type: $json.type, currency: $json.currency, amount: $json.amount, sku: $json.sku, trackInventory: true, allowOutOfStockPurchases: false, availableQuantity: $('Calcular stock devuelto').item.json.nuevoStock }) }}",
         "options": {}
       },
       "id": "devolver",
       "name": "GHL · devolver stock",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1240, 140],
+      "position": [
+        1460,
+        140
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       }
     },
     {
@@ -130,8 +218,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Version", "value": "2021-07-28" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -143,21 +237,101 @@
       "name": "GHL · marcar vencido",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1460, 140],
+      "position": [
+        1460,
+        140
+      ],
       "credentials": {
-        "httpHeaderAuth": { "id": "REEMPLAZAR", "name": "GHL · PIT Greentex" }
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
       },
       "notes": "Los campos del contacto se ESCRIBEN por key y se LEEN por id. Esto dispara la plantilla 4 desde GHL."
     }
   ],
   "connections": {
-    "Cada 15 minutos": { "main": [[{ "node": "GHL · apartados abiertos", "type": "main", "index": 0 }]] },
-    "GHL · apartados abiertos": { "main": [[{ "node": "¿Cuáles vencieron?", "type": "main", "index": 0 }]] },
-    "¿Cuáles vencieron?": { "main": [[{ "node": "GHL · listar productos", "type": "main", "index": 0 }]] },
-    "GHL · listar productos": { "main": [[{ "node": "Calcular stock devuelto", "type": "main", "index": 0 }]] },
-    "Calcular stock devuelto": { "main": [[{ "node": "GHL · devolver stock", "type": "main", "index": 0 }]] },
-    "GHL · devolver stock": { "main": [[{ "node": "GHL · marcar vencido", "type": "main", "index": 0 }]] }
+    "Cada 15 minutos": {
+      "main": [
+        [
+          {
+            "node": "GHL · apartados abiertos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · apartados abiertos": {
+      "main": [
+        [
+          {
+            "node": "¿Cuáles vencieron?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cuáles vencieron?": {
+      "main": [
+        [
+          {
+            "node": "GHL · inventario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular stock devuelto": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer precio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · devolver stock": {
+      "main": [
+        [
+          {
+            "node": "GHL · marcar vencido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · inventario": {
+      "main": [
+        [
+          {
+            "node": "Calcular stock devuelto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer precio": {
+      "main": [
+        [
+          {
+            "node": "GHL · devolver stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
   "pinData": {}
 }

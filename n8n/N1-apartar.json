@@ -35,7 +35,7 @@
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/products/?locationId={{$env.GHL_LOCATION_ID}}&limit=100",
+        "url": "=https://services.leadconnectorhq.com/products/inventory?altId={{$env.GHL_LOCATION_ID}}&altType=location&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -54,7 +54,7 @@
         "options": {}
       },
       "id": "get-productos",
-      "name": "GHL · listar productos",
+      "name": "GHL · inventario",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -67,11 +67,11 @@
           "name": "GHL · PIT Greentex"
         }
       },
-      "notes": "SUPUESTO: availableQuantity vive en el objeto price, no en el product. Verificar al cargar los 30 productos."
+      "notes": "Probado el 25 sep: /products/ NO trae precios. /products/inventory sí trae sku, availableQuantity, _id (price) y product en una sola llamada."
     },
     {
       "parameters": {
-        "jsCode": "// Resuelve SKU -> price, y decide si alcanza el stock.\n// El SKU se guarda en el campo `sku` del price del producto en GHL.\nconst pedido = $('Webhook · apartar').first().json.body;\nconst sku = (pedido.sku || '').trim();\nconst cantidad = Number(pedido.cantidad || 1);\n\nconst productos = $input.first().json.products || [];\nlet encontrado = null;\n\nfor (const p of productos) {\n  for (const precio of (p.prices || [])) {\n    if ((precio.sku || '').trim() === sku) {\n      encontrado = { productId: p._id || p.id, priceId: precio._id || precio.id,\n                     nombre: p.name, monto: Number(precio.amount ?? 0),\n                     disponible: Number(precio.availableQuantity ?? 0) };\n    }\n  }\n}\n\nif (!encontrado) {\n  return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad } }];\n}\n\nconst alcanza = encontrado.disponible >= cantidad;\nreturn [{ json: { ...encontrado, sku, cantidad, alcanza,\n                  nuevoStock: encontrado.disponible - cantidad,\n                  ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
+        "jsCode": "// Resuelve SKU -> price con el inventario, y decide si alcanza el stock.\nconst pedido = $('Webhook · apartar').first().json.body;\nconst sku = (pedido.sku || '').trim();\nconst cantidad = Number(pedido.cantidad || 1);\nconst inv = $input.first().json.inventory || [];\nconst i = inv.find(x => (x.sku || '').trim() === sku);\nif (!i) return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad } }];\nconst disponible = Number(i.availableQuantity ?? 0);\nconst alcanza = disponible >= cantidad;\nreturn [{ json: { productId: i.product, priceId: i._id, nombre: i.productName, disponible, sku, cantidad, alcanza,\n  nuevoStock: disponible - cantidad, ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
       },
       "id": "resolver-sku",
       "name": "Resolver SKU y stock",
@@ -116,8 +116,40 @@
     },
     {
       "parameters": {
+        "url": "=https://services.leadconnectorhq.com/products/{{ $('Resolver SKU y stock').first().json.productId }}/price/{{ $('Resolver SKU y stock').first().json.priceId }}?locationId={{$env.GHL_LOCATION_ID}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "leer-precio",
+      "name": "GHL · leer precio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Probado el 25 sep: el PUT del precio exige el cuerpo completo (name, type, currency, amount). Se lee y se reescribe con la cantidad nueva."
+    },
+    {
+      "parameters": {
         "method": "PUT",
-        "url": "=https://services.leadconnectorhq.com/products/{{$json.productId}}/price/{{$json.priceId}}",
+        "url": "=https://services.leadconnectorhq.com/products/{{ $('Resolver SKU y stock').first().json.productId }}/price/{{ $('Resolver SKU y stock').first().json.priceId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -135,7 +167,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, availableQuantity: $json.nuevoStock }) }}",
+        "jsonBody": "={{ JSON.stringify({ locationId: $env.GHL_LOCATION_ID, product: $json.product, name: $json.name, type: $json.type, currency: $json.currency, amount: $json.amount, sku: $json.sku, trackInventory: true, allowOutOfStockPurchases: false, availableQuantity: $('Resolver SKU y stock').first().json.nuevoStock }) }}",
         "options": {}
       },
       "id": "descontar",
@@ -143,7 +175,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
+        1240,
         40
       ],
       "credentials": {
@@ -155,14 +187,14 @@
     },
     {
       "parameters": {
-        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: datos.monto,\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString(),\n  // Para que el bot lo diga tal cual y no convierta fechas.\n  expira_texto: expira.toLocaleString('es-MX', { timeZone: 'America/Chicago', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })\n} }];"
+        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: Number($('GHL · leer precio').first().json.amount ?? 0),\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString(),\n  // Para que el bot lo diga tal cual y no convierta fechas.\n  expira_texto: expira.toLocaleString('es-MX', { timeZone: 'America/Chicago', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })\n} }];"
       },
       "id": "reloj",
       "name": "Arrancar reloj de 24 h",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1240,
+        1460,
         40
       ]
     },
@@ -177,7 +209,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        2120,
+        2340,
         40
       ]
     },
@@ -220,7 +252,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        1680,
         40
       ],
       "credentials": {
@@ -252,7 +284,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1680,
+        1900,
         40
       ],
       "credentials": {
@@ -292,7 +324,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1900,
+        2120,
         40
       ],
       "credentials": {
@@ -332,7 +364,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2120,
+        2340,
         40
       ],
       "credentials": {
@@ -352,7 +384,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2340,
+        2560,
         40
       ],
       "notes": "GHL_INVOICE_URL_BASE = dominio de la subcuenta, sin barra final (Korvance: https://link.korvance.com). Formato /invoice/{id} CONFIRMADO el 25 sep: abre la página de la factura con el botón de pago."
@@ -363,18 +395,7 @@
       "main": [
         [
           {
-            "node": "GHL · listar productos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "GHL · listar productos": {
-      "main": [
-        [
-          {
-            "node": "Resolver SKU y stock",
+            "node": "GHL · inventario",
             "type": "main",
             "index": 0
           }
@@ -396,7 +417,7 @@
       "main": [
         [
           {
-            "node": "GHL · descontar stock",
+            "node": "GHL · leer precio",
             "type": "main",
             "index": 0
           }
@@ -481,6 +502,28 @@
         [
           {
             "node": "GHL · crear factura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · inventario": {
+      "main": [
+        [
+          {
+            "node": "Resolver SKU y stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer precio": {
+      "main": [
+        [
+          {
+            "node": "GHL · descontar stock",
             "type": "main",
             "index": 0
           }
