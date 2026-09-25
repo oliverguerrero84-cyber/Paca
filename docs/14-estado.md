@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 23 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 25 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -13,7 +13,9 @@
 
 **El cliente aceptó y pagó el Completo, su subcuenta existe —Greentex Clothing LLC— y
 ya tiene el esqueleto de GHL de pie**: pipeline, campos y custom values. Falta el
-motor —n8n, workflows y el agente— y los datos que el cliente todavía no manda.
+motor —n8n, workflows y el agente— y los datos que el cliente todavía no manda. **El 25
+de sep cambió la pasarela: se cobra con el Stripe del cliente, no con Mercado Pago**, y
+la primera pieza que hace falta es que él lo conecte en Greentex.
 
 ## 2. Hecho
 
@@ -34,6 +36,8 @@ motor —n8n, workflows y el agente— y los datos que el cliente todavía no ma
 | **Los 3 usuarios del cliente**, dados de alta a mano | 786 | 24 sep |
 | **Las 6 plantillas de mensaje redactadas** (`A5`), listas para mandar a Meta | 786 | 24 sep |
 | **Los 5 flujos de n8n escritos** como JSON importable — **sin probar**, no hay instancia donde correrlos | 786 | 24 sep |
+| Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | 786 | 24 – 25 sep |
+| **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / 786 | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
 > Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
@@ -65,7 +69,7 @@ Son los tres eslabones raíz de `docs/13-accesos.md` §2. Todo lo demás cuelga 
 | **Piezas por paca** | De lo que más preguntan los compradores |
 | **Stock inicial** al menudeo | La carga de `availableQuantity` |
 | **Verificar el Meta Business Manager** y agregar a 786 como socio | `A1` y `A2`, el primer eslabón del carril más largo |
-| **Mercado Pago verificado** | El cobro real. Sin verificación retiene fondos |
+| **Conectar su Stripe en Greentex** (`B1`), y activar OXXO y transferencia MX en su dashboard (`B2`) | Las validaciones 1, 2 y 4. Es lo único que hoy detiene el carril del cobro |
 | **Cuenta de Envia.com con saldo** | Las guías |
 
 Los primeros cinco se piden con el Excel que ya se les mandó.
@@ -77,19 +81,20 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 | **7 de los 8 custom values están en `PENDIENTE`** — las 5 URLs de n8n, el WhatsApp del almacén y el correo de los dueños | Las URLs, a que n8n exista (`0.3`); las otras dos, a que las mande el cliente |
 | **Validación 3** — que el nodo `API Call` responda a tiempo | Que `N1` exista, o sea la semana 2 |
 | Mandar las 4 plantillas a Meta (`A6`) — **ya redactadas** en `docs/15-plantillas.md` | La WhatsApp Business Account (`A4`) |
-| **Validaciones 1, 2 y 4** | Conectar Mercado Pago (`B1`/`B2`), que es de interfaz. Es lo único que las bloquea |
+| **Validaciones 1, 2 y 4** | Que el cliente conecte Stripe (`B1`). La 4 además pregunta si el checkout de GHL muestra OXXO y SPEI; si no, el plan es tarjeta más transferencia manual con `AP03` |
 | **La liga de pago del cliente** e incrustarla en la propuesta | Nada: es tarea viva de Germán |
 
 ## 5. Sin dueño todavía
 
-De los cuatro huecos de `docs/13-accesos.md` §8, **uno ya se cerró**: Korvance es la
-cuenta de trabajo de Germán. Quedan tres:
+De los cinco huecos de `docs/13-accesos.md` §8, **dos ya se cerraron**: Korvance es la
+cuenta de trabajo de Germán, y n8n corre en la instancia de Germán, prestada. Quedan
+tres:
 
 | # | Hueco | Bloquea |
 |---|---|---|
 | 1 | Cómo se obtienen las credenciales de API de Envia, y si hay ambiente de pruebas | `C3`, y con él los flujos `N3`, `N4` y `N5` |
-| 2 | Dónde corre n8n y con qué cuenta — hoy sólo aparece como costo de terceros | `0.3`, que es raíz de medio proyecto |
 | 4 | Roles y permisos de Pamela, Miguel y Mauricio dentro de la subcuenta | La capacitación de la última semana |
+| 5 | Quién activa OXXO y transferencia MX en el Stripe del cliente: él, o 786 con acceso | `B2`, y con él la validación 4 |
 
 ## 6. Riesgos vivos
 
@@ -97,4 +102,7 @@ cuenta de trabajo de Germán. Quedan tres:
   Tarda de 24 a 48 horas y puede rechazar. Si se atrasa, se lleva el go-live con ella.
 - **Si la validación 1 falla**, entra el plan B: cobrar por el checkout de la tienda y
   renunciar al apartado de 24 h. Conviene saberlo antes de prometérselo al cliente.
+- **La propuesta prometió tarjeta, OXXO y SPEI en una liga.** Con Stripe en GHL sólo
+  tarjeta está confirmado; los otros dos dependen de la validación 4. Si no salen, hay
+  que avisarle al cliente esa misma semana.
 - **El PIT sigue sin rotar.** Es lo primero de la lista de arriba.

@@ -113,12 +113,18 @@ ya pasó una vez con la tabla comparativa y se coló un desbordamiento a 320 px.
 2. **El asistente es uno solo, en Agent Studio de GHL.** Su nodo `API Call` le permite
    consultar a n8n dentro del mismo turno. Dos bots en el mismo WhatsApp se pelean el
    primer turno.
-3. **n8n nunca habla con el cliente y nunca toca Mercado Pago.** Sólo valida y aparta
-   stock, busca sucursal por código postal, y genera guías y rastrea.
+3. **n8n nunca habla con el cliente y nunca toca Stripe.** Valida y aparta stock, crea
+   la factura en GHL por la API de Invoices y devuelve la liga al agente, busca
+   sucursal por código postal, y genera guías y rastrea. Quien cobra es GHL con la
+   pasarela que tenga conectada.
 4. **El inventario vive en los productos de GHL**, con n8n como dueño único del
    contador.
-5. **Mercado Pago es pasarela nativa de HighLevel** desde el 27 de abril de 2026, y
-   México está entre los países soportados. Cubre tarjeta, OXXO y SPEI.
+5. **La pasarela es el Stripe del cliente** (entidad de EE.UU.), conectado por él en
+   Greentex; la subcuenta va en **MXN**. Tarjeta está confirmado. OXXO y SPEI existen
+   en Stripe para cuentas de EE.UU., pero **falta comprobar que el checkout de GHL los
+   muestre** (validación 4). Si no, el plan B es tarjeta por la liga y transferencia
+   manual con el formulario `AP03`. Mercado Pago quedó fuera el 25 de septiembre de
+   2026 por decisión del cliente; sigue siendo pasarela nativa de GHL, por si vuelve.
 
 > Dos afirmaciones de revisiones viejas eran **falsas** y están corregidas: que
 > Mercado Pago no era nativo, y que GHL no llevaba inventario. Si las encuentras
