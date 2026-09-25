@@ -155,7 +155,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: datos.monto,\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString()\n} }];"
+        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($env.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: datos.monto,\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString(),\n  // Para que el bot lo diga tal cual y no convierta fechas.\n  expira_texto: expira.toLocaleString('es-MX', { timeZone: 'America/Chicago', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })\n} }];"
       },
       "id": "reloj",
       "name": "Arrancar reloj de 24 h",

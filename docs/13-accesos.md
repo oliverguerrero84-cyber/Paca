@@ -160,6 +160,18 @@ subcuenta antes de crear la factura. Consecuencia para el agente: si el contacto
 tiene correo o teléfono, la factura no se crea; hay que pedirlos antes de apartar. Lo
 que falta de B3 es sólo pagar con tarjeta de prueba, y eso sí espera a `B1`.
 
+**Ensayo del asistente con la acción Custom API de Conversation AI, 25 sep.** Con un
+endpoint falso que responde lo mismo que va a responder `N1`, el bot de Conversation AI
+pidió la cantidad, pidió confirmación, llamó **una sola vez** y contestó con la liga y
+la hora de vencimiento en palabras. El mecanismo «el asistente consulta a n8n en el
+mismo turno y manda la liga» queda probado sin n8n; lo que falta de la validación 3 es
+medir el tiempo con `N1` real, contra el límite de **10 segundos** de esa acción. La
+acción recoge los campos con un esquema JSON (`sku`, `cantidad`, `contactId`) y mapea
+la respuesta (`ok`, `articulo`, `expira_texto`, `liga_pago`). Abre una decisión: el
+asistente puede vivir en Conversation AI con esta acción en vez de en Agent Studio;
+la razón por la que se eligió Agent Studio —que sólo él podía llamar APIs a mitad de
+turno— ya no aplica desde esta semana.
+
 B3 necesita un producto con precio dentro de la subcuenta, así que va después del
 eslabón 0 — pero con **un producto de prueba**, no con el catálogo real. El Excel del
 cliente no bloquea esto. `test 1` ya existe, pero **sin inventario activado**: para la
