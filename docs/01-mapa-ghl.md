@@ -9,11 +9,11 @@ Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
 | | Esencial | Completo |
 |---|---|---|
 | Pipeline | 5 etapas | 8 etapas |
-| Workflows | 5 | 9 |
+| Workflows | 5 | 8 |
 | Nodos del agente | 12 | 19 |
 | Integraciones externas | 0 | 2 (Envia.com + n8n) |
 | Catálogo | En la conversación | En la conversación + página pública opcional |
-| Cobro | — | Liga de pago con Mercado Pago |
+| Cobro | — | Liga de pago: factura de GHL cobrada con Stripe |
 
 ---
 
@@ -26,8 +26,8 @@ Hay **dos paquetes**. Este documento describe el **Completo**; lo que lleva el
 | 1 | Lead Nuevo | Llega un mensaje de un contacto sin oportunidad abierta |
 | 2 | En Conversación (Bot) | El agente toma la conversación |
 | 3 | Pedido Apartado (24 h) | n8n confirma la reserva de stock |
-| 4 | Liga de Pago Enviada | Se envió la liga de Mercado Pago |
-| 5 | Pago Confirmado | Mercado Pago acreditó — `Payment Received` |
+| 4 | Liga de Pago Enviada | Se envió la liga de pago (la factura de GHL) |
+| 5 | Pago Confirmado | Stripe acreditó — `Payment Received` |
 | 6 | Orden en Almacén | Se disparó la orden de despacho |
 | 7 | Enviado — Guía Generada | Envia generó la guía y el almacén despachó |
 | 8 | Entregado / Cerrado | Cierre |
@@ -43,14 +43,13 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 
 ## 2. Workflows
 
-### Completo — 9 workflows
+### Completo — 8 workflows
 
 | Código | Nombre | Trigger | Nodos |
 |---|---|---|---:|
 | `LS01` | Entrada de lead menudeo | Contact Created (WhatsApp) | 10 |
 | `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
 | `SP02` | Apartado 24 h + recordatorios + liberación | Inbound Webhook (n8n `N1`) | 16 |
-| `SP03` | **Crea la liga de pago** (API de Invoices) y da seguimiento | Opportunity Stage Changed → Apartado | 12 |
 | `SP04` | Pago confirmado → nº de orden | **Goal Event `Payment Received`** | 10 |
 | `SP05` | Despacho: guía Envia + PDF al almacén + correo a dueños | Opportunity Stage Changed → Pagado | 12 |
 | `AP01` | Rastreo: avisos hasta "llegó a tu sucursal" | Inbound Webhook (n8n `N5`) | 10 |
@@ -58,8 +57,11 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 | `AP03` | Registro manual de pago por transferencia | Form Submitted (form interno) | 7 |
 
 **Qué cambió respecto a la revisión 3:**
-- `SP04` ya no necesita Inbound Webhook: con Mercado Pago nativo, el **Goal Event
-  `Payment Received` dispara solo**.
+- `SP04` ya no necesita Inbound Webhook: la factura es un pago de GHL, cobre con la
+  pasarela que cobre, y el **Goal Event `Payment Received` dispara solo**.
+- `SP03` **desapareció el 25 sep** con el cambio a Stripe: la factura la crea `N1` por
+  la API de Invoices en la misma corrida del apartado, y los recordatorios ya vivían
+  en `SP02`.
 - `SP05` genera la guía en vez de esperar a que el almacén la capture.
 - `AP01` deja de ser un formulario y pasa a ser rastreo automático.
 - `AP03` es nuevo: el registro manual de transferencias a su banco.
@@ -74,8 +76,8 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 | `SP03` | Seguimiento de pedido sin cerrar | Opportunity Stage Changed | 8 |
 | `AP02` | Escalamiento a humano | Tag Added `escalar-humano` | 8 |
 
-`SP02`, `SP03`, `SP04`, `SP05` y `AP01` del Completo **no existen en el Esencial**:
-todos dependen de n8n, de Mercado Pago o de la cadena de despacho. En su lugar,
+`SP02`, `SP04`, `SP05` y `AP01` del Completo **no existen en el Esencial**:
+todos dependen de n8n, de Stripe o de la cadena de despacho. En su lugar,
 `SP02` del Esencial avisa al asesor y le crea la tarea para que cierre él.
 
 ### Detalle de los tres workflows críticos
@@ -88,12 +90,13 @@ pagó? → si no, recordatorio final (template) → `Wait 2 h` → IF ¿ya pagó
 webhook a n8n `N2` para liberar → tag `apartado-vencido` → mensaje de recuperación.
 `Goal Event` = **`Payment Received`**, que salta todos los waits y corta el flujo.
 
-> Rama del efectivo: si el método elegido es OXXO o Paycash, los `Wait` se calculan
-> sobre la vigencia de la referencia de Mercado Pago, no sobre 24 h. El efectivo
-> tarda hasta 72 h hábiles en acreditar.
+> Rama del efectivo, **sólo si la validación 4 confirma que el checkout de GHL muestra
+> OXXO**: los `Wait` se calculan sobre la vigencia del voucher de Stripe (5 días por
+> defecto) más un día hábil para que acredite, no sobre 24 h. OXXO no admite
+> reembolsos ni contracargos.
 
 **`SP04` — Pago confirmado (10 nodos).** Trigger **Goal Event `Payment Received`**,
-que ahora sí funciona porque Mercado Pago es pasarela nativa. Guarda `orden_id`,
+que dispara porque la factura es de GHL, cobre con la pasarela que cobre. Guarda `orden_id`,
 monto y método → mueve a etapa 5 → quita el tag de apartado → confirma al cliente
 (template) → dispara `SP05`.
 
@@ -141,40 +144,34 @@ disparando un Inbound Webhook y un segundo workflow continuando. Por eso `SP02` 
 `AP01` tienen ese trigger.
 
 **El carril síncrono es la razón entera de usar Agent Studio.** Su nodo `API Call` sí
-espera dentro del turno. Se usa dos veces, las dos con el cliente mirando la pantalla:
-stock (nodo 11) y sucursal (nodo 16). Nada más.
+espera dentro del turno. Se usa tres veces, las tres con el cliente mirando la
+pantalla: stock (nodo 11), sucursal (nodo 16) y apartado con liga de pago (nodo 19).
+Nada más.
 
 De ahí se sigue lo que más se pregunta: **no hace falta un asistente para llamar a una
-API.** Un asistente sirve para conversar. Crear la guía, cobrar o rastrear ocurren
-cuando nadie conversa, así que los hace un workflow llamando a n8n. Y un segundo
+API.** Un asistente sirve para conversar. Confirmar el pago, crear la guía o rastrear
+ocurren cuando nadie conversa, así que los hace un workflow llamando a n8n. Y un segundo
 asistente no sobra: estorba, porque dos bots en el mismo WhatsApp se pelean el primer
 turno.
 
-### Falta un eslabón entre el nodo 19 y `SP02`
+### El eslabón entre el nodo 19 y `SP02` — cerrado con el cambio a Stripe
 
-El nodo 19 marca el tag `pedido-listo`. `SP02` dispara con un Inbound Webhook de n8n
-`N1`. **Entre esas dos cosas no hay nada escrito**, y la evidencia es que
-`url_n8n_crear_apartado` existe como custom value sin que ningún documento diga quién
-la llama.
-
-La secuencia real tiene que ser:
+Antes el nodo 19 sólo marcaba `pedido-listo` y nadie llamaba a
+`url_n8n_crear_apartado`. Desde el 25 sep el propio nodo 19 hace la llamada: `API Call
+→ N1` aparta, crea la factura y devuelve la liga en el mismo turno, y `N1` dispara el
+Inbound Webhook con el que arranca `SP02`:
 
 ```
-nodo 19 marca pedido-listo
-   → [FALTA: un workflow que llame a url_n8n_crear_apartado]
-   → n8n N1 descuenta el stock
+nodo 19: API Call → url_n8n_crear_apartado
+   → n8n N1 descuenta el stock y crea la factura por la API de Invoices
+   → N1 responde liga_pago e invoice_id; el agente manda la liga
    → N1 dispara el Inbound Webhook
    → SP02 arranca el reloj de 24 h
 ```
 
-No es que `SP02` tenga dos triggers contradictorios: es que **falta el workflow del
-medio**, y no está en la lista de 9. No puede ser el propio `SP02` porque un workflow
-no dispara con un tag y con un Inbound Webhook a la vez, y el webhook de salida no
-espera respuesta.
-
-> **Pendiente de diseño.** Hay que decidir si ese eslabón es un workflow nuevo —y
-> entonces son 10, no 9— o si `SP02` se parte en dos. Afecta la cotización, que está
-> hecha sobre 9 workflows y 93 nodos.
+> **Efecto en la cotización.** Se cae `SP03` (12 nodos) y no entra ningún workflow
+> nuevo: quedan 8 workflows y 81 nodos contra los 9 y 93 cotizados. No se recotiza; el
+> trabajo se movió a `N1`.
 
 ### `SP01` — qué es y qué no
 
@@ -223,7 +220,7 @@ completo sin que el cliente salga de WhatsApp.
 | 16 | API Call → n8n `N3` | Buscador de sucursal: devuelve 2-3 opciones cercanas |
 | 17 | Single Choice | El cliente **elige** sucursal de la lista |
 | 18 | Text Gen | Resumen del pedido + aviso de que no hay devoluciones |
-| 19 | End Node | Marca `pedido-listo`, que dispara `SP02` (apartado) |
+| 19 | API Call → n8n `N1` + End Node | Aparta y crea la factura; recibe `liga_pago` y la manda. `N1` dispara `SP02` |
 
 **Qué cambió en la revisión 5:** el agente ya no manda a la tienda. Absorbe el
 catálogo (fotos y videos por WhatsApp, como pidieron en la junta) y el buscador de
@@ -281,7 +278,9 @@ ningún mensaje al cliente puede decir «tu apartado de PV-MUJ-BOU») ·
 (dropdown: apartado / pagado / vencido / cancelado) · `expira_en` (texto — **no**
 Date, por la hora; lo escribe `SP02` y lo lee el cron de respaldo de `N2`)
 
-**Carpeta `Pago`:** `mp_preference_id` (texto) · `liga_pago` (texto) ·
+**Carpeta `Pago`:** `invoice_id` (texto — el campo se creó el 24 sep como
+`mp_preference_id`; se le renombra la etiqueta en Greentex, no se crea otro) ·
+`liga_pago` (texto) ·
 `fecha_pago` (texto — **no** Date: los Date de GHL no guardan hora)
 
 **Carpeta `Envío`:** `ciudad` · `estado_mx` · `codigo_postal` (lo pide la regla 8 del
@@ -314,8 +313,9 @@ que para las dos que ya lo decían.
 
 **Dos que se cayeron de la lista**, los dos residuos de revisiones viejas:
 
-- `url_n8n_liga_pago` — la liga la crea `SP03` con la API de Invoices de GHL.
-  **n8n nunca toca un peso**, así que no hay URL que guardar
+- `url_n8n_liga_pago` — la liga es la factura que `N1` crea con la API de Invoices de
+  GHL en la misma llamada del apartado (`url_n8n_crear_apartado`). **n8n nunca toca
+  Stripe**, así que no hay URL aparte que guardar
 - `form_captura_guia_link` — el formulario de captura de guía desapareció (ver §6).
   Envia genera la guía sola
 
@@ -323,7 +323,7 @@ que para las dos que ya lo decían.
 
 | Formulario | Quién lo usa | Campos |
 |---|---|---|
-| `Registrar Pago Manual` | Los dueños | `orden_id`, `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Mercado Pago |
+| `Registrar Pago Manual` | Los dueños | `orden_id`, `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Stripe |
 | `Ajuste Manual de Stock` | Los dueños (opcional) | `sku`, `nuevo_disponible`, `motivo` |
 
 > El formulario de captura de guía **desapareció**: Envia genera la guía sola.
@@ -387,7 +387,7 @@ Del `PLAYBOOK-GHL.md` del CLI v2.2. Cada regla costó un bug en producción real
 
 | Pieza | Cómo se construye |
 |---|---|
-| Workflows y triggers | **Por API** (la interna, con token Firebase). Los 9 workflows son guionables |
+| Workflows y triggers | **Por API** (la interna, con token Firebase). Los 8 workflows son guionables |
 | Pipelines, campos, custom values | Por API pública (PIT) |
 | **Bots de Conversation AI** | **Sólo UI.** Prompts, acciones y canales se pegan a mano — no hay atajo |
 

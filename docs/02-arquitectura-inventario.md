@@ -16,13 +16,13 @@
   ┌──────────────────────────────────────────────────────────────┐
   │  GHL                                                          │
   │  CRM · Agente (Agent Studio) · Productos con inventario        │
-  │  Ligas de pago con Mercado Pago · Workflows                    │
+  │  Facturas cobradas con Stripe · Workflows                      │
   └──────────────────────────────────────────────────────────────┘
         │  webhook                          ▲  inbound webhook
         ▼                                   │
   ┌──────────────────────────────────────────────────────────────┐
   │  n8n — dos trabajos, nada más                                 │
-  │  1. El reloj del apartado (Update Inventory ±1)               │
+  │  1. El apartado: Update Inventory ±1 y la factura por API     │
   │  2. El puente con Envia.com (guía, recolección, rastreo)      │
   └──────────────────────────────────────────────────────────────┘
                                       │
@@ -30,7 +30,7 @@
                     Envia.com ──► Paquete Express
 ```
 
-**Lo que cambió:** Mercado Pago y el inventario salieron de n8n y entraron a GHL.
+**Lo que cambió:** el cobro y el inventario salieron de n8n y entraron a GHL.
 n8n ya no es el motor del sistema, es un temporizador y un traductor.
 
 ---
@@ -42,7 +42,7 @@ n8n ya no es el motor del sistema, es un temporizador y un traductor.
 | Catálogo de los 30 artículos | Productos de GHL — el precio vive aquí y lo usan las ligas de pago | Se carga una vez; los dueños editan precios |
 | **Stock disponible** | `availableQuantity` del producto en GHL | Los dueños al reponer; n8n al apartar y liberar |
 | Apartados vigentes | Oportunidades del pipeline + campos custom | Los workflows |
-| Pagos | Mercado Pago nativo, dentro de GHL | Mercado Pago |
+| Pagos | Facturas de GHL, cobradas con el Stripe del cliente | GHL |
 | Guías y rastreo | Envia.com, reflejado en campos custom | n8n |
 
 **No hay Google Sheet.** El cliente ve y edita su stock en la misma pantalla donde
@@ -81,8 +81,9 @@ pagas se libera para el siguiente.
 
 ### Por qué n8n es dueño único del contador
 
-**La venta no pasa por ningún checkout de tienda.** El agente arma el pedido, n8n
-aparta, y un workflow de GHL crea la **liga de pago** con la API de Invoices. Como
+**La venta no pasa por ningún checkout de tienda.** El agente arma el pedido, y n8n
+aparta y, en la misma corrida, crea la factura con la API de Invoices de GHL: esa
+factura es la **liga de pago**. Como
 GHL sólo descuenta stock en órdenes de su tienda, y aquí no hay ninguna, **nadie
 más toca el contador**. n8n descuenta al apartar y devuelve al vencer. Punto.
 
@@ -100,25 +101,29 @@ El segundo era el grave. Sacar el cobro de la tienda los elimina de raíz.
 A las **12 h** y a las **2 h** de vencer. Los dos caen fuera de la ventana de 24 h
 de WhatsApp, así que necesitan plantilla aprobada por Meta.
 
-### El choque con el efectivo
+### El choque con el efectivo — sólo si hay OXXO
 
-Los pagos en OXXO y Paycash tardan **hasta 72 horas hábiles** en acreditarse — más
-que el apartado de 24 h. Si el comprador elige efectivo:
+Depende de la validación 4: Stripe abre OXXO a cuentas de EE.UU., pero el checkout de
+GHL con Stripe no lo lista oficialmente. Si aparece, el efectivo tarda más que el
+apartado de 24 h: el voucher de OXXO vale **5 días** y el pago acredita al siguiente
+día hábil. Si el comprador elige efectivo:
 
-- el apartado **se extiende hasta que venza la referencia** de Mercado Pago;
-- el bot se lo dice al entregar el comprobante, para que no crea que tiene 24 h.
+- el apartado **se extiende hasta que venza el voucher** de Stripe, más un día hábil;
+- el bot se lo dice al entregar el comprobante, para que no crea que tiene 24 h;
+- OXXO no admite reembolsos ni contracargos, que encaja con la venta sin devoluciones.
 
-Tarjeta y SPEI se acreditan al instante y no necesitan la excepción.
+Tarjeta se acredita al instante y no necesita la excepción. Si el checkout no muestra
+OXXO ni SPEI, esta sección no aplica.
 
-### Pagos fuera de Mercado Pago
+### Pagos fuera de Stripe
 
 Tienen cuenta en un banco mexicano y reciben transferencias directas. Para ese caso
-hay un formulario interno **"Registrar pago manual"**: se elige la orden, se marca
-pagada y el workflow confirma la reserva y dispara el despacho.
+hay un formulario interno **"Registrar pago manual"** (`AP03`): se elige la orden, se
+marca pagada y el workflow confirma la reserva y dispara el despacho.
 
-> Ojo con la distinción: **OXXO y SPEI dentro de Mercado Pago se confirman solos.**
-> El registro manual es únicamente para transferencias a su banco, fuera de la
-> pasarela.
+> Ojo con la distinción: **lo que se paga en la liga se confirma solo.** El registro
+> manual es únicamente para transferencias a su banco, fuera de la pasarela — y es el
+> plan B para SPEI si el checkout de GHL no lo ofrece.
 
 ---
 
@@ -128,7 +133,7 @@ Sólo cinco, y ninguno lleva lógica de negocio pesada.
 
 | Flujo | Entrada | Qué hace |
 |---|---|---|
-| `N1 · Apartar` | Webhook desde GHL | Lee `availableQuantity`; si hay, descuenta 1 y devuelve OK. Si no, devuelve agotado |
+| `N1 · Apartar` | API Call del agente | Lee `availableQuantity`; si hay, descuenta 1, crea la factura en GHL por la API de Invoices y devuelve `liga_pago` e `invoice_id`. Si no, devuelve agotado |
 | `N2 · Liberar vencidos` | Webhook desde `SP02`, **más** un cron de respaldo cada 15 min | Devuelve el stock con `Update Inventory`. Son dos caminos, no uno — ver abajo |
 | `N3 · Buscar sucursal` | API Call del agente | Código postal → 2-3 sucursales cercanas (ver `06-logistica-envia.md`) |
 | `N4 · Generar guía` | Webhook al confirmarse el pago | Crea la guía en Envia, devuelve PDF y número de rastreo |
@@ -163,25 +168,34 @@ Para saber qué barrer, el cron lee **`expira_en`, un campo de texto en GHL** �
 
 ---
 
-## 5. Cobro con Mercado Pago
+## 5. Cobro con Stripe
 
-**Nativo desde abril de 2026.** Se conecta en Pagos → Integraciones con Public Key y
-Access Token. No hay middleware, no hay webhook IPN que interpretar, no hay n8n.
+**El Stripe del cliente** (entidad de EE.UU.), conectado por él en Pagos →
+Integraciones de Greentex. No hay middleware ni webhook que interpretar. La subcuenta
+va en **MXN**: GHL no convierte moneda, Stripe presenta en pesos y liquida en dólares.
 
-**La liga la genera GHL, no n8n.** El agente captura qué quiere el cliente, n8n
-confirma que hay stock, y un workflow de GHL crea la liga con la API de Invoices /
-Payment Links. El monto sale del producto; el cobro sale por Mercado Pago porque
-está conectado a nivel cuenta. **n8n nunca toca un peso.**
+**La liga es una factura de GHL, y la pide `N1`.** El agente captura qué quiere el
+cliente; `N1` confirma que hay stock, lo aparta y en la misma corrida crea la factura
+con la API de Invoices —producto, cantidad, contacto— y le devuelve al agente
+`liga_pago` e `invoice_id`. El monto sale del producto; el cobro sale por Stripe
+porque está conectado a nivel cuenta. **n8n nunca toca Stripe**: le pide una factura a
+GHL, y GHL cobra. La acción de workflow «Send Invoice» no sirve para esto porque exige
+una plantilla fija; la API sí toma producto y cantidad en cada llamada.
 
-Un solo checkout cubre los tres métodos que pidieron en la junta:
+Métodos:
 
-| Método | Acreditación |
-|---|---|
-| Tarjeta de crédito o débito | Inmediata |
-| Transferencia SPEI | Inmediata |
-| Efectivo en OXXO o Paycash | Hasta 72 h hábiles |
+| Método | Estado | Acreditación |
+|---|---|---|
+| Tarjeta de crédito o débito | Confirmado en GHL | Inmediata |
+| Transferencia SPEI | Por validar (4) | Inmediata |
+| Efectivo en OXXO | Por validar (4) | Siguiente día hábil; voucher de 5 días; sin reembolsos |
 
-**El Goal Event `Payment Received` sí funciona**, porque el pago es un pago de GHL.
+Stripe abre OXXO y transferencia MX a cuentas de EE.UU., pero el checkout de GHL con
+Stripe lista tarjeta, Apple/Google Pay, Klarna, iDEAL, SEPA y Link — no OXXO ni SPEI
+(artículo de HighLevel, feb 2026). Si no aparecen, el plan B es tarjeta por la liga y
+transferencia manual con `AP03`.
+
+**El Goal Event `Payment Received` sí funciona**, porque la factura es un pago de GHL.
 Los workflows de confirmación se disparan solos.
 
 ---
@@ -222,14 +236,14 @@ diseño dependen del comportamiento real de GHL y hay que probarlos en cuenta an
 dar por bueno el flujo. La numeración es la misma que en `docs/11-cronograma.md` y
 `docs/13-accesos.md`, y no se cambia:
 
-1. Que la **API de Invoices / Payment Links cobre con Mercado Pago.** El changelog
-   los nombra como soportados, pero hay que verlo cobrar: es el supuesto que
-   sostiene todo el diseño.
+1. Que una **factura creada por API cobre con Stripe.** Hay que verla cobrar y ver el
+   formato de la liga que devuelve: es el supuesto que sostiene todo el diseño.
 2. Que **pagar una liga no descuente stock solo.** Si lo hiciera, vuelve el doble
    descuento y n8n dejaría de ser dueño único del contador.
 3. Que el nodo **`API Call` de Agent Studio responda a tiempo**, para que la
    conversación no se sienta trabada. Necesita `N1` vivo, así que va en la semana 2.
-4. Que `Payment Received` dispare igual con los tres métodos, incluido el efectivo.
+4. Que el checkout de GHL **muestre OXXO y SPEI**, y que `Payment Received` dispare
+   igual con cada método que muestre.
 5. Que **Agent Studio soporte los nodos que diseñamos** — `API Call`, `Single Choice`,
    `Capture`. Prueba de humo con tres o cuatro nodos sueltos, en la semana 1: si no
    puede, no es un ajuste, es rediseñar el carril del agente entero.

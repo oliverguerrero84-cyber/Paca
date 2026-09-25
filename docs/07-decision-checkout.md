@@ -27,7 +27,7 @@ link abre en otro dispositivo.
 |---|---|
 | El carrito abandonado nativo manda **una sola notificación** por abandono | No alcanza para la cadencia de recordatorios del apartado (12 h y 2 h) |
 | Requiere que el cliente **haya escrito su email** en el checkout | Si sólo mira y se va, no hay evento ni link que mandar |
-| Mercado Pago nombra **Invoices y Payment Links** como soportados, pero **no nombra el checkout de la tienda** | Cobrar por la tienda es apostar a algo que no está confirmado |
+| **Invoices y Payment Links** son lo que HighLevel documenta para cobrar con Stripe; la tienda no se necesita | Cobrar por la tienda agrega una pieza que no hace falta |
 
 ---
 
@@ -64,30 +64,33 @@ No dos asistentes, y ninguno en n8n.
 2. **Buscar sucursales** por código postal — Envia `carrier-branches` + `validate-zip-code`
 3. **Generar guías y rastrear** — Envia `ship/generate`, `ship/pickup`, `ship/track`
 
-> **n8n nunca habla con el cliente y nunca toca Mercado Pago.** Es un servicio que el
-> agente consulta, no un participante de la conversación.
+> **n8n nunca habla con el cliente y nunca toca Stripe.** Le pide la factura a GHL por
+> API, y GHL cobra. Es un servicio que el agente consulta, no un participante de la
+> conversación.
 
 ### GHL — la conversación, el cobro y el registro
 
-Y aquí está el nudo que faltaba resolver: **si Mercado Pago vive en GHL, ¿quién
-genera la liga?**
+Y aquí está el nudo que faltaba resolver: **si Stripe vive en GHL, ¿quién genera la
+liga?**
 
-**La genera GHL.** n8n no tiene por qué:
+**La genera GHL, a petición de n8n.** La acción de workflow «Send Invoice» exige una
+plantilla fija, así que no sirve por SKU y cantidad; la API de Invoices sí:
 
 ```
   Agente captura SKU y cantidad
         │
-        ├─► API Call → n8n: ¿hay stock?   →   n8n lee GHL y responde
-        │                                      (y aparta si el cliente confirma)
+        ├─► API Call → n8n N1: ¿hay stock?  →  n8n lee GHL, aparta, y crea la
+        │                                       factura con la API de Invoices
+        │                                       (producto, cantidad, contacto, MXN)
         ▼
-  Workflow de GHL crea la liga con la API de Invoices / Payment Links
+  n8n devuelve liga_pago e invoice_id en el mismo turno
         │     el monto sale del producto de GHL
-        │     el cobro sale por Mercado Pago, conectado a nivel cuenta
+        │     el cobro sale por Stripe, conectado a nivel cuenta
         ▼
   El agente manda la liga por WhatsApp
 ```
 
-n8n sólo dijo "sí hay". Nunca vio un peso.
+n8n pidió la factura y la entregó. Nunca tocó un peso: cobra GHL.
 
 ---
 
@@ -123,8 +126,8 @@ elimina los dos de raíz.
  6. API Call → n8n devuelve 2-3 sucursales cercanas           ── n8n + Envia
  7. El cliente elige de la lista (nunca escribe la sucursal)
  8. n8n APARTA: availableQuantity −1 · arranca el reloj de 24 h
- 9. Workflow de GHL crea la liga de pago                      ── GHL + Mercado Pago
-10. El cliente paga: tarjeta, OXXO en efectivo o SPEI
+ 9. n8n crea la factura en GHL; el agente manda la liga      ── n8n + GHL
+10. El cliente paga con tarjeta (OXXO y SPEI, si el checkout los muestra)
 11. Payment Received confirma la venta
 12. n8n genera la guía y programa la recolección              ── n8n + Envia
 13. La etiqueta en PDF llega al almacén, sin el monto
@@ -142,7 +145,7 @@ cuenta real antes de comprometer esto con el cliente:
 
 | # | Qué probar | Por qué importa |
 |---|---|---|
-| 1 | Que la **API de Invoices / Payment Links cobre con Mercado Pago** | Es el supuesto que sostiene todo el diseño. El changelog los nombra como soportados, pero hay que verlo cobrar |
+| 1 | Que una **factura creada por API cobre con Stripe** | Es el supuesto que sostiene todo el diseño. Hay que verla cobrar y ver el formato de la liga |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo descontara, vuelve el doble descuento |
 | 3 | Que el nodo **`API Call` de Agent Studio responda a tiempo** | Si tarda, la conversación se siente trabada y se pierde la ventaja sobre el camino asíncrono |
 

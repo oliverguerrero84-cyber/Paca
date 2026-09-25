@@ -71,8 +71,8 @@ Tres razones para no mandarlos a una tienda:
 1. **Fricción para su público.** Mauricio: *"muchas veces no saben cómo escribir
    bien, no saben cómo usar muy bien el teléfono, las redes"*. Un checkout con
    carrito los pierde.
-2. **Mercado Pago nombra Invoices y Payment Links como soportados, pero no nombra el
-   checkout de la tienda.** Cobrar por ahí es apostar a algo sin confirmar.
+2. **Invoices y Payment Links son lo que HighLevel documenta para cobrar con Stripe.**
+   El checkout de la tienda es una pieza que no hace falta.
 3. **El apartado y el checkout de la tienda chocan.** Si alguien aparta la última
    paca, la tienda se la muestra agotada *a esa misma persona* cuando va a pagar.
 
@@ -97,7 +97,7 @@ publicidad, porque no tienen Instagram ni TikTok.
 | Temporizador del apartado + recordatorios | Workflow con `Wait` + `Goal Event` |
 | Orden simple al almacén por WhatsApp | `Send Message` en workflow |
 | Correo con el detalle completo a los dueños | `Send Internal Notification` / `Send Message — Email` |
-| Cobro con tarjeta, OXXO y SPEI | **Liga de pago** (API de Invoices) con Mercado Pago nativo |
+| Cobro con tarjeta (OXXO y SPEI por validar) | **Liga de pago**: factura por la API de Invoices, cobrada con Stripe |
 | Catálogo con fotos y videos | **En la conversación**, más una página pública para la publicidad |
 | Inventario que no sobrevende | Productos de GHL + `Update Inventory` desde n8n |
 | Envío del rastreo al cliente | `Send Message — WhatsApp` disparado por los eventos de Envia |
@@ -135,26 +135,28 @@ por `Update Inventory` al reservar y al liberar. Detalle completo en
 > aritmética en campos de contacto.** Por eso el conteo no puede vivir en un campo
 > custom — pero sí vive en el producto de la tienda, que es otra cosa.
 
-### 5.2 · Mercado Pago — **ya es pasarela nativa**
+### 5.2 · Stripe — la pasarela, desde el 25 de septiembre
 
 > ⚠️ **Corrección.** Las revisiones 2 y 3 de este documento decían que Mercado Pago
-> no era nativo y había que pasarlo por n8n. **Era falso.** HighLevel lo liberó el
-> **27 de abril de 2026** y México es uno de los siete países soportados. Se conecta
-> en Pagos → Integraciones con Public Key y Access Token.
+> no era nativo. **Era falso**: lo es desde el 27 de abril de 2026. Pero el 25 de
+> septiembre el cliente decidió cobrar con **su Stripe** (entidad de EE.UU.) y Mercado
+> Pago quedó fuera. Stripe se conecta en Pagos → Integraciones; la subcuenta va en
+> **MXN** porque GHL no convierte moneda.
 
-Consecuencias, todas a favor:
+Consecuencias:
 
-- **El Goal Event `Payment Received` sí dispara**, porque el pago es un pago de GHL.
+- **El Goal Event `Payment Received` sí dispara**, porque la factura es un pago de GHL.
   No hace falta Inbound Webhook ni middleware.
-- **Un solo checkout cubre los tres métodos que pidieron**: tarjeta, efectivo en
-  OXXO y Paycash, y transferencia SPEI. En la junta se dijo que OXXO sólo se podía
-  por WooCommerce; tampoco es cierto, Checkout Pro en México ya lo trae.
-- Se cae una integración externa completa del alcance.
+- **Tarjeta está confirmado.** OXXO y transferencia SPEI existen en Stripe para
+  cuentas de EE.UU. con comprador en México, pero el checkout de GHL con Stripe no los
+  lista oficialmente: es la **validación 4**. Si no aparecen, el plan B es tarjeta por
+  la liga y transferencia manual con `AP03`.
+- No hay verificación de cuenta pendiente: el Stripe del cliente ya está activo.
 
-> ⚠️ **Lo que sí hay que vigilar:** los pagos en efectivo tardan **hasta 72 horas
-> hábiles** en acreditar, más que el apartado de 24 h. Si el comprador elige
-> efectivo, el apartado se extiende hasta que venza la referencia de Mercado Pago y
-> el bot se lo dice. Tarjeta y SPEI son instantáneos.
+> ⚠️ **Si hay OXXO:** el voucher vale **5 días** y el pago acredita al siguiente día
+> hábil, más que el apartado de 24 h. El apartado se extiende hasta que venza el
+> voucher, más un día hábil, y el bot se lo dice. OXXO no admite reembolsos ni
+> contracargos. Tarjeta y SPEI son instantáneos.
 
 ### 5.3 · Ventana de 24 horas de WhatsApp — **el principal riesgo de cronograma**
 
@@ -197,7 +199,7 @@ confirmarse el pago, le manda el PDF al almacén para que lo imprima y pegue,
 programa la recolección y rastrea hasta que el paquete llega a la sucursal.
 
 **Costo:** prepago, sin mensualidad ni comisión. Se carga saldo y se paga por guía.
-Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
+Va en costos de terceros, junto con WhatsApp API y la comisión de Stripe.
 
 ### 5.5 · Otras limitaciones que condicionan el diseño
 
@@ -224,7 +226,7 @@ Va en costos de terceros, junto con WhatsApp API y Mercado Pago.
 | Cierre de la venta | **Todo en WhatsApp**; sale una vez a la liga de pago | Revisión 5 — ver `07-decision-checkout.md` |
 | Devoluciones | **No hay**, política explícita | *"tratamos que la venta sea sincera y directa: es esto y trae esto y no hay devolución"* |
 | Volumen esperado | 500 a 800 envíos al mes, hasta 1,000 | Miguel: *"de acuerdo a la experiencia, arriba de 500 muy fácilmente"* |
-| Pasarela | Mercado Pago | Pedido por el cliente y recomendado por nosotros en la llamada |
+| Pasarela | Stripe del cliente (entidad de EE.UU.), cobrando en MXN | Decisión del cliente del 25 sep 2026; antes era Mercado Pago |
 
 ---
 
@@ -236,11 +238,11 @@ es todo lo que GHL hace nativo; el Completo agrega lo que necesita piezas extern
 ### Completo — $4,497 setup / $637 al mes · 3 a 4 semanas
 
 El sistema que el cliente pidió: bot que atiende y califica, tienda con los 30
-artículos e inventario en vivo, apartado de 24 h con reloj, cobro con tarjeta, OXXO
-y SPEI, guía y recolección automáticas, rastreo hasta la sucursal, buscador de
+artículos e inventario en vivo, apartado de 24 h con reloj, cobro por liga de pago
+(tarjeta; OXXO y SPEI por validar), guía y recolección automáticas, rastreo hasta la sucursal, buscador de
 sucursal por código postal y escalamiento a humano.
 
-1 pipeline de 8 etapas · 9 workflows · 1 agente de 19 nodos · 2 integraciones ·
+1 pipeline de 8 etapas · 8 workflows · 1 agente de 19 nodos · 2 integraciones ·
 6 plantillas · catálogo público de 6 secciones · 2 capacitaciones · soporte.
 
 ### Esencial — $2,899 setup / $437 al mes · 2 semanas
@@ -252,7 +254,7 @@ arma el pedido y **deriva a un asesor**, que confirma disponibilidad y cobra.
 3 plantillas · 1 capacitación · soporte.
 
 **No lleva:** inventario conectado, apartado con reloj, cobro automático, aviso al
-almacén, guía al cliente ni landing. Nada de n8n, Sheets ni Mercado Pago.
+almacén, guía al cliente ni landing. Nada de n8n, Sheets ni pasarela conectada.
 
 > ⚠️ **Advertencia de alcance, para no vender de más.** El cliente dijo que no
 > sobrevender era central — *"tengo tantas de esta y no tengo más"*. **El Esencial
@@ -278,9 +280,8 @@ Números y desgloses en `04-precotizacion.md`.
 | 2 | Templates de Meta sin aprobar al go-live | Redactarlos y enviarlos a aprobación en la semana 1 |
 | 3 | Dos clientes apartando la última paca a la vez | n8n serializado; ruta de escape a Supabase documentada |
 | 4 | Los dueños ajustan `availableQuantity` a mano mientras hay apartados vivos | n8n es dueño único del contador; el ajuste manual es para reponer, no para corregir apartados |
-| 5 | Cuenta de Mercado Pago sin verificar → retención de fondos | Ya salió en la llamada; enviarles los requisitos |
+| 5 | OXXO y SPEI dependen de que el checkout de GHL con Stripe los muestre | Validación 4. Plan B: tarjeta por la liga y transferencia manual con `AP03` |
 | 6 | 6 de los 30 SKUs no están descritos en ningún transcript (2 corsé, playera comercial, 2 chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
 | 7 | **No hay fotos de producto.** La landing y las fichas del bot no se pueden montar sin ellas | Pregunta bloqueante #2. **No están cotizadas**: las produce el cliente |
 | 8 | **El almacén nunca debe ver dinero.** Miguel fue explícito: *"ellos no tienen por qué enterarse"* | El aviso al almacén lleva sólo nombre, cantidad, destino y CP. Regla dura del diseño |
-| 9 | Efectivo en OXXO acredita hasta 72 h después, más que el apartado de 24 h | El apartado se extiende a la vigencia de la referencia de Mercado Pago |
-| 10 | Piden **fotos y videos** de producto, no sólo fotos | Sube el peso del pendiente de material. Sigue sin cotizarse: lo entrega el cliente |
+| 9 | Piden **fotos y videos** de producto, no sólo fotos | Sube el peso del pendiente de material. Sigue sin cotizarse: lo entrega el cliente |

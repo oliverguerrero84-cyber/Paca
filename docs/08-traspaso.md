@@ -45,16 +45,15 @@ de `:root`, no se usan emojis, y el responsivo se mide en Chromium, no se supone
 
 ### Cómo generar la liga
 
-Mercado Pago **ya es pasarela nativa de HighLevel** (desde el 27 de abril de 2026,
-con México entre los países soportados), así que la liga puede salir de GHL por
-Payment Links o Invoices y cobrar con tarjeta, OXXO o SPEI sin desarrollo extra.
+La liga sale de GHL por Payment Links o Invoices y cobra con la pasarela conectada en
+la subcuenta —Korvance tiene Stripe— sin desarrollo extra.
 Detalle en `docs/07-decision-checkout.md` §3.
 
 Dos ligas distintas: una de **cobro único** por el monto de implementación, y otra
 **recurrente** para la mensualidad, con el primer cargo un mes después de entregado.
 
-> El mismo mecanismo de Payment Links es el que sostiene el cobro del cliente final
-> en el diseño del Completo. Si lo pruebas ahora, de paso resuelves la validación 1
+> El mismo mecanismo de Invoices es el que sostiene el cobro del cliente final en el
+> diseño del Completo, ahí con el Stripe del cliente en Greentex. Si lo pruebas ahora, de paso resuelves la validación 1
 > de §4 — es el supuesto que sostiene toda la arquitectura.
 
 ---
@@ -80,7 +79,7 @@ asíncrono. Y dos bots en el mismo WhatsApp se pelean el primer turno.
 
 **n8n hace tres cosas y ninguna es conversacional:** valida y aparta stock, busca
 sucursal por código postal contra Envia, y genera guías y rastrea. **Nunca habla con
-el cliente y nunca toca Mercado Pago.**
+el cliente y nunca toca Stripe.** La factura la pide a GHL por API, y GHL cobra.
 → `docs/02-arquitectura-inventario.md`
 
 **El inventario vive en los productos de GHL, con n8n como dueño único del
@@ -108,17 +107,17 @@ como supuestos en todos los documentos. **No las presentes al cliente como hecho
 
 | # | Qué probar | Por qué importa |
 |---|---|---|
-| 1 | Que la API de Invoices / Payment Links **cobre con Mercado Pago** | Sostiene todo el diseño. El changelog los nombra como soportados, pero hay que verlo cobrar |
+| 1 | Que una factura creada por API **cobre con Stripe** | Sostiene todo el diseño. Hay que verla cobrar y ver el formato de la liga |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo descontara, vuelve el doble descuento |
 | 3 | Que el nodo **`API Call` responda a tiempo** | Si tarda, la conversación se siente trabada |
 
 **Plan B si falla la 1:** cobrar por el checkout de la tienda y renunciar al apartado
 de 24 h, porque ahí sí chocan. Conviene saberlo antes de prometer el apartado.
 
-Hay un conflicto conocido que no es un supuesto, es un hecho: **OXXO acredita en
-hasta 72 horas hábiles** y el apartado dura 24. La solución adoptada es que el
-apartado se extiende hasta el vencimiento de la referencia de Mercado Pago cuando el
-cliente elige efectivo.
+Hay un conflicto que sólo existe si el checkout de GHL muestra OXXO (validación 4):
+el voucher vale **5 días** y acredita al siguiente día hábil, y el apartado dura 24 h.
+La solución adoptada es que el apartado se extiende hasta que venza el voucher de
+Stripe, más un día hábil, cuando el cliente elige efectivo.
 
 ---
 

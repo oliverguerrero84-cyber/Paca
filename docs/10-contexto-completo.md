@@ -79,7 +79,7 @@ temporadas, el reloj del apartado y la conexión con la paquetería.
 
 **Qué paga el cliente aparte, directo al proveedor:** la conexión de WhatsApp con
 Meta y su cobro por conversación, los correos, los mensajes automáticos del pedido,
-la comisión de Mercado Pago, las guías de paquetería y la licencia de Google
+la comisión de Stripe, las guías de paquetería y la licencia de Google
 Workspace. Y las fotos y videos de producto, que los produce él.
 
 **No se construye flujo de devoluciones**, porque su política es que no hay:
@@ -108,8 +108,8 @@ de ahí una sola vez, para pagar, y regresa solo.
  6. n8n devuelve 2 o 3 sucursales cercanas              ── n8n + Envia
  7. El cliente elige de la lista
  8. n8n APARTA: descuenta 1 y arranca el reloj de 24 h  ── n8n
- 9. GHL crea la liga de pago                            ── GHL + Mercado Pago
-10. El cliente paga: tarjeta, OXXO en efectivo o SPEI
+ 9. n8n crea la factura en GHL; el agente manda la liga  ── n8n + GHL
+10. El cliente paga con tarjeta (OXXO y SPEI, por validar)
 11. Pago acreditado → se confirma la venta sola
 12. n8n genera la guía y programa la recolección        ── n8n + Envia
 13. Al almacén le llega la etiqueta lista para imprimir
@@ -122,9 +122,10 @@ Lo pidieron así: eliges, se abre un reloj, y si no pagas se libera para el sigu
 **24 horas.** Con recordatorios automáticos antes de vencer y liberación sola si no
 paga.
 
-**Choque conocido con el efectivo:** OXXO acredita en hasta **72 horas hábiles**, más
-que el apartado. Cuando el cliente elige efectivo, el apartado se extiende hasta que
-venza la referencia de Mercado Pago.
+**Choque conocido con el efectivo**, sólo si el checkout de GHL muestra OXXO (por
+validar): el voucher vale **5 días** y acredita al siguiente día hábil, más que el
+apartado. Cuando el cliente elige efectivo, el apartado se extiende hasta que venza el
+voucher de Stripe, más un día hábil.
 
 ### Regla dura: el almacén nunca ve dinero
 
@@ -139,13 +140,14 @@ regla de diseño, no una preferencia.
 | Pieza | Responsabilidad |
 |---|---|
 | **Agent Studio de GHL** | Toda la conversación. Es el único que le habla al cliente |
-| **Workflows de GHL** | El tablero, el apartado, crear la liga de pago, avisar al almacén |
-| **Mercado Pago** | Cobra. Es pasarela **nativa** de HighLevel |
-| **n8n** | Valida y aparta stock · busca sucursal por código postal · genera guías y rastrea |
+| **Workflows de GHL** | El tablero, el reloj del apartado, confirmar el pago, avisar al almacén |
+| **Stripe** (del cliente) | Cobra las facturas de GHL. Conectado en Greentex; la subcuenta va en MXN |
+| **n8n** | Valida y aparta stock y crea la factura en GHL por API · busca sucursal por código postal · genera guías y rastrea |
 | **Envia.com** | Guías de Paquete Express, recolección y rastreo |
 
-**n8n nunca habla con el cliente y nunca toca Mercado Pago.** Es un servicio que el
-agente consulta, no un participante de la conversación.
+**n8n nunca habla con el cliente y nunca toca Stripe.** Le pide la factura a GHL, y
+GHL cobra. Es un servicio que el agente consulta, no un participante de la
+conversación.
 
 ### Dónde vive cada dato
 
@@ -154,7 +156,7 @@ agente consulta, no un participante de la conversación.
 | Los 30 artículos y sus precios | Productos de GHL | Se carga una vez; los dueños editan |
 | **Stock disponible** | `availableQuantity` del producto en GHL | Los dueños al reponer; **n8n** al apartar y liberar |
 | Apartados vigentes | Oportunidades del pipeline + campos custom | Los workflows |
-| Pagos | Mercado Pago, dentro de GHL | Mercado Pago |
+| Pagos | Facturas de GHL, cobradas con Stripe | GHL |
 | Guías y rastreo | Envia.com, reflejado en campos custom | n8n |
 
 **No hay Google Sheet.** El cliente ve y edita su stock en la misma pantalla donde ve
@@ -172,14 +174,13 @@ Nada de esto está hecho todavía. **No se ha tocado la cuenta de GoHighLevel.**
 Apartado (24 h) → Liga de Pago Enviada → Pago Confirmado → Orden en Almacén →
 Enviado, Guía Generada → Entregado.
 
-**9 workflows:**
+**8 workflows:**
 
 | Código | Qué hace | Nodos |
 |---|---|---:|
 | `LS01` | Entrada de lead de menudeo | 10 |
 | `SP01` | Handoff al agente + control del bot on/off | 8 |
 | `SP02` | Apartado de 24 h, recordatorios y liberación | 16 |
-| `SP03` | **Crea la liga de pago** por la API de Invoices | 12 |
 | `SP04` | Pago confirmado → número de orden (Goal Event `Payment Received`) | 10 |
 | `SP05` | Despacho: guía de Envia + PDF al almacén + correo a los dueños | 12 |
 | `AP01` | Rastreo hasta "llegó a tu sucursal" | 10 |
@@ -237,7 +238,8 @@ Están corregidas, pero si te las encuentras repetidas en algún lado, es un res
 se escapó:
 
 - **Mercado Pago sí es pasarela nativa de HighLevel**, desde el 27 de abril de 2026,
-  con México entre los países soportados. Cubre tarjeta, OXXO y SPEI.
+  con México entre los países soportados. Ya no se usa: desde el 25 de septiembre el
+  cobro es con el Stripe del cliente.
 - **GHL sí lleva inventario** en sus productos, con `availableQuantity`.
 
 ### Lo que se retiró del alcance
@@ -262,7 +264,7 @@ la pauta publicitaria. Si los quieren, se cotizan aparte.
 | **Piezas por paca** | De lo que más preguntan los compradores |
 | **Stock inicial** al menudeo | La carga inicial de `availableQuantity` |
 | **Meta Business Manager verificado** | Sin BM no hay WhatsApp Business Account, y sin WABA no se pueden mandar las plantillas a aprobación |
-| **Mercado Pago verificado** | Sin verificación de identidad y fiscal, retiene fondos |
+| **Conectar su Stripe en Greentex** | Sin pasarela no hay validación 1 ni liga real |
 | **Cuenta de Envia.com** con saldo | Prepago, sin mensualidad ni comisión |
 
 Los seis sin descripción: `CORSE VERANO BOUTIQUE`, `CORSE VERANO PREMIUM`,
@@ -282,7 +284,7 @@ Regla del toolkit: *"se guardó" no es "funciona"*.
 
 | # | Qué probar | Por qué importa |
 |---|---|---|
-| 1 | Que la API de Invoices / Payment Links **cobre con Mercado Pago** | Sostiene todo el diseño |
+| 1 | Que una factura creada por API **cobre con Stripe** | Sostiene todo el diseño |
 | 2 | Que **pagar una liga no descuente stock solo** | Si lo hiciera, vuelve el doble descuento |
 | 3 | Que el nodo **`API Call` responda a tiempo** | Si tarda, la conversación se siente trabada |
 
@@ -292,8 +294,8 @@ de 24 h, porque ahí sí chocan.
 ### Riesgos vivos
 
 Templates de Meta sin aprobar al go-live (redactarlos y mandarlos en la semana 1) ·
-dos clientes apartando la última paca a la vez (`N1` serializado lo resuelve) ·
-Mercado Pago sin verificar reteniendo fondos.
+dos clientes apartando la última paca a la vez (`N1` serializado lo resuelve) · que el
+checkout de GHL no muestre OXXO ni SPEI (plan B: tarjeta y transferencia manual).
 
 ---
 
