@@ -256,7 +256,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Saca la guía del contacto. Sin guía, se responde sin llamar a Envia.\nconst c = $json.contact || {};\nconst campos = c.customFields || [];\nconst buscar = (clave) => { const x = campos.find(f => (f.fieldKey || '').endsWith(clave) || f.id === clave); return x ? (x.fieldValue ?? x.value) : null; };\nconst guia = buscar('numero_guia');\nreturn [{ json: { contactId: c.id, numero_guia: guia, track_url: buscar('track_url'), sin_guia: !guia } }];"
+        "jsCode": "// Saca la guía del contacto. Sin guía, se responde sin llamar a Envia.\n// GET /contacts/{id} trae los custom fields sólo como { id, value }, sin la clave:\n// se traduce clave -> id con la lista de campos de la subcuenta.\nconst c = $('GHL · leer contacto').first().json.contact || {};\nconst ids = {};\nfor (const f of $input.first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^contact\\./, '')] = f.id;\nconst campos = c.customFields || [];\nconst buscar = (clave) => { const x = campos.find(f => f.id === ids[clave] || (f.fieldKey || '').endsWith(clave)); return x ? (x.fieldValue ?? x.value) : null; };\nconst guia = buscar('numero_guia');\nreturn [{ json: { contactId: c.id, numero_guia: guia, track_url: buscar('track_url'), sin_guia: !guia } }];"
       },
       "id": "guia-contacto",
       "name": "Guía del contacto",
@@ -432,6 +432,12 @@
               "name": "ENVIA_API_URL",
               "value": "https://api-test.envia.com",
               "type": "string"
+            },
+            {
+              "id": "cfg-ghl_location_id",
+              "name": "GHL_LOCATION_ID",
+              "value": "c9jj5uu1WZOIkwi6Vfj5",
+              "type": "string"
             }
           ]
         },
@@ -447,6 +453,38 @@
         420
       ],
       "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config rastreo').first().json.GHL_LOCATION_ID }}/customFields?model=contact",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "n5-campos-contacto",
+      "name": "GHL · campos del contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        580
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "La guía vive en el campo numero_guia del contacto; la escribe N4."
     }
   ],
   "connections": {
@@ -543,7 +581,7 @@
       "main": [
         [
           {
-            "node": "Guía del contacto",
+            "node": "GHL · campos del contacto",
             "type": "main",
             "index": 0
           }
@@ -617,6 +655,17 @@
         [
           {
             "node": "GHL · leer contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos del contacto": {
+      "main": [
+        [
+          {
+            "node": "Guía del contacto",
             "type": "main",
             "index": 0
           }
