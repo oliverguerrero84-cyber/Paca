@@ -61,6 +61,7 @@ de cada cosa.
 | **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán | 28 sep |
 | **Validación 3 cerrada**: `N1` completo tarda **4 s**, dentro del límite de 10 s de la acción Custom API | Germán | 28 sep |
 | **Liga de pago dada por buena**: en Greentex abre la factura en MXN con los datos del negocio; el botón de pago con Stripe ya se vio funcionar en Korvance, así que en Greentex aparece al conectar Stripe | Germán | 28 sep |
+| **`N3` probado desde un Webhook de GHL en Greentex**: CP 20126 → Aguascalientes y las 3 sucursales de Paquete Express más cercanas, con `branch_code` y distancia | Germán | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
