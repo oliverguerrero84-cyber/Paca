@@ -38,8 +38,8 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "method": "GET",
+        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config').first().json.GHL_PIPELINE_ID }}&pipeline_stage_id={{ $('Config').first().json.GHL_STAGE_APARTADO }}&status=open&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -48,16 +48,9 @@
             {
               "name": "Version",
               "value": "2021-07-28"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
             }
           ]
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ location_id: $('Config').first().json.GHL_LOCATION_ID, pipeline_id: $('Config').first().json.GHL_PIPELINE_ID, pipeline_stage_id: $('Config').first().json.GHL_STAGE_APARTADO, status: 'open', limit: 100 }) }}",
         "options": {}
       },
       "id": "buscar",
@@ -319,7 +312,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Una oportunidad por item; el siguiente nodo lee el contacto de cada una.\n// ponytail: una llamada a GHL por oportunidad abierta (tope 100 por corrida). Si el volumen\n// crece, cambiar a POST /contacts/search filtrando por el campo.\nreturn ($input.first().json.opportunities || []).map(o => ({ json: { opportunityId: o.id, contactId: o.contactId } }));"
+        "jsCode": "// Una oportunidad por item; el siguiente nodo lee el contacto de cada una.\n// ponytail: una llamada a GHL por oportunidad abierta (tope 100 por corrida). Si el volumen\n// crece, cambiar a POST /contacts/search filtrando por el campo.\nreturn ($input.first().json.opportunities || []).map(o => ({ json: { opportunityId: o.id, contactId: o.contactId || (o.contact || {}).id } }));"
       },
       "id": "filtrar-ops",
       "name": "Oportunidades",
