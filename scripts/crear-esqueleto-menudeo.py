@@ -36,11 +36,14 @@ ETAPAS = [
 
 ESTADOS_APARTADO = ["apartado", "pagado", "vencido", "cancelado"]
 
-# §4 — 19 campos en 4 carpetas: (carpeta, [(fieldKey, nombre, dataType, opciones)])
+# §4 — campos por carpeta: (carpeta, modelo, [(fieldKey, nombre, dataType, opciones)])
+# 28 sep: lo que es de CADA PEDIDO vive en la oportunidad (un contacto puede tener
+# varios pedidos abiertos y en el contacto se pisarían). En el contacto se queda lo
+# de la persona y lo que escribe el bot: Conversation AI sólo escribe campos de contacto.
 # Las fechas van todas en TEXT: los DATE de GHL no guardan hora, y §4 lo exige
 # explícitamente para expira_en y fecha_pago. Las otras dos se hacen igual.
 CARPETAS = [
-    ("Apartado", [
+    ("Apartado", "opportunity", [
         ("orden_id",           "Orden ID",            "TEXT",           None),
         ("sku_apartado",       "SKU apartado",        "TEXT",           None),
         # El nombre legible. sku_apartado es la clave (PV-MUJ-BOU) y ningún
@@ -53,12 +56,12 @@ CARPETAS = [
         ("estado_apartado",    "Estado del apartado", "SINGLE_OPTIONS", ESTADOS_APARTADO),
         ("expira_en",          "Expira en",           "TEXT",           None),
     ]),
-    ("Pago", [
+    ("Pago", "opportunity", [
         ("invoice_id",         "Factura de GHL · ID",          "TEXT", None),
         ("liga_pago",          "Liga de pago",                 "TEXT", None),
         ("fecha_pago",         "Fecha de pago",                "TEXT", None),
     ]),
-    ("Envío", [
+    ("Envío", "contact", [
         ("ciudad",             "Ciudad",            "TEXT", None),
         ("estado_mx",          "Estado",            "TEXT", None),
         # SP05 manda al almacén "nombre, cantidad, destino y CP", y la regla 8
@@ -68,12 +71,15 @@ CARPETAS = [
         # 25 sep: lo que N3 devuelve y N4 necesita (Envia probado en sandbox)
         ("servicio_envio",     "Servicio de envío (ground / ground_do)", "TEXT", None),
         ("branch_code",        "Código de sucursal Envia", "TEXT", None),
+    ]),
+    # Lo que N4 escribe al generar la guía: es del pedido.
+    ("Guía", "opportunity", [
         ("numero_guia",        "Número de guía",    "TEXT", None),
         ("etiqueta_pdf",       "Etiqueta PDF",      "TEXT", None),
         ("track_url",          "Liga de rastreo",   "TEXT", None),
         ("fecha_envio",        "Fecha de envío",    "TEXT", None),
     ]),
-    ("Atribución", [
+    ("Atribución", "contact", [
         ("canal_origen",           "Canal de origen",        "TEXT", None),
         ("utm_source",             "UTM source",             "TEXT", None),
         ("utm_medium",             "UTM medium",             "TEXT", None),
@@ -119,7 +125,8 @@ def main():
     url_cv = f"{BASE}/locations/{loc}/customValues"
     url_pl = f"{BASE}/opportunities/pipelines"
 
-    r = requests.get(url_cf, headers=H, timeout=30)
+    # sin model=all el GET sólo lista los de contacto
+    r = requests.get(f"{url_cf}?model=all", headers=H, timeout=30)
     if not r.ok:
         sys.exit(f"No se pudo leer la cuenta: {r.status_code} {r.text[:300]}")
     campos_previos = r.json().get("customFields", [])
@@ -131,8 +138,8 @@ def main():
     pipes = requests.get(f"{url_pl}?locationId={loc}", headers=H, timeout=30).json().get("pipelines", [])
     hay_pipeline = any(p.get("name") == PIPELINE for p in pipes)
 
-    todos = [c for _, cs in CARPETAS for c in cs]
-    faltan_campos = [c for c in todos if f"contact.{c[0]}" not in claves]
+    todos = [(m, *c) for _, m, cs in CARPETAS for c in cs]
+    faltan_campos = [c for c in todos if f"{c[0]}.{c[1]}" not in claves]
     faltan_cv = [v for v in CUSTOM_VALUES if v[0] not in nombres_cv]
 
     print(f"Cuenta {loc}")
@@ -140,8 +147,8 @@ def main():
     print(f"  campos: {len(faltan_campos)} por crear, {len(todos) - len(faltan_campos)} ya estaban")
     print(f"  custom values: {len(faltan_cv)} por crear, {len(CUSTOM_VALUES) - len(faltan_cv)} ya estaban")
     if seco:
-        for k, n, t, _ in faltan_campos:
-            print(f"    · {k:24} {t:15} {n}")
+        for m, k, n, t, _ in faltan_campos:
+            print(f"    · {m}.{k:24} {t:15} {n}")
         for n, v in faltan_cv:
             print(f"    · {n:24} = {v}")
         return
@@ -168,18 +175,18 @@ def main():
             falla(r, "pipeline"); errores += 1
 
     # ── Carpetas y campos ────────────────────────────────────────────────
-    for carpeta, campos in CARPETAS:
-        pend = [c for c in campos if c in faltan_campos]
+    for carpeta, modelo, campos in CARPETAS:
+        pend = [c for c in campos if (modelo, *c) in faltan_campos]
         if not pend:
             continue
         # El GET de customFields no lista carpetas, así que la de una carpeta ya
         # usada se deduce del parentId que comparten sus campos.
         padre = next((c.get("parentId") for c in campos_previos
-                      if c.get("fieldKey") in {f"contact.{k}" for k, *_ in campos}
+                      if c.get("fieldKey") in {f"{modelo}.{k}" for k, *_ in campos}
                       and c.get("parentId")), None)
         if not padre:
             r = requests.post(url_cf, headers=H, timeout=30,
-                              json={"name": carpeta, "documentType": "folder"})
+                              json={"name": carpeta, "documentType": "folder", "model": modelo})
             if not r.ok:
                 falla(r, f"carpeta «{carpeta}»"); errores += 1; continue
             d = r.json()
@@ -191,14 +198,16 @@ def main():
             print(f"  ✓ carpeta «{carpeta}» → {padre}")
 
         for clave, nombre, tipo, opciones in pend:
+            # GHL le antepone el modelo a la clave (contact.x / opportunity.x);
+            # sin "model" lo crea de contacto.
             cuerpo = {"name": nombre, "dataType": tipo, "fieldKey": clave,
-                      "documentType": "field", "parentId": padre}
+                      "documentType": "field", "parentId": padre, "model": modelo}
             if opciones:
                 # options es lo que exige el POST; picklistOptions es de lectura
                 cuerpo["options"] = opciones
             r = requests.post(url_cf, headers=H, json=cuerpo, timeout=30)
             if r.ok:
-                print(f"    ✓ {clave:24} {tipo:15} {nombre}")
+                print(f"    ✓ {modelo}.{clave:24} {tipo:15} {nombre}")
             else:
                 falla(r, clave); errores += 1
 
