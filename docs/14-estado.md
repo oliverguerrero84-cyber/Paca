@@ -22,37 +22,44 @@ el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga. 
 
 ## 2. Hecho
 
+**Cómo se lee la columna «Quién».** **Germán** es lo que hizo él —en la cuenta de GHL,
+en su instancia de n8n y contra las APIs de Stripe, Mercado Pago y Envia—. **Claude /
+786** es lo que salió de las sesiones de Claude Code: documentos, scripts, la propuesta
+y los flujos escritos. **786** a secas es trabajo a mano de la agencia, y **Cliente** es
+lo que él decidió o mandó. Si hay duda, el `git log` del repo tiene el autor y la fecha
+de cada cosa.
+
 | Qué | Quién | Cuándo |
 |---|---|---|
-| Alcance, arquitectura y las decisiones de diseño | 786 | 14 – 19 sep |
-| **Propuesta cerrada, aceptada y cobrada** — Completo, USD 4,497 + 637 al mes | 786 | 18 – 22 sep |
-| Paquete de traspaso para trabajar el repo desde otra cuenta | 786 | 19 sep |
-| **Excel del catálogo mandado al cliente** para que capture precio, piezas y stock | 786 | 22 sep |
-| Mensaje de arranque al cliente con todo lo que hay que pedirle | 786 | 22 sep |
-| **Los 23 campos del formulario de alta**, en la carpeta «Alta de subcuenta» | 786 | 23 sep |
+| Alcance, arquitectura y las decisiones de diseño | Claude / 786 | 14 – 19 sep |
+| **Propuesta cerrada, aceptada y cobrada** — Completo, USD 4,497 + 637 al mes | Claude / 786 | 18 – 22 sep |
+| Paquete de traspaso para trabajar el repo desde otra cuenta | Claude / 786 | 19 sep |
+| **Excel del catálogo mandado al cliente** para que capture precio, piezas y stock | Claude / 786 | 22 sep |
+| Mensaje de arranque al cliente con todo lo que hay que pedirle | Claude / 786 | 22 sep |
+| **Los 23 campos del formulario de alta**, en la carpeta «Alta de subcuenta» | Claude / 786 | 23 sep |
 | Cronograma de las 4 semanas al go-live | Germán | 23 sep |
 | **La cadena de altas y accesos**, ordenada por dependencias | Germán | 23 sep |
 | Mapa de desarrollo en una página para el equipo | Germán | 23 sep |
-| Condiciones de pago corregidas en la propuesta | 786 | 23 sep |
-| **Subcuenta del cliente creada** — Greentex Clothing LLC, y es donde se trabaja de aquí en adelante | 786 | 24 sep |
-| **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, **25** campos custom en 4 carpetas y los 8 custom values | 786 | 24 sep |
+| Condiciones de pago corregidas en la propuesta | Claude / 786 | 23 sep |
+| **Subcuenta del cliente creada** — Greentex Clothing LLC, y es donde se trabaja de aquí en adelante | Germán | 24 sep |
+| **Esqueleto de GHL levantado** en Greentex: pipeline `SP · Menudeo` de 8 etapas, **25** campos custom en 4 carpetas y los 8 custom values | Claude / 786 | 24 sep |
 | **Los 3 usuarios del cliente**, dados de alta a mano | 786 | 24 sep |
-| **Las 6 plantillas de mensaje redactadas** (`A5`), listas para mandar a Meta | 786 | 24 sep |
-| **Los 5 flujos de n8n escritos** como JSON importable — **sin probar**, no hay instancia donde correrlos | 786 | 24 sep |
-| Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | 786 | 24 – 25 sep |
-| **Ensayo del asistente con Custom API de Conversation AI**: con un endpoint falso, el bot recogió los datos, llamó una vez y mandó la liga. Mecanismo probado sin n8n | 786 | 25 sep |
-| **Ensayo de la factura por API en Korvance**: 201, queda enviada con Stripe, liga `{dominio}/invoice/{id}` confirmada. `N1` corregido con lo que la API exige | 786 | 25 sep |
-| **Primera prueba de `N1` en el n8n de Germán**: llegó hasta «¿Alcanza?» y contestó agotado con stock de 3, porque `GET /products/` no trae precios. Corregido: `N1` y `N2` leen `/products/inventory` | Germán y 786 | 25 sep |
-| **Los 5 flujos sin `$env`**: la instancia lo bloquea, así que cada flujo trae un nodo `Config` con sus valores. Sin tocar Portainer | 786 | 25 sep |
-| **4 URLs de n8n en los custom values de Greentex**, en modo prueba (`webhook-test`) | 786 | 25 sep |
-| **`N5` con webhook `rastrear`** para la acción del bot; antes sólo tenía cron | 786 | 25 sep |
-| **PIT de Greentex creado (`0.2d`) y los 5 campos nuevos en la subcuenta**: `invoice_id`, `servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`; `mp_preference_id` borrado. 25 campos en total | 786 | 25 sep |
+| **Las 6 plantillas de mensaje redactadas** (`A5`), listas para mandar a Meta | Claude / 786 | 24 sep |
+| **Los 5 flujos de n8n escritos** como JSON importable — **sin probar**, no hay instancia donde correrlos | Claude / 786 | 24 sep |
+| Validación 1 con Mercado Pago **cerrada sin resultado**: la cuenta argentina de 786 tiene las llaves revocadas. Queda anotado en `docs/13-accesos.md` §4 por si vuelve | Germán | 24 – 25 sep |
+| **Ensayo del asistente con Custom API de Conversation AI**: con un endpoint falso, el bot recogió los datos, llamó una vez y mandó la liga. Mecanismo probado sin n8n | Germán | 25 sep |
+| **Ensayo de la factura por API en Korvance**: 201, queda enviada con Stripe, liga `{dominio}/invoice/{id}` confirmada. `N1` corregido con lo que la API exige | Germán | 25 sep |
+| **Primera prueba de `N1` en el n8n de Germán**: llegó hasta «¿Alcanza?» y contestó agotado con stock de 3, porque `GET /products/` no trae precios. Corregido: `N1` y `N2` leen `/products/inventory` | Germán | 25 sep |
+| **Los 5 flujos sin `$env`**: la instancia lo bloquea, así que cada flujo trae un nodo `Config` con sus valores. Sin tocar Portainer | Germán | 25 sep |
+| **4 URLs de n8n en los custom values de Greentex**, en modo prueba (`webhook-test`) | Germán | 25 sep |
+| **`N5` con webhook `rastrear`** para la acción del bot; antes sólo tenía cron | Germán | 25 sep |
+| **PIT de Greentex creado (`0.2d`) y los 5 campos nuevos en la subcuenta**: `invoice_id`, `servicio_envio`, `branch_code`, `etiqueta_pdf`, `track_url`; `mp_preference_id` borrado. 25 campos en total | Germán | 25 sep |
 | **Los 5 flujos importados en el n8n de Germán** (`0.3` a medias: faltan variables, credenciales y las URLs en los custom values) | Germán | 25 sep |
-| **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | 786 | 25 sep |
-| **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | 786 | 25 sep |
-| **Greentex en MXN** (`0.2c`) | 786 | 25 sep |
-| **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán y 786 | 28 sep |
-| **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / 786 | 25 sep |
+| **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | Germán | 25 sep |
+| **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | Germán | 25 sep |
+| **Greentex en MXN** (`0.2c`) | Germán | 25 sep |
+| **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán | 28 sep |
+| **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
 > Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
