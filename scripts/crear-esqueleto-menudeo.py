@@ -94,7 +94,7 @@ CARPETAS = [
 # Una URL de relleno con forma de URL fallaría en silencio o pegaría en otro lado.
 PENDIENTE = "PENDIENTE"
 CUSTOM_VALUES = [
-    ("url_n8n_consultar_stock",  PENDIENTE),
+    # url_n8n_consultar_stock se borró el 25 sep: N1 consulta y aparta en la misma llamada.
     ("url_n8n_crear_apartado",   PENDIENTE),
     ("url_n8n_buscar_sucursal",  PENDIENTE),
     ("url_n8n_generar_guia",     PENDIENTE),
