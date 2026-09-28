@@ -59,6 +59,7 @@ de cada cosa.
 | **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | Germán | 25 sep |
 | **Greentex en MXN** (`0.2c`) | Germán | 25 sep |
 | **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán | 28 sep |
+| **Validación 3 cerrada**: `N1` completo tarda **4 s**, dentro del límite de 10 s de la acción Custom API | Germán | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
@@ -73,8 +74,8 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
-| `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales y **medir que `N1` responda en menos de 10 s**: validación 3 | Germán |
-| — | **Abrir la liga de pago de la prueba** y confirmar que el checkout sale en MXN y si muestra OXXO y SPEI: validación 4 | 786 |
+| `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales | Germán |
+| — | **Validación 4 (OXXO y SPEI)**: la liga de prueba ya abre la factura en MXN a nombre de Greentex, pero **sin botón de pago**, porque Greentex todavía no tiene Stripe conectado. Se cierra en cuanto el cliente lo conecte (`B1`) | 786, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: el workflow `PRUEBA N1 - webhook apartar`, la factura de prueba y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
@@ -102,7 +103,6 @@ Los primeros cinco se piden con el Excel que ya se les mandó.
 | Qué | Espera a |
 |---|---|
 | **2 de los 7 custom values siguen en `PENDIENTE`**: el WhatsApp del almacén y el correo de los dueños. Las 4 URLs ya apuntan al n8n de Germán, en modo prueba (`webhook-test`); al activar los flujos se quitan el `-test` | A que las mande el cliente |
-| **Validación 3** — que el nodo `API Call` responda a tiempo | Que `N1` exista, o sea la semana 2 |
 | Mandar las 4 plantillas a Meta (`A6`) — **ya redactadas** en `docs/15-plantillas.md` | La WhatsApp Business Account (`A4`) |
 | **Validaciones 1, 2 y 4** | Que el cliente conecte Stripe (`B1`). La 4 además pregunta si el checkout de GHL muestra OXXO y SPEI; si no, el plan es tarjeta más transferencia manual con `AP03` |
 | **La liga de pago del cliente** e incrustarla en la propuesta | Nada: es tarea viva de Germán |
