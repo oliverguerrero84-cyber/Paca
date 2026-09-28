@@ -82,7 +82,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | — | **Crear los campos de oportunidad en Greentex**: `GHL_API_KEY` con el PIT de Greentex y `python scripts/crear-esqueleto-menudeo.py --dry-run`, luego sin `--dry-run`. Después, reimportar `N1`, `N2`, `N4` y `N5` y repetir las pruebas | Germán |
-| — | **Borrar los 11 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
+| — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
 | — | Al armar `SP05`: el Webhook a `N4` tiene que mandar `opportunityId` = `{{opportunity.id}}` en Custom Data | 786 |
 | `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
