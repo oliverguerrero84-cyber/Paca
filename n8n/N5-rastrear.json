@@ -78,15 +78,15 @@
     },
     {
       "parameters": {
-        "jsCode": "// Saca los que traen número de guía. Sin guía no hay nada que rastrear.\nconst oportunidades = $input.first().json.opportunities || [];\nconst salida = [];\n\nfor (const o of oportunidades) {\n  const campos = o.customFields || [];\n  const buscar = (clave) => {\n    const c = campos.find(x => (x.fieldKey || '').endsWith(clave) || x.id === clave);\n    return c ? (c.fieldValue ?? c.value) : null;\n  };\n  const guia = buscar('numero_guia');\n  if (!guia) continue;\n  salida.push({ json: { opportunityId: o.id, contactId: o.contactId, numero_guia: guia } });\n}\nreturn salida;"
+        "jsCode": "// Los campos viven en el CONTACTO, no en la oportunidad, y GET /contacts/{id} los trae\n// sólo como { id, value }: se traduce clave -> id con la lista de campos de la subcuenta.\nconst ids = {};\nfor (const f of $('GHL · campos (reloj)').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^contact\\./, '')] = f.id;\nconst ops = $('Oportunidades').all().map(i => i.json);\nconst lector = (c) => (clave) => { const x = (c.customFields || []).find(f => f.id === ids[clave]); return x ? (x.fieldValue ?? x.value) : null; };\n\n// Saca los que traen número de guía. Sin guía no hay nada que rastrear.\nconst salida = [];\n$input.all().forEach((it, k) => {\n  const c = it.json.contact || {};\n  const guia = lector(c)('numero_guia');\n  if (guia) salida.push({ json: { opportunityId: ops[k].opportunityId, contactId: c.id, numero_guia: guia } });\n});\nreturn salida;"
       },
       "id": "con-guia",
       "name": "Los que tienen guía",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        160
+        1240,
+        340
       ]
     },
     {
@@ -485,6 +485,81 @@
         }
       },
       "notes": "La guía vive en el campo numero_guia del contacto; la escribe N4."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=contact",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "con-guia-campos",
+      "name": "GHL · campos (reloj)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Una oportunidad por item; el siguiente nodo lee el contacto de cada una.\n// ponytail: una llamada a GHL por oportunidad abierta (tope 100 por corrida). Si el volumen\n// crece, cambiar a POST /contacts/search filtrando por el campo.\nreturn ($input.first().json.opportunities || []).map(o => ({ json: { opportunityId: o.id, contactId: o.contactId } }));"
+      },
+      "id": "con-guia-ops",
+      "name": "Oportunidades",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "con-guia-leer",
+      "name": "GHL · leer contacto (cada una)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        340
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
     }
   ],
   "connections": {
@@ -503,7 +578,7 @@
       "main": [
         [
           {
-            "node": "Los que tienen guía",
+            "node": "Oportunidades",
             "type": "main",
             "index": 0
           }
@@ -643,7 +718,7 @@
       "main": [
         [
           {
-            "node": "GHL · envíos en curso",
+            "node": "GHL · campos (reloj)",
             "type": "main",
             "index": 0
           }
@@ -666,6 +741,39 @@
         [
           {
             "node": "Guía del contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Oportunidades": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer contacto (cada una)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer contacto (cada una)": {
+      "main": [
+        [
+          {
+            "node": "Los que tienen guía",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos (reloj)": {
+      "main": [
+        [
+          {
+            "node": "GHL · envíos en curso",
             "type": "main",
             "index": 0
           }

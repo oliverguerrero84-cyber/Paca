@@ -63,6 +63,8 @@ de cada cosa.
 | **Liga de pago dada por buena**: en Greentex abre la factura en MXN con los datos del negocio; el botón de pago con Stripe ya se vio funcionar en Korvance, así que en Greentex aparece al conectar Stripe | Germán | 28 sep |
 | **`N3` probado desde un Webhook de GHL en Greentex**: CP 20126 → Aguascalientes y las 3 sucursales de Paquete Express más cercanas, con `branch_code` y distancia | Germán | 28 sep |
 | **`N4` probado desde un Webhook de GHL en Greentex**, contra el sandbox de Envia: genera la guía a sucursal y la etiqueta en PDF. Con un almacén de prueba en `Config`, porque el real sigue en `PENDIENTE`. La liga de rastreo del sandbox (`test.envia.com`) no abre; en producción Envia la devuelve en `envia.com` | Germán | 28 sep |
+| **`N5` por webhook probado**: responde el estatus de la guía del contacto | Germán | 28 sep |
+| **`N2` y el reloj de `N5` corregidos, sin probar en vivo**: buscaban los campos en la oportunidad, pero viven en el contacto, y `GET /contacts/{id}` los devuelve sin clave, sólo con id. Así `N2` nunca habría liberado un apartado vencido, sin dar error. Ahora leen el contacto de cada oportunidad y traducen clave → id; `N2` además marcaba vencido a un contacto vacío | Claude / 786 | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de

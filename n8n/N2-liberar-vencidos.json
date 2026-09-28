@@ -78,15 +78,15 @@
     },
     {
       "parameters": {
-        "jsCode": "// Separa los que ya vencieron. expira_en se lee del custom field.\n// Si viene vacío o no parsea, se ignora: mejor no liberar que liberar de más.\nconst ahora = Date.now();\nconst oportunidades = $input.first().json.opportunities || [];\nconst vencidos = [];\n\nfor (const o of oportunidades) {\n  const campos = o.customFields || [];\n  const buscar = (clave) => {\n    const c = campos.find(x => (x.fieldKey || '').endsWith(clave) || x.id === clave);\n    return c ? (c.fieldValue ?? c.value) : null;\n  };\n\n  const expira = buscar('expira_en');\n  const estado = buscar('estado_apartado');\n  if (!expira || estado === 'pagado' || estado === 'vencido') continue;\n\n  const t = Date.parse(expira);\n  if (Number.isNaN(t)) continue;   // formato raro: no se toca\n  if (t > ahora) continue;          // todavía tiene tiempo\n\n  vencidos.push({\n    opportunityId: o.id,\n    contactId: o.contactId,\n    sku: buscar('sku_apartado'),\n    articulo: buscar('articulo_apartado'),\n    cantidad: Number(buscar('cantidad_apartada') || 1),\n    expira_en: expira\n  });\n}\n\nreturn vencidos.map(v => ({ json: v }));"
+        "jsCode": "// Los campos viven en el CONTACTO, no en la oportunidad, y GET /contacts/{id} los trae\n// sólo como { id, value }: se traduce clave -> id con la lista de campos de la subcuenta.\nconst ids = {};\nfor (const f of $('GHL · campos del contacto').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^contact\\./, '')] = f.id;\nconst ops = $('Oportunidades').all().map(i => i.json);\nconst lector = (c) => (clave) => { const x = (c.customFields || []).find(f => f.id === ids[clave]); return x ? (x.fieldValue ?? x.value) : null; };\n\n// Separa los que ya vencieron. Si expira_en viene vacío o no parsea, se ignora:\n// mejor no liberar que liberar de más.\nconst ahora = Date.now();\nconst vencidos = [];\n$input.all().forEach((it, k) => {\n  const c = it.json.contact || {};\n  const buscar = lector(c);\n  const expira = buscar('expira_en');\n  const estado = buscar('estado_apartado');\n  if (!expira || estado === 'pagado' || estado === 'vencido') return;\n  const t = Date.parse(expira);\n  if (Number.isNaN(t)) return;   // formato raro: no se toca\n  if (t > ahora) return;          // todavía tiene tiempo\n  vencidos.push({\n    opportunityId: ops[k].opportunityId,\n    contactId: c.id,\n    sku: buscar('sku_apartado'),\n    articulo: buscar('articulo_apartado'),\n    cantidad: Number(buscar('cantidad_apartada') || 1),\n    expira_en: expira\n  });\n});\nreturn vencidos.map(v => ({ json: v }));"
       },
       "id": "filtrar",
       "name": "¿Cuáles vencieron?",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        140
+        1240,
+        320
       ]
     },
     {
@@ -212,7 +212,7 @@
     {
       "parameters": {
         "method": "PUT",
-        "url": "=https://services.leadconnectorhq.com/contacts/{{$json.contactId}}",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Calcular stock devuelto').item.json.contactId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -285,6 +285,81 @@
         140
       ],
       "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=contact",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "filtrar-campos",
+      "name": "GHL · campos del contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Una oportunidad por item; el siguiente nodo lee el contacto de cada una.\n// ponytail: una llamada a GHL por oportunidad abierta (tope 100 por corrida). Si el volumen\n// crece, cambiar a POST /contacts/search filtrando por el campo.\nreturn ($input.first().json.opportunities || []).map(o => ({ json: { opportunityId: o.id, contactId: o.contactId } }));"
+      },
+      "id": "filtrar-ops",
+      "name": "Oportunidades",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "filtrar-leer",
+      "name": "GHL · leer contacto (cada una)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
     }
   ],
   "connections": {
@@ -303,7 +378,7 @@
       "main": [
         [
           {
-            "node": "¿Cuáles vencieron?",
+            "node": "Oportunidades",
             "type": "main",
             "index": 0
           }
@@ -369,7 +444,40 @@
       "main": [
         [
           {
+            "node": "GHL · campos del contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos del contacto": {
+      "main": [
+        [
+          {
             "node": "GHL · apartados abiertos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Oportunidades": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer contacto (cada una)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · leer contacto (cada una)": {
+      "main": [
+        [
+          {
+            "node": "¿Cuáles vencieron?",
             "type": "main",
             "index": 0
           }
