@@ -60,6 +60,7 @@ de cada cosa.
 | **Greentex en MXN** (`0.2c`) | Germán | 25 sep |
 | **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán | 28 sep |
 | **Validación 3 cerrada**: `N1` completo tarda **4 s**, dentro del límite de 10 s de la acción Custom API | Germán | 28 sep |
+| **Liga de pago dada por buena**: en Greentex abre la factura en MXN con los datos del negocio; el botón de pago con Stripe ya se vio funcionar en Korvance, así que en Greentex aparece al conectar Stripe | Germán | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
@@ -75,7 +76,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales | Germán |
-| — | **Validación 4 (OXXO y SPEI)**: la liga de prueba ya abre la factura en MXN a nombre de Greentex, pero **sin botón de pago**, porque Greentex todavía no tiene Stripe conectado. Se cierra en cuanto el cliente lo conecte (`B1`) | 786, tras `B1` |
+| — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: el workflow `PRUEBA N1 - webhook apartar`, la factura de prueba y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |

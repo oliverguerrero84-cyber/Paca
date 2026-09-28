@@ -35,7 +35,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// 5 dígitos y nada más. Si no, ni se molesta en llamar a Envia.\nconst cp = String(($json.body || {}).codigo_postal || '').trim();\nif (!/^\\d{5}$/.test(cp)) {\n  return [{ json: { valido: false, motivo: 'cp_invalido', codigo_postal: cp } }];\n}\nreturn [{ json: { valido: true, codigo_postal: cp } }];"
+        "jsCode": "// 5 dígitos y nada más. Si no, ni se molesta en llamar a Envia.\nconst b = $json.body || {};  // plano (Custom API) o en customData (Webhook de workflow de GHL)\nconst cp = String((b.customData || {}).codigo_postal || b.codigo_postal || '').trim();\nif (!/^\\d{5}$/.test(cp)) {\n  return [{ json: { valido: false, motivo: 'cp_invalido', codigo_postal: cp } }];\n}\nreturn [{ json: { valido: true, codigo_postal: cp } }];"
       },
       "id": "validar-forma",
       "name": "¿5 dígitos?",

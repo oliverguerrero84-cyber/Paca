@@ -224,7 +224,7 @@
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.body.contactId }}",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ ($json.body.customData || {}).contactId || $json.body.contactId || $json.body.contact_id }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
