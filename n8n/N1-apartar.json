@@ -71,7 +71,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Resuelve SKU -> price con el inventario, y decide si alcanza el stock.\nconst pedido = $('Webhook · apartar').first().json.body;\nconst sku = (pedido.sku || '').trim();\nconst cantidad = Number(pedido.cantidad || 1);\nconst inv = $input.first().json.inventory || [];\nconst i = inv.find(x => (x.sku || '').trim() === sku);\nif (!i) return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad } }];\nconst disponible = Number(i.availableQuantity ?? 0);\nconst alcanza = disponible >= cantidad;\nreturn [{ json: { productId: i.product, priceId: i._id, nombre: i.productName, disponible, sku, cantidad, alcanza,\n  nuevoStock: disponible - cantidad, ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
+        "jsCode": "// Resuelve SKU -> price con el inventario, y decide si alcanza el stock.\n// Acepta dos formas de llamada: body plano (accion Custom API / Custom Webhook) o el\n// Webhook estandar de un workflow de GHL, que mete los campos en customData y manda contact_id.\nconst body = $('Webhook · apartar').first().json.body || {};\nconst pedido = { ...body, ...(body.customData || {}) };\nconst sku = String(pedido.sku || '').trim().toUpperCase();\nconst cantidad = Number(pedido.cantidad || 1);\nconst contactId = pedido.contactId || pedido.contact_id || body.contact_id;\nconst inv = $input.first().json.inventory || [];\nconst i = inv.find(x => String(x.sku || '').trim().toUpperCase() === sku);\n// recibido/inventario: para ver en la ejecucion por que no lo encontro.\nif (!i) return [{ json: { ok: false, motivo: 'sku_no_existe', sku, cantidad, contactId,\n  recibido: Object.keys(pedido), inventario: inv.length } }];\nconst disponible = Number(i.availableQuantity ?? 0);\nconst alcanza = disponible >= cantidad;\nreturn [{ json: { productId: i.product, priceId: i._id, nombre: i.productName, disponible, sku, cantidad, contactId, alcanza,\n  nuevoStock: disponible - cantidad, ok: alcanza, motivo: alcanza ? null : 'agotado' } }];"
       },
       "id": "resolver-sku",
       "name": "Resolver SKU y stock",
@@ -187,7 +187,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = $('Webhook · apartar').first().json.body.contactId;\nconst horas = Number($('Config').first().json.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: Number($('GHL · leer precio').first().json.amount ?? 0),\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString(),\n  // Para que el bot lo diga tal cual y no convierta fechas.\n  expira_texto: expira.toLocaleString('es-MX', { timeZone: 'America/Chicago', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })\n} }];"
+        "jsCode": "// El reloj del apartado. expira_en va en ISO 8601 CON OFFSET, siempre.\n// N2 lo compara contra la hora actual y SP02 tiene que escribirlo igual.\nconst datos = $('Resolver SKU y stock').first().json;\nconst contactId = datos.contactId;\nconst horas = Number($('Config').first().json.HORAS_APARTADO || 24);\nconst expira = new Date(Date.now() + horas * 3600 * 1000);\n\nreturn [{ json: {\n  ok: true,\n  sku: datos.sku,\n  articulo: datos.nombre,\n  cantidad: datos.cantidad,\n  productId: datos.productId,\n  priceId: datos.priceId,\n  monto: Number($('GHL · leer precio').first().json.amount ?? 0),\n  contactId,\n  stockRestante: datos.nuevoStock,\n  expira_en: expira.toISOString(),\n  // Para que el bot lo diga tal cual y no convierta fechas.\n  expira_texto: expira.toLocaleString('es-MX', { timeZone: 'America/Chicago', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })\n} }];"
       },
       "id": "reloj",
       "name": "Arrancar reloj de 24 h",
@@ -356,7 +356,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ altId: $('Config').first().json.GHL_LOCATION_ID, altType: 'location', userId: $('Config').first().json.GHL_USER_ID, action: 'send_manually', liveMode: true, autoPayment: false }) }}",
+        "jsonBody": "={{ JSON.stringify({ altId: $('Config').first().json.GHL_LOCATION_ID, altType: 'location', userId: $('Config').first().json.GHL_USER_ID, action: 'send_manually', liveMode: true }) }}",
         "options": {}
       },
       "id": "enviar-factura",
