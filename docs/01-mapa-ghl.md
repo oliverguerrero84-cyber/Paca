@@ -301,6 +301,13 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > en el contacto **Envío** (ciudad, estado, CP, sucursal, servicio, `branch_code`: los
 > escribe el bot, y Conversation AI sólo escribe campos de contacto) y **Atribución**.
 > Un apartado vencido deja la oportunidad en `abandoned`.
+>
+> **Una oportunidad abierta por contacto.** Greentex no tiene activada la opción de
+> oportunidades duplicadas, así que GHL rechaza una segunda abierta en el pipeline.
+> Consecuencias: `N1` usa la del lead (etapa 1 o 2) o crea una si no hay ninguna abierta,
+> y si el contacto ya tiene otro pedido en curso responde `pedido_en_curso` **antes** de
+> tocar stock o facturar. Para que un cliente pueda volver a comprar, el pedido anterior
+> tiene que cerrarse: `abandoned` al vencer (`N2`) y **`won` al entregarse** (`AP01`).
 
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
 `articulo_apartado` (texto — el nombre legible; `sku_apartado` guarda la clave y

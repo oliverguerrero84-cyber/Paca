@@ -58,7 +58,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        580,
+        1380,
         140
       ],
       "credentials": {
@@ -78,7 +78,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
+        1600,
         140
       ]
     },
@@ -110,7 +110,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1020,
+        1820,
         140
       ]
     },
@@ -135,7 +135,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1240,
+        2040,
         40
       ],
       "credentials": {
@@ -175,7 +175,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1460,
+        2260,
         40
       ],
       "credentials": {
@@ -194,7 +194,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1680,
+        2480,
         40
       ]
     },
@@ -209,7 +209,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        3660,
+        4460,
         40
       ]
     },
@@ -226,7 +226,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1240,
+        2040,
         260
       ],
       "notes": "Responde 200, no error: el agente necesita leer el motivo para ofrecer alternativas."
@@ -252,7 +252,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1900,
+        2700,
         40
       ],
       "credentials": {
@@ -284,7 +284,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2120,
+        2920,
         40
       ],
       "credentials": {
@@ -324,7 +324,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2340,
+        3140,
         40
       ],
       "credentials": {
@@ -364,7 +364,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2560,
+        3360,
         40
       ],
       "credentials": {
@@ -384,7 +384,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2780,
+        3580,
         40
       ],
       "notes": "GHL_INVOICE_URL_BASE = dominio de la subcuenta, sin barra final (Korvance: https://link.korvance.com). Formato /invoice/{id} CONFIRMADO el 25 sep: abre la página de la factura con el botón de pago."
@@ -458,7 +458,7 @@
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config').first().json.GHL_PIPELINE_ID }}&contact_id={{ $json.contactId }}&status=open&limit=100",
+        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config').first().json.GHL_PIPELINE_ID }}&contact_id={{ ($json.body.customData || {}).contactId || $json.body.contactId || $json.body.contact_id }}&status=open&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -477,8 +477,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2560,
-        40
+        540,
+        140
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -508,7 +508,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2780,
+        3580,
         40
       ],
       "credentials": {
@@ -520,15 +520,15 @@
     },
     {
       "parameters": {
-        "jsCode": "// El apartado va a la oportunidad del lead (etapa 1 o 2) si hay una abierta.\n// Si no, se crea una: nunca se reusa la de otro pedido que ya va más adelante.\nconst c = $('Config').first().json;\nconst tempranas = [c.GHL_STAGE_LEAD, c.GHL_STAGE_CONVERSACION];\nconst ops = $('GHL · pedidos del contacto').first().json.opportunities || [];\nconst o = ops.find(x => tempranas.includes(x.pipelineStageId));\nreturn [{ json: { opportunityId: o ? o.id : '' } }];"
+        "jsCode": "// GHL deja una sola oportunidad abierta por contacto en el pipeline (sin la opción de\n// duplicados). Se revisa ANTES de tocar el stock:\n// - abierta en etapa 1 o 2 (el lead): ahí va el apartado;\n// - abierta más adelante: es otro pedido en curso, se responde sin descontar nada;\n// - ninguna abierta: se crea al final.\nconst c = $('Config').first().json;\nconst tempranas = [c.GHL_STAGE_LEAD, c.GHL_STAGE_CONVERSACION];\nconst ops = $input.first().json.opportunities || [];\nconst lead = ops.find(x => tempranas.includes(x.pipelineStageId));\nconst otro = ops.find(x => !tempranas.includes(x.pipelineStageId));\nreturn [{ json: { opportunityId: lead ? lead.id : '', pedido_en_curso: !lead && !!otro,\n  pedido_en_curso_id: otro ? otro.id : null } }];"
       },
       "id": "n1-elegir",
       "name": "Elegir oportunidad",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3000,
-        40
+        740,
+        140
       ]
     },
     {
@@ -541,7 +541,7 @@
           "conditions": [
             {
               "id": "n1-hay-c",
-              "leftValue": "={{ $json.opportunityId }}",
+              "leftValue": "={{ $('Elegir oportunidad').first().json.opportunityId }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -559,13 +559,13 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        3220,
+        4020,
         40
       ]
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $json.opportunityId }}",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Elegir oportunidad').first().json.opportunityId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -592,7 +592,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3440,
+        4240,
         -60
       ],
       "credentials": {
@@ -631,7 +631,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3440,
+        4240,
         140
       ],
       "credentials": {
@@ -640,6 +640,56 @@
           "name": "GHL · PIT Greentex"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "n1-curso-c",
+              "leftValue": "={{ $json.pedido_en_curso }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n1-curso",
+      "name": "¿Otro pedido en curso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        940,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: 'pedido_en_curso' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "n1-resp-curso",
+      "name": "Responder pedido en curso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        340
+      ],
+      "notes": "El bot le explica que termine o cancele su pedido actual antes de apartar otro. No se tocó el stock."
     }
   ],
   "connections": {
@@ -731,7 +781,7 @@
       "main": [
         [
           {
-            "node": "GHL · pedidos del contacto",
+            "node": "GHL · campos del pedido",
             "type": "main",
             "index": 0
           }
@@ -786,7 +836,7 @@
       "main": [
         [
           {
-            "node": "GHL · inventario",
+            "node": "GHL · pedidos del contacto",
             "type": "main",
             "index": 0
           }
@@ -797,7 +847,7 @@
       "main": [
         [
           {
-            "node": "GHL · campos del pedido",
+            "node": "Elegir oportunidad",
             "type": "main",
             "index": 0
           }
@@ -808,7 +858,7 @@
       "main": [
         [
           {
-            "node": "Elegir oportunidad",
+            "node": "¿Hay oportunidad del lead?",
             "type": "main",
             "index": 0
           }
@@ -819,7 +869,7 @@
       "main": [
         [
           {
-            "node": "¿Hay oportunidad del lead?",
+            "node": "¿Otro pedido en curso?",
             "type": "main",
             "index": 0
           }
@@ -860,6 +910,24 @@
         [
           {
             "node": "Responder apartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Otro pedido en curso?": {
+      "main": [
+        [
+          {
+            "node": "Responder pedido en curso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL · inventario",
             "type": "main",
             "index": 0
           }
