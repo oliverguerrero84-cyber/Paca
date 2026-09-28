@@ -109,6 +109,19 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 - **La instancia de n8n bloquea `$env`.** Los flujos leen su configuración de un nodo
   `Config` al inicio de cada uno, no de variables de entorno. Si alguien vuelve a poner
   `$env.…`, el nodo falla con *«access to env vars denied»*.
+- **El Webhook de un workflow de GHL no manda el body plano.** Los campos de *Custom
+  Data* llegan dentro de `body.customData` y el contacto como `contact_id`; la acción
+  Custom API del bot sí los manda planos. Un flujo que lea sólo `body.sku` recibe vacío y
+  contesta `sku_no_existe` con stock de sobra. Los cinco flujos ya aceptan las dos formas.
+- **Los custom fields no vienen con su clave.** `GET /contacts/{id}` los trae sólo como
+  `{ id, value }`; las oportunidades, como `fieldValue` al leerlas por id y como
+  `fieldValueString` / `fieldValueNumber` en la búsqueda. Buscar por `fieldKey` da `null`
+  siempre, y así `N2` no liberaba nada. Se traduce clave → id con
+  `GET /locations/{id}/customFields?model=…` y se escribe por id.
+- **GHL deja una sola oportunidad abierta por contacto** en el pipeline: Greentex no tiene
+  activada la opción de duplicados. Crear otra da 400 `OPPORTUNITY_NO_DUPLICATE`. Por eso
+  `N1` revisa la oportunidad **antes** de tocar stock, y un pedido tiene que cerrarse
+  (`abandoned` al vencer, `won` al entregarse) para que el cliente pueda volver a comprar.
 
 ---
 
@@ -134,7 +147,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/15-plantillas.md` | Las 6 plantillas de mensaje, listas para mandar a Meta |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
-| `n8n/` | Los 5 flujos de n8n como JSON importable — importados en el n8n de Germán; `N1` probado hasta el apartado, el resto sin probar |
+| `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |
@@ -162,6 +175,9 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
    muestre** (validación 4). Si no, el plan B es tarjeta por la liga y transferencia
    manual con el formulario `AP03`. Mercado Pago quedó fuera el 25 de septiembre de
    2026 por decisión del cliente; sigue siendo pasarela nativa de GHL, por si vuelve.
+6. **Los datos de cada pedido viven en la oportunidad, no en el contacto** (28 sep).
+   Apartado, Pago y Guía son campos de oportunidad; Envío y Atribución se quedan en el
+   contacto porque el bot de Conversation AI sólo escribe ahí. Ver `docs/01-mapa-ghl.md` §4.
 
 > Dos afirmaciones de revisiones viejas eran **falsas** y están corregidas: que
 > Mercado Pago no era nativo, y que GHL no llevaba inventario. Si las encuentras

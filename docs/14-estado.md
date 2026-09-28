@@ -19,6 +19,9 @@ la primera pieza que hace falta es que él lo conecte en Greentex. Mientras, el 
 las dos piezas del cobro que no dependen de él: la factura por API ya se crea y su liga abre
 el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga. **El 28 de sep
 `N1` corrió de punta a punta en Greentex**: aparta, descuenta stock y crea y envía la factura.
+Ese mismo día **los datos del pedido pasaron del contacto a la oportunidad** (un cliente puede
+hacer varios pedidos), y `N1` y `N2` ya se probaron en vivo así: `N1` escribe el apartado en la
+oportunidad y `N2` libera el vencido y la cierra como `abandoned`. `N3` también quedó probado.
 
 ## 2. Hecho
 
@@ -84,14 +87,14 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
-| — | **Crear los campos de oportunidad en Greentex**: `GHL_API_KEY` con el PIT de Greentex y `python scripts/crear-esqueleto-menudeo.py --dry-run`, luego sin `--dry-run`. Después, reimportar `N1`, `N2`, `N4` y `N5` y repetir las pruebas | Germán |
+| — | **Terminar las pruebas con la oportunidad**: la rama de `N1` que **crea** la oportunidad (el contacto de prueba ya no tiene una abierta), `N4` con `opportunityId` en el Custom Data, y `N5` por webhook y por reloj | Germán y Claude |
 | — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
 | — | Al armar `AP01`: cuando el pedido se entrega, la oportunidad pasa a «Entregado / Cerrado» **con status `won`**. Si se queda abierta, el cliente no puede volver a comprar (`N1` contesta `pedido_en_curso`) | 786 |
 | — | Prompt del bot: qué decir cuando `N1` contesta `pedido_en_curso` (terminar o cancelar el pedido actual antes de apartar otro) | 786 |
 | — | Al armar `SP05`: el Webhook a `N4` tiene que mandar `opportunityId` = `{{opportunity.id}}` en Custom Data | 786 |
-| `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales | Germán |
+| `0.3` | `N1`, `N2` y `N3` reimportados y probados. Falta **reimportar `N4` y `N5`** con la versión de la oportunidad y asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
-| — | **Limpiar lo de la prueba en Greentex**: el workflow `PRUEBA N1 - webhook apartar`, la factura de prueba y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
+| — | **Limpiar lo de la prueba en Greentex**: los workflows `PRUEBA N1 - webhook apartar` y el de N3 (quedó como «New Workflow : 1790609975341»), las facturas de prueba, la oportunidad «Prueba Paca» y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
