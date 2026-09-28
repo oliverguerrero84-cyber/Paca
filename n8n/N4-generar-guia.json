@@ -31,11 +31,11 @@
         140,
         160
       ],
-      "notes": "Body: { orden_id, contactId, nombre, telefono, email, calle, numero, colonia, ciudad, estado_mx, codigo_postal, cantidad, servicio ('ground_do' | 'ground'), branch_code (obligatorio con ground_do) }"
+      "notes": "Body: { orden_id, opportunityId (obligatorio: ahí se guarda la guía), contactId, nombre, telefono, email, calle, numero, colonia, ciudad, estado_mx, codigo_postal, cantidad, servicio ('ground_do' | 'ground'), branch_code (obligatorio con ground_do) }"
     },
     {
       "parameters": {
-        "jsCode": "// Arma el cuerpo de ship/generate con el esquema probado el 25 sep en el sandbox.\n// Peso fijo: cada paca son 100 lb / 45 kg. Si piden más de una, se multiplica.\nconst b = $json.body || {};  // plano (Custom API) o en customData (Webhook de workflow de GHL)\nconst p = { ...b, ...(b.customData || {}), contactId: (b.customData || {}).contactId || b.contactId || b.contact_id };\nconst servicio = p.servicio === 'ground' ? 'ground' : 'ground_do';   // a sucursal por defecto\nconst faltan = ['orden_id', 'nombre', 'telefono', 'codigo_postal', 'ciudad', 'estado_mx']\n  .filter(k => !p[k]);\nif (servicio === 'ground_do' && !p.branch_code) faltan.push('branch_code');\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nconst peso = 45 * cantidad;\nconst destination = {\n  name: p.nombre,\n  company: '',\n  email: p.email || '',\n  phone: p.telefono,\n  // ponytail: con ground_do la dirección es la de la sucursal, pero Envia igual pide\n  // calle; si el bot no la capturó va un texto fijo.\n  street: p.calle || 'Ocurre Paquete Express',\n  number: p.numero || 'S/N',\n  district: p.colonia || '',\n  city: p.ciudad,\n  state: p.estado_mx,\n  country: 'MX',\n  postalCode: p.codigo_postal\n};\nif (servicio === 'ground_do') destination.branchCode = p.branch_code;\n\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  cantidad,\n  peso,\n  envio: {\n    origin: {\n      name: $('Config').first().json.ALMACEN_NOMBRE,\n      company: $('Config').first().json.ALMACEN_NOMBRE,\n      email: $('Config').first().json.ALMACEN_EMAIL,\n      phone: $('Config').first().json.ALMACEN_TELEFONO,\n      street: $('Config').first().json.ALMACEN_CALLE,\n      number: $('Config').first().json.ALMACEN_NUMERO,\n      district: $('Config').first().json.ALMACEN_COLONIA,\n      city: $('Config').first().json.ALMACEN_CIUDAD,\n      state: $('Config').first().json.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $('Config').first().json.ALMACEN_CP\n    },\n    destination,\n    packages: [{\n      type: 'box',\n      content: 'Ropa usada',\n      amount: 1,\n      name: `Paca x${cantidad}`,\n      // ponytail: valor declarado fijo por paca, para el seguro; no es el precio de venta.\n      declaredValue: 1000 * cantidad,\n      lengthUnit: 'CM',\n      weightUnit: 'KG',\n      weight: peso,\n      dimensions: { length: 80, width: 50, height: 50 }\n    }],\n    shipment: { carrier: 'paquetexpress', service: servicio, type: 1, reverse_pickup: 0, import: 0 },\n    settings: { currency: 'MXN', printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
+        "jsCode": "// Arma el cuerpo de ship/generate con el esquema probado el 25 sep en el sandbox.\n// Peso fijo: cada paca son 100 lb / 45 kg. Si piden más de una, se multiplica.\nconst b = $json.body || {};  // plano (Custom API) o en customData (Webhook de workflow de GHL)\nconst p = { ...b, ...(b.customData || {}), contactId: (b.customData || {}).contactId || b.contactId || b.contact_id,\n  opportunityId: (b.customData || {}).opportunityId || b.opportunityId || b.opportunity_id };\nconst servicio = p.servicio === 'ground' ? 'ground' : 'ground_do';   // a sucursal por defecto\n// opportunityId: la guía se guarda en el pedido, no en el contacto.\nconst faltan = ['orden_id', 'opportunityId', 'nombre', 'telefono', 'codigo_postal', 'ciudad', 'estado_mx']\n  .filter(k => !p[k]);\nif (servicio === 'ground_do' && !p.branch_code) faltan.push('branch_code');\nif (faltan.length) {\n  return [{ json: { ok: false, motivo: 'faltan_datos', faltan } }];\n}\n\nconst cantidad = Number(p.cantidad || 1);\nconst peso = 45 * cantidad;\nconst destination = {\n  name: p.nombre,\n  company: '',\n  email: p.email || '',\n  phone: p.telefono,\n  // ponytail: con ground_do la dirección es la de la sucursal, pero Envia igual pide\n  // calle; si el bot no la capturó va un texto fijo.\n  street: p.calle || 'Ocurre Paquete Express',\n  number: p.numero || 'S/N',\n  district: p.colonia || '',\n  city: p.ciudad,\n  state: p.estado_mx,\n  country: 'MX',\n  postalCode: p.codigo_postal\n};\nif (servicio === 'ground_do') destination.branchCode = p.branch_code;\n\nreturn [{ json: {\n  ok: true,\n  orden_id: p.orden_id,\n  contactId: p.contactId,\n  opportunityId: p.opportunityId,\n  cantidad,\n  peso,\n  envio: {\n    origin: {\n      name: $('Config').first().json.ALMACEN_NOMBRE,\n      company: $('Config').first().json.ALMACEN_NOMBRE,\n      email: $('Config').first().json.ALMACEN_EMAIL,\n      phone: $('Config').first().json.ALMACEN_TELEFONO,\n      street: $('Config').first().json.ALMACEN_CALLE,\n      number: $('Config').first().json.ALMACEN_NUMERO,\n      district: $('Config').first().json.ALMACEN_COLONIA,\n      city: $('Config').first().json.ALMACEN_CIUDAD,\n      state: $('Config').first().json.ALMACEN_ESTADO,\n      country: 'MX',\n      postalCode: $('Config').first().json.ALMACEN_CP\n    },\n    destination,\n    packages: [{\n      type: 'box',\n      content: 'Ropa usada',\n      amount: 1,\n      name: `Paca x${cantidad}`,\n      // ponytail: valor declarado fijo por paca, para el seguro; no es el precio de venta.\n      declaredValue: 1000 * cantidad,\n      lengthUnit: 'CM',\n      weightUnit: 'KG',\n      weight: peso,\n      dimensions: { length: 80, width: 50, height: 50 }\n    }],\n    shipment: { carrier: 'paquetexpress', service: servicio, type: 1, reverse_pickup: 0, import: 0 },\n    settings: { currency: 'MXN', printFormat: 'PDF', printSize: 'STOCK_4X6', comments: `Orden ${p.orden_id}` }\n  }\n} }];"
       },
       "id": "armar",
       "name": "Armar el envío",
@@ -117,7 +117,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Saca el número de rastreo y la etiqueta de la respuesta probada el 25 sep.\n// Envia devuelve errores con HTTP 200 y meta: 'error', así que se revisa aquí.\nconst r = $json;\nconst previo = $('Armar el envío').first().json;\nif (r.meta === 'error') {\n  return [{ json: { ok: false, motivo: 'envia_error', detalle: r.error, orden_id: previo.orden_id } }];\n}\nconst g = (r.data || [])[0] || {};\nif (!g.trackingNumber) {\n  return [{ json: { ok: false, motivo: 'envia_sin_guia', respuesta: r, orden_id: previo.orden_id } }];\n}\nreturn [{ json: { ok: true, orden_id: previo.orden_id, contactId: previo.contactId,\n                  cantidad: previo.cantidad, peso: previo.peso,\n                  numero_guia: g.trackingNumber, etiqueta_pdf: g.label, track_url: g.trackUrl,\n                  folio: g.folio, costo_guia: g.totalPrice,\n                  fecha_envio: new Date().toISOString() } }];"
+        "jsCode": "// Saca el número de rastreo y la etiqueta de la respuesta probada el 25 sep.\n// Envia devuelve errores con HTTP 200 y meta: 'error', así que se revisa aquí.\nconst r = $json;\nconst previo = $('Armar el envío').first().json;\nif (r.meta === 'error') {\n  return [{ json: { ok: false, motivo: 'envia_error', detalle: r.error, orden_id: previo.orden_id } }];\n}\nconst g = (r.data || [])[0] || {};\nif (!g.trackingNumber) {\n  return [{ json: { ok: false, motivo: 'envia_sin_guia', respuesta: r, orden_id: previo.orden_id } }];\n}\nreturn [{ json: { ok: true, orden_id: previo.orden_id, contactId: previo.contactId, opportunityId: previo.opportunityId,\n                  cantidad: previo.cantidad, peso: previo.peso,\n                  numero_guia: g.trackingNumber, etiqueta_pdf: g.label, track_url: g.trackUrl,\n                  folio: g.folio, costo_guia: g.totalPrice,\n                  fecha_envio: new Date().toISOString() } }];"
       },
       "id": "leer-guia",
       "name": "Leer número de guía",
@@ -218,7 +218,7 @@
     {
       "parameters": {
         "method": "PUT",
-        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Leer número de guía').first().json.contactId }}",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Leer número de guía').first().json.opportunityId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -236,7 +236,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify((() => { const g = $('Leer número de guía').first().json; return { customFields: [ { key: 'numero_guia', field_value: g.numero_guia }, { key: 'fecha_envio', field_value: g.fecha_envio }, { key: 'etiqueta_pdf', field_value: g.etiqueta_pdf }, { key: 'track_url', field_value: g.track_url } ] }; })()) }}",
+        "jsonBody": "={{ JSON.stringify((() => { const g = $('Leer número de guía').first().json; return { customFields: (() => { const ids = {}; for (const f of $('GHL · campos del pedido').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id; return Object.entries({ numero_guia: g.numero_guia, fecha_envio: g.fecha_envio, etiqueta_pdf: g.etiqueta_pdf, track_url: g.track_url }).map(([k, v]) => { if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k); return { id: ids[k], field_value: v }; }); })() }; })()) }}",
         "options": {}
       },
       "id": "guardar",
@@ -244,7 +244,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1900,
+        2120,
         60
       ],
       "credentials": {
@@ -253,7 +253,7 @@
           "name": "GHL · PIT Greentex"
         }
       },
-      "notes": "etiqueta_pdf y track_url son campos NUEVOS del contacto: hay que crearlos en Greentex (carpeta Envío) antes de importar."
+      "notes": "Guarda numero_guia, fecha_envio, etiqueta_pdf y track_url en la OPORTUNIDAD del pedido (campos de modelo opportunity, carpeta Guía). Se escriben por id; si falta un campo en la subcuenta, el nodo truena."
     },
     {
       "parameters": {
@@ -266,7 +266,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        2120,
+        2340,
         60
       ]
     },
@@ -350,6 +350,12 @@
               "name": "ALMACEN_EMAIL",
               "value": "PENDIENTE",
               "type": "string"
+            },
+            {
+              "id": "cfg-ghl_location_id",
+              "name": "GHL_LOCATION_ID",
+              "value": "c9jj5uu1WZOIkwi6Vfj5",
+              "type": "string"
             }
           ]
         },
@@ -365,6 +371,37 @@
         160
       ],
       "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=opportunity",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n4-campos",
+      "name": "GHL · campos del pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1900,
+        60
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
     }
   ],
   "connections": {
@@ -452,7 +489,7 @@
       "main": [
         [
           {
-            "node": "GHL · guardar guía",
+            "node": "GHL · campos del pedido",
             "type": "main",
             "index": 0
           }
@@ -475,6 +512,17 @@
         [
           {
             "node": "Armar el envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos del pedido": {
+      "main": [
+        [
+          {
+            "node": "GHL · guardar guía",
             "type": "main",
             "index": 0
           }

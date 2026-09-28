@@ -96,8 +96,12 @@ producción la cuenta va en MXN—. Tarifas de referencia Nuevo Laredo → Monte
 `max_weight: 50` kg: una paca por guía si va a ocurre. **La recolección
 (`ship/pickup/`) no se probó**: el cuerpo de `N4` sigue la referencia oficial.
 
-**Campos nuevos que `N4` escribe en el contacto y todavía no existen en Greentex:**
-`etiqueta_pdf` y `track_url`. Hay que crearlos en la carpeta Envío antes de importar.
+**Los datos del pedido viven en la oportunidad, no en el contacto** (28 sep): un contacto
+puede tener varios pedidos y en el contacto se pisarían. `N1` escribe el apartado y la
+liga en la oportunidad, `N2` la lee y la marca `abandoned` al vencer, `N4` guarda la guía
+en ella (necesita `opportunityId` en el body) y `N5` la rastrea. Los campos se crean con
+`scripts/crear-esqueleto-menudeo.py`. En el contacto sólo quedan los de la persona y los
+que escribe el bot (ciudad, CP, sucursal, servicio, `branch_code`).
 
 **Pendiente nuevo (25 sep):** `N4` manda una sola caja de `45 × cantidad` kg. Las
 sucursales aceptan máximo 50 kg por paquete, así que un pedido de varias pacas a

@@ -71,7 +71,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Los campos viven en el CONTACTO, no en la oportunidad, y GET /contacts/{id} los trae\n// sólo como { id, value }: se traduce clave -> id con la lista de campos de la subcuenta.\nconst ids = {};\nfor (const f of $('GHL · campos (reloj)').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^contact\\./, '')] = f.id;\nconst ops = $('Oportunidades').all().map(i => i.json);\nconst lector = (c) => (clave) => { const x = (c.customFields || []).find(f => f.id === ids[clave]); return x ? (x.fieldValue ?? x.value) : null; };\n\n// Saca los que traen número de guía. Sin guía no hay nada que rastrear.\nconst salida = [];\n$input.all().forEach((it, k) => {\n  const c = it.json.contact || {};\n  const guia = lector(c)('numero_guia');\n  if (guia) salida.push({ json: { opportunityId: ops[k].opportunityId, contactId: c.id, numero_guia: guia } });\n});\nreturn salida;"
+        "jsCode": "const idsPedido = (nodo) => { const m = {};\n  for (const f of $(nodo).first().json.customFields || []) m[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id;\n  return m; };\nconst valor = (o, ids, clave) => { const x = (o.customFields || []).find(f => f.id === ids[clave]);\n  if (!x) return null;\n  const v = x.fieldValue ?? x.value ?? x.fieldValueString ?? x.fieldValueNumber ?? x.fieldValueArray ?? null;\n  return Array.isArray(v) ? v[0] ?? null : v; };\n\n// Saca los pedidos en etapa «Enviado» que traen número de guía.\nconst ids = idsPedido('GHL · campos (reloj)');\nconst salida = [];\nfor (const o of $input.first().json.opportunities || []) {\n  const guia = valor(o, ids, 'numero_guia');\n  if (guia) salida.push({ json: { opportunityId: o.id, contactId: o.contactId || (o.contact || {}).id, numero_guia: guia } });\n}\nreturn salida;"
       },
       "id": "con-guia",
       "name": "Los que tienen guía",
@@ -217,46 +217,14 @@
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/contacts/{{ ($json.body.customData || {}).contactId || $json.body.contactId || $json.body.contact_id }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Version",
-              "value": "2021-07-28"
-            }
-          ]
-        },
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "options": {}
-      },
-      "id": "leer-contacto",
-      "name": "GHL · leer contacto",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        580,
-        420
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REEMPLAZAR",
-          "name": "GHL · PIT Greentex"
-        }
-      },
-      "notes": "La guía vive en el campo numero_guia del contacto; la escribe N4."
-    },
-    {
-      "parameters": {
-        "jsCode": "// Saca la guía del contacto. Sin guía, se responde sin llamar a Envia.\n// GET /contacts/{id} trae los custom fields sólo como { id, value }, sin la clave:\n// se traduce clave -> id con la lista de campos de la subcuenta.\nconst c = $('GHL · leer contacto').first().json.contact || {};\nconst ids = {};\nfor (const f of $input.first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^contact\\./, '')] = f.id;\nconst campos = c.customFields || [];\nconst buscar = (clave) => { const x = campos.find(f => f.id === ids[clave] || (f.fieldKey || '').endsWith(clave)); return x ? (x.fieldValue ?? x.value) : null; };\nconst guia = buscar('numero_guia');\nreturn [{ json: { contactId: c.id, numero_guia: guia, track_url: buscar('track_url'), sin_guia: !guia } }];"
+        "jsCode": "const idsPedido = (nodo) => { const m = {};\n  for (const f of $(nodo).first().json.customFields || []) m[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id;\n  return m; };\nconst valor = (o, ids, clave) => { const x = (o.customFields || []).find(f => f.id === ids[clave]);\n  if (!x) return null;\n  const v = x.fieldValue ?? x.value ?? x.fieldValueString ?? x.fieldValueNumber ?? x.fieldValueArray ?? null;\n  return Array.isArray(v) ? v[0] ?? null : v; };\n\n// El pedido abierto más reciente que ya tiene guía. Sin guía, se responde sin llamar a Envia.\nconst ids = idsPedido('GHL · campos del pedido');\nconst ops = ($('GHL · pedidos del contacto').first().json.opportunities || [])\n  .map(o => ({ o, guia: valor(o, ids, 'numero_guia') })).filter(x => x.guia)\n  .sort((a, b) => String(b.o.updatedAt || b.o.lastStatusChangeAt || '').localeCompare(String(a.o.updatedAt || a.o.lastStatusChangeAt || '')));\nconst x = ops[0];\nreturn [{ json: { opportunityId: x ? x.o.id : null, numero_guia: x ? x.guia : null,\n  track_url: x ? valor(x.o, ids, 'track_url') : null, sin_guia: !x } }];"
       },
       "id": "guia-contacto",
-      "name": "Guía del contacto",
+      "name": "Guía del pedido",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
+        1020,
         420
       ]
     },
@@ -335,7 +303,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Mismo catálogo que «Traducir estatus», pero para una sola guía y en palabras para el bot.\nconst r = $json;\nconst previo = $('Guía del contacto').first().json;\nif (r.meta === 'error' || !(r.data || []).length) {\n  return [{ json: { ok: false, estatus: 'desconocido', estatus_texto: 'No pude consultar el rastreo ahora mismo; intenta en unos minutos.', track_url: previo.track_url } }];\n}\nconst t = r.data[0];\nconst clave = String(t.status || '').toLowerCase().replace(/[^a-z]/g, '');\nconst camino = ['en_transito', 'Tu paquete ya va en camino.'];\nconst sucursal = ['en_sucursal', 'Tu paquete ya está en la sucursal, listo para recoger.'];\nconst incid = ['incidencia', 'Hubo un contratiempo con tu envío; ya lo estamos revisando.'];\nconst cancel = ['cancelado', 'Esa guía se canceló; te contactamos para resolverlo.'];\nconst mapa = { created: ['creada', 'Tu guía ya está generada y el paquete está por salir del almacén.'],\n  pickedup: camino, collected: camino, shipped: camino, intransit: camino,\n  outfordelivery: ['en_reparto', 'Tu paquete está en reparto, llega hoy.'],\n  readyforpickup: sucursal, availableforpickup: sucursal, atbranch: sucursal,\n  delivered: ['entregado', 'Tu paquete ya fue entregado.'],\n  canceled: cancel, cancelled: cancel, exception: incid, returned: incid };\nconst [estado, texto] = mapa[clave] || camino;\nconst eta = t.estimatedDelivery ? ` Entrega estimada: ${String(t.estimatedDelivery).slice(0, 10)}.` : '';\nreturn [{ json: { ok: true, estatus: estado, estatus_crudo: t.status, estatus_texto: texto + eta, entrega_estimada: t.estimatedDelivery, track_url: t.trackUrlSite || t.trackUrl || previo.track_url } }];"
+        "jsCode": "// Mismo catálogo que «Traducir estatus», pero para una sola guía y en palabras para el bot.\nconst r = $json;\nconst previo = $('Guía del pedido').first().json;\nif (r.meta === 'error' || !(r.data || []).length) {\n  return [{ json: { ok: false, estatus: 'desconocido', estatus_texto: 'No pude consultar el rastreo ahora mismo; intenta en unos minutos.', track_url: previo.track_url } }];\n}\nconst t = r.data[0];\nconst clave = String(t.status || '').toLowerCase().replace(/[^a-z]/g, '');\nconst camino = ['en_transito', 'Tu paquete ya va en camino.'];\nconst sucursal = ['en_sucursal', 'Tu paquete ya está en la sucursal, listo para recoger.'];\nconst incid = ['incidencia', 'Hubo un contratiempo con tu envío; ya lo estamos revisando.'];\nconst cancel = ['cancelado', 'Esa guía se canceló; te contactamos para resolverlo.'];\nconst mapa = { created: ['creada', 'Tu guía ya está generada y el paquete está por salir del almacén.'],\n  pickedup: camino, collected: camino, shipped: camino, intransit: camino,\n  outfordelivery: ['en_reparto', 'Tu paquete está en reparto, llega hoy.'],\n  readyforpickup: sucursal, availableforpickup: sucursal, atbranch: sucursal,\n  delivered: ['entregado', 'Tu paquete ya fue entregado.'],\n  canceled: cancel, cancelled: cancel, exception: incid, returned: incid };\nconst [estado, texto] = mapa[clave] || camino;\nconst eta = t.estimatedDelivery ? ` Entrega estimada: ${String(t.estimatedDelivery).slice(0, 10)}.` : '';\nreturn [{ json: { ok: true, estatus: estado, estatus_crudo: t.status, estatus_texto: texto + eta, entrega_estimada: t.estimatedDelivery, track_url: t.trackUrlSite || t.trackUrl || previo.track_url } }];"
       },
       "id": "estatus-palabras",
       "name": "Estatus en palabras",
@@ -431,6 +399,12 @@
               "name": "GHL_LOCATION_ID",
               "value": "c9jj5uu1WZOIkwi6Vfj5",
               "type": "string"
+            },
+            {
+              "id": "cfg-ghl_pipeline_id",
+              "name": "GHL_PIPELINE_ID",
+              "value": "80QTHEK406nT2KJhQ6TZ",
+              "type": "string"
             }
           ]
         },
@@ -449,39 +423,7 @@
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config rastreo').first().json.GHL_LOCATION_ID }}/customFields?model=contact",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Version",
-              "value": "2021-07-28"
-            }
-          ]
-        },
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "options": {}
-      },
-      "id": "n5-campos-contacto",
-      "name": "GHL · campos del contacto",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        800,
-        580
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REEMPLAZAR",
-          "name": "GHL · PIT Greentex"
-        }
-      },
-      "notes": "La guía vive en el campo numero_guia del contacto; la escribe N4."
-    },
-    {
-      "parameters": {
-        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=contact",
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=opportunity",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -495,13 +437,13 @@
         },
         "options": {}
       },
-      "id": "con-guia-campos",
+      "id": "n5-campos-reloj",
       "name": "GHL · campos (reloj)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         460,
-        340
+        320
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -512,20 +454,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Una oportunidad por item; el siguiente nodo lee el contacto de cada una.\n// ponytail: una llamada a GHL por oportunidad abierta (tope 100 por corrida). Si el volumen\n// crece, cambiar a POST /contacts/search filtrando por el campo.\nreturn ($input.first().json.opportunities || []).map(o => ({ json: { opportunityId: o.id, contactId: o.contactId || (o.contact || {}).id } }));"
-      },
-      "id": "con-guia-ops",
-      "name": "Oportunidades",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        800,
-        340
-      ]
-    },
-    {
-      "parameters": {
-        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contactId }}",
+        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config rastreo').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config rastreo').first().json.GHL_PIPELINE_ID }}&contact_id={{ ($json.body.customData || {}).contactId || $json.body.contactId || $json.body.contact_id }}&status=open&limit=100",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -539,13 +468,44 @@
         },
         "options": {}
       },
-      "id": "con-guia-leer",
-      "name": "GHL · leer contacto (cada una)",
+      "id": "n5-pedidos",
+      "name": "GHL · pedidos del contacto",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
-        340
+        580,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config rastreo').first().json.GHL_LOCATION_ID }}/customFields?model=opportunity",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n5-campos-webhook",
+      "name": "GHL · campos del pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        580
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -571,7 +531,7 @@
       "main": [
         [
           {
-            "node": "Oportunidades",
+            "node": "Los que tienen guía",
             "type": "main",
             "index": 0
           }
@@ -645,28 +605,6 @@
         ]
       ]
     },
-    "GHL · leer contacto": {
-      "main": [
-        [
-          {
-            "node": "GHL · campos del contacto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Guía del contacto": {
-      "main": [
-        [
-          {
-            "node": "¿Sin guía?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "¿Sin guía?": {
       "main": [
         [
@@ -722,40 +660,7 @@
       "main": [
         [
           {
-            "node": "GHL · leer contacto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "GHL · campos del contacto": {
-      "main": [
-        [
-          {
-            "node": "Guía del contacto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Oportunidades": {
-      "main": [
-        [
-          {
-            "node": "GHL · leer contacto (cada una)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "GHL · leer contacto (cada una)": {
-      "main": [
-        [
-          {
-            "node": "Los que tienen guía",
+            "node": "GHL · pedidos del contacto",
             "type": "main",
             "index": 0
           }
@@ -767,6 +672,39 @@
         [
           {
             "node": "GHL · envíos en curso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · pedidos del contacto": {
+      "main": [
+        [
+          {
+            "node": "GHL · campos del pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos del pedido": {
+      "main": [
+        [
+          {
+            "node": "Guía del pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guía del pedido": {
+      "main": [
+        [
+          {
+            "node": "¿Sin guía?",
             "type": "main",
             "index": 0
           }

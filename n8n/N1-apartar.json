@@ -201,7 +201,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
+        "responseBody": "={{ JSON.stringify($('Armar respuesta').first().json) }}",
         "options": {}
       },
       "id": "resp-ok",
@@ -209,7 +209,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        2560,
+        3660,
         40
       ]
     },
@@ -416,6 +416,30 @@
               "name": "HORAS_APARTADO",
               "value": "24",
               "type": "string"
+            },
+            {
+              "id": "cfg-ghl_pipeline_id",
+              "name": "GHL_PIPELINE_ID",
+              "value": "80QTHEK406nT2KJhQ6TZ",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_lead",
+              "name": "GHL_STAGE_LEAD",
+              "value": "bd808b6f-2132-4c20-bff8-67ec06db36f6",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_conversacion",
+              "name": "GHL_STAGE_CONVERSACION",
+              "value": "d34058aa-0d9e-42a0-af22-b1732835e676",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_liga",
+              "name": "GHL_STAGE_LIGA",
+              "value": "4f1e4ebd-9514-4f7d-98ef-0bcb4c145744",
+              "type": "string"
             }
           ]
         },
@@ -431,6 +455,191 @@
         140
       ],
       "notes": "Configuración del flujo. Antes eran variables de entorno ($env), pero la instancia las bloquea. Cambia aquí los valores; PENDIENTE = todavía no lo tenemos. includeOtherFields deja pasar el item del disparador."
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config').first().json.GHL_PIPELINE_ID }}&contact_id={{ $json.contactId }}&status=open&limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n1-pedidos",
+      "name": "GHL · pedidos del contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config').first().json.GHL_LOCATION_ID }}/customFields?model=opportunity",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n1-campos",
+      "name": "GHL · campos del pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2780,
+        40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// El apartado va a la oportunidad del lead (etapa 1 o 2) si hay una abierta.\n// Si no, se crea una: nunca se reusa la de otro pedido que ya va más adelante.\nconst c = $('Config').first().json;\nconst tempranas = [c.GHL_STAGE_LEAD, c.GHL_STAGE_CONVERSACION];\nconst ops = $('GHL · pedidos del contacto').first().json.opportunities || [];\nconst o = ops.find(x => tempranas.includes(x.pipelineStageId));\nreturn [{ json: { opportunityId: o ? o.id : '' } }];"
+      },
+      "id": "n1-elegir",
+      "name": "Elegir oportunidad",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3000,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "n1-hay-c",
+              "leftValue": "={{ $json.opportunityId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n1-hay",
+      "name": "¿Hay oportunidad del lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3220,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $json.opportunityId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {},
+        "method": "PUT",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((() => { const a = $('Armar respuesta').first().json; const c = $('Config').first().json; return { pipelineId: c.GHL_PIPELINE_ID, pipelineStageId: c.GHL_STAGE_LIGA, status: 'open', monetaryValue: a.monto, customFields: (() => { const ids = {}; for (const f of $('GHL · campos del pedido').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id; return Object.entries({ sku_apartado: a.sku, articulo_apartado: a.articulo, cantidad_apartada: a.cantidad, monto_apartado: a.monto, estado_apartado: 'apartado', expira_en: a.expira_en, invoice_id: a.invoice_id, liga_pago: a.liga_pago }).map(([k, v]) => { if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k); return { id: ids[k], field_value: v }; }); })() }; })()) }}"
+      },
+      "id": "n1-actualizar",
+      "name": "GHL · apartado en la oportunidad",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3440,
+        -60
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {},
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((() => { const a = $('Armar respuesta').first().json; const c = $('Config').first().json; return { locationId: c.GHL_LOCATION_ID, contactId: a.contactId, name: 'Pedido ' + a.articulo + ' · ' + a.expira_en.slice(0, 10), pipelineId: c.GHL_PIPELINE_ID, pipelineStageId: c.GHL_STAGE_LIGA, status: 'open', monetaryValue: a.monto, customFields: (() => { const ids = {}; for (const f of $('GHL · campos del pedido').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id; return Object.entries({ sku_apartado: a.sku, articulo_apartado: a.articulo, cantidad_apartada: a.cantidad, monto_apartado: a.monto, estado_apartado: 'apartado', expira_en: a.expira_en, invoice_id: a.invoice_id, liga_pago: a.liga_pago }).map(([k, v]) => { if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k); return { id: ids[k], field_value: v }; }); })() }; })()) }}"
+      },
+      "id": "n1-crear",
+      "name": "GHL · crear oportunidad del pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3440,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
     }
   ],
   "connections": {
@@ -522,7 +731,7 @@
       "main": [
         [
           {
-            "node": "Responder apartado",
+            "node": "GHL · pedidos del contacto",
             "type": "main",
             "index": 0
           }
@@ -578,6 +787,79 @@
         [
           {
             "node": "GHL · inventario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · pedidos del contacto": {
+      "main": [
+        [
+          {
+            "node": "GHL · campos del pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos del pedido": {
+      "main": [
+        [
+          {
+            "node": "Elegir oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir oportunidad": {
+      "main": [
+        [
+          {
+            "node": "¿Hay oportunidad del lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay oportunidad del lead?": {
+      "main": [
+        [
+          {
+            "node": "GHL · apartado en la oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL · crear oportunidad del pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · apartado en la oportunidad": {
+      "main": [
+        [
+          {
+            "node": "Responder apartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · crear oportunidad del pedido": {
+      "main": [
+        [
+          {
+            "node": "Responder apartado",
             "type": "main",
             "index": 0
           }

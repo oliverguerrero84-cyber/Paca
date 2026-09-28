@@ -294,6 +294,14 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 
 ## 4. Custom fields
 
+> **28 sep: los datos de cada pedido viven en la OPORTUNIDAD**, no en el contacto. Un
+> contacto puede tener varios pedidos a la vez y en el contacto se pisarían. Son de
+> oportunidad las carpetas **Apartado**, **Pago** y **Guía** (`numero_guia`, `etiqueta_pdf`,
+> `track_url`, `fecha_envio`); en las plantillas van como `{{opportunity.…}}`. Se quedan
+> en el contacto **Envío** (ciudad, estado, CP, sucursal, servicio, `branch_code`: los
+> escribe el bot, y Conversation AI sólo escribe campos de contacto) y **Atribución**.
+> Un apartado vencido deja la oportunidad en `abandoned`.
+
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
 `articulo_apartado` (texto — el nombre legible; `sku_apartado` guarda la clave y
 ningún mensaje al cliente puede decir «tu apartado de PV-MUJ-BOU») ·
