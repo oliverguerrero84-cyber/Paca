@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 25 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 28 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -17,7 +17,8 @@ motor —n8n, workflows y el agente— y los datos que el cliente todavía no ma
 de sep cambió la pasarela: se cobra con el Stripe del cliente, no con Mercado Pago**, y
 la primera pieza que hace falta es que él lo conecte en Greentex. Mientras, el 25 de sep se probaron
 las dos piezas del cobro que no dependen de él: la factura por API ya se crea y su liga abre
-el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
+el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga. **El 28 de sep
+`N1` corrió de punta a punta en Greentex**: aparta, descuenta stock y crea y envía la factura.
 
 ## 2. Hecho
 
@@ -50,6 +51,7 @@ el checkout, y el asistente ya llama a la API a mitad de turno y manda la liga.
 | **Envia probado en su sandbox**: cotización, guía a domicilio y a sucursal, y rastreo. `N3`, `N4` y `N5` corregidos con la API real; supuestos 3 a 6 de n8n cerrados | 786 | 25 sep |
 | **El asistente vive en Conversation AI**, con acciones Custom API, en vez de Agent Studio. Decidido tras el ensayo del mismo día | 786 | 25 sep |
 | **Greentex en MXN** (`0.2c`) | 786 | 25 sep |
+| **`N1` probado de punta a punta en Greentex**, disparado por un Webhook de un workflow de GHL: encuentra el SKU, descuenta stock, crea y envía la factura. Salieron tres cosas: el `N1` de la instancia era una versión vieja (se reimportó), el Webhook de GHL manda los datos en `customData` y `contact_id` (`N1` ya acepta las dos formas), y `/send` da 422 con `autoPayment: false` (quitado) | Germán y 786 | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / 786 | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
@@ -64,7 +66,9 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
-| `0.3` | **Reimportar los 5 flujos** desde el repo (ya cambiaron: inventario, `Config`, webhook de `N5`), asignar las dos credenciales en sus nodos y poner `N1` en **concurrencia 1**. Luego la prueba de `N1` de punta a punta y **medir que responda en menos de 10 s**: validación 3 | Germán |
+| `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales y **medir que `N1` responda en menos de 10 s**: validación 3 | Germán |
+| — | **Abrir la liga de pago de la prueba** y confirmar que el checkout sale en MXN y si muestra OXXO y SPEI: validación 4 | 786 |
+| — | **Limpiar lo de la prueba en Greentex**: el workflow `PRUEBA N1 - webhook apartar`, la factura de prueba y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
 | `A3` | Confirmar que **+1 (956) 820-2011 recibe SMS o llamada**. Si es VoIP, el alta en Meta puede fallar y hay que conseguir otro número | 786 |
 | — | **Agendar la sesión de mapeo** con el cliente, y en ella pedirle que conecte su Stripe en Greentex (`B1`) | 786 |
 | — | El **logo de 786**: la propuesta todavía lleva el wordmark provisional en CSS | 786 |
