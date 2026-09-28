@@ -135,7 +135,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2040,
+        2920,
         40
       ],
       "credentials": {
@@ -175,7 +175,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2260,
+        3140,
         40
       ],
       "credentials": {
@@ -194,7 +194,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2480,
+        3360,
         40
       ]
     },
@@ -209,7 +209,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        4460,
+        5340,
         40
       ]
     },
@@ -252,7 +252,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2700,
+        3580,
         40
       ],
       "credentials": {
@@ -284,7 +284,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2920,
+        3800,
         40
       ],
       "credentials": {
@@ -324,7 +324,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3140,
+        4020,
         40
       ],
       "credentials": {
@@ -364,7 +364,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3360,
+        4240,
         40
       ],
       "credentials": {
@@ -384,7 +384,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3580,
+        4460,
         40
       ],
       "notes": "GHL_INVOICE_URL_BASE = dominio de la subcuenta, sin barra final (Korvance: https://link.korvance.com). Formato /invoice/{id} CONFIRMADO el 25 sep: abre la página de la factura con el botón de pago."
@@ -439,6 +439,12 @@
               "id": "cfg-ghl_stage_liga",
               "name": "GHL_STAGE_LIGA",
               "value": "4f1e4ebd-9514-4f7d-98ef-0bcb4c145744",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_stage_apartado",
+              "name": "GHL_STAGE_APARTADO",
+              "value": "4e1d2753-b967-4817-b3b2-2b0a42efa5c6",
               "type": "string"
             }
           ]
@@ -508,8 +514,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3580,
-        40
+        2040,
+        140
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -559,13 +565,13 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4020,
-        40
+        2260,
+        140
       ]
     },
     {
       "parameters": {
-        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Elegir oportunidad').first().json.opportunityId }}",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Oportunidad del pedido').first().json.opportunityId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -592,7 +598,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4240,
+        5120,
         -60
       ],
       "credentials": {
@@ -624,22 +630,23 @@
         "method": "POST",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify((() => { const a = $('Armar respuesta').first().json; const c = $('Config').first().json; return { locationId: c.GHL_LOCATION_ID, contactId: a.contactId, name: 'Pedido ' + a.articulo + ' · ' + a.expira_en.slice(0, 10), pipelineId: c.GHL_PIPELINE_ID, pipelineStageId: c.GHL_STAGE_LIGA, status: 'open', monetaryValue: a.monto, customFields: (() => { const ids = {}; for (const f of $('GHL · campos del pedido').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id; return Object.entries({ sku_apartado: a.sku, articulo_apartado: a.articulo, cantidad_apartada: a.cantidad, monto_apartado: a.monto, estado_apartado: 'apartado', expira_en: a.expira_en, invoice_id: a.invoice_id, liga_pago: a.liga_pago }).map(([k, v]) => { if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k); return { id: ids[k], field_value: v }; }); })() }; })()) }}"
+        "jsonBody": "={{ JSON.stringify((() => { const r = $('Resolver SKU y stock').first().json; const c = $('Config').first().json; return { locationId: c.GHL_LOCATION_ID, contactId: r.contactId, pipelineId: c.GHL_PIPELINE_ID, pipelineStageId: c.GHL_STAGE_APARTADO, status: 'open', name: 'Pedido ' + r.nombre + ' · ' + new Date().toISOString().slice(0, 10), customFields: (() => { const ids = {}; for (const f of $('GHL · campos del pedido').first().json.customFields || []) ids[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id; return Object.entries({ sku_apartado: r.sku, articulo_apartado: r.nombre, cantidad_apartada: r.cantidad, estado_apartado: 'apartado' }).map(([k, v]) => { if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k); return { id: ids[k], field_value: v }; }); })() }; })()) }}"
       },
       "id": "n1-crear",
       "name": "GHL · crear oportunidad del pedido",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4240,
-        140
+        2480,
+        300
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "REEMPLAZAR",
           "name": "GHL · PIT Greentex"
         }
-      }
+      },
+      "notes": "Se crea ANTES de descontar stock. Si GHL la rechaza (p. ej. OPPORTUNITY_NO_DUPLICATE, sin la opción de duplicados), el flujo se detiene aquí y el stock queda intacto."
     },
     {
       "parameters": {
@@ -690,6 +697,19 @@
         340
       ],
       "notes": "El bot le explica que termine o cancele su pedido actual antes de apartar otro. No se tocó el stock."
+    },
+    {
+      "parameters": {
+        "jsCode": "// La oportunidad del pedido: la del lead, o la que se acaba de crear.\nconst lead = $('Elegir oportunidad').first().json.opportunityId;\nconst creada = lead ? null : (($input.first().json.opportunity || {}).id || $input.first().json.id);\nconst opportunityId = lead || creada;\nif (!opportunityId) throw new Error('Sin oportunidad del pedido: no se descuenta stock');\nreturn [{ json: { opportunityId } }];"
+      },
+      "id": "n1-oportunidad",
+      "name": "Oportunidad del pedido",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2700,
+        140
+      ]
     }
   ],
   "connections": {
@@ -719,7 +739,7 @@
       "main": [
         [
           {
-            "node": "GHL · leer precio",
+            "node": "GHL · campos del pedido",
             "type": "main",
             "index": 0
           }
@@ -781,7 +801,7 @@
       "main": [
         [
           {
-            "node": "GHL · campos del pedido",
+            "node": "GHL · apartado en la oportunidad",
             "type": "main",
             "index": 0
           }
@@ -880,7 +900,7 @@
       "main": [
         [
           {
-            "node": "GHL · apartado en la oportunidad",
+            "node": "Oportunidad del pedido",
             "type": "main",
             "index": 0
           }
@@ -909,7 +929,7 @@
       "main": [
         [
           {
-            "node": "Responder apartado",
+            "node": "Oportunidad del pedido",
             "type": "main",
             "index": 0
           }
@@ -928,6 +948,17 @@
         [
           {
             "node": "GHL · inventario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Oportunidad del pedido": {
+      "main": [
+        [
+          {
+            "node": "GHL · leer precio",
             "type": "main",
             "index": 0
           }
