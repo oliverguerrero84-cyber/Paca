@@ -65,6 +65,8 @@ de cada cosa.
 | **`N4` probado desde un Webhook de GHL en Greentex**, contra el sandbox de Envia: genera la guía a sucursal y la etiqueta en PDF. Con un almacén de prueba en `Config`, porque el real sigue en `PENDIENTE`. La liga de rastreo del sandbox (`test.envia.com`) no abre; en producción Envia la devuelve en `envia.com` | Germán | 28 sep |
 | **`N5` por webhook probado**: responde el estatus de la guía del contacto | Germán | 28 sep |
 | **`N2` y el reloj de `N5` corregidos, sin probar en vivo**: buscaban los campos en la oportunidad, pero viven en el contacto, y `GET /contacts/{id}` los devuelve sin clave, sólo con id. Así `N2` nunca habría liberado un apartado vencido, sin dar error. Ahora leen el contacto de cada oportunidad y traducen clave → id; `N2` además marcaba vencido a un contacto vacío | Claude / 786 | 28 sep |
+| **`N2` probado en vivo**: liberó la paca vencida y la devolvió al stock | Germán | 28 sep |
+| **Los datos del pedido pasan a la oportunidad** (decisión de Germán: un contacto puede tener varios pedidos). Apartado, Pago y Guía son campos de oportunidad; Envío y Atribución se quedan en el contacto porque el bot sólo escribe ahí. `N1` escribe el apartado en la oportunidad del lead (o crea una) y la pasa a «Liga de Pago Enviada»; `N2` revisa las etapas 3 y 4 y deja el vencido en `abandoned`; `N4` guarda la guía en la oportunidad; `N5` rastrea desde ella. **En el repo y probado con datos simulados; falta crear los campos y probar en vivo** | Claude / 786 | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
@@ -79,6 +81,9 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | # | Qué | Quién |
 |---|---|---|
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
+| — | **Crear los campos de oportunidad en Greentex**: `GHL_API_KEY` con el PIT de Greentex y `python scripts/crear-esqueleto-menudeo.py --dry-run`, luego sin `--dry-run`. Después, reimportar `N1`, `N2`, `N4` y `N5` y repetir las pruebas | Germán |
+| — | **Borrar los 11 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
+| — | Al armar `SP05`: el Webhook a `N4` tiene que mandar `opportunityId` = `{{opportunity.id}}` en Custom Data | 786 |
 | `0.3` | `N1` ya está reimportado y probado. Falta **reimportar `N2` a `N5`** desde el repo, asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: el workflow `PRUEBA N1 - webhook apartar`, la factura de prueba y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
