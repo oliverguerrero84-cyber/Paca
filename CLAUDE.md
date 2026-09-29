@@ -10,6 +10,17 @@ entromete con mi menudeo"*.
 entero en una sola lectura y `docs/14-estado.md` dice en qué va hoy. Lee los dos
 antes de tocar nada.
 
+**Si te dicen «continuemos»:** retoma desde `docs/14-estado.md` §0 «Continuar desde
+aquí». Ahí están el siguiente paso exacto, los accesos que hacen falta y las decisiones
+que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguiente.
+
+**Herramientas que ya existen, antes de escribir otra:**
+- `scripts/subir-n8n.py` sube los flujos del repo a n8n por la API, con las credenciales reales.
+- `scripts/crear-esqueleto-menudeo.py` crea pipeline, campos (de contacto y de oportunidad) y custom values.
+- `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
+
+Todos leen sus credenciales del entorno.
+
 ---
 
 ## Reglas duras

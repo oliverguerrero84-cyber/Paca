@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 28 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 29 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -8,6 +8,51 @@
 > plan y éste sólo en el avance.
 
 ---
+
+## 0. Continuar desde aquí
+
+> **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
+
+**Dónde quedó (29 sep):**
+- Los 5 flujos de n8n están en el n8n de Germán.
+  - Probados en vivo con los datos en la oportunidad: `N1` y `N2`.
+  - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
+- Se decidió el orden de construcción de los workflows de GHL (`docs/01-mapa-ghl.md` §2, «Detalle de cada workflow — rediseño del 28 sep»).
+- Se le dio a Germán la guía de **`AP01 · Rastreo`**, y estamos **esperando que pase la URL de su Inbound Webhook**.
+
+**Siguiente paso, en orden:**
+1. **Terminar `AP01`.** Con la URL del Inbound Webhook:
+   1. Poner el id en `GHL_WEBHOOK_RASTREO` del nodo `Config` de `n8n/N5-rastrear.json`.
+   2. Subirlo con `python scripts/subir-n8n.py n8n/N5-rastrear.json --aplicar`.
+   3. Mandar al webhook un POST de ejemplo, para que GHL aprenda los campos, con `estado: entregado` y el `opportunityId` de «Prueba Paca».
+   4. Verificar por la API que la oportunidad quedó en «Entregado / Cerrado» con status **won**.
+2. **`SP02`**: guía para Germán y copia de prueba con waits de minutos.
+3. **`SP04`**: probar si «registrar pago» manual sobre una factura de prueba dispara `Payment Received`.
+4. **`AP03`** con su formulario, luego **`SP05`** (se arma; se prueba cuando lleguen los datos del almacén), **`AP02`** y **`LS01`**.
+5. **Repetir `N4` y `N5`** con los datos en la oportunidad (`N4` necesita `opportunityId` en el Custom Data).
+
+**Cómo se trabaja con Germán:**
+- Germán arma los workflows en la UI de GHL con una guía nodo por nodo; nosotros verificamos por la API.
+- Los flujos de n8n se cambian en el repo y se suben con `scripts/subir-n8n.py`, sin reimportar.
+
+**Accesos para trabajar desde Claude Code** (nunca por chat, nunca en el repo):
+- **API de Greentex:** `GHL_API_KEY` (el PIT de Greentex) y `GHL_LOCATION_ID`. En la máquina de Germán viven en `C:\Users\germa\gohighlevel-cli\.env.greentex`.
+- **API de n8n:** `N8N_API_URL` y `N8N_API_KEY`. En la máquina de Germán viven en `C:\Users\germa\.n8n-korvance.env`. Es la key de *Settings → n8n API*, no el token del MCP.
+- **En otra máquina:** pedírselos a Germán por un gestor de contraseñas y cargarlos como variables de entorno.
+
+**Decisiones pendientes de Germán:**
+- **Reabrir la oportunidad cuando GHL rechaza el duplicado.**
+  - Greentex tiene `allowDuplicateOpportunity: false`. El token de la subcuenta no puede cambiarlo (401) y en la UI de la subcuenta no aparece; queda probar desde la agencia.
+  - Sin eso, un contacto que ya tuvo una oportunidad no puede volver a apartar: `N1` se detiene antes de tocar el stock.
+  - El cambio propuesto a `N1`: en «GHL · crear oportunidad del pedido», `neverError`; y en «Oportunidad del pedido», si la respuesta es `OPPORTUNITY_NO_DUPLICATE`, usar `meta.existingId`.
+  - Existe sólo en la copia local de Germán, **sin commit**.
+- **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
+
+**Datos de prueba en Greentex hoy:**
+- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con una oportunidad (`ZMTFf0hvLxNkwQJn6tRw`) en «Liga de Pago Enviada», status `abandoned`, `estado_apartado = vencido`.
+- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 3**. Una corrida fallida de `N1` descontó una pieza que no se devolvió.
+- 5 facturas de prueba de $100 (000001 a 000005).
+- Todo esto se limpia al final (ver §3).
 
 ## 1. Dónde estamos, en una línea
 
