@@ -54,7 +54,8 @@ def main():
     for archivo in archivos:
         repo = json.load(open(archivo, encoding="utf-8"))
         nombre = repo["name"]
-        iguales = [w for w in vivos if w["name"] == nombre]
+        # Las archivadas son las copias viejas que deja cada reimportación: no cuentan.
+        iguales = [w for w in vivos if w["name"] == nombre and not w.get("isArchived")]
         print(f"\n{archivo} → «{nombre}»")
         if len(iguales) != 1:
             # Con dos copias del mismo nombre no se adivina cuál es la buena.
