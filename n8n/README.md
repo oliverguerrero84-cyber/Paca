@@ -55,6 +55,21 @@ Sin eso, dos clientes apartando la última paca en el mismo segundo hacen un
 read-check-write concurrente y el stock queda en negativo. Con 30 artículos y 500 a 800
 envíos al mes, serializar `N1` no cuesta nada.
 
+## Actualizar sin reimportar
+
+Una vez importado un flujo y con sus credenciales asignadas, los cambios del repo se suben
+con la API de n8n (*Settings → n8n API*), sin tocar la interfaz:
+
+```bash
+N8N_API_URL=https://devn8n.korvance.com N8N_API_KEY=...     python scripts/subir-n8n.py n8n/N1-apartar.json            # sólo dice qué haría
+    python scripts/subir-n8n.py n8n/N1-apartar.json --aplicar  # lo sube
+```
+
+Actualiza el flujo del mismo nombre en su lugar (mismo id, sigue activo si lo estaba) y
+le pone a cada nodo la credencial real que ya usa ese flujo: los marcadores del repo no
+llegan a la instancia. Si hay dos flujos con el mismo nombre o falta una credencial real,
+no sube nada. La API key va en el entorno, nunca en el repo.
+
 ## Lo que respetan, y por qué
 
 **Ninguno toca Stripe.** `N1` crea la factura en GHL por su API de Invoices y devuelve
