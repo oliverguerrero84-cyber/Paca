@@ -19,6 +19,7 @@
   - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
 - Se decidió el orden de construcción de los workflows de GHL (`docs/01-mapa-ghl.md` §2, «Detalle de cada workflow — rediseño del 28 sep»).
 - Se le dio a Germán la guía de **`AP01 · Rastreo`**, y estamos **esperando que pase la URL de su Inbound Webhook**.
+- **La guía de `SP02` está escrita** en `docs/16-guias-workflows.md` §2, nodo por nodo, verificada contra la cuenta. Es el documento donde van a vivir todas las guías; la de `AP01` sólo existió en un chat.
 
 **Siguiente paso, en orden:**
 0. **Probar la rama de `N1` que crea la oportunidad**: ya se puede, porque el 29 sep se activaron varias oportunidades por contacto. Con «Prueba Paca», `N1` debe crear una oportunidad **nueva** y dejar la vieja (`abandoned`) intacta. Antes, subir el stock de `test 1`.
@@ -27,7 +28,7 @@
    2. Subirlo con `python scripts/subir-n8n.py n8n/N5-rastrear.json --aplicar`.
    3. Mandar al webhook un POST de ejemplo, para que GHL aprenda los campos, con `estado: entregado` y el `opportunityId` de «Prueba Paca».
    4. Verificar por la API que la oportunidad quedó en «Entregado / Cerrado» con status **won**.
-2. **`SP02`**: guía para Germán y copia de prueba con waits de minutos.
+2. **Armar `SP02`** con `docs/16-guias-workflows.md` §2. Antes de conectar la plantilla 1 hacen falta dos cosas de §1.4: crear el campo de oportunidad `expira_texto` y que `N1` lo escriba. Primero la copia de prueba, con sus **dos** corridas —el que paga y el que no—, que es lo que cierra las 4 marcas *(verificar)*.
 3. **`SP04`**: probar si «registrar pago» manual sobre una factura de prueba dispara `Payment Received`.
 4. **`AP03`** con su formulario, luego **`SP05`** (se arma; se prueba cuando lleguen los datos del almacén), **`AP02`** y **`LS01`**.
 5. **Repetir `N4` y `N5`** con los datos en la oportunidad (`N4` necesita `opportunityId` en el Custom Data).
@@ -42,6 +43,7 @@
 - **En otra máquina:** pedírselos a Germán por un gestor de contraseñas y cargarlos como variables de entorno.
 
 **Decisiones pendientes de Germán:**
+- **Borrar los 14 campos viejos del contacto** (`contact.articulo_apartado`, `contact.estado_apartado`, `contact.expira_en`…), duplicados de los de la oportunidad desde el cambio del 28 sep. Nadie los escribe y están vacíos, pero en el selector de la UI se llaman igual que los buenos: escoger uno deja el mensaje vacío o el If siempre en falso, **sin error**. Es la trampa de `docs/16-guias-workflows.md` §1.2.
 - **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
 
 **Datos de prueba en Greentex hoy:**
