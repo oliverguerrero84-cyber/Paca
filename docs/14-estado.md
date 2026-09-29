@@ -21,6 +21,7 @@
 - Se le dio a Germán la guía de **`AP01 · Rastreo`**, y estamos **esperando que pase la URL de su Inbound Webhook**.
 
 **Siguiente paso, en orden:**
+0. **Probar la rama de `N1` que crea la oportunidad**: ya se puede, porque el 29 sep se activaron varias oportunidades por contacto. Con «Prueba Paca», `N1` debe crear una oportunidad **nueva** y dejar la vieja (`abandoned`) intacta. Antes, subir el stock de `test 1`.
 1. **Terminar `AP01`.** Con la URL del Inbound Webhook:
    1. Poner el id en `GHL_WEBHOOK_RASTREO` del nodo `Config` de `n8n/N5-rastrear.json`.
    2. Subirlo con `python scripts/subir-n8n.py n8n/N5-rastrear.json --aplicar`.
@@ -41,11 +42,6 @@
 - **En otra máquina:** pedírselos a Germán por un gestor de contraseñas y cargarlos como variables de entorno.
 
 **Decisiones pendientes de Germán:**
-- **Reabrir la oportunidad cuando GHL rechaza el duplicado.**
-  - Greentex tiene `allowDuplicateOpportunity: false`. El token de la subcuenta no puede cambiarlo (401) y en la UI de la subcuenta no aparece; queda probar desde la agencia.
-  - Sin eso, un contacto que ya tuvo una oportunidad no puede volver a apartar: `N1` se detiene antes de tocar el stock.
-  - El cambio propuesto a `N1`: en «GHL · crear oportunidad del pedido», `neverError`; y en «Oportunidad del pedido», si la respuesta es `OPPORTUNITY_NO_DUPLICATE`, usar `meta.existingId`.
-  - Existe sólo en la copia local de Germán, **sin commit**.
 - **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
 
 **Datos de prueba en Greentex hoy:**
@@ -116,6 +112,7 @@ de cada cosa.
 | **`N2` probado en vivo**: liberó la paca vencida y la devolvió al stock | Germán | 28 sep |
 | **Los datos del pedido pasan a la oportunidad** (decisión de Germán: un contacto puede tener varios pedidos). Apartado, Pago y Guía son campos de oportunidad; Envío y Atribución se quedan en el contacto porque el bot sólo escribe ahí. `N1` escribe el apartado en la oportunidad del lead (o crea una) y la pasa a «Liga de Pago Enviada»; `N2` revisa las etapas 3 y 4 y deja el vencido en `abandoned`; `N4` guarda la guía en la oportunidad; `N5` rastrea desde ella. **En el repo y probado con datos simulados; falta crear los campos y probar en vivo** | Claude / 786 | 28 sep |
 | **Campos de oportunidad creados en Greentex** (14, carpetas Apartado, Pago y Guía) con el script. **Sin la opción de duplicados** (no se encontró en Greentex), GHL deja una sola oportunidad abierta por contacto: `N1` ahora lo revisa antes de tocar stock y contesta `pedido_en_curso` si ya hay otro pedido abierto | Claude / 786 | 28 sep |
+| **Varias oportunidades por contacto activadas en Greentex** (*Settings → Objects → Opportunities → «Allow multiple opportunities per contact»*), verificado por la API (`allowDuplicateOpportunity: true`). Cada pedido queda en su oportunidad; se descartó el cambio de `N1` que reabría la existente | Germán | 29 sep |
 | **`N1` nuevo probado en vivo**: reutilizó la oportunidad del lead, la pasó a «Liga de Pago Enviada» y le escribió los 8 campos del apartado (`expira_en` en ISO). GHL devuelve los valores de oportunidad como `fieldValueString` / `fieldValueNumber` | Germán | 28 sep |
 | **`N2` nuevo probado en vivo**: encontró el apartado vencido en la etapa 4 leyendo los campos de la oportunidad, devolvió la paca (stock 3 → 4), puso `estado_apartado = vencido` y dejó la oportunidad en `abandoned` | Germán | 28 sep |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |

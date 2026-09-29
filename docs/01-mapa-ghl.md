@@ -85,7 +85,7 @@ todos dependen de n8n, de Stripe o de la cadena de despacho. En su lugar,
 > **Cambió el 28 sep y manda sobre cualquier otra descripción de este documento.**
 >
 > - El pedido vive en la **oportunidad**: en los mensajes, los campos van como `{{opportunity.…}}`.
-> - Hay **una sola oportunidad por contacto**: la acción *Create/Update Opportunity* da siempre con la del pedido.
+> - Cada pedido es **una oportunidad**, y un contacto tiene **un solo pedido abierto a la vez** (`N1` lo garantiza). En los workflows que arrancan por cambio de etapa, `{{opportunity.…}}` es la del pedido. En los que arrancan sin oportunidad (Inbound Webhook, `Payment Received`, formulario), *Create/Update Opportunity* tiene que dar con la **abierta** del contacto **(verificar; si no, que lo haga n8n por la API con el `opportunityId`)**.
 > - `N1` ya escribe el apartado y deja la oportunidad en «Liga de Pago Enviada».
 > - `N2` libera solo, cada 15 min, y deja la oportunidad `abandoned`.
 > - Un pedido **tiene que cerrarse** (`abandoned` o `won`): si no, el cliente no puede volver a comprar, porque `N1` le contesta `pedido_en_curso`.
@@ -360,12 +360,13 @@ tallas, público, contenido y peso. Más las preguntas frecuentes del transcript
 > escribe el bot, y Conversation AI sólo escribe campos de contacto) y **Atribución**.
 > Un apartado vencido deja la oportunidad en `abandoned`.
 >
-> **Una oportunidad abierta por contacto.** Greentex no tiene activada la opción de
-> oportunidades duplicadas, así que GHL rechaza una segunda abierta en el pipeline.
-> Consecuencias: `N1` usa la del lead (etapa 1 o 2) o crea una si no hay ninguna abierta,
-> y si el contacto ya tiene otro pedido en curso responde `pedido_en_curso` **antes** de
-> tocar stock o facturar. Para que un cliente pueda volver a comprar, el pedido anterior
-> tiene que cerrarse: `abandoned` al vencer (`N2`) y **`won` al entregarse** (`AP01`).
+> **Una oportunidad por pedido, un pedido abierto a la vez.** Desde el 29 sep Greentex
+> permite varias oportunidades por contacto (*Settings → Objects → Opportunities → «Allow
+> multiple opportunities per contact»*), así que cada pedido queda en la suya y el historial
+> se conserva. `N1` usa la del lead (etapa 1 o 2) o crea una nueva; si el contacto ya tiene
+> otro pedido abierto, responde `pedido_en_curso` **antes** de tocar stock o facturar. Para
+> que pueda volver a comprar, el pedido anterior tiene que cerrarse: `abandoned` al vencer
+> (`N2`) y **`won` al entregarse** (`AP01`).
 
 **Carpeta `Apartado`:** `orden_id` (texto) · `sku_apartado` (texto) ·
 `articulo_apartado` (texto — el nombre legible; `sku_apartado` guarda la clave y

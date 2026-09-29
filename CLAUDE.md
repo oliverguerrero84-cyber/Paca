@@ -129,10 +129,15 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   `fieldValueString` / `fieldValueNumber` en la búsqueda. Buscar por `fieldKey` da `null`
   siempre, y así `N2` no liberaba nada. Se traduce clave → id con
   `GET /locations/{id}/customFields?model=…` y se escribe por id.
-- **GHL deja una sola oportunidad abierta por contacto** en el pipeline: Greentex no tiene
-  activada la opción de duplicados. Crear otra da 400 `OPPORTUNITY_NO_DUPLICATE`. Por eso
-  `N1` revisa la oportunidad **antes** de tocar stock, y un pedido tiene que cerrarse
-  (`abandoned` al vencer, `won` al entregarse) para que el cliente pueda volver a comprar.
+- **Una oportunidad por pedido depende de un ajuste de la subcuenta.** *Settings → Objects →
+  Opportunities → «Allow multiple opportunities per contact»*, activado en Greentex el 29 sep
+  (`allowDuplicateOpportunity: true`). Si alguien lo apaga, crear la oportunidad del segundo
+  pedido da 400 `OPPORTUNITY_NO_DUPLICATE` aunque la anterior esté cerrada. `N1` la crea
+  **antes** de tocar stock, así que falla sin descontar nada, pero el cliente no puede comprar.
+  No se ve en el repo: el token de la subcuenta no puede cambiarlo (401), sólo la UI.
+- **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
+  contesta `pedido_en_curso`. Por eso el pedido tiene que cerrarse (`abandoned` al vencer,
+  `won` al entregarse), o el cliente ya no puede volver a comprar.
 
 ---
 
