@@ -1,6 +1,6 @@
-# Las 6 plantillas de mensaje
+# Las 7 plantillas de mensaje
 
-> **Listas para copiar y pegar.** Las cuatro primeras necesitan aprobación de Meta, que
+> **Listas para copiar y pegar.** La 1, 2, 3, 4 y 7 necesitan aprobación de Meta, que
 > tarda de 24 a 48 horas y **es el único plazo del proyecto que no controlamos**. Se
 > mandan a cola el mismo día que exista la WhatsApp Business Account (`A4`).
 >
@@ -172,6 +172,27 @@ Etiqueta adjunta. Imprimir y pegar.
 > nada que se le parezca.
 
 ---
+
+## 7 · El paquete llegó a la sucursal
+
+**Categoría: UTILITY** · La dispara `AP01` cuando `N5` ve el estatus `en_sucursal`.
+Agregada el 28 sep: el aviso llega días después del último mensaje, fuera de la ventana de
+24 horas, y sin plantilla no sale.
+
+```
+{{1}}, tu paca ya llegó a la sucursal y está lista para recoger.
+
+Guía: {{2}}
+Síguela aquí: {{3}}
+
+Llévate una identificación.
+```
+
+| Variable | Campo | Ejemplo |
+|---|---|---|
+| `{{1}}` | nombre del contacto | Laura |
+| `{{2}}` | `numero_guia` (del webhook de `N5`) | 7712345678 |
+| `{{3}}` | `track_url` (del webhook de `N5`) | envia.com/rastreo?label=… |
 
 ## Dos cosas técnicas al darlas de alta
 

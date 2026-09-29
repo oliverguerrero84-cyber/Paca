@@ -49,7 +49,7 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 |---|---|---|---:|
 | `LS01` | Entrada de lead menudeo | Contact Created (WhatsApp) | 10 |
 | `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
-| `SP02` | Apartado 24 h + recordatorios + liberación | Inbound Webhook (n8n `N1`) | 16 |
+| `SP02` | Apartado 24 h + recordatorios + aviso de vencido | Pipeline Stage Changed → Liga de Pago Enviada | 12 |
 | `SP04` | Pago confirmado → nº de orden | **Goal Event `Payment Received`** | 10 |
 | `SP05` | Despacho: guía Envia + PDF al almacén + correo a dueños | Opportunity Stage Changed → Pagado | 12 |
 | `AP01` | Rastreo: avisos hasta "llegó a tu sucursal" | Inbound Webhook (n8n `N5`) | 10 |
@@ -80,30 +80,90 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 todos dependen de n8n, de Stripe o de la cadena de despacho. En su lugar,
 `SP02` del Esencial avisa al asesor y le crea la tarea para que cierre él.
 
-### Detalle de los tres workflows críticos
+### Detalle de cada workflow — rediseño del 28 sep
 
-**`SP02` — Apartado 24 h (16 nodos).** El corazón del sistema.
-Trigger inbound webhook desde n8n `N1` (que ya descontó el stock) → actualiza
-campos del apartado → mueve a etapa 3 → envía resumen con términos y condiciones →
-`Wait 12 h` → IF ¿ya pagó? → si no, recordatorio (template) → `Wait 10 h` → IF ¿ya
-pagó? → si no, recordatorio final (template) → `Wait 2 h` → IF ¿ya pagó? → si no,
-webhook a n8n `N2` para liberar → tag `apartado-vencido` → mensaje de recuperación.
-`Goal Event` = **`Payment Received`**, que salta todos los waits y corta el flujo.
+> **Cambió el 28 sep y manda sobre cualquier otra descripción de este documento.**
+>
+> - El pedido vive en la **oportunidad**: en los mensajes, los campos van como `{{opportunity.…}}`.
+> - Hay **una sola oportunidad por contacto**: la acción *Create/Update Opportunity* da siempre con la del pedido.
+> - `N1` ya escribe el apartado y deja la oportunidad en «Liga de Pago Enviada».
+> - `N2` libera solo, cada 15 min, y deja la oportunidad `abandoned`.
+> - Un pedido **tiene que cerrarse** (`abandoned` o `won`): si no, el cliente no puede volver a comprar, porque `N1` le contesta `pedido_en_curso`.
+>
+> Las marcas **(verificar)** son comportamientos de GHL que no se han probado todavía.
 
-> Rama del efectivo, **sólo si la validación 4 confirma que el checkout de GHL muestra
-> OXXO**: los `Wait` se calculan sobre la vigencia del voucher de Stripe (5 días por
-> defecto) más un día hábil para que acredite, no sobre 24 h. OXXO no admite
-> reembolsos ni contracargos.
+**Orden de construcción:** `AP01` (su id lo necesita `N5`) → `SP02` → `SP04` → `AP03` →
+`SP05` → `AP02` → `LS01` → `SP01` (cuando exista el bot).
 
-**`SP04` — Pago confirmado (10 nodos).** Trigger **Goal Event `Payment Received`**,
-que dispara porque la factura es de GHL, cobre con la pasarela que cobre. Guarda `orden_id`,
-monto y método → mueve a etapa 5 → quita el tag de apartado → confirma al cliente
-(template) → dispara `SP05`.
+**`AP01` — Rastreo.**
+- **Trigger:** Inbound Webhook. Lo llama `N5` con `{ contactId, opportunityId, numero_guia, estado, estado_crudo, entrega_estimada, track_url }`. El contacto se mapea por `contactId`.
+- **Ramas** (If/Else sobre `{{inboundWebhookRequest.estado}}`):
+  - `en_sucursal` → plantilla 7 con `numero_guia` y `track_url` del webhook.
+  - `entregado` → *Create/Update Opportunity*: etapa «Entregado / Cerrado» y **status `won`**. Sin mensaje.
+  - `incidencia` o `cancelado` → tag `escalar-humano`, que dispara `AP02`.
+  - `en_reparto` → nada. Es sólo para envíos a domicilio y la plantilla 3 ya avisó que va en camino.
+- El id del webhook va en `GHL_WEBHOOK_RASTREO` del `Config` de `N5`.
 
-**`SP05` — Despacho (12 nodos).** Llama a n8n `N4`, que genera la guía en Envia.
-Manda el **PDF de la etiqueta al WhatsApp del almacén** con nombre, cantidad,
-destino y CP —**nunca el monto**, regla explícita de Miguel— y el correo completo a
-los dueños. Programa la recolección y mueve a etapa 6.
+**`SP02` — Apartado 24 h.**
+- **Trigger:** *Pipeline Stage Changed* → SP · Menudeo, etapa «Liga de Pago Enviada». Ya no es un Inbound Webhook: `N1` no llama a ningún workflow, mueve la oportunidad.
+- **Pasos:**
+  1. Mensaje con términos y condiciones. Texto libre: el cliente acaba de escribir y la ventana está abierta.
+  2. Wait 12 h → If `{{opportunity.estado_apartado}}` es `pagado` → fin; si no, plantilla 1.
+  3. Wait 10 h → mismo If → plantilla 1 como recordatorio final.
+  4. Wait 2 h 20 min → If status de la oportunidad es `abandoned` (lo pone `N2`) → tag `apartado-vencido` y plantilla 4.
+- `expira_en` es texto, así que los waits son fijos y suman 24 h + 20 min de margen para el cron de `N2`.
+- **Se quitaron** «actualizar campos», «mover a etapa 3» y el webhook a `N2`.
+- **Goal:** `Payment Received` **(verificar que exista como goal)**. Aunque no exista, los If de cada paso cortan el flujo cuando `SP04` pone `pagado`.
+
+**`SP04` — Pago confirmado.**
+- **Trigger:** `Payment Received` (la factura es de GHL, cobre con la pasarela que cobre).
+- *Create/Update Opportunity*:
+  - `estado_apartado = pagado`
+  - `fecha_pago` = ahora (ISO)
+  - `orden_id` = número de la factura **(verificar qué merge field lo trae)**
+  - etapa «Pago Confirmado»
+- Quita el tag de apartado y manda la plantilla 2. `SP05` arranca solo por el cambio de etapa.
+
+**`AP03` — Pago manual por transferencia.**
+- **Trigger:** *Form Submitted* → «Registrar Pago Manual». Lo llenan los dueños con **el teléfono del comprador**, para que GHL dé con su contacto (dedupe por teléfono), más monto, fecha y referencia.
+- Hace lo mismo que `SP04`.
+
+**`SP05` — Despacho.**
+- **Trigger:** *Pipeline Stage Changed* → «Pago Confirmado».
+- **Webhook a `{{custom_values.url_n8n_generar_guia}}`** con Custom Data:
+
+  | Clave | Valor |
+  |---|---|
+  | `opportunityId` | `{{opportunity.id}}` **(obligatorio: ahí guarda `N4` la guía)** |
+  | `orden_id` | `{{opportunity.orden_id}}` |
+  | `cantidad` | `{{opportunity.cantidad_apartada}}` |
+  | `nombre` | nombre del contacto |
+  | `telefono` | teléfono del contacto |
+  | `email` | email del contacto |
+  | `calle`, `numero`, `colonia` | del contacto |
+  | `ciudad`, `estado_mx`, `codigo_postal` | del contacto |
+  | `servicio` | `{{contact.servicio_envio}}` |
+  | `branch_code` | `{{contact.branch_code}}` |
+
+- **Después:**
+  1. Wait 2 min.
+  2. If `{{opportunity.etiqueta_pdf}}` no está vacío **(verificar que el If lea el valor nuevo)**:
+     - WhatsApp al almacén (`whatsapp_almacen`) con PDF, nombre, cantidad, destino y CP, **nunca el monto**;
+     - correo completo a los dueños;
+     - plantilla 3;
+     - etapa «Orden en Almacén».
+  3. Si está vacío: `N4` falló → tag `escalar-humano`.
+
+**`AP02` — Escalamiento.** Tag `escalar-humano` → apaga el bot
+(`Update Conversation AI Bot Status`) → tarea para los dueños → aviso interno a `email_duenos`.
+
+**`LS01` — Entrada de lead.** *Contact Created* por WhatsApp → atribución (`canal_origen`,
+UTM, `fecha_primer_contacto`) → *Create/Update Opportunity* en «Lead Nuevo». `N1` pone el
+apartado en esa misma oportunidad.
+
+> **Rama del efectivo**, sólo si la validación 4 confirma que el checkout de GHL muestra
+> OXXO: los waits de `SP02` se calculan sobre la vigencia del voucher de Stripe (5 días por
+> defecto) más un día hábil para que acredite. OXXO no admite reembolsos ni contracargos.
 
 ### Retirados del alcance
 
@@ -139,8 +199,8 @@ mandar mensajes desde un workflow: para eso está `Send Message`.
 
 **El carril asíncrono no es una preferencia, es una limitación.** El webhook de salida
 de GHL no espera respuesta, así que todo ida y vuelta con n8n se cierra con n8n
-disparando un Inbound Webhook y un segundo workflow continuando. Por eso `SP02` y
-`AP01` tienen ese trigger.
+disparando un Inbound Webhook y un segundo workflow continuando. Por eso `AP01` tiene
+ese trigger. `SP02` no lo necesita: arranca cuando `N1` mueve la oportunidad de etapa.
 
 **El carril síncrono lo cubre la acción Custom API de Conversation AI.** Llama a n8n y
 espera la respuesta dentro del turno, con **10 s de límite**. Se usa tres veces, las
@@ -153,19 +213,17 @@ ocurren cuando nadie conversa, así que los hace un workflow llamando a n8n. Y u
 asistente no sobra: estorba, porque dos bots en el mismo WhatsApp se pelean el primer
 turno.
 
-### El eslabón entre el bot y `SP02` — cerrado con el cambio a Stripe
+### El eslabón entre el bot y `SP02`
 
-Antes el agente sólo marcaba `pedido-listo` y nadie llamaba a
-`url_n8n_crear_apartado`. Desde el 25 sep la acción **Apartar paca y liga de pago** hace la
-llamada: `N1` aparta, crea la factura y devuelve la liga en el mismo turno, y `N1` dispara el
-Inbound Webhook con el que arranca `SP02`:
+La acción **Apartar paca y liga de pago** llama a `N1`, y `N1` deja la oportunidad lista para `SP02`:
 
 ```
 acción «Apartar paca y liga de pago» → url_n8n_crear_apartado
-   → n8n N1 descuenta el stock y crea la factura por la API de Invoices
-   → N1 responde liga_pago e invoice_id; el agente manda la liga
-   → N1 dispara el Inbound Webhook
-   → SP02 arranca el reloj de 24 h
+   → n8n N1 revisa que no haya otro pedido abierto y asegura la oportunidad
+   → descuenta el stock y crea la factura por la API de Invoices
+   → responde liga_pago; el agente manda la liga
+   → N1 escribe el apartado en la oportunidad y la pasa a «Liga de Pago Enviada»
+   → SP02 arranca por el cambio de etapa
 ```
 
 > **Efecto en la cotización.** Se cae `SP03` (12 nodos) y no entra ningún workflow
@@ -351,8 +409,8 @@ que para las dos que ya lo decían.
 
 Las tres primeras ya apuntan al n8n de Germán (25 sep), **en modo prueba**: son URLs
 `webhook-test/…`, que sólo responden mientras el flujo está escuchando en el editor.
-Al activar los flujos se cambian por las mismas sin `-test`. `url_n8n_rastrear` espera
-a que `N5` tenga su webhook (ver `n8n/README.md`).
+Al activar los flujos se cambian por las mismas sin `-test`. `url_n8n_rastrear` ya
+apunta al webhook de `N5` (25 sep).
 
 > Las URLs de n8n van en custom values, nunca hardcodeadas en los workflows.
 
@@ -371,7 +429,7 @@ a que `N5` tenga su webhook (ver `n8n/README.md`).
 
 | Formulario | Quién lo usa | Campos |
 |---|---|---|
-| `Registrar Pago Manual` | Los dueños | `orden_id`, `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Stripe |
+| `Registrar Pago Manual` | Los dueños | **teléfono del comprador** (con él GHL da con su contacto y su oportunidad), `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Stripe. Lo procesa `AP03` |
 | `Ajuste Manual de Stock` | Los dueños (opcional) | `sku`, `nuevo_disponible`, `motivo` |
 
 > El formulario de captura de guía **desapareció**: Envia genera la guía sola.
@@ -386,8 +444,9 @@ a que `N5` tenga su webhook (ver `n8n/README.md`).
 | 4 | WhatsApp | Apartado vencido / recuperación | **Sí** |
 | 5 | Email | Detalle completo de la orden a los dueños | No |
 | 6 | WhatsApp | Orden simple al almacén | No |
+| 7 | WhatsApp | El paquete llegó a la sucursal | **Sí** |
 
-> Los cuatro primeros necesitan **aprobación de Meta (24–48 h)**. Redactarlos y
+> La 1, 2, 3, 4 y 7 necesitan **aprobación de Meta (24–48 h)**. Redactarlos y
 > enviarlos a aprobación en la semana 1 del proyecto, no al final. Es el ítem que
 > más fácilmente atora el go-live.
 

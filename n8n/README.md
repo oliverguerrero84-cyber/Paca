@@ -1,9 +1,8 @@
 # Los 5 flujos de n8n
 
-> ⚠️ **Escritos, no probados.** No existe todavía la instancia donde correrlos
-> (eslabón `0.3` de `docs/13-accesos.md`). Se verificó la estructura y que los campos
-> que leen y escriben existan de verdad en Greentex, **pero ninguno se ha ejecutado**.
-> Los supuestos van marcados abajo y en notas dentro de cada flujo.
+> **Probados contra Greentex el 28 sep:** `N1`, `N2` y `N3` en vivo; `N4` y `N5`, antes de
+> pasar los datos a la oportunidad (falta repetirlos). Los cinco están importados en el n8n
+> de Germán y se actualizan con `scripts/subir-n8n.py`.
 
 | Flujo | Entrada | Qué hace |
 |---|---|---|

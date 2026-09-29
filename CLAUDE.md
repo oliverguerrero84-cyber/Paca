@@ -144,7 +144,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/07-decision-checkout.md` | Por qué el cobro va por liga y no por la tienda |
 | `docs/09-conversacion.md` | Cómo se llegó a cada decisión — **no es fuente de verdad** |
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
-| `docs/15-plantillas.md` | Las 6 plantillas de mensaje, listas para mandar a Meta |
+| `docs/15-plantillas.md` | Las 7 plantillas de mensaje, listas para mandar a Meta |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
 | `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos |
