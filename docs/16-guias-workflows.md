@@ -378,3 +378,57 @@ directo por WhatsApp sin que les escriba encima.
 | El estado del bot | **Off**, no Toggle: un toggle lo volvería a prender si ya estaba apagado |
 | El correo | Apunta a `{{custom_values.email_duenos}}`, no a una dirección escrita a mano |
 | Nodos vivos | Los 3 existen y ninguno quedó a medio configurar |
+
+---
+
+## 4. Armar workflows por API — probado el 1 de octubre
+
+**Sí se puede, y está probado de punta a punta.** Crear el workflow, escribirle los nodos
+y leerlos de vuelta: los tres funcionan. No hace falta armarlos a mano en la interfaz.
+
+### 4.1 La llave que faltaba
+
+La API pública **no crea** workflows: `GET /workflows/` sólo lista. La única vía es la
+interna, `backend.leadconnectorhq.com`, con la cabecera `token-id`.
+
+Lo que faltaba no era un token nuevo: era **cómo canjearlo**. El token que da la
+extensión de Chrome del kit empieza con `AMf-` y es un **refresh token** de Firebase, no
+sirve para autenticar. Se cambia por un JWT —el que sí vale— contra
+`securetoken.googleapis.com/v1/token` con la API key de HighLevel, que vive en el kit.
+El `TokenManager` del kit lo hace solo y lo cachea.
+
+| | |
+|---|---|
+| Refresh token | `AMf-…`, **no** autentica. Es el que da la extensión |
+| JWT de sesión | `eyJ…`, tres partes. Es el de `token-id`. **Dura 1 hora** |
+| Herramientas | `cli_anything/gohighlevel/utils/` del kit: `ghl_internal_client.py` y `wf_toolkit.py` |
+
+### 4.2 Lo que hay que respetar al escribir
+
+- **Releer el workflow antes de cada PUT.** El `version` sube con cada escritura y con
+  uno viejo el API contesta *«Your version is outdated»*, que **parece un error del nodo
+  y no lo es**.
+- **El PUT es todo o nada**, y el motivo del rechazo viene en el cuerpo de la respuesta.
+  Hay que leerlo siempre.
+- **Validar el grafo antes de escribir** con `validar_grafo()`: un `next` en `null` o un
+  `parentKey` que no cuadra tumba el PUT entero.
+- **`allowMultiple` y `stopOnResponse` van siempre en el body**: lo que se omite se
+  resetea a su valor por defecto.
+- **Crear el trigger publica el workflow.** Y la etiqueta del trigger tiene que existir
+  antes.
+
+### 4.3 🔴 Lo que hoy NO se puede armar
+
+El nodo que **apaga el bot** —`ai_status` / `update_conversation_ai_status`— lo rechaza
+la cuenta con *«action has a corrupted type»*, con los dos nombres de tipo. La lectura
+más probable: **Conversation AI no está provisionado todavía en Greentex**, porque no hay
+bot ni WhatsApp conectado.
+
+Consecuencia para `AP02`: se arma el aviso a los dueños, pero **el nodo que apaga el bot
+espera a que el bot exista**. Y lo mismo para cualquier otro nodo que toque Conversation
+AI. Hay que volver a probarlo en cuanto WhatsApp esté conectado.
+
+### 4.4 Estado en la cuenta
+
+`AP02 · Escalamiento a humano` ya existe en Greentex, **sin publicar**. Quedó con un nodo
+suelto de las pruebas que hay que limpiar en la siguiente sesión.

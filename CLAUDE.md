@@ -135,6 +135,20 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   pedido da 400 `OPPORTUNITY_NO_DUPLICATE` aunque la anterior esté cerrada. `N1` la crea
   **antes** de tocar stock, así que falla sin descontar nada, pero el cliente no puede comprar.
   No se ve en el repo: el token de la subcuenta no puede cambiarlo (401), sólo la UI.
+- **El `version` del workflow es control de concurrencia.** Sube con cada PUT, y hay que
+  **releer el workflow justo antes de cada escritura**. Con uno viejo, el API contesta
+  *«Your version is outdated, please refresh your page»* — que suena a problema del
+  navegador y **se confunde con que el nodo es inválido**. Pasó el 1 oct: siete tipos de
+  nodo parecían rechazados y en realidad sólo el primer PUT fue real.
+- **El PUT de un workflow es todo o nada, y sí dice qué falla.** Un error de grafo no
+  guarda ni un nodo, ni los buenos; pero el motivo viene en el **cuerpo** de la
+  respuesta (*«action has a corrupted type»*, *«parentKey points to X…»*), no como
+  excepción. Buena parte de la fama de que GHL falla en silencio, aquí, es código que no
+  lee la respuesta.
+- **Crear un trigger PUBLICA el workflow**, aunque el body diga `active: false`. El
+  `status` del workflow y el `active` del trigger son el mismo interruptor. Y la
+  **etiqueta tiene que existir antes** de escribir un trigger de tag, o queda en
+  «Selecciona una etiqueta» y no dispara.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
   contesta `pedido_en_curso`. Por eso el pedido tiene que cerrarse (`abandoned` al vencer,
   `won` al entregarse), o el cliente ya no puede volver a comprar.
