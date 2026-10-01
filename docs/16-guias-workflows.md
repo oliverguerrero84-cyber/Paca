@@ -514,3 +514,42 @@ medias hace daño.
 - `AP01`: las ramas por estado del paquete.
 - `AP02`: **el nodo que apaga el bot**, que es el importante (§4.3).
 - `SP01`: entero. No hay bot.
+
+### 4.10 🔴 Las condiciones If sobre campos de OPORTUNIDAD: falta el molde
+
+`SP02` y `SP05` necesitan preguntar por un campo de la **oportunidad**:
+
+- `SP02`: ¿`estado_apartado` ya es `pagado`? — para no mandarle «tu apartado venció» a
+  alguien que **ya pagó**.
+- `SP05`: ¿`etiqueta_pdf` está vacío? — para detectar que `N4` falló y escalar.
+
+El molde del kit (`cond_campo`) es `conditionType: "contact_detail"` con el id de un
+campo **de contacto**. **No hay ejemplo verificado de un If sobre un campo de
+oportunidad**, y meterle el id de uno es exactamente la trampa que este documento viene
+señalando: la condición **se guarda, se ve bien y nunca se cumple**. El flujo se iría
+siempre por el `else`, sin un solo error.
+
+Por eso no se armaron. Por ahora `SP02` y `SP05` son cadenas rectas.
+
+**Cómo se destraba, en un minuto y es la receta del playbook §0** —donde falta el molde,
+se arma a mano, se lee y se copia:
+
+1. En la interfaz, abrir cualquier workflow de prueba y agregar un nodo **If/Else** con
+   la condición *Opportunity → Estado del apartado → es igual a → pagado*.
+2. Guardar.
+3. Avisar, y de aquí se lee ese nodo por API y se copia la forma exacta.
+
+Con ese molde se arman los If de `SP02` y `SP05` en la misma sesión.
+
+### 4.11 Los triggers que faltan, y por qué no se inventaron
+
+`AP02` ya tiene el suyo. De los otros seis, el molde de `contact_tag` está verificado;
+los de **`opportunity_stage_changed`** (`SP02`, `SP05`) y **pago recibido** (`SP04`) **no
+están en el kit**: el playbook los nombra pero no trae su forma.
+
+Y aquí no vale adivinar: el playbook §2-4b avisa que **una condición de trigger mal
+formada se guarda y el desplegable sale en blanco**, con el trigger marcando *«Errors
+found»* — y eso no se ve por API.
+
+Misma salida que arriba: Germán arma **uno** de cada tipo a mano, se lee por API y se
+copian los moldes. O los pone los seis a mano, que son dos clics cada uno.
