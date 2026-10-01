@@ -446,27 +446,71 @@ El `POST` lo devuelve con `status: null`, no `draft` como los que se crean en la
 Hay que ponerlo en `draft` con un PUT explícito antes de seguir. Mientras está en `null`
 se comporta a medias.
 
-### 4.6 🔴 El trigger no se pudo crear por API
+### 4.6 Los triggers SÍ se crean — la forma de creación no es la del GET
 
-`POST /workflow/{loc}/trigger` contesta **200 con un id**, y el trigger **no existe**:
-ni aparece en la lista del workflow ni se puede leer por su propio id, que da 404. Se
-probó con `active` en `true` y en `false`, con el workflow en `null` y en `draft`, y con
-el molde copiado de un trigger vivo de la misma cuenta. El mismo resultado siempre.
+El error estaba en copiar la forma de un trigger **ya guardado**. La de **creación** es
+otra, y es la que usa `workflow_builder.py` del kit:
 
-**El reparto que queda, y es razonable:** los **nodos** —que son el trabajo— se arman por
-API; el **trigger** se pone a mano en la interfaz, que son dos clics. Para `AP02`:
-*Add New Trigger → Contact Tag → `escalar-humano`*. La etiqueta **ya está creada**, así
-que el desplegable la va a listar.
+| Lo que devuelve el GET | Lo que pide la creación |
+|---|---|
+| `workflow_id` sólo dentro de `actions` | **`workflowId`** (camelCase) también en la raíz |
+| — | **`status: "draft"`** |
+| — | **`triggersChanged: true`** |
+| `belongs_to: "workflow"` | no va |
 
-> Después de ponerlo a mano hay que **releer el workflow**, porque añadir un trigger
-> publica: si todavía no debe recibir a nadie, regresarlo a borrador.
+Y después un **segundo paso**: `PUT /workflow/{loc}/trigger/{id}` con `targetActionId`
+apuntando al **primer nodo**, más `advanceCanvasMeta`. Sin ese PUT el trigger existe pero
+no entra por ningún lado.
 
-### 4.7 Estado en la cuenta
+Con la forma del GET, el POST contesta **200 con un id** y el trigger **no existe**.
+Probado y resuelto el 1 oct con `AP02`.
 
-`AP02 · Escalamiento a humano` existe en Greentex, en **borrador**, con su nodo de aviso
-a los dueños y **sin trigger**. La etiqueta `escalar-humano` ya existe.
+### 4.7 Lo que la cuenta acepta hoy, medido
 
-**No está terminado**, y no por el trigger: le falta el nodo que apaga el bot, que es el
-importante. Mientras ese nodo no esté, **no conviene publicarlo**: cuando exista el bot,
-un `AP02` publicado sin él avisaría a los dueños mientras el bot le sigue escribiendo al
-cliente, que es justo lo que este workflow existe para evitar.
+| Tipo de nodo | ¿Lo acepta? |
+|---|---|
+| `wait`, `add_contact_tag`, `remove_contact_tag` | sí |
+| `webhook`, `internal_notification`, `email` | sí |
+| `internal_create_opportunity`, `internal_update_opportunity` | sí |
+| `update_contact_field` | sí |
+| **`sms`** | **sí** — por eso sirve de provisional |
+| **`whatsapp_v2`** | **no** — *Action validation failed* |
+| **`ai_status`** (apagar el bot) | **no** — *action has a corrupted type* |
+
+Los dos rechazos son lo mismo: la cuenta no tiene **número ni proveedor de
+conversaciones** (`pools: []`) ni Conversation AI provisionado. No es la forma del nodo.
+
+### 4.8 Los nodos «TEMPORAL · SMS»
+
+Donde va un mensaje al cliente hay hoy un **nodo SMS marcado `TEMPORAL · SMS`**, con el
+texto entre `[TEMPORAL]`. Es una decisión de Oliver del 1 oct: así la estructura queda
+armada y el cambio después es mecánico.
+
+**Se reemplazan cuando estén las tres cosas**: WhatsApp conectado, las plantillas
+redactadas (ya lo están, en `docs/15-plantillas.md`) y **aprobadas por Meta**. Buscar
+`TEMPORAL` en los workflows los lista todos.
+
+### 4.9 Estado en la cuenta — 1 de octubre
+
+**7 workflows armados, 26 nodos, todos en borrador. Ninguno publicado.**
+
+| Workflow | Nodos | Trigger |
+|---|---:|---|
+| `LS01` · Entrada de lead | 2 | a mano |
+| `SP02` · Apartado 24 h | 8 | a mano |
+| `SP04` · Pago confirmado | 3 | a mano |
+| `SP05` · Despacho | 5 | a mano |
+| `AP01` · Rastreo | 2 | espera la URL del Inbound Webhook |
+| `AP02` · Escalamiento | 1 | **puesto, y verificado** |
+| `AP03` · Pago manual | 2 | espera el formulario, que es de interfaz |
+
+**Nada se publica** hasta que WhatsApp y Stripe estén conectados: un workflow vivo a
+medias hace daño.
+
+**Lo que falta por workflow**, además del trigger:
+
+- `SP02`, `SP05`: las **condiciones If** — cortar cuando ya pagó, y revisar que `N4`
+  escribió la guía. Hoy son cadenas rectas.
+- `AP01`: las ramas por estado del paquete.
+- `AP02`: **el nodo que apaga el bot**, que es el importante (§4.3).
+- `SP01`: entero. No hay bot.
