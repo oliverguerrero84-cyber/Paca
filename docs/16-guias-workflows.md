@@ -16,8 +16,9 @@ leerlo por la API y correrlo.
 |---|---|---|
 | `AP01` · Rastreo | — | Esperando la URL del Inbound Webhook de Germán |
 | **`SP02`** · Apartado 24 h | **§2 de este documento** | **Lista para armar** |
+| **`AP02`** · Escalamiento a humano | **§3 de este documento** | **Lista para armar** — es la más corta, y la elegida para probar si la API interna sirve |
 | `SP04` · Pago confirmado | — | Se escribe con lo que salga de `SP02` |
-| `AP03`, `SP05`, `AP02`, `LS01` | — | Después |
+| `AP03`, `SP05`, `LS01` | — | Después |
 
 ---
 
@@ -295,3 +296,85 @@ Cuando Germán la dé por armada, antes de activarla:
 
 La 3 es la que más importa: **si sale que no, el apartado le manda recordatorios a gente
 que ya pagó.**
+
+---
+
+## 3. `AP02` · Escalamiento a humano
+
+**La más corta del proyecto, y por eso la primera.** Cuatro nodos. Se eligió para probar
+si la API interna de GHL sirve para crear workflows: si algo sale mal, se pierde esto y
+no ocho workflows.
+
+### 3.1 Qué hace, y por qué importa
+
+Cuando el cliente pide hablar con una persona —o el bot detecta que es mayoreo, que está
+fuera de alcance— hay que **apagar el bot en esa conversación** y avisarle a los dueños.
+
+Si el bot no se apaga, pasa lo peor que puede pasar en este sistema: **el dueño contesta
+y el bot le contesta encima al cliente.** Dos voces en el mismo WhatsApp.
+
+### 3.2 El trigger
+
+| | |
+|---|---|
+| Tipo | **Contact Tag Added** |
+| Tag | `escalar-humano` |
+
+> El tag **no existe todavía** en Greentex (sólo están `prueba-n1`, `prueba-n3` y
+> `prueba-paca`). Se crea solo al escribirlo en el trigger, pero conviene revisar que
+> quede escrito **exactamente así**, en minúsculas y con guión: quien lo pone es el bot,
+> y un tag con otra letra no dispara nada y no avisa.
+
+### 3.3 Los nodos, en orden
+
+| # | Nodo | Qué se configura |
+|---|---|---|
+| 1 | **Update Conversation AI Bot Status** | **Off**. Va primero, antes que todo: cada segundo que tarde es un turno que el bot le puede ganar al dueño |
+| 2 | **Create Task** | Asignada a los dueños. Título: `Atender a {{contact.first_name}} — pidió hablar con una persona`. Vencimiento: **mismo día** |
+| 3 | **Send Email** | A `{{custom_values.email_duenos}}`. Asunto y cuerpo en §3.4 |
+
+**El orden no es decorativo.** Apagar el bot es lo único urgente; la tarea y el correo
+pueden tardar un segundo más sin que pase nada.
+
+> **No lleva mensaje al cliente.** A propósito: quien debe contestarle ahora es una
+> persona. Un *"en un momento te atendemos"* automático justo después de que pidió un
+> humano se lee como que nadie lo escuchó.
+
+### 3.4 El correo a los dueños
+
+**Asunto:** `Un cliente pidió hablar con una persona — {{contact.first_name}} {{contact.last_name}}`
+
+```
+{{contact.first_name}} {{contact.last_name}} pidió que lo atienda una persona.
+
+Teléfono: {{contact.phone}}
+Correo:   {{contact.email}}
+
+El asistente ya quedó apagado en esa conversación, así que pueden contestarle
+directo por WhatsApp sin que les escriba encima.
+```
+
+> 🔴 **`email_duenos` sigue en `PENDIENTE`.** Es uno de los 2 custom values que faltan, y
+> espera a que el cliente mande el correo. **El workflow se arma igual**: el nodo queda
+> puesto y apuntando al custom value, y en cuanto el valor se llene empieza a funcionar
+> sin tocar nada. Lo que no se puede es probar el correo hasta entonces.
+
+### 3.5 Cómo se prueba
+
+1. Ponerle el tag `escalar-humano` al contacto **«Prueba Paca»**.
+2. Comprobar que la tarea se creó y quedó asignada.
+3. El correo no se puede comprobar hasta que `email_duenos` tenga valor.
+4. El apagado del bot tampoco, hasta que exista el bot — pero **el nodo tiene que quedar
+   armado desde hoy**: es el que evita que dos voces le escriban al mismo cliente.
+
+> Al terminar, quitarle el tag a «Prueba Paca» para dejarlo como estaba.
+
+### 3.6 Qué se verifica por la API
+
+| Qué | Bien es |
+|---|---|
+| El trigger | Tag Added, con el tag escrito `escalar-humano` exacto |
+| El orden | *Update Conversation AI Bot Status* es el **primer** nodo |
+| El estado del bot | **Off**, no Toggle: un toggle lo volvería a prender si ya estaba apagado |
+| El correo | Apunta a `{{custom_values.email_duenos}}`, no a una dirección escrita a mano |
+| Nodos vivos | Los 3 existen y ninguno quedó a medio configurar |
