@@ -428,7 +428,45 @@ Consecuencia para `AP02`: se arma el aviso a los dueños, pero **el nodo que apa
 espera a que el bot exista**. Y lo mismo para cualquier otro nodo que toque Conversation
 AI. Hay que volver a probarlo en cuanto WhatsApp esté conectado.
 
-### 4.4 Estado en la cuenta
+### 4.4 Lo que sí se puede y lo que no, probado
 
-`AP02 · Escalamiento a humano` ya existe en Greentex, **sin publicar**. Quedó con un nodo
-suelto de las pruebas que hay que limpiar en la siguiente sesión.
+| Paso | ¿Por API? |
+|---|---|
+| Canjear el token y autenticarse | **Sí** |
+| Listar y leer workflows | **Sí** |
+| Crear un workflow | **Sí** |
+| Escribirle los nodos y releerlos vivos | **Sí** |
+| Ponerlo en `draft` | **Sí** — y hay que hacerlo (§4.5) |
+| Crear la etiqueta de un trigger | **Sí** |
+| **Crear el trigger** | **No se logró** (§4.6) |
+
+### 4.5 Un workflow creado por API nace sin estado
+
+El `POST` lo devuelve con `status: null`, no `draft` como los que se crean en la interfaz.
+Hay que ponerlo en `draft` con un PUT explícito antes de seguir. Mientras está en `null`
+se comporta a medias.
+
+### 4.6 🔴 El trigger no se pudo crear por API
+
+`POST /workflow/{loc}/trigger` contesta **200 con un id**, y el trigger **no existe**:
+ni aparece en la lista del workflow ni se puede leer por su propio id, que da 404. Se
+probó con `active` en `true` y en `false`, con el workflow en `null` y en `draft`, y con
+el molde copiado de un trigger vivo de la misma cuenta. El mismo resultado siempre.
+
+**El reparto que queda, y es razonable:** los **nodos** —que son el trabajo— se arman por
+API; el **trigger** se pone a mano en la interfaz, que son dos clics. Para `AP02`:
+*Add New Trigger → Contact Tag → `escalar-humano`*. La etiqueta **ya está creada**, así
+que el desplegable la va a listar.
+
+> Después de ponerlo a mano hay que **releer el workflow**, porque añadir un trigger
+> publica: si todavía no debe recibir a nadie, regresarlo a borrador.
+
+### 4.7 Estado en la cuenta
+
+`AP02 · Escalamiento a humano` existe en Greentex, en **borrador**, con su nodo de aviso
+a los dueños y **sin trigger**. La etiqueta `escalar-humano` ya existe.
+
+**No está terminado**, y no por el trigger: le falta el nodo que apaga el bot, que es el
+importante. Mientras ese nodo no esté, **no conviene publicarlo**: cuando exista el bot,
+un `AP02` publicado sin él avisaría a los dueños mientras el bot le sigue escribiendo al
+cliente, que es justo lo que este workflow existe para evitar.
