@@ -20,7 +20,7 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
 - `scripts/armar-workflows.py` crea los workflows de GHL por la API interna, **en línea recta**.
   ⚠️ No correrlo con `--aplicar` sobre `SP02`, `SP05` ni `AP01`: reescribe el workflow entero y borra sus ramas.
-- `scripts/ramas-sp02.py`, `ramas-sp05.py` y `ramas-ap01.py` les pusieron las condiciones If. Se corren **una vez**:
+- `scripts/ramas-sp02.py`, `ramas-sp05.py`, `ramas-ap01.py` y `aviso-pago-sin-pedido.py` les pusieron condiciones y avisos. Se corren **una vez**:
   verifican la forma de antes y guardan respaldo.
 
 **Escribir un workflow vivo lo corre Germán**, con `!` en el prompt: el clasificador de Claude Code
@@ -167,6 +167,8 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 - **La acción *Update opportunity* no hace nada si el workflow no arranca por una oportunidad**
   y no hay un *Find opportunity* antes (lo dice su propia ayuda). `SP04` (pago recibido) y `AP03`
   (formulario) lo tenían así hasta el 2 oct: el pago entraba y el pedido no se movía.
+- **Una etiqueta que no existe en la cuenta deja el nodo con aviso de error**, y los triggers de
+  tag no disparan. Hay que crearla antes (`POST /locations/{id}/tags`). Le pasó a `apartado-vencido`.
 - **El Custom Data de un Webhook de workflow va en `customData`**, no en `data`. Por API, `data`
   se guarda sin error y el webhook sale vacío (le pasó a `SP05` el 1 oct).
 - **`N5` avisa una sola vez por estado** porque guarda el último en `opportunity.estado_envio`. Si
