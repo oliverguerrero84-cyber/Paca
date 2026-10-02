@@ -44,9 +44,9 @@
    2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
 2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
 3. ~~Probar la rama de `N1` que crea la oportunidad~~ — **pasó el 2 oct**. Con «Prueba Paca» creó una oportunidad nueva (`u0LqSbCow6Kp6HMKAfKM`) en «Liga de Pago Enviada», `open`, con sus 8 campos y `monetaryValue` 100; dejó intacta la vieja (`abandoned`); el stock bajó de 3 a 2 y la factura 000006 salió `sent` en MXN.
-   - **Efecto: `SP02` corriendo en vivo** sobre esa oportunidad (los workflows están publicados). Entró el 2 oct a las 12:39 p.m. (CDT) y está en «Espera 12 h»; la siguiente acción es el **3 oct a las 12:39 a.m.** Revisar en *Enrollment history* / *Execution logs* de `SP02`: el If de las 12 h debe ir por «No» (sigue `apartado`), el SMS falla porque el contacto no tiene teléfono, y a las 24 h 20 min (3 oct ~12:59 p.m. CDT) el If de «¿Venció?» va por «No» porque `N2` está apagado. Para probar la rama de vencido, `N2` tiene que estar prendido entre las 12:39 p.m. (vence) y las 12:59 p.m. del 3 oct, y después devolver la pieza a `test 1` lo hace él solo.
+   - **Efecto: `SP02` corrió en vivo** sobre esa oportunidad (los workflows están publicados) y **pasó la rama del que no paga** el 2 oct. Germán adelantó las esperas a mano (*Enrollment history*) y corrió `N2` con *Execute workflow* tras ponerle a la oportunidad un `expira_en` ya pasado. *Execution logs*: los dos «¿Ya pagó?» por «No», `N2` dejó la oportunidad `abandoned` + `vencido` y devolvió la pieza (stock 3), «¿Venció?» por «Ya vencido», tag `apartado-vencido` puesto y fin. Los SMS salen *Skipped* porque el contacto no tiene teléfono.
    - Los 5 flujos de n8n están **apagados**. Para probar, se prende el flujo, se llama y se apaga; prenderlo lo corre Germán con `!` (el clasificador lo bloquea). Script de esta prueba: prende `N1`, llama `/webhook/apartar` y lo apaga con un `trap`.
-4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.
+4. **`SP02`:** falta la rama **del que paga** (necesita `SP04` o `AP03` marcando `pagado`; se prueba junto con el paso 5) y crear el campo de oportunidad `expira_texto` para que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). La del que no paga ya pasó. Para probar no hace falta copia con waits cortos: las esperas se adelantan a mano desde *Enrollment history*.
 5. **`SP04`:** probar si «registrar pago» manual sobre una factura de prueba dispara el pago recibido.
 6. **Repetir `N4` y `N5`** con los datos en la oportunidad.
 
@@ -68,8 +68,8 @@
 - **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
 
 **Datos de prueba en Greentex hoy:**
-- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con dos oportunidades en «Liga de Pago Enviada»: la vieja (`ZMTFf0hvLxNkwQJn6tRw`), `abandoned` y `vencido`; y la del 2 oct (`u0LqSbCow6Kp6HMKAfKM`), **`open` y `apartado`, expira el 3 oct 17:39 UTC**. Con `N2` apagado no se libera sola: sirve para probar `SP04` y `SP02`, y si no, se cierra en la limpieza devolviendo la pieza.
-- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 2** (una pieza apartada por la oportunidad del 2 oct; otra la descontó una corrida fallida de `N1` y no se devolvió).
+- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con dos oportunidades en «Liga de Pago Enviada»: la vieja (`ZMTFf0hvLxNkwQJn6tRw`), `abandoned` y `vencido`; y la del 2 oct (`u0LqSbCow6Kp6HMKAfKM`), también `abandoned` y `vencido` (la usó la prueba de `SP02`). El contacto tiene el tag `apartado-vencido`.
+- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 3** (N2 devolvió la del apartado del 2 oct; otra pieza la descontó una corrida fallida de `N1` y no se devolvió).
 - 6 facturas de prueba de $100 (000001 a 000006; la 000006 es la del apartado abierto).
 - Los workflows «PRUEBA N1», «PRUEBA N3» y «PRUEBA N5», y el borrador «New Workflow : 1790282449589».
 - Todo esto se limpia al final (ver §3).
