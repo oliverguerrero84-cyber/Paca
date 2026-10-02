@@ -32,7 +32,7 @@
       - *Pipeline Stage Changed*, para `SP02` y `SP05`;
       - pago recibido, para `SP04`;
       - el de `LS01`.
-   3. En el trigger de `AP01` (Inbound Webhook, ya creado): tomar la muestra que llegó el 2 oct y mapear el contacto por `contactId`.
+   3. ~~Contacto de `AP01`~~ — hecho el 2 oct: el trigger nuevo no mapea contacto, así que va un *Find contact* por Contact ID (`docs/16-guias-workflows.md` §4.10.bis).
 2. **`AP01`** — la URL ya está en `GHL_WEBHOOK_RASTREO` de `N5`, subida a n8n el 2 oct:
    1. Armar las ramas por `estado` (`docs/01-mapa-ghl.md` §2). Falta el molde de un If sobre `inboundWebhookRequest.estado`.
    2. POST de prueba con `estado: entregado` y verificar por la API que la oportunidad quede **won**.

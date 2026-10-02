@@ -563,6 +563,26 @@ Con ese molde se arman los If de `SP02` y `SP05` en la misma sesión.
   `"branch-no"` (`attributes: {else: true}`), hermanos entre sí (`sibling`).
 - **Falta el operador «está vacío»** para el If de `SP05` sobre `etiqueta_pdf`: no se ha leído.
 
+### 4.10.bis El Inbound Webhook nuevo no mapea el contacto — 2 oct
+
+El trigger *Inbound webhook* (el premium, `inbound_webhook`) **no tiene «Contact mapping»**: solo
+URL y una muestra de referencia. Buscar `contactId` en el selector de *Create contact* no sirve;
+ese nodo crea o actualiza por email y teléfono, y **duplicaría al cliente**.
+
+Lo que funciona —armado en `AP01` y releído por API— es un **`find_contact` por Contact ID** como
+primer nodo:
+
+```json
+{"type": "find_contact",
+ "fields": [{"field": "id", "value": "{{inboundWebhookRequest.contactId}}",
+             "title": "Contact ID", "type": "string"}],
+ "transitions": [{"name": "Contact found",     "condition": "contact_found"},
+                 {"name": "Contact not found", "condition": "contact_not_found"}]}
+```
+
+El resto del flujo cuelga de *Contact found*. *Contact not found* termina. Los campos del body se
+leen como `{{inboundWebhookRequest.<clave>}}`.
+
 ### 4.11 Los triggers que faltan, y por qué no se inventaron
 
 `AP02` ya tiene el suyo. De los otros seis, el molde de `contact_tag` está verificado;
