@@ -55,6 +55,10 @@ CARPETAS = [
         # del playbook es que los bots no pueden escribir en SINGLE_OPTIONS.
         ("estado_apartado",    "Estado del apartado", "SINGLE_OPTIONS", ESTADOS_APARTADO),
         ("expira_en",          "Expira en",           "TEXT",           None),
+        # La misma hora que expira_en, pero en palabras y en español. expira_en va en
+        # ISO porque es un contrato con N2; mostrárselo al cliente sería mandarle
+        # "vence hoy a las 2026-10-02T22:30:00.000Z". Lo usa la plantilla 1.
+        ("expira_texto",       "Expira en · texto",   "TEXT",           None),
     ]),
     ("Pago", "opportunity", [
         ("invoice_id",         "Factura de GHL · ID",          "TEXT", None),

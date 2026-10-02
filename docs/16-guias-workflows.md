@@ -112,14 +112,21 @@ No da error. Sólo sale mal, y sale mal en un mensaje al cliente.
 arma `expira_texto` con `toLocaleString('es-MX', …)` en `America/Chicago`, y sólo se lo
 devuelve al bot.
 
-**El arreglo son dos cambios chicos**, y hay que hacerlos antes de conectar la plantilla 1:
+**Arreglado el 2 oct, a medias:**
 
-1. Crear el campo de oportunidad **`expira_texto`** (`TEXT`, «Expira en · texto»), en la
-   carpeta *Apartado*, con `scripts/crear-esqueleto-menudeo.py`, que es idempotente.
-2. En `N1`, nodo «GHL · apartado en la oportunidad», sumar `expira_texto: a.expira_texto`
-   al objeto de `customFields`, y subirlo con `scripts/subir-n8n.py`.
+1. ✅ El campo de oportunidad **`expira_texto`** (`TEXT`, «Expira en · texto»,
+   `bZU4v1s6iBJkMZnuJVL6`) **ya existe** en Greentex, en la carpeta *Apartado*. Se creó
+   con `scripts/crear-esqueleto-menudeo.py`, que lo lleva desde entonces.
+2. ✅ `N1` **ya lo escribe**: en «GHL · apartado en la oportunidad» se sumó
+   `expira_texto: a.expira_texto` al objeto de `customFields`. El dato llega porque
+   «Armar respuesta» hace `...apartado` y arrastra todo lo del reloj.
+3. ⏳ **Falta subir `N1` a n8n** con `scripts/subir-n8n.py`, que necesita la API key de
+   n8n. Lo corre Germán.
 
-Mientras no estén, la plantilla 1 no se conecta. No bloquea armar `SP02` ni probarla.
+> ⚠️ **El orden importaba y por eso el campo va primero.** El nodo que escribe la
+> oportunidad lanza *«Falta el campo de oportunidad …»* si no encuentra la clave, así
+> que un `N1` subido antes de que el campo existiera habría roto el apartado entero.
+> Ya no es un riesgo: el campo está.
 
 ---
 
