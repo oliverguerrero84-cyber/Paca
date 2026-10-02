@@ -18,7 +18,11 @@
   - Probados en vivo con los datos en la oportunidad: `N1` y `N2`.
   - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
   - **`N5` cambió el 2 oct**, sin probar todavía: avisa a `AP01` una sola vez por estado (guarda el último en `opportunity.estado_envio`, campo creado ese día) y, al entregarse, pasa la oportunidad a «Entregado» con status **won**. Antes avisaba cada hora y nunca cerraba el pedido.
-- **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con 26 nodos y **todos en borrador**. Ninguno se publica hasta que estén WhatsApp y Stripe. El detalle está en `docs/16-guias-workflows.md` §4.9.
+- **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con **74 nodos**. El detalle está en `docs/16-guias-workflows.md` §4.9.
+- ⚠️ **Los 10 workflows están PUBLICADOS, no en borrador** — verificado leyendo la cuenta el 2 oct. Es el efecto de rebote que avisa el playbook: **crear un trigger publica el workflow**, y el 2 oct se crearon seis. Ninguno se publicó a propósito.
+  - **Hoy no hace daño**: hay 3 contactos de prueba y 1 oportunidad, no hay WhatsApp ni Stripe, y los nodos de mensaje son SMS sin número, así que fallan en ejecución sin mandar nada.
+  - **Lo que sí importa**: `LS01` dispara con *Contact Created* **sin filtro**, así que en cuanto entren contactos de verdad —una importación, un formulario— a cada uno se le crea una oportunidad. Está bien por diseño (`N1` reutiliza la del lead y sólo contesta `pedido_en_curso` si hay **otra** que no sea de lead), pero conviene decidirlo, no heredarlo.
+  - **Decisión pendiente:** o se regresan los 7 a borrador hasta que estén WhatsApp y Stripe, o se deja así a sabiendas. Regresar a borrador apaga sus triggers solo.
   - **Triggers puestos** (verificados por API el 2 oct): `LS01` *Contact Created*, `SP02` etapa → «Liga de Pago Enviada», `SP04` *Payment Received*, `SP05` etapa → «Pago Confirmado», `AP01` Inbound Webhook (URL ya en `N5`), `AP02` tag `escalar-humano`. Falta `AP03`: espera su formulario.
   - **`AP01` terminado** (2 oct, 11 nodos, revisado en la interfaz): *Find contact* por Contact ID → If por `estado`: `en_sucursal` → SMS; `incidencia` y `cancelado` → tag `escalar-humano`; lo demás, nada.
   - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
