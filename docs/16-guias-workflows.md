@@ -541,6 +541,19 @@ se arma a mano, se lee y se copia:
 
 Con ese molde se arman los If de `SP02` y `SP05` en la misma sesión.
 
+**Molde leído el 2 oct** (Germán lo armó a mano en «PRUEBA N1»):
+
+- **El If sobre la oportunidad necesita antes un nodo `find_opportunity`** (`sorting: "latest"`), que
+  abre dos `transition`: *Opportunity Found* y *Opportunity Not Found*. El If cuelga de *Found*.
+  La interfaz lo agrega sola cuando el workflow no trae una oportunidad en contexto (trigger por tag).
+  Con un solo pedido abierto por cliente, «la más reciente» es la del pedido.
+- **La condición:** `conditionType: "opportunities"`, `conditionSubType` = **id** del campo de
+  oportunidad (`estado_apartado` = `nvxnGXleQU26J2gkzabB`; **no** el de contacto,
+  `CCZdcXbJc9W7hS7mojgi`), `conditionOperator: "=="`, `conditionValue: "pagado"`.
+- **Las ramas** son nodos `if_else` hijos: `nodeType: "branch-yes"` (con el nombre de la rama) y
+  `"branch-no"` (`attributes: {else: true}`), hermanos entre sí (`sibling`).
+- **Falta el operador «está vacío»** para el If de `SP05` sobre `etiqueta_pdf`: no se ha leído.
+
 ### 4.11 Los triggers que faltan, y por qué no se inventaron
 
 `AP02` ya tiene el suyo. De los otros seis, el molde de `contact_tag` está verificado;
