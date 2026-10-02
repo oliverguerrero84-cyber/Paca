@@ -224,7 +224,15 @@ def sp05(tk, loc, pit):
     """
     de_correo, de_nombre, duenos = ctx(loc, pit)
     return "SP05 · Despacho", [
-        ({"url": "{{custom_values.url_n8n_generar_guia}}", "method": "POST", "data": []},
+        # El Custom Data va en `customData`, no en `data`: con `data` el webhook sale vacío y N4 falla.
+        ({"url": "{{custom_values.url_n8n_generar_guia}}", "method": "POST", "data": [],
+          "customData": [{"key": k, "value": v} for k, v in [
+              ("opportunityId", "{{opportunity.id}}"), ("orden_id", "{{opportunity.orden_id}}"),
+              ("cantidad", "{{opportunity.cantidad_apartada}}"), ("nombre", "{{contact.name}}"),
+              ("telefono", "{{contact.phone}}"), ("email", "{{contact.email}}"),
+              ("calle", "{{contact.address1}}"), ("ciudad", "{{contact.ciudad}}"),
+              ("estado_mx", "{{contact.estado_mx}}"), ("codigo_postal", "{{contact.codigo_postal}}"),
+              ("servicio", "{{contact.servicio_envio}}"), ("branch_code", "{{contact.branch_code}}")]]},
          "Pedirle la guía a n8n", "webhook", None),
         (tk.n_espera(2, "minutes"), "Espera a que N4 escriba la guía", "wait", None),
         (tk.n_aviso_correo(

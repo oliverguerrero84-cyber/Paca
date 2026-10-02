@@ -164,6 +164,8 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 - **El Inbound Webhook nuevo (premium) no mapea el contacto.** No hay dónde poner `contactId`; un
   *Create contact* busca por email y teléfono y **duplica** al cliente. Se resuelve con *Find contact*
   por Contact ID como primer nodo (`AP01`).
+- **El Custom Data de un Webhook de workflow va en `customData`**, no en `data`. Por API, `data`
+  se guarda sin error y el webhook sale vacío (le pasó a `SP05` el 1 oct).
 - **`N5` avisa una sola vez por estado** porque guarda el último en `opportunity.estado_envio`. Si
   alguien borra ese campo, `N5` se detiene con error; sin él, mandaría el mismo SMS cada hora.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`

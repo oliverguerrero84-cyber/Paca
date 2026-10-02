@@ -584,6 +584,12 @@ primer nodo:
 El resto del flujo cuelga de *Contact found*. *Contact not found* termina. Los campos del body se
 leen como `{{inboundWebhookRequest.<clave>}}`.
 
+### 4.10.ter El Custom Data de un nodo Webhook va en `customData`
+
+Leído el 2 oct del webhook de `SP05` armado en la UI: `attributes.customData = [{key, value}, …]`.
+El script del 1 oct lo escribía en `data`, que GHL acepta y **deja vacío**: `N4` habría fallado en
+cada pedido por `faltan_datos`. Ya corregido en `armar-workflows.py`.
+
 ### 4.11 Los triggers que faltan, y por qué no se inventaron
 
 `AP02` ya tiene el suyo. De los otros seis, el molde de `contact_tag` está verificado;

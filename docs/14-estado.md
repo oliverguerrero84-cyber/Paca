@@ -29,7 +29,11 @@
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
-0. **🔴 El webhook de `SP05` no le manda nada a `N4`** (`data: []`, armado así el 1 oct). `N4` exige `opportunityId`: tal como está, falla siempre y cada pedido pagado acaba escalado a humano. Hay que ponerle el Custom Data de `docs/01-mapa-ghl.md` §2 (`opportunityId = {{opportunity.id}}`, dirección, servicio, `branch_code`, cantidad…). Se puede editar en el navegador o con un script como `ramas-sp05.py`.
+0. **🔴 `SP04` y `AP03` sólo mueven la etapa.** No escriben en la oportunidad `estado_apartado = pagado`, `orden_id` ni `fecha_pago`. Consecuencias, sin ningún error:
+   - los If de `SP02` nunca ven el pago: **al cliente que ya pagó le siguen llegando los recordatorios** de «tu apartado vence»;
+   - `N4` exige `orden_id`: sin él contesta `faltan_datos` y `SP05` escala cada pedido.
+   Hay que agregar esos campos a la acción de oportunidad de los dos (en `SP04`, `orden_id` = número de la factura: falta ver qué merge field lo trae).
+   *(El webhook vacío de `SP05` ya se corrigió el 2 oct: 12 claves en `customData`, verificado por API.)*
 1. **Germán, a mano en la interfaz:**
    1. ~~If de `SP05` y triggers~~ — hechos el 2 oct.
    2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
@@ -150,7 +154,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | — | **Terminar las pruebas con la oportunidad**: la rama de `N1` que **crea** la oportunidad (el contacto de prueba ya no tiene una abierta), `N4` con `opportunityId` en el Custom Data, y `N5` por webhook y por reloj | Germán y Claude |
 | — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
 | — | Prompt del bot: qué decir cuando `N1` contesta `pedido_en_curso` (terminar o cancelar el pedido actual antes de apartar otro) | 786 |
-| — | **🔴 `SP05`: el Webhook a `N4` está vacío.** Tiene que mandar `opportunityId` = `{{opportunity.id}}` y los datos de envío en Custom Data (ver §0, paso 0) | Germán / Claude |
+| — | **🔴 `SP04` y `AP03` no marcan el pedido como pagado** ni escriben `orden_id` / `fecha_pago` (ver §0, paso 0) | Germán / Claude |
 | `0.3` | `N1`, `N2` y `N3` reimportados y probados. Falta **reimportar `N4` y `N5`** con la versión de la oportunidad y asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: los workflows `PRUEBA N1 - webhook apartar` y el de N3 (quedó como «New Workflow : 1790609975341»), las facturas de prueba, la oportunidad «Prueba Paca» y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
