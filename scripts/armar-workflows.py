@@ -89,12 +89,16 @@ class Interna:
 
     def escribir(self, wid, nodos, status="draft"):
         """PUT releyendo la versión. `allowMultiple`/`stopOnResponse` van siempre:
-        lo que se omite se resetea a su valor por defecto."""
+        lo que se omite se resetea a su valor por defecto. Se copian del vivo: con
+        `allowMultiple` (Allow re-entry) en False, un cliente entra una sola vez en su vida
+        y su segundo pedido no dispara nada (pasó el 2 oct)."""
         d = self.leer(wid)
         r = requests.put(f"{BASE}/workflow/{self.loc}/{wid}", headers=self.H, timeout=40,
                          json={"name": d.get("name"), "version": d.get("version"),
                                "parentId": d.get("parentId"), "status": status,
-                               "allowMultiple": False, "stopOnResponse": False,
+                               "allowMultiple": bool(d.get("allowMultiple")),
+                               "allowMultipleOpportunity": bool(d.get("allowMultipleOpportunity")),
+                               "stopOnResponse": bool(d.get("stopOnResponse")),
                                "workflowData": {"templates": nodos}})
         if r.ok:
             return True, ""

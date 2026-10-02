@@ -413,7 +413,12 @@ El `TokenManager` del kit lo hace solo y lo cachea.
 - **Validar el grafo antes de escribir** con `validar_grafo()`: un `next` en `null` o un
   `parentKey` que no cuadra tumba el PUT entero.
 - **`allowMultiple` y `stopOnResponse` van siempre en el body**: lo que se omite se
-  resetea a su valor por defecto.
+  resetea a su valor por defecto. `escribir()` los copia del workflow vivo.
+- **`allowMultiple` es «Allow re-entry»** (*Settings* del workflow). En `false`, un contacto
+  entra **una sola vez en su vida**: su segundo pedido no dispara `SP02`, `SP04` ni `SP05`, y
+  el segundo aviso de `N5` no entra a `AP01`. Todos menos `LS01` lo llevan en `true`. Hasta el
+  2 oct `escribir()` lo forzaba a `false` en cada PUT; se descubrió porque «Prueba Paca» no
+  volvió a entrar a `SP02` en su segundo pedido.
 - **Crear el trigger publica el workflow.** Y la etiqueta del trigger tiene que existir
   antes.
 

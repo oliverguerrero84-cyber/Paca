@@ -167,6 +167,10 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 - **La acción *Update opportunity* no hace nada si el workflow no arranca por una oportunidad**
   y no hay un *Find opportunity* antes (lo dice su propia ayuda). `SP04` (pago recibido) y `AP03`
   (formulario) lo tenían así hasta el 2 oct: el pago entraba y el pedido no se movía.
+- **«Allow re-entry» apagado deja entrar a cada cliente una sola vez en su vida.** Es
+  `allowMultiple` en *Settings* del workflow. Sin él, el segundo pedido de un cliente no dispara
+  `SP02`, `SP04` ni `SP05`, y `AP01` sólo recibe el primer aviso de rastreo. Todos lo llevan
+  prendido menos `LS01`. `armar-workflows.py` lo forzaba a `false` hasta el 2 oct; ahora lo copia.
 - **Una etiqueta que no existe en la cuenta deja el nodo con aviso de error**, y los triggers de
   tag no disparan. Hay que crearla antes (`POST /locations/{id}/tags`). Le pasó a `apartado-vencido`.
 - **El Custom Data de un Webhook de workflow va en `customData`**, no en `data`. Por API, `data`
