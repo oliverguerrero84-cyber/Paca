@@ -32,12 +32,10 @@
       - *Pipeline Stage Changed*, para `SP02` y `SP05`;
       - pago recibido, para `SP04`;
       - el de `LS01`.
-   3. El Inbound Webhook de `AP01`: pasar su URL.
-2. **Con la URL de `AP01`:**
-   1. Poner el id en `GHL_WEBHOOK_RASTREO` del `Config` de `n8n/N5-rastrear.json`.
-   2. Subirlo con `python scripts/subir-n8n.py n8n/N5-rastrear.json --aplicar`.
-   3. Armar las ramas por estado (`docs/01-mapa-ghl.md` §2).
-   4. POST de prueba con `estado: entregado` y verificar por la API que la oportunidad quede **won**.
+   3. En el trigger de `AP01` (Inbound Webhook, ya creado): tomar la muestra que llegó el 2 oct y mapear el contacto por `contactId`.
+2. **`AP01`** — la URL ya está en `GHL_WEBHOOK_RASTREO` de `N5`, subida a n8n el 2 oct:
+   1. Armar las ramas por `estado` (`docs/01-mapa-ghl.md` §2). Falta el molde de un If sobre `inboundWebhookRequest.estado`.
+   2. POST de prueba con `estado: entregado` y verificar por la API que la oportunidad quede **won**.
 3. **Probar la rama de `N1` que crea la oportunidad.** Con «Prueba Paca» debe crear una **nueva** y dejar intacta la vieja (`abandoned`). Antes, subir el stock de `test 1`.
 4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.
 5. **`SP04`:** probar si «registrar pago» manual sobre una factura de prueba dispara el pago recibido.

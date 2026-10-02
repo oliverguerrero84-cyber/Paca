@@ -102,7 +102,7 @@ todos dependen de n8n, de Stripe o de la cadena de despacho. En su lugar,
   - `entregado` → *Create/Update Opportunity*: etapa «Entregado / Cerrado» y **status `won`**. Sin mensaje.
   - `incidencia` o `cancelado` → tag `escalar-humano`, que dispara `AP02`.
   - `en_reparto` → nada. Es sólo para envíos a domicilio y la plantilla 3 ya avisó que va en camino.
-- El id del webhook va en `GHL_WEBHOOK_RASTREO` del `Config` de `N5`.
+- La **URL completa** del webhook va en `GHL_WEBHOOK_RASTREO` del `Config` de `N5` (puesta el 2 oct). La forma real es `/hooks/{location}/webhook-trigger/{id}`, no `/hooks/inbound/{id}`.
 
 **`SP02` — Apartado 24 h.**
 - **Trigger:** *Pipeline Stage Changed* → SP · Menudeo, etapa «Liga de Pago Enviada». Ya no es un Inbound Webhook: `N1` no llama a ningún workflow, mueve la oportunidad.

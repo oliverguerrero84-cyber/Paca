@@ -37,7 +37,7 @@ Los valores ya vienen cargados en los JSON. Los que dicen `PENDIENTE` hay que ll
 al importar, y son los mismos en todos los flujos donde aparecen:
 
 ```
-GHL_WEBHOOK_RASTREO   = id del Inbound Webhook de AP01, cuando exista     (N5)
+GHL_WEBHOOK_RASTREO   = URL completa del Inbound Webhook de AP01         (N5)
 ALMACEN_*             = nombre, calle, número, colonia, CP, teléfono y correo del
                         almacén de Nuevo Laredo; los manda el cliente     (N4)
 ```

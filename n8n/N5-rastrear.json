@@ -181,7 +181,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://services.leadconnectorhq.com/hooks/inbound/{{ $('Config').first().json.GHL_WEBHOOK_RASTREO }}",
+        "url": "={{ $('Config').first().json.GHL_WEBHOOK_RASTREO }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ contactId: $json.contactId, opportunityId: $json.opportunityId, numero_guia: $json.numero_guia, estado: $json.estado, estado_crudo: $json.estado_crudo, entrega_estimada: $json.entrega_estimada, track_url: $json.track_url }) }}",
@@ -360,7 +360,7 @@
             {
               "id": "cfg-ghl_webhook_rastreo",
               "name": "GHL_WEBHOOK_RASTREO",
-              "value": "PENDIENTE: id del Inbound Webhook de AP01",
+              "value": "https://services.leadconnectorhq.com/hooks/c9jj5uu1WZOIkwi6Vfj5/webhook-trigger/24f5a126-af7b-4605-83db-05190c9b8486",
               "type": "string"
             },
             {
