@@ -13,15 +13,17 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
-**Dónde quedó (1 oct):**
+**Dónde quedó (2 oct):**
 - Los 5 flujos de n8n están en el n8n de Germán.
   - Probados en vivo con los datos en la oportunidad: `N1` y `N2`.
   - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
+  - **`N5` cambió el 2 oct**, sin probar todavía: avisa a `AP01` una sola vez por estado (guarda el último en `opportunity.estado_envio`, campo creado ese día) y, al entregarse, pasa la oportunidad a «Entregado» con status **won**. Antes avisaba cada hora y nunca cerraba el pedido.
 - **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con 26 nodos y **todos en borrador**. Ninguno se publica hasta que estén WhatsApp y Stripe. El detalle está en `docs/16-guias-workflows.md` §4.9.
-  - **Trigger puesto:** solo `AP02`. `AP01` espera la URL de su Inbound Webhook y `AP03`, su formulario. Los de `LS01`, `SP02`, `SP04` y `SP05` faltan.
+  - **Trigger puesto:** `AP02` y `AP01` (Inbound Webhook, URL ya en `N5`). `AP03` espera su formulario. Los de `LS01`, `SP02`, `SP04` y `SP05` faltan.
+  - **`AP01` terminado** (2 oct, 11 nodos, revisado en la interfaz): *Find contact* por Contact ID → If por `estado`: `en_sucursal` → SMS; `incidencia` y `cancelado` → tag `escalar-humano`; lo demás, nada.
   - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
   - **`SP02` ya tiene sus If** (2 oct, 26 nodos), sobre `opportunity.estado_apartado`. Falta verlo en la interfaz. `SP05` sigue en línea recta: falta el molde del operador «está vacío» (§4.10).
-  - ⚠️ No volver a correr `armar-workflows.py SP02 --aplicar`: borraría esos If.
+  - ⚠️ No volver a correr `armar-workflows.py SP02` ni `AP01` con `--aplicar`: borraría las ramas. Las ramas se escribieron con `scripts/ramas-sp02.py` y `scripts/ramas-ap01.py`, que se corren una sola vez (verifican la forma de antes y guardan respaldo).
   - El nodo de `AP02` que apaga el bot lo rechaza la cuenta, porque Conversation AI todavía no está provisionado (§4.3).
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
@@ -32,10 +34,7 @@
       - *Pipeline Stage Changed*, para `SP02` y `SP05`;
       - pago recibido, para `SP04`;
       - el de `LS01`.
-   3. ~~Contacto de `AP01`~~ — hecho el 2 oct: el trigger nuevo no mapea contacto, así que va un *Find contact* por Contact ID (`docs/16-guias-workflows.md` §4.10.bis).
-2. **`AP01`** — la URL ya está en `GHL_WEBHOOK_RASTREO` de `N5`, subida a n8n el 2 oct:
-   1. Armar las ramas por `estado` (`docs/01-mapa-ghl.md` §2). Falta el molde de un If sobre `inboundWebhookRequest.estado`.
-   2. POST de prueba con `estado: entregado` y verificar por la API que la oportunidad quede **won**.
+2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
 3. **Probar la rama de `N1` que crea la oportunidad.** Con «Prueba Paca» debe crear una **nueva** y dejar intacta la vieja (`abandoned`). Antes, subir el stock de `test 1`.
 4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.
 5. **`SP04`:** probar si «registrar pago» manual sobre una factura de prueba dispara el pago recibido.
@@ -43,6 +42,8 @@
 
 **Cómo se trabaja con Germán:**
 - Los workflows se arman **por API** con `scripts/armar-workflows.py`. Lo que la API no puede (moldes que faltan, formularios) lo hace Germán en la interfaz, y después se lee por API.
+- **Escribir un workflow vivo lo corre Germán** con `!` en el prompt: el clasificador de Claude Code bloquea esa escritura. Leer sí lo hace Claude.
+- El canje del token de Firebase da **429** si se repite en menos de un minuto: es un límite de Google, se espera y se reintenta.
 - Antes de escribir un workflow, leer `docs/16-guias-workflows.md` §4.2: hay que releerlo antes de cada PUT, el PUT es todo o nada y crear un trigger lo publica.
 - La API interna pide el token de la extensión de Chrome **canjeado por un JWT**, que dura una hora (§4.1).
 - Los flujos de n8n se cambian en el repo y se suben con `scripts/subir-n8n.py`, sin reimportar.
