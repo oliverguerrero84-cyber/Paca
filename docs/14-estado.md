@@ -29,11 +29,11 @@
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
-0. **🔴 `SP04` y `AP03` sólo mueven la etapa.** No escriben en la oportunidad `estado_apartado = pagado`, `orden_id` ni `fecha_pago`. Consecuencias, sin ningún error:
-   - los If de `SP02` nunca ven el pago: **al cliente que ya pagó le siguen llegando los recordatorios** de «tu apartado vence»;
-   - `N4` exige `orden_id`: sin él contesta `faltan_datos` y `SP05` escala cada pedido.
-   Hay que agregar esos campos a la acción de oportunidad de los dos (en `SP04`, `orden_id` = número de la factura: falta ver qué merge field lo trae).
-   *(El webhook vacío de `SP05` ya se corrigió el 2 oct: 12 claves en `customData`, verificado por API.)*
+0. ~~`SP04` y `AP03` sólo movían la etapa~~ — corregido el 2 oct en la interfaz:
+   - Los dos tienen ahora **Find opportunity** (pipeline SP · Menudeo, etapa «Liga de Pago Enviada», status open, la más reciente). Sin él, la acción de oportunidad **no hacía nada**: el trigger de pago y el de formulario no traen oportunidad.
+   - La acción escribe `estado_apartado = pagado` y `fecha_pago = {{right_now.little_endian_date}}`. `SP04` además `orden_id = {{payment.invoice.number}}`.
+   - **Falta en `AP03`:** `orden_id`, que saldrá de la referencia del formulario cuando exista. Sin él, `N4` contesta `faltan_datos` en los pagos por transferencia.
+   - **Hueco conocido:** si alguien paga **después** de que `N2` venció el apartado, la oportunidad ya está `abandoned` y el filtro no la encuentra: el pago entra y nadie se entera. Decidir qué hacer (aviso a los dueños en la rama *Not Found*).
 1. **Germán, a mano en la interfaz:**
    1. ~~If de `SP05` y triggers~~ — hechos el 2 oct.
    2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
@@ -154,7 +154,7 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | — | **Terminar las pruebas con la oportunidad**: la rama de `N1` que **crea** la oportunidad (el contacto de prueba ya no tiene una abierta), `N4` con `opportunityId` en el Custom Data, y `N5` por webhook y por reloj | Germán y Claude |
 | — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
 | — | Prompt del bot: qué decir cuando `N1` contesta `pedido_en_curso` (terminar o cancelar el pedido actual antes de apartar otro) | 786 |
-| — | **🔴 `SP04` y `AP03` no marcan el pedido como pagado** ni escriben `orden_id` / `fecha_pago` (ver §0, paso 0) | Germán / Claude |
+| — | **`AP03`: `orden_id` desde el formulario**, y qué hacer con un pago que llega después del vencimiento (rama *Not Found* de `SP04`/`AP03`) | Germán / Claude |
 | `0.3` | `N1`, `N2` y `N3` reimportados y probados. Falta **reimportar `N4` y `N5`** con la versión de la oportunidad y asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: los workflows `PRUEBA N1 - webhook apartar` y el de N3 (quedó como «New Workflow : 1790609975341»), las facturas de prueba, la oportunidad «Prueba Paca» y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
