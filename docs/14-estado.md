@@ -19,21 +19,19 @@
   - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
   - **`N5` cambió el 2 oct**, sin probar todavía: avisa a `AP01` una sola vez por estado (guarda el último en `opportunity.estado_envio`, campo creado ese día) y, al entregarse, pasa la oportunidad a «Entregado» con status **won**. Antes avisaba cada hora y nunca cerraba el pedido.
 - **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con 26 nodos y **todos en borrador**. Ninguno se publica hasta que estén WhatsApp y Stripe. El detalle está en `docs/16-guias-workflows.md` §4.9.
-  - **Trigger puesto:** `AP02` y `AP01` (Inbound Webhook, URL ya en `N5`). `AP03` espera su formulario. Los de `LS01`, `SP02`, `SP04` y `SP05` faltan.
+  - **Triggers puestos** (verificados por API el 2 oct): `LS01` *Contact Created*, `SP02` etapa → «Liga de Pago Enviada», `SP04` *Payment Received*, `SP05` etapa → «Pago Confirmado», `AP01` Inbound Webhook (URL ya en `N5`), `AP02` tag `escalar-humano`. Falta `AP03`: espera su formulario.
   - **`AP01` terminado** (2 oct, 11 nodos, revisado en la interfaz): *Find contact* por Contact ID → If por `estado`: `en_sucursal` → SMS; `incidencia` y `cancelado` → tag `escalar-humano`; lo demás, nada.
   - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
-  - **`SP02` ya tiene sus If** (2 oct, 26 nodos), sobre `opportunity.estado_apartado`. Falta verlo en la interfaz. `SP05` sigue en línea recta: falta el molde del operador «está vacío» (§4.10).
-  - ⚠️ No volver a correr `armar-workflows.py SP02` ni `AP01` con `--aplicar`: borraría las ramas. Las ramas se escribieron con `scripts/ramas-sp02.py` y `scripts/ramas-ap01.py`, que se corren una sola vez (verifican la forma de antes y guardan respaldo).
+  - **`SP02` ya tiene sus If** (2 oct, 26 nodos), sobre `opportunity.estado_apartado`.
+  - **`SP05` ya tiene su If** (2 oct, 12 nodos, revisado en la interfaz): si `opportunity.etiqueta_pdf` está vacía tras la espera, `N4` falló → tag `escalar-humano`; si no, correo, SMS y «Orden en Almacén».
+  - ⚠️ No volver a correr `armar-workflows.py SP02`, `SP05` ni `AP01` con `--aplicar`: borraría las ramas. Las ramas se escribieron con `scripts/ramas-sp02.py`, `scripts/ramas-ap01.py` y `scripts/ramas-sp05.py`, que se corren una sola vez (verifican la forma de antes y guardan respaldo).
   - El nodo de `AP02` que apaga el bot lo rechaza la cuenta, porque Conversation AI todavía no está provisionado (§4.3).
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
 1. **Germán, a mano en la interfaz** (desbloquea todo lo demás):
-   1. En el If de «PRUEBA N1», cambiar la condición a *Opportunity → Etiqueta PDF → está vacío*. Se lee por API y con eso se arma el If de `SP05`.
-   2. Los triggers que faltan. Basta con uno de cada tipo para copiar el molde; si no, los pone él, son dos clics cada uno:
-      - *Pipeline Stage Changed*, para `SP02` y `SP05`;
-      - pago recibido, para `SP04`;
-      - el de `LS01`.
+   1. ~~If de `SP05` y triggers~~ — hechos el 2 oct.
+   2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
 2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
 3. **Probar la rama de `N1` que crea la oportunidad.** Con «Prueba Paca» debe crear una **nueva** y dejar intacta la vieja (`abandoned`). Antes, subir el stock de `test 1`.
 4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.

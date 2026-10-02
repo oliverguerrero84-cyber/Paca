@@ -538,7 +538,7 @@ el flujo termina; si no, sigue el recordatorio. A las 24 h 20 min, si es `vencid
 > el PUT reescribe el workflow entero, así que **borraría los If**. Hay que pasar los If al
 > armador antes.
 
-`SP05` sigue en cadena recta: falta el molde del operador «está vacío».
+`SP05` y `AP01` también tienen sus ramas desde el 2 oct (`scripts/ramas-*.py`).
 
 **Cómo se destraba, en un minuto y es la receta del playbook §0** —donde falta el molde,
 se arma a mano, se lee y se copia:
@@ -561,7 +561,8 @@ Con ese molde se arman los If de `SP02` y `SP05` en la misma sesión.
   `CCZdcXbJc9W7hS7mojgi`), `conditionOperator: "=="`, `conditionValue: "pagado"`.
 - **Las ramas** son nodos `if_else` hijos: `nodeType: "branch-yes"` (con el nombre de la rama) y
   `"branch-no"` (`attributes: {else: true}`), hermanos entre sí (`sibling`).
-- **Falta el operador «está vacío»** para el If de `SP05` sobre `etiqueta_pdf`: no se ha leído.
+- **«Está vacío»** (leído el 2 oct): `conditionOperator: "has_no_value"`, `conditionValue: null`. Lo usa `SP05` sobre `etiqueta_pdf`.
+- **Sobre el body de un Inbound Webhook**: `conditionType: "inboundWebhookRequest"`, `conditionSubType` = la clave del body (`estado`). Lo usa `AP01`.
 
 ### 4.10.bis El Inbound Webhook nuevo no mapea el contacto — 2 oct
 
