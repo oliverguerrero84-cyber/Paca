@@ -16,6 +16,9 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
 
 **Herramientas que ya existen, antes de escribir otra:**
 - `scripts/subir-n8n.py` sube los flujos del repo a n8n por la API, con las credenciales reales.
+- `scripts/probar-n1.sh` prende `N1`, le hace un pedido de prueba con «Prueba Paca» y lo apaga. Los flujos de
+  n8n viven **apagados**; prenderlos lo corre una persona con `!`, igual que escribir workflows.
+- **Para probar un workflow sin esperar horas**, las esperas se adelantan a mano en *Enrollment history*.
 - `scripts/crear-esqueleto-menudeo.py` crea pipeline, campos (de contacto y de oportunidad) y custom values.
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
 - `scripts/armar-workflows.py` crea los workflows de GHL por la API interna, **en línea recta**.

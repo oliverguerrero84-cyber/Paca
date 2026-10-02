@@ -13,6 +13,13 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
+**Para retomar (quedó a medias el 2 oct, prueba de la rama «del que paga»):**
+1. Pedido anterior de «Prueba Paca» cerrado como `won`; Allow re-entry ya prendido; **`SP05` en borrador a propósito** (si escala con `N4` apagado, `AP02` les manda correo a los dueños reales).
+2. `! bash scripts/probar-n1.sh` → crea el pedido y la factura 000008, y «Prueba Paca» debe **entrar a `SP02`** (antes no entraba por el re-entry).
+3. Germán: *Record payment* (cash) sobre la 000008 → `SP04` lo marca `pagado`.
+4. Germán: en `SP02` → *Enrollment history*, adelantar «Espera 12 h» → «¿Ya pagó?» debe ir por **«Ya pagado»** y terminar sin recordatorio.
+5. Claude verifica por API y en *Execution logs*; después **`SP05` vuelve a Published** y se le prende «Allow multiple opportunities» (`allowMultipleOpportunity` quedó `false` sólo en él).
+
 **Dónde quedó (2 oct):**
 - Los 5 flujos de n8n están en el n8n de Germán.
   - Probados en vivo con los datos en la oportunidad: `N1` y `N2`.
@@ -22,7 +29,7 @@
 - ⚠️ **Los 10 workflows están PUBLICADOS, no en borrador** — verificado leyendo la cuenta el 2 oct. Es el efecto de rebote que avisa el playbook: **crear un trigger publica el workflow**, y el 2 oct se crearon seis. Ninguno se publicó a propósito.
   - **Hoy no hace daño**: hay 3 contactos de prueba y 1 oportunidad, no hay WhatsApp ni Stripe, y los nodos de mensaje son SMS sin número, así que fallan en ejecución sin mandar nada.
   - **Lo que sí importa**: `LS01` dispara con *Contact Created* **sin filtro**, así que en cuanto entren contactos de verdad —una importación, un formulario— a cada uno se le crea una oportunidad. Está bien por diseño (`N1` reutiliza la del lead y sólo contesta `pedido_en_curso` si hay **otra** que no sea de lead), pero conviene decidirlo, no heredarlo.
-  - **Decidido el 2 oct:** `LS01` regresó a **borrador** (Germán, verificado por API) para que no cree oportunidades a contactos reales. Los otros 6 se quedan publicados a sabiendas: sólo disparan con pedidos, pagos o el webhook de `N5`, y así se prueban en vivo (`SP02` ya corre sobre «Prueba Paca»). Regresar a borrador apaga los triggers; `LS01` se publica en el lanzamiento.
+  - **Decidido el 2 oct:** `LS01` regresó a **borrador** (Germán, verificado por API) para que no cree oportunidades a contactos reales. `SP05` está en borrador **sólo mientras dura la prueba** (ver «Para retomar»). Los otros 5 se quedan publicados a sabiendas: sólo disparan con pedidos, pagos o el webhook de `N5`, y así se prueban en vivo (`SP02` ya corre sobre «Prueba Paca»). Regresar a borrador apaga los triggers; `LS01` se publica en el lanzamiento.
   - **Triggers puestos** (verificados por API el 2 oct): `LS01` *Contact Created*, `SP02` etapa → «Liga de Pago Enviada», `SP04` *Payment Received*, `SP05` etapa → «Pago Confirmado», `AP01` Inbound Webhook (URL ya en `N5`), `AP02` tag `escalar-humano`. Falta `AP03`: espera su formulario.
   - **`AP01` terminado** (2 oct, 11 nodos, revisado en la interfaz): *Find contact* por Contact ID → If por `estado`: `en_sucursal` → SMS; `incidencia` y `cancelado` → tag `escalar-humano`; lo demás, nada.
   - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
@@ -45,9 +52,9 @@
 2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
 3. ~~Probar la rama de `N1` que crea la oportunidad~~ — **pasó el 2 oct**. Con «Prueba Paca» creó una oportunidad nueva (`u0LqSbCow6Kp6HMKAfKM`) en «Liga de Pago Enviada», `open`, con sus 8 campos y `monetaryValue` 100; dejó intacta la vieja (`abandoned`); el stock bajó de 3 a 2 y la factura 000006 salió `sent` en MXN.
    - **Efecto: `SP02` corrió en vivo** sobre esa oportunidad (los workflows están publicados) y **pasó la rama del que no paga** el 2 oct. Germán adelantó las esperas a mano (*Enrollment history*) y corrió `N2` con *Execute workflow* tras ponerle a la oportunidad un `expira_en` ya pasado. *Execution logs*: los dos «¿Ya pagó?» por «No», `N2` dejó la oportunidad `abandoned` + `vencido` y devolvió la pieza (stock 3), «¿Venció?» por «Ya vencido», tag `apartado-vencido` puesto y fin. Los SMS salen *Skipped* porque el contacto no tiene teléfono.
-   - Los 5 flujos de n8n están **apagados**. Para probar, se prende el flujo, se llama y se apaga; prenderlo lo corre Germán con `!` (el clasificador lo bloquea). Script de esta prueba: prende `N1`, llama `/webhook/apartar` y lo apaga con un `trap`.
+   - Los 5 flujos de n8n están **apagados**. Para probar, se prende el flujo, se llama y se apaga; prenderlo lo corre Germán con `!` (el clasificador lo bloquea). Script: `scripts/probar-n1.sh` (prende `N1`, llama `/webhook/apartar` con «Prueba Paca» y lo apaga con un `trap`).
 4. **`SP02`:** falta la rama **del que paga** (necesita `SP04` o `AP03` marcando `pagado`; se prueba junto con el paso 5) y crear el campo de oportunidad `expira_texto` para que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). La del que no paga ya pasó. Para probar no hace falta copia con waits cortos: las esperas se adelantan a mano desde *Enrollment history*.
-   - **2 oct, segundo pedido de «Prueba Paca»** (`IcFEOalVHvIIbV05wzZ9`, factura 000007): **no entró a `SP02`**. Causa: «Allow re-entry» (`allowMultiple`) apagado en los 6 workflows; `armar-workflows.py` lo forzaba a `false`. Ya no lo fuerza (lo copia del vivo). **Falta que Germán lo prenda** en *Settings* de `SP02`, `SP04`, `SP05`, `AP01`, `AP02` y `AP03` (no en `LS01`), y luego repetir la rama del que paga con otro pedido.
+   - **2 oct, segundo pedido de «Prueba Paca»** (`IcFEOalVHvIIbV05wzZ9`, factura 000007): **no entró a `SP02`**. Causa: «Allow re-entry» (`allowMultiple`) apagado en los 6 workflows; `armar-workflows.py` lo forzaba a `false`. Ya no lo fuerza (lo copia del vivo). Germán lo prendió en los 6 (verificado por API, `LS01` sigue en `false`). Falta repetir la rama del que paga: ver «Para retomar».
 5. ~~`SP04` con pago manual~~ — **pasó el 2 oct**. *Record payment* (cash) sobre la factura 000007 disparó `SP04`: encontró el pedido, lo pasó a «Pago Confirmado» con `estado_apartado = pagado`, `orden_id = INV-000007`, `fecha_pago = 2/10/2026`, y quitó el tag `apartado-vencido`. `SP05` estaba en borrador a propósito: con `N4` apagado habría escalado y `AP02` les manda correo a los 3 dueños reales (`@gtxusa.com`). Ojo: `fecha_pago` sale `d/m/aaaa`, no ISO, y `orden_id` lleva el prefijo `INV-`.
 6. **Repetir `N4` y `N5`** con los datos en la oportunidad.
 
@@ -69,9 +76,9 @@
 - **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
 
 **Datos de prueba en Greentex hoy:**
-- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con dos oportunidades en «Liga de Pago Enviada»: la vieja (`ZMTFf0hvLxNkwQJn6tRw`), `abandoned` y `vencido`; y la del 2 oct (`u0LqSbCow6Kp6HMKAfKM`), también `abandoned` y `vencido` (la usó la prueba de `SP02`). El contacto tiene el tag `apartado-vencido`.
-- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 3** (N2 devolvió la del apartado del 2 oct; otra pieza la descontó una corrida fallida de `N1` y no se devolvió).
-- 6 facturas de prueba de $100 (000001 a 000006; la 000006 es la del apartado abierto).
+- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`, sin teléfono, correo `@example.com`) con tres oportunidades, **ninguna abierta**: `ZMTFf0hvLxNkwQJn6tRw` y `u0LqSbCow6Kp6HMKAfKM` (`abandoned`, `vencido`) y `IcFEOalVHvIIbV05wzZ9` (pagada con la 000007, cerrada a mano como `won`).
+- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 2** (el pedido pagado se llevó una; otra la descontó una corrida fallida de `N1` y no se devolvió).
+- 7 facturas de prueba de $100 (000001 a 000007; la 000007 está `paid` con un pago en efectivo registrado a mano).
 - Los workflows «PRUEBA N1», «PRUEBA N3» y «PRUEBA N5», y el borrador «New Workflow : 1790282449589».
 - Todo esto se limpia al final (ver §3).
 
