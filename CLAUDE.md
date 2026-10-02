@@ -18,6 +18,14 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
 - `scripts/subir-n8n.py` sube los flujos del repo a n8n por la API, con las credenciales reales.
 - `scripts/crear-esqueleto-menudeo.py` crea pipeline, campos (de contacto y de oportunidad) y custom values.
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
+- `scripts/armar-workflows.py` crea los workflows de GHL por la API interna, **en línea recta**.
+  ⚠️ No correrlo con `--aplicar` sobre `SP02`, `SP05` ni `AP01`: reescribe el workflow entero y borra sus ramas.
+- `scripts/ramas-sp02.py`, `ramas-sp05.py` y `ramas-ap01.py` les pusieron las condiciones If. Se corren **una vez**:
+  verifican la forma de antes y guardan respaldo.
+
+**Escribir un workflow vivo lo corre Germán**, con `!` en el prompt: el clasificador de Claude Code
+bloquea esa escritura. Leer workflows, y editarlos en el navegador, sí lo hace Claude. El canje del
+token de la API interna da **429** si se repite en menos de un minuto; se espera y se reintenta.
 
 Todos leen sus credenciales del entorno.
 
@@ -149,6 +157,15 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   `status` del workflow y el `active` del trigger son el mismo interruptor. Y la
   **etiqueta tiene que existir antes** de escribir un trigger de tag, o queda en
   «Selecciona una etiqueta» y no dispara.
+- **Un If sobre un campo de oportunidad necesita antes un nodo *Find opportunity*.** Sin él, en un
+  workflow que no arranca por la oportunidad, la condición no tiene de dónde leer y se va siempre por
+  el *else*. Y en el selector hay **dos** «Etiqueta PDF», «Estado del apartado»…: la de *Contact
+  details* es la vieja y vacía. Hay que escoger la de *Opportunities*.
+- **El Inbound Webhook nuevo (premium) no mapea el contacto.** No hay dónde poner `contactId`; un
+  *Create contact* busca por email y teléfono y **duplica** al cliente. Se resuelve con *Find contact*
+  por Contact ID como primer nodo (`AP01`).
+- **`N5` avisa una sola vez por estado** porque guarda el último en `opportunity.estado_envio`. Si
+  alguien borra ese campo, `N5` se detiene con error; sin él, mandaría el mismo SMS cada hora.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
   contesta `pedido_en_curso`. Por eso el pedido tiene que cerrarse (`abandoned` al vencer,
   `won` al entregarse), o el cliente ya no puede volver a comprar.
@@ -175,11 +192,11 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/09-conversacion.md` | Cómo se llegó a cada decisión — **no es fuente de verdad** |
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
 | `docs/15-plantillas.md` | Las 7 plantillas de mensaje, listas para mandar a Meta |
-| `docs/16-guias-workflows.md` | **Cómo se arma cada workflow en la UI**, nodo por nodo y con los valores exactos |
+| `docs/16-guias-workflows.md` | **Cómo se arma cada workflow**, en la UI y por la API interna: moldes de nodos, If y triggers, y lo que la cuenta acepta (§4) |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/reporte-avance.html` | El reporte de avance que ve el cliente — mismo checklist que la propuesta |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
-| `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos |
+| `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos. `N5` cambió el 2 oct (no repite avisos y cierra el pedido entregado), sin probar |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |

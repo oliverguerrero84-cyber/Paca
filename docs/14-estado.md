@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 1 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 2 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -29,7 +29,8 @@
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
-1. **Germán, a mano en la interfaz** (desbloquea todo lo demás):
+0. **🔴 El webhook de `SP05` no le manda nada a `N4`** (`data: []`, armado así el 1 oct). `N4` exige `opportunityId`: tal como está, falla siempre y cada pedido pagado acaba escalado a humano. Hay que ponerle el Custom Data de `docs/01-mapa-ghl.md` §2 (`opportunityId = {{opportunity.id}}`, dirección, servicio, `branch_code`, cantidad…). Se puede editar en el navegador o con un script como `ramas-sp05.py`.
+1. **Germán, a mano en la interfaz:**
    1. ~~If de `SP05` y triggers~~ — hechos el 2 oct.
    2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
 2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
@@ -127,6 +128,11 @@ de cada cosa.
 | **Varias oportunidades por contacto activadas en Greentex** (*Settings → Objects → Opportunities → «Allow multiple opportunities per contact»*), verificado por la API (`allowDuplicateOpportunity: true`). Cada pedido queda en su oportunidad; se descartó el cambio de `N1` que reabría la existente | Germán | 29 sep |
 | **`N1` nuevo probado en vivo**: reutilizó la oportunidad del lead, la pasó a «Liga de Pago Enviada» y le escribió los 8 campos del apartado (`expira_en` en ISO). GHL devuelve los valores de oportunidad como `fieldValueString` / `fieldValueNumber` | Germán | 28 sep |
 | **`N2` nuevo probado en vivo**: encontró el apartado vencido en la etapa 4 leyendo los campos de la oportunidad, devolvió la paca (stock 3 → 4), puso `estado_apartado = vencido` y dejó la oportunidad en `abandoned` | Germán | 28 sep |
+| **Los 7 workflows de GHL creados por API** en borrador, con nodos «TEMPORAL · SMS» donde irá WhatsApp. Probado que la API interna crea workflows, nodos y triggers (`scripts/armar-workflows.py`, `docs/16-guias-workflows.md` §4) | Oliver | 1 oct |
+| **Triggers de `LS01`, `SP02`, `SP04` y `SP05`** puestos en la UI y verificados por API | Germán | 2 oct |
+| **If sobre campos de oportunidad**: moldes leídos de la UI (`find_opportunity` + `conditionType: opportunities`, «está vacío» = `has_no_value`). `SP02` (26 nodos) y `SP05` (12) con sus ramas, escritas por API | Germán / Claude | 2 oct |
+| **`AP01` terminado**: Inbound Webhook (URL en `N5`), *Find contact* por Contact ID y ramas por `estado` (sucursal → SMS; incidencia o cancelado → `escalar-humano`) | Germán / Claude | 2 oct |
+| **`N5` corregido**: avisaba a `AP01` cada hora y nunca cerraba el pedido entregado. Ahora guarda el último estado en `opportunity.estado_envio` (campo nuevo) y pasa el entregado a «Entregado» con status `won`. Subido a n8n, **sin probar** | Claude / 786 | 2 oct |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
@@ -143,9 +149,8 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | `0.1` | **Rotar el PIT de Korvance.** Volvió a pasar por chat el 25 sep | 786 |
 | — | **Terminar las pruebas con la oportunidad**: la rama de `N1` que **crea** la oportunidad (el contacto de prueba ya no tiene una abierta), `N4` con `opportunityId` en el Custom Data, y `N5` por webhook y por reloj | Germán y Claude |
 | — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
-| — | Al armar `AP01`: cuando el pedido se entrega, la oportunidad pasa a «Entregado / Cerrado» **con status `won`**. Si se queda abierta, el cliente no puede volver a comprar (`N1` contesta `pedido_en_curso`) | 786 |
 | — | Prompt del bot: qué decir cuando `N1` contesta `pedido_en_curso` (terminar o cancelar el pedido actual antes de apartar otro) | 786 |
-| — | Al armar `SP05`: el Webhook a `N4` tiene que mandar `opportunityId` = `{{opportunity.id}}` en Custom Data | 786 |
+| — | **🔴 `SP05`: el Webhook a `N4` está vacío.** Tiene que mandar `opportunityId` = `{{opportunity.id}}` y los datos de envío en Custom Data (ver §0, paso 0) | Germán / Claude |
 | `0.3` | `N1`, `N2` y `N3` reimportados y probados. Falta **reimportar `N4` y `N5`** con la versión de la oportunidad y asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: los workflows `PRUEBA N1 - webhook apartar` y el de N3 (quedó como «New Workflow : 1790609975341»), las facturas de prueba, la oportunidad «Prueba Paca» y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
