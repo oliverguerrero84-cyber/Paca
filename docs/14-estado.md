@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 29 de septiembre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 1 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -13,28 +13,39 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
-**Dónde quedó (29 sep):**
+**Dónde quedó (1 oct):**
 - Los 5 flujos de n8n están en el n8n de Germán.
   - Probados en vivo con los datos en la oportunidad: `N1` y `N2`.
   - `N3` probado. `N4` y `N5`, probados antes del cambio a la oportunidad.
-- Se decidió el orden de construcción de los workflows de GHL (`docs/01-mapa-ghl.md` §2, «Detalle de cada workflow — rediseño del 28 sep»).
-- Se le dio a Germán la guía de **`AP01 · Rastreo`**, y estamos **esperando que pase la URL de su Inbound Webhook**.
-- **La guía de `SP02` está escrita** en `docs/16-guias-workflows.md` §2, nodo por nodo, verificada contra la cuenta. Es el documento donde van a vivir todas las guías; la de `AP01` sólo existió en un chat.
+- **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con 26 nodos y **todos en borrador**. Ninguno se publica hasta que estén WhatsApp y Stripe. El detalle está en `docs/16-guias-workflows.md` §4.9.
+  - **Trigger puesto:** solo `AP02`. `AP01` espera la URL de su Inbound Webhook y `AP03`, su formulario. Los de `LS01`, `SP02`, `SP04` y `SP05` faltan.
+  - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
+  - `SP02` y `SP05` van **en línea recta, sin sus If**: falta el molde de una condición sobre un campo de oportunidad (§4.10).
+  - El nodo de `AP02` que apaga el bot lo rechaza la cuenta, porque Conversation AI todavía no está provisionado (§4.3).
+- Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
-0. **Probar la rama de `N1` que crea la oportunidad**: ya se puede, porque el 29 sep se activaron varias oportunidades por contacto. Con «Prueba Paca», `N1` debe crear una oportunidad **nueva** y dejar la vieja (`abandoned`) intacta. Antes, subir el stock de `test 1`.
-1. **Terminar `AP01`.** Con la URL del Inbound Webhook:
-   1. Poner el id en `GHL_WEBHOOK_RASTREO` del nodo `Config` de `n8n/N5-rastrear.json`.
+1. **Germán, a mano en la interfaz** (desbloquea todo lo demás):
+   1. Un nodo If/Else de prueba: *Opportunity → Estado del apartado → es igual a → pagado*. Se lee por API y con ese molde se arman los If de `SP02` y `SP05`.
+   2. Los triggers que faltan. Basta con uno de cada tipo para copiar el molde; si no, los pone él, son dos clics cada uno:
+      - *Pipeline Stage Changed*, para `SP02` y `SP05`;
+      - pago recibido, para `SP04`;
+      - el de `LS01`.
+   3. El Inbound Webhook de `AP01`: pasar su URL.
+2. **Con la URL de `AP01`:**
+   1. Poner el id en `GHL_WEBHOOK_RASTREO` del `Config` de `n8n/N5-rastrear.json`.
    2. Subirlo con `python scripts/subir-n8n.py n8n/N5-rastrear.json --aplicar`.
-   3. Mandar al webhook un POST de ejemplo, para que GHL aprenda los campos, con `estado: entregado` y el `opportunityId` de «Prueba Paca».
-   4. Verificar por la API que la oportunidad quedó en «Entregado / Cerrado» con status **won**.
-2. **Armar `SP02`** con `docs/16-guias-workflows.md` §2. Antes de conectar la plantilla 1 hacen falta dos cosas de §1.4: crear el campo de oportunidad `expira_texto` y que `N1` lo escriba. Primero la copia de prueba, con sus **dos** corridas —el que paga y el que no—, que es lo que cierra las 4 marcas *(verificar)*.
-3. **`SP04`**: probar si «registrar pago» manual sobre una factura de prueba dispara `Payment Received`.
-4. **`AP03`** con su formulario, luego **`SP05`** (se arma; se prueba cuando lleguen los datos del almacén), **`AP02`** y **`LS01`**.
-5. **Repetir `N4` y `N5`** con los datos en la oportunidad (`N4` necesita `opportunityId` en el Custom Data).
+   3. Armar las ramas por estado (`docs/01-mapa-ghl.md` §2).
+   4. POST de prueba con `estado: entregado` y verificar por la API que la oportunidad quede **won**.
+3. **Probar la rama de `N1` que crea la oportunidad.** Con «Prueba Paca» debe crear una **nueva** y dejar intacta la vieja (`abandoned`). Antes, subir el stock de `test 1`.
+4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.
+5. **`SP04`:** probar si «registrar pago» manual sobre una factura de prueba dispara el pago recibido.
+6. **Repetir `N4` y `N5`** con los datos en la oportunidad.
 
 **Cómo se trabaja con Germán:**
-- Germán arma los workflows en la UI de GHL con una guía nodo por nodo; nosotros verificamos por la API.
+- Los workflows se arman **por API** con `scripts/armar-workflows.py`. Lo que la API no puede (moldes que faltan, formularios) lo hace Germán en la interfaz, y después se lee por API.
+- Antes de escribir un workflow, leer `docs/16-guias-workflows.md` §4.2: hay que releerlo antes de cada PUT, el PUT es todo o nada y crear un trigger lo publica.
+- La API interna pide el token de la extensión de Chrome **canjeado por un JWT**, que dura una hora (§4.1).
 - Los flujos de n8n se cambian en el repo y se suben con `scripts/subir-n8n.py`, sin reimportar.
 
 **Accesos para trabajar desde Claude Code** (nunca por chat, nunca en el repo):
@@ -50,6 +61,7 @@
 - Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con una oportunidad (`ZMTFf0hvLxNkwQJn6tRw`) en «Liga de Pago Enviada», status `abandoned`, `estado_apartado = vencido`.
 - Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 3**. Una corrida fallida de `N1` descontó una pieza que no se devolvió.
 - 5 facturas de prueba de $100 (000001 a 000005).
+- Los workflows «PRUEBA N1», «PRUEBA N3» y «PRUEBA N5», y el borrador «New Workflow : 1790282449589».
 - Todo esto se limpia al final (ver §3).
 
 ## 1. Dónde estamos, en una línea
