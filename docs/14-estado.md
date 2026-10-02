@@ -43,7 +43,8 @@
    1. ~~If de `SP05` y triggers~~ — hechos el 2 oct.
    2. El formulario «Registrar Pago Manual» y el trigger de `AP03`.
 2. **Probar `N5` + `AP01` de punta a punta**: hace falta una oportunidad de prueba en «Enviado» con `numero_guia` de una guía real de Envia (sandbox). Correr `N5` a mano dos veces: la segunda **no** debe volver a avisar. Con una guía entregada, verificar por la API que la oportunidad quede **won**.
-3. **Probar la rama de `N1` que crea la oportunidad.** Con «Prueba Paca» debe crear una **nueva** y dejar intacta la vieja (`abandoned`). Antes, subir el stock de `test 1`.
+3. ~~Probar la rama de `N1` que crea la oportunidad~~ — **pasó el 2 oct**. Con «Prueba Paca» creó una oportunidad nueva (`u0LqSbCow6Kp6HMKAfKM`) en «Liga de Pago Enviada», `open`, con sus 8 campos y `monetaryValue` 100; dejó intacta la vieja (`abandoned`); el stock bajó de 3 a 2 y la factura 000006 salió `sent` en MXN.
+   - Los 5 flujos de n8n están **apagados**. Para probar, se prende el flujo, se llama y se apaga; prenderlo lo corre Germán con `!` (el clasificador lo bloquea). Script de esta prueba: prende `N1`, llama `/webhook/apartar` y lo apaga con un `trap`.
 4. **`SP02`:** crear el campo de oportunidad `expira_texto` y que `N1` lo escriba (`docs/16-guias-workflows.md` §1.4). Después, una copia de prueba con waits de minutos y sus dos corridas: el que paga y el que no.
 5. **`SP04`:** probar si «registrar pago» manual sobre una factura de prueba dispara el pago recibido.
 6. **Repetir `N4` y `N5`** con los datos en la oportunidad.
@@ -66,9 +67,9 @@
 - **10 flujos de n8n archivados pero activos**, de otros proyectos, sin borrar. La mayoría son subflujos; «Servir Páginas de Propiedades» tiene un webhook que podría estar en uso. Los otros 57 archivados ya se borraron.
 
 **Datos de prueba en Greentex hoy:**
-- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con una oportunidad (`ZMTFf0hvLxNkwQJn6tRw`) en «Liga de Pago Enviada», status `abandoned`, `estado_apartado = vencido`.
-- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 3**. Una corrida fallida de `N1` descontó una pieza que no se devolvió.
-- 5 facturas de prueba de $100 (000001 a 000005).
+- Contacto «Prueba Paca» (`1IzcksRfvxpnEohAZSg5`) con dos oportunidades en «Liga de Pago Enviada»: la vieja (`ZMTFf0hvLxNkwQJn6tRw`), `abandoned` y `vencido`; y la del 2 oct (`u0LqSbCow6Kp6HMKAfKM`), **`open` y `apartado`, expira el 3 oct 17:39 UTC**. Con `N2` apagado no se libera sola: sirve para probar `SP04` y `SP02`, y si no, se cierra en la limpieza devolviendo la pieza.
+- Producto `test 1` (SKU `PV-MUJ-BOU`) con **stock 2** (una pieza apartada por la oportunidad del 2 oct; otra la descontó una corrida fallida de `N1` y no se devolvió).
+- 6 facturas de prueba de $100 (000001 a 000006; la 000006 es la del apartado abierto).
 - Los workflows «PRUEBA N1», «PRUEBA N3» y «PRUEBA N5», y el borrador «New Workflow : 1790282449589».
 - Todo esto se limpia al final (ver §3).
 
