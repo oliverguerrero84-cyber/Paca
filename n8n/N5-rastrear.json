@@ -71,7 +71,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const idsPedido = (nodo) => { const m = {};\n  for (const f of $(nodo).first().json.customFields || []) m[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id;\n  return m; };\nconst valor = (o, ids, clave) => { const x = (o.customFields || []).find(f => f.id === ids[clave]);\n  if (!x) return null;\n  const v = x.fieldValue ?? x.value ?? x.fieldValueString ?? x.fieldValueNumber ?? x.fieldValueArray ?? null;\n  return Array.isArray(v) ? v[0] ?? null : v; };\n\n// Saca los pedidos en etapa «Enviado» que traen número de guía.\nconst ids = idsPedido('GHL · campos (reloj)');\nconst salida = [];\nfor (const o of $input.first().json.opportunities || []) {\n  const guia = valor(o, ids, 'numero_guia');\n  if (guia) salida.push({ json: { opportunityId: o.id, contactId: o.contactId || (o.contact || {}).id, numero_guia: guia } });\n}\nreturn salida;"
+        "jsCode": "const idsPedido = (nodo) => { const m = {};\n  for (const f of $(nodo).first().json.customFields || []) m[String(f.fieldKey || '').replace(/^opportunity\\./, '')] = f.id;\n  return m; };\nconst valor = (o, ids, clave) => { const x = (o.customFields || []).find(f => f.id === ids[clave]);\n  if (!x) return null;\n  const v = x.fieldValue ?? x.value ?? x.fieldValueString ?? x.fieldValueNumber ?? x.fieldValueArray ?? null;\n  return Array.isArray(v) ? v[0] ?? null : v; };\n\n// Saca los pedidos en etapa «Enviado» que traen número de guía.\nconst ids = idsPedido('GHL · campos (reloj)');\nconst salida = [];\nfor (const o of $input.first().json.opportunities || []) {\n  const guia = valor(o, ids, 'numero_guia');\n  if (guia) salida.push({ json: { opportunityId: o.id, contactId: o.contactId || (o.contact || {}).id, numero_guia: guia,\n                                  previo: valor(o, ids, 'estado_envio') } });\n}\nreturn salida;"
       },
       "id": "con-guia",
       "name": "Los que tienen guía",
@@ -134,7 +134,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Traduce el catálogo de estatus de Envia (28 valores en inglés, probado el 25 sep)\n// a lo que nos importa: ¿llegó a sucursal? ¿ya lo entregaron? ¿se canceló o hay problema?\nconst r = $json;\nif (r.meta === 'error') {\n  // ponytail: si Envia falla, esta corrida no avisa nada; la siguiente hora lo reintenta.\n  return [];\n}\nconst entradas = $('Los que tienen guía').all().map(i => i.json);\n\n// ponytail: sólo los estatus que vimos o que la referencia nombra; lo demás cae en en_transito.\nconst mapa = {\n  created: 'creada',\n  pickedup: 'en_transito', collected: 'en_transito', shipped: 'en_transito', intransit: 'en_transito',\n  outfordelivery: 'en_reparto',\n  readyforpickup: 'en_sucursal', availableforpickup: 'en_sucursal', atbranch: 'en_sucursal',\n  delivered: 'entregado',\n  canceled: 'cancelado', cancelled: 'cancelado',\n  exception: 'incidencia', returned: 'incidencia', returntosender: 'incidencia'\n};\n\nreturn (r.data || []).map(t => {\n  const crudo = String(t.status || '');\n  const clave = crudo.toLowerCase().replace(/[^a-z]/g, '');\n  const estado = mapa[clave] || 'en_transito';\n  const entrada = entradas.find(x => x.numero_guia === t.trackingNumber) || {};\n  return { json: { ...entrada, estado, estado_crudo: crudo,\n                   entrega_estimada: t.estimatedDelivery || null, entregado_el: t.deliveredAt || null,\n                   track_url: t.trackUrl || null,\n                   avisar: !['creada', 'en_transito'].includes(estado),\n                   mover_a: estado === 'entregado' ? $('Config').first().json.GHL_STAGE_ENTREGADO : null } };\n});"
+        "jsCode": "// Traduce el catálogo de estatus de Envia (28 valores en inglés, probado el 25 sep)\n// a lo que nos importa: ¿llegó a sucursal? ¿ya lo entregaron? ¿se canceló o hay problema?\nconst r = $json;\nif (r.meta === 'error') {\n  // ponytail: si Envia falla, esta corrida no avisa nada; la siguiente hora lo reintenta.\n  return [];\n}\nconst entradas = $('Los que tienen guía').all().map(i => i.json);\nconst cfg = $('Config').first().json;\nconst idEstado = Object.fromEntries(($('GHL · campos (reloj)').first().json.customFields || [])\n  .map(f => [String(f.fieldKey || '').replace(/^opportunity\\./, ''), f.id])).estado_envio;\nif (!idEstado) throw new Error('Falta el campo de oportunidad estado_envio');\n\n// ponytail: sólo los estatus que vimos o que la referencia nombra; lo demás cae en en_transito.\nconst mapa = {\n  created: 'creada',\n  pickedup: 'en_transito', collected: 'en_transito', shipped: 'en_transito', intransit: 'en_transito',\n  outfordelivery: 'en_reparto',\n  readyforpickup: 'en_sucursal', availableforpickup: 'en_sucursal', atbranch: 'en_sucursal',\n  delivered: 'entregado',\n  canceled: 'cancelado', cancelled: 'cancelado',\n  exception: 'incidencia', returned: 'incidencia', returntosender: 'incidencia'\n};\n\nreturn (r.data || []).map(t => {\n  const crudo = String(t.status || '');\n  const clave = crudo.toLowerCase().replace(/[^a-z]/g, '');\n  const estado = mapa[clave] || 'en_transito';\n  const entrada = entradas.find(x => x.numero_guia === t.trackingNumber) || {};\n  return { json: { ...entrada, estado, estado_crudo: crudo,\n                   entrega_estimada: t.estimatedDelivery || null, entregado_el: t.deliveredAt || null,\n                   track_url: t.trackUrl || null,\n                   // Sólo si cambió desde el último aviso: sin esto AP01 manda el mismo SMS cada hora.\n                   avisar: !['creada', 'en_transito'].includes(estado) && estado !== entrada.previo,\n                   // Lo que se escribe en la oportunidad después de avisar. Entregado cierra el pedido:\n                   // si no queda won, N1 le contesta pedido_en_curso al cliente para siempre.\n                   guardar: Object.assign({ customFields: [{ id: idEstado, field_value: estado }] },\n                     estado === 'entregado' ? { pipelineStageId: cfg.GHL_STAGE_ENTREGADO, status: 'won' } : {}) } };\n});"
       },
       "id": "traducir",
       "name": "Traducir estatus",
@@ -513,6 +513,42 @@
           "name": "GHL · PIT Greentex"
         }
       }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Traducir estatus').item.json.opportunityId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Traducir estatus').item.json.guardar) }}",
+        "options": {}
+      },
+      "id": "guardar-estado",
+      "name": "GHL · guardar estado del envío",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2120,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "Guarda el estado avisado (para no repetir el aviso) y, si se entregó, cierra la oportunidad como won."
     }
   ],
   "connections": {
@@ -705,6 +741,17 @@
         [
           {
             "node": "¿Sin guía?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · avisar a AP01": {
+      "main": [
+        [
+          {
+            "node": "GHL · guardar estado del envío",
             "type": "main",
             "index": 0
           }

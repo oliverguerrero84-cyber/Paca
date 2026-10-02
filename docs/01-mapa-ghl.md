@@ -96,10 +96,11 @@ todos dependen de n8n, de Stripe o de la cadena de despacho. En su lugar,
 `SP05` → `AP02` → `LS01` → `SP01` (cuando exista el bot).
 
 **`AP01` — Rastreo.**
-- **Trigger:** Inbound Webhook. Lo llama `N5` con `{ contactId, opportunityId, numero_guia, estado, estado_crudo, entrega_estimada, track_url }`. El contacto se mapea por `contactId`.
+- **Trigger:** Inbound Webhook. Lo llama `N5` con `{ contactId, opportunityId, numero_guia, estado, estado_crudo, entrega_estimada, track_url }`. El primer nodo es *Find contact* por Contact ID: este trigger no mapea contacto.
+- **`N5` avisa una sola vez por estado**: guarda el último en `opportunity.estado_envio` y no repite. Antes del 2 oct avisaba cada hora.
 - **Ramas** (If/Else sobre `{{inboundWebhookRequest.estado}}`):
   - `en_sucursal` → plantilla 7 con `numero_guia` y `track_url` del webhook.
-  - `entregado` → *Create/Update Opportunity*: etapa «Entregado / Cerrado» y **status `won`**. Sin mensaje.
+  - `entregado` → nada en GHL. **Lo cierra `N5`** (2 oct): después de avisar, pasa la oportunidad a «Entregado / Cerrado» con status **`won`** por la API, porque es el único que sabe cuál es (`opportunityId`). La acción de GHL no distingue entre los pedidos de un mismo cliente.
   - `incidencia` o `cancelado` → tag `escalar-humano`, que dispara `AP02`.
   - `en_reparto` → nada. Es sólo para envíos a domicilio y la plantilla 3 ya avisó que va en camino.
 - La **URL completa** del webhook va en `GHL_WEBHOOK_RASTREO` del `Config` de `N5` (puesta el 2 oct). La forma real es `/hooks/{location}/webhook-trigger/{id}`, no `/hooks/inbound/{id}`.

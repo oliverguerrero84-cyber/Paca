@@ -78,6 +78,8 @@ CARPETAS = [
         ("etiqueta_pdf",       "Etiqueta PDF",      "TEXT", None),
         ("track_url",          "Liga de rastreo",   "TEXT", None),
         ("fecha_envio",        "Fecha de envío",    "TEXT", None),
+        # Lo escribe N5: el último estado que le avisó a AP01. Sin esto avisa cada hora.
+        ("estado_envio",       "Estado del envío",  "TEXT", None),
     ]),
     ("Atribución", "contact", [
         ("canal_origen",           "Canal de origen",        "TEXT", None),
