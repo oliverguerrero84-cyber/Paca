@@ -20,13 +20,14 @@
 - **Los 7 workflows de GHL están creados por API en Greentex** (`scripts/armar-workflows.py`), con 26 nodos y **todos en borrador**. Ninguno se publica hasta que estén WhatsApp y Stripe. El detalle está en `docs/16-guias-workflows.md` §4.9.
   - **Trigger puesto:** solo `AP02`. `AP01` espera la URL de su Inbound Webhook y `AP03`, su formulario. Los de `LS01`, `SP02`, `SP04` y `SP05` faltan.
   - Los mensajes al cliente son nodos **«TEMPORAL · SMS»**, porque la cuenta todavía no acepta `whatsapp_v2`: no hay número conectado. Se cambian cuando haya WhatsApp y plantillas aprobadas (§4.8).
-  - `SP02` y `SP05` van **en línea recta, sin sus If**: falta el molde de una condición sobre un campo de oportunidad (§4.10).
+  - **`SP02` ya tiene sus If** (2 oct, 26 nodos), sobre `opportunity.estado_apartado`. Falta verlo en la interfaz. `SP05` sigue en línea recta: falta el molde del operador «está vacío» (§4.10).
+  - ⚠️ No volver a correr `armar-workflows.py SP02 --aplicar`: borraría esos If.
   - El nodo de `AP02` que apaga el bot lo rechaza la cuenta, porque Conversation AI todavía no está provisionado (§4.3).
 - Hay un borrador suelto, «New Workflow : 1790282449589» (`f66b0701-…`), que parece una prueba. Se borra en la limpieza.
 
 **Siguiente paso, en orden:**
 1. **Germán, a mano en la interfaz** (desbloquea todo lo demás):
-   1. Un nodo If/Else de prueba: *Opportunity → Estado del apartado → es igual a → pagado*. Se lee por API y con ese molde se arman los If de `SP02` y `SP05`.
+   1. En el If de «PRUEBA N1», cambiar la condición a *Opportunity → Etiqueta PDF → está vacío*. Se lee por API y con eso se arma el If de `SP05`.
    2. Los triggers que faltan. Basta con uno de cada tipo para copiar el molde; si no, los pone él, son dos clics cada uno:
       - *Pipeline Stage Changed*, para `SP02` y `SP05`;
       - pago recibido, para `SP04`;

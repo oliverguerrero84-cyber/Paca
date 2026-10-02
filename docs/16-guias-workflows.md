@@ -497,7 +497,7 @@ redactadas (ya lo están, en `docs/15-plantillas.md`) y **aprobadas por Meta**. 
 | Workflow | Nodos | Trigger |
 |---|---:|---|
 | `LS01` · Entrada de lead | 2 | a mano |
-| `SP02` · Apartado 24 h | 8 | a mano |
+| `SP02` · Apartado 24 h | 26, con sus If (2 oct) | a mano |
 | `SP04` · Pago confirmado | 3 | a mano |
 | `SP05` · Despacho | 5 | a mano |
 | `AP01` · Rastreo | 2 | espera la URL del Inbound Webhook |
@@ -529,7 +529,16 @@ oportunidad**, y meterle el id de uno es exactamente la trampa que este document
 señalando: la condición **se guarda, se ve bien y nunca se cumple**. El flujo se iría
 siempre por el `else`, sin un solo error.
 
-Por eso no se armaron. Por ahora `SP02` y `SP05` son cadenas rectas.
+Por eso no se armaron el 1 oct. **Destrabado el 2 oct para `SP02`** con el molde de abajo:
+tras cada espera, *Find opportunity* → If. A las 12 h y a las 22 h, si `estado_apartado = pagado`
+el flujo termina; si no, sigue el recordatorio. A las 24 h 20 min, si es `vencido` (lo escribe
+`N2`), etiqueta y aviso. 26 nodos, aceptados y releídos.
+
+> ⚠️ **No volver a correr `armar-workflows.py SP02 --aplicar`**: su armador es la cadena recta y
+> el PUT reescribe el workflow entero, así que **borraría los If**. Hay que pasar los If al
+> armador antes.
+
+`SP05` sigue en cadena recta: falta el molde del operador «está vacío».
 
 **Cómo se destraba, en un minuto y es la receta del playbook §0** —donde falta el molde,
 se arma a mano, se lee y se copia:
