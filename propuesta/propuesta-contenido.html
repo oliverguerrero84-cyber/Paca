@@ -10,9 +10,11 @@
 <style>
 /* ──────────────────────────────────────────────────────────────
    Propuesta de contenido y campañas · Greentex (pacas)
-   Fecha: 2026-10-09 · Revisión 1
+   Fecha: 2026-10-09 · Revisión 2
    NO reintroducir: emojis · transition:all · colores fuera de
    :root · quitar estados de foco o reduced-motion.
+   DOCUMENTO PARA 786 MARKETING — no es el del cliente: lleva
+   adentro los precios mayoristas de su proveedor actual.
    La sección «Inversión» lleva NUESTRO precio a 786. El margen de
    reventa lo ponen ellas: no se sugiere aquí.
    NO ofrecer página web (fuera de alcance, 8 oct).
@@ -141,6 +143,11 @@ section h2{font-size:clamp(1.3rem, 4.6vw, 1.8rem); font-weight:700; margin-botto
 /* Tablas */
 .tabla{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); box-shadow:var(--shadow-sm)}
 table{border-collapse:collapse; width:100%; min-width:460px; font-size:.92rem}
+/* Las de precio son de 3 columnas y tienen que caber en un celular: la columna
+   que queda fuera de pantalla es justo la que se quiere que vean. */
+.tabla.precio table{min-width:0}
+.tabla.precio td:first-child, .tabla.precio th:first-child{padding-right:8px}
+.tabla.precio td.num, .tabla.precio th.num{padding-left:8px}
 th,td{padding:12px 14px; text-align:left; border-bottom:1px solid var(--border)}
 th{background:var(--slate-50); font-family:var(--font-title); font-weight:700; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase; color:var(--text-gray)}
 td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
@@ -174,6 +181,15 @@ a:active{color:var(--brand-900)}
   .hero-note{padding:17px}
   th,td{padding:10px 12px}
 }
+/* A 320 px las de precio todavía se pasaban por unos 40 px: se aprieta el
+   relleno y se baja un punto la letra para que quepan enteras. */
+@media (max-width:390px){
+  .tabla.precio table{font-size:.86rem}
+  .tabla.precio th, .tabla.precio td{padding:10px 7px}
+  .tabla.precio td:first-child, .tabla.precio th:first-child{padding-right:5px}
+  .tabla.precio td.num, .tabla.precio th.num{padding-left:5px}
+  .tabla.precio th{font-size:.7rem; letter-spacing:.03em}
+}
 </style>
 </head>
 <body>
@@ -188,11 +204,12 @@ a:active{color:var(--brand-900)}
     </p>
 
     <div class="hero-note">
-      <strong>Esto no reemplaza a un equipo de marketing.</strong> Hace algo distinto:
-      conecta los anuncios con el CRM que ya les estamos construyendo, para saber
-      <strong>qué anuncio trajo al comprador que de verdad pagó</strong> — no clics, no
-      mensajes: ventas cobradas. El mensual es el mismo que ya se paga por redes con
-      campañas; lo que cambia es qué se recibe.
+      <strong>Estos son nuestros precios para ustedes</strong>, antes de lo que ustedes le
+      sumen: cuánto le suben para pasárselo a Greentex lo deciden ustedes, y aquí no va
+      sugerido. Están armados con los números que nos compartieron, para quedar dentro del
+      rango que ya manejan — con algo encima que hoy nadie más les puede dar:
+      <strong>saber qué anuncio trajo al comprador que de verdad pagó</strong>. No clics, no
+      mensajes: ventas cobradas.
     </div>
   </div>
 </header>
@@ -230,52 +247,54 @@ a:active{color:var(--brand-900)}
 <section>
   <div class="wrap">
     <p class="eyebrow">Qué proponemos</p>
-    <h2>Tres piezas, y sólo una es para siempre</h2>
+    <h2>Un arranque, y luego un mensual</h2>
     <p class="lede">
-      La estructura sale de algo que ustedes plantearon y que nos parece correcto:
-      <strong>el contenido no tiene por qué ser indefinido</strong>. Se siembra una vez y
-      lo que sigue corriendo son las campañas.
+      La estructura sale de algo que ustedes plantearon en la llamada y que nos parece
+      correcto: <strong>no tiene por qué pagarse producción de contenido para
+      siempre</strong>. Hay un empujón fuerte al principio, y después un mensual que
+      sostiene lo sembrado y mueve los anuncios.
     </p>
 
     <div class="pitch">
-      <h3><span class="gl gl-text"></span>Siembra de contenido · 2 meses</h3>
+      <h3><span class="gl gl-text"></span>El arranque &middot; una sola vez</h3>
       <p>
-        Facebook e Instagram de cero a perfiles con los que ya se puede anunciar.
-        Publicaciones, reels, historias y carruseles, sobre los tres temas que mueven este
-        negocio:
+        Facebook e Instagram de cero a perfiles con los que ya se puede anunciar: se abren u
+        ordenan las cuentas, se define la línea gráfica y las plantillas, y se producen
+        <strong>dos meses de contenido intensivo</strong> sobre los tres temas que mueven
+        este negocio.
       </p>
       <p>
         <strong>Qué trae una paca</strong> — lo que más se pregunta.
-        <strong>Qué esperar al recibirla</strong> — alinea la expectativa y baja las
-        quejas. <strong>Cómo se hace negocio con esto</strong> — el informativo, que es el
-        que convierte a un curioso en revendedor.
+        <strong>Qué esperar al recibirla</strong> — alinea la expectativa y baja las quejas.
+        <strong>Cómo se hace negocio con esto</strong> — el informativo, que es el que
+        convierte a un curioso en revendedor.
+      </p>
+      <p>
+        Aquí entra también la <strong>base de vendedores</strong> de la que nos habló Brenda:
+        los contactos de quienes ya vendían se suben al CRM, se limpian y se segmentan, y se
+        les arma su campaña de recuperación. <strong>Es lo primero que se hace</strong>,
+        porque es lo que puede dar venta en la primera semana.
       </p>
       <p class="punch">
-        <strong>Se paga dos meses y se acaba.</strong> Al terminar, los perfiles quedan
-        con material suficiente para sostener los anuncios.
+        <strong>Se paga una vez y se acaba.</strong> Yera tenía razón en esto: la producción
+        pesada son dos meses, no una mensualidad eterna.
       </p>
     </div>
 
     <div class="pitch strong">
-      <h3><span class="gl gl-chart"></span>Campañas · mes con mes</h3>
+      <h3><span class="gl gl-chart"></span>El mensual &middot; mes con mes</h3>
       <p>
-        Propuesta de anuncios, diseño de las piezas, y el ciclo de revisión y ajuste.
-        Esto sí es permanente, porque una campaña que nadie ajusta se apaga sola.
+        Las campañas: propuesta de anuncios, diseño de las piezas, y el ciclo de revisión y
+        ajuste. Esto sí es permanente, porque una campaña que nadie ajusta se apaga sola.
+      </p>
+      <p>
+        Y lleva <strong>contenido de mantenimiento</strong>, para que el perfil no se quede
+        muerto cuando termine el arranque. No es un calendario editorial aparte: son las
+        piezas que los anuncios van necesitando, publicadas también en el perfil. Por eso un
+        solo mensual alcanza para las dos cosas.
       </p>
       <p class="punch">
-        Es el único cargo que sigue después del segundo mes.
-      </p>
-    </div>
-
-    <div class="pitch">
-      <h3><span class="gl gl-spark"></span>Despertar la base de vendedores</h3>
-      <p>
-        Los contactos de quienes ya vendían se suben al CRM, se limpian y se segmentan, y
-        se les arma su campaña de recuperación.
-      </p>
-      <p class="punch">
-        <strong>Es lo primero que se hace</strong>, y lo que puede dar venta más rápido:
-        es gente que ya conoce el producto.
+        Es el único cargo que sigue después del arranque.
       </p>
     </div>
   </div>
@@ -286,8 +305,8 @@ a:active{color:var(--brand-900)}
     <p class="eyebrow">La diferencia</p>
     <h2>Qué hace la IA que un equipo no alcanza</h2>
     <p class="lede">
-      No es escribir publicaciones más rápido. Eso lo hace cualquiera. Son tres cosas de
-      volumen y de frecuencia, y una cuarta que depende de estar dentro del CRM.
+      No es escribir publicaciones más rápido. Eso lo hace cualquiera. Son dos cosas de
+      volumen y de frecuencia, y una tercera que sólo se puede desde dentro del CRM.
     </p>
 
     <div class="cards">
@@ -330,52 +349,106 @@ a:active{color:var(--brand-900)}
     <p class="eyebrow">Inversión</p>
     <h2>Lo que cuesta</h2>
     <p class="lede">
-      Dos conceptos de una sola vez y uno mensual. Las cifras están en pesos mexicanos y
-      no incluyen lo que se le paga a Meta por los anuncios, que va aparte y lo define el
-      presupuesto que quieran poner.
+      Dos niveles, para que tengan margen de maniobra con el cliente. En pesos
+      mexicanos, y sin lo que se le paga a Meta por los anuncios: eso va aparte y lo define
+      el presupuesto que quieran poner.
     </p>
 
-    <div class="tabla">
+    <div class="tabla precio">
       <table>
         <thead>
           <tr>
-            <th>Concepto</th>
-            <th>Cuándo se paga</th>
-            <th class="num">Monto</th>
+            <th>Qué lleva el mensual</th>
+            <th class="num">Esencial</th>
+            <th class="num">Completo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Siembra de contenido</strong><br>Facebook e Instagram, 2 meses</td>
-            <td>2 meses, y se acaba</td>
-            <td class="num">$10,000 / mes</td>
+            <td><strong>Redes atendidas</strong></td>
+            <td class="num">2</td>
+            <td class="num">3</td>
           </tr>
           <tr>
-            <td><strong>Despertar la base de vendedores</strong><br>Carga, limpieza, segmentación y campaña</td>
-            <td>Una sola vez</td>
-            <td class="num">$5,000</td>
+            <td><strong>Piezas al mes</strong><br>Contenido de mantenimiento y variantes de anuncio</td>
+            <td class="num">8 a 12</td>
+            <td class="num">16 a 20</td>
           </tr>
           <tr>
-            <td><strong>Campañas</strong><br>Propuesta, diseño, revisión y ajuste</td>
-            <td>Mes con mes</td>
-            <td class="num">$10,000 / mes</td>
+            <td><strong>Campañas</strong><br>Propuesta, diseño, revisión diaria y ajuste</td>
+            <td class="num">Sí</td>
+            <td class="num">Sí</td>
+          </tr>
+          <tr>
+            <td><strong>Atribución a venta cobrada</strong><br>Qué anuncio trajo a quien pagó</td>
+            <td class="num">Sí</td>
+            <td class="num">Sí</td>
           </tr>
           <tr class="total">
-            <td>Primer año, todo incluido</td>
-            <td>Con la siembra y el arranque de la base</td>
-            <td class="num">$145,000</td>
+            <td>Mensual</td>
+            <td class="num">$8,000</td>
+            <td class="num">$10,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      La atribución va en los dos niveles. No es un extra que se cobre aparte: es la razón
+      de la propuesta.
+    </p>
+
+    <div class="pitch" style="margin-top:24px">
+      <h3><span class="gl gl-spark"></span>El arranque &middot; $15,000, una sola vez</h3>
+      <p>
+        Apertura u ordenamiento de Facebook e Instagram, línea gráfica y plantillas, los dos
+        meses de contenido intensivo, y la carga, limpieza y segmentación de la base de
+        vendedores con su campaña de recuperación.
+      </p>
+      <p class="punch">
+        No se repite. Se cubre al arrancar, y del tercer mes en adelante sólo queda el
+        mensual.
+      </p>
+    </div>
+
+    <div class="tabla precio" style="margin-top:24px">
+      <table>
+        <thead>
+          <tr>
+            <th>Cómo se acumula</th>
+            <th class="num">Año 1</th>
+            <th class="num">Del año 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lo que manejan hoy</strong><br>$10,000 al mes</td>
+            <td class="num">$120,000</td>
+            <td class="num">$120,000</td>
+          </tr>
+          <tr>
+            <td><strong>Esencial</strong><br>$8,000 al mes, más el arranque</td>
+            <td class="num">$111,000</td>
+            <td class="num">$96,000</td>
           </tr>
           <tr class="total">
-            <td>Del segundo año en adelante</td>
-            <td>Sólo el mensual de campañas</td>
+            <td>Completo<br>$10,000 al mes, más el arranque</td>
+            <td class="num">$135,000</td>
             <td class="num">$120,000</td>
           </tr>
         </tbody>
       </table>
     </div>
     <p class="nota">
-      El primer año carga la siembra ($20,000) y el arranque de la base ($5,000), que no
-      se repiten. Por eso el segundo año baja $25,000 y se queda ahí.
+      <strong>Completo queda a la par del año 2 en adelante</strong>, entregando lo mismo más
+      la atribución. El año 1 sale $15,000 arriba, que es exactamente el arranque y no se
+      repite. Esencial queda por debajo los dos años, con 2 redes en lugar de 3.
+      Sumados dos años: <strong>$255,000</strong> Completo y <strong>$207,000</strong>
+      Esencial, contra los <strong>$240,000</strong> de hoy.
+    </p>
+    <p class="nota">
+      No lleva página web — quedó fuera a propósito. Y el <strong>catálogo público</strong>
+      que ya va dentro del paquete Completo de automatización no se vuelve a cobrar aquí: es
+      el mismo, y los anuncios lo pueden usar como destino.
     </p>
   </div>
 </section>
@@ -383,56 +456,66 @@ a:active{color:var(--brand-900)}
 <section>
   <div class="wrap">
     <p class="eyebrow">Comparación</p>
-    <h2>El mismo mensual, comprando otra cosa</h2>
+    <h2>Armado con los números que ya manejan</h2>
     <p class="lede">
-      No vamos a decir que esto sale más barato, porque no sale: el mensual es el mismo
-      que ya se paga por redes con campañas, y el primer año trae además la siembra. Lo
-      que cambia es qué se recibe por ese dinero.
+      No pusimos un precio y después buscamos cómo justificarlo. Tomamos la lista que nos
+      compartieron y sumamos sus propias partes. Por eso los dos mensuales caen exacto donde
+      caen.
     </p>
 
-    <div class="tabla">
+    <div class="tabla precio">
       <table>
         <thead>
           <tr>
-            <th>Por el mismo mensual</th>
-            <th>Redes con campañas, como se hace hoy</th>
-            <th>Esta propuesta</th>
+            <th>De dónde sale cada mensual</th>
+            <th class="num">Esencial</th>
+            <th class="num">Completo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Quién revisa los anuncios</strong></td>
-            <td>Un gestor, cada quincena</td>
-            <td>Se leen todos los días y se mueve el presupuesto</td>
+            <td><strong>Su paquete de redes</strong><br>2 redes con 8–12 piezas &middot; 3 redes con 20 piezas</td>
+            <td class="num">$5,000</td>
+            <td class="num">$8,000</td>
           </tr>
           <tr>
-            <td><strong>Cuántas variantes</strong></td>
-            <td>Las que alcance a diseñar el equipo</td>
-            <td>Las que Meta necesite para optimizar</td>
+            <td><strong>Su incremento por llevar campañas</strong><br>Lo que su lista cobra de más por el paquete con Meta</td>
+            <td class="num">+$3,000</td>
+            <td class="num">+$2,000</td>
           </tr>
           <tr>
-            <td><strong>Cómo se reporta</strong></td>
-            <td>Alcance, interacciones y clics</td>
-            <td><strong>Ventas cobradas, por anuncio</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Qué pasa con el CRM</strong></td>
-            <td>No lo ve: es de otro proveedor</td>
-            <td>Es el mismo que ya les estamos construyendo</td>
+            <td><strong>Atribución a venta cobrada</strong><br>No está en su lista: necesita el CRM</td>
+            <td class="num">sin cargo</td>
+            <td class="num">sin cargo</td>
           </tr>
           <tr class="total">
-            <td>La pregunta que contesta</td>
-            <td>Cuánta gente vio el anuncio</td>
-            <td>Cuánto costó cada venta real</td>
+            <td>Nuestro mensual</td>
+            <td class="num">$8,000</td>
+            <td class="num">$10,000</td>
           </tr>
         </tbody>
       </table>
     </div>
     <p class="nota">
-      Las dos primeras filas son de volumen y de frecuencia, y cualquiera con suficiente
-      gente podría igualarlas. Las dos últimas no: dependen de estar dentro del sistema
-      donde se aparta la paca y se cobra, y ahí ya estamos.
+      Su lista cobra entre $2,000 y $3,000 de más por llevar las campañas, según con qué
+      paquete se compare; tomamos ese mismo incremento. Así, <strong>Completo es el mismo
+      $10,000 de su paquete con campañas</strong> y Esencial es su paquete de 2 redes con el
+      incremento encima. No estamos cobrando de menos ni de más: el precio es su propia
+      lista, sumada. Lo que se agrega va sin cargo.
     </p>
+
+    <div class="pitch strong" style="margin-top:24px">
+      <h3><span class="gl gl-alert"></span>Y lo decimos antes de que lo resten: el año 1 sale más</h3>
+      <p>
+        Completo pide $15,000 arriba el primer año. Es el arranque: abrir las cuentas,
+        definir la línea y producir dos meses de contenido desde cero. Trabajo que no se
+        vuelve a hacer. Del segundo año en adelante queda a la par, peso por peso.
+      </p>
+      <p class="punch">
+        Y si hace falta entrar más abajo, <strong>Esencial está debajo de lo que pagan hoy
+        desde el primer año</strong>, con 2 redes en lugar de 3 y la misma atribución.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -445,8 +528,8 @@ a:active{color:var(--brand-900)}
       <li><span class="n">1</span><span><strong>Semana 1 — la base.</strong> Se recibe el archivo de los vendedores, se sube al CRM, se limpia y se segmenta. Es lo que puede dar venta más rápido.</span></li>
       <li><span class="n">2</span><span><strong>Semana 1 y 2 — la línea.</strong> Se define el tono, se arman las plantillas visuales y se aprueba el primer lote de publicaciones.</span></li>
       <li><span class="n">3</span><span><strong>Semana 2 — las cuentas.</strong> Se abren o se ordenan Facebook e Instagram y se enlazan al administrador de anuncios.</span></li>
-      <li><span class="n">4</span><span><strong>Mes 1 y 2 — la siembra.</strong> Publicación constante sobre los tres temas, y la primera campaña a la base recuperada.</span></li>
-      <li><span class="n">5</span><span><strong>Desde el mes 2 — el ciclo.</strong> Los anuncios ya corren con datos propios: se revisan, se ajustan y se reparte el presupuesto hacia lo que vende.</span></li>
+      <li><span class="n">4</span><span><strong>Mes 1 y 2 — el contenido intensivo.</strong> Publicación constante sobre los tres temas, y la primera campaña a la base recuperada. Aquí se agota el arranque.</span></li>
+      <li><span class="n">5</span><span><strong>Desde el mes 3 — sólo el mensual.</strong> Los anuncios ya corren con datos propios: se revisan, se ajustan y se reparte el presupuesto hacia lo que vende, produciendo las piezas que haga falta.</span></li>
     </ol>
   </div>
 </section>
@@ -483,7 +566,8 @@ a:active{color:var(--brand-900)}
 
 <footer>
   <div class="wrap">
-    <p><strong>Propuesta de contenido y campañas</strong> &middot; 9 de octubre de 2026</p>
+    <p><strong>Propuesta de contenido y campañas</strong> &middot; 9 de octubre de 2026 &middot; 786 Marketing</p>
+    <p style="margin-top:9px">Documento para <strong>786 Marketing</strong>. No es el documento del cliente: lleva precios de su proveedor actual, y los nuestros antes de su margen.</p>
   </div>
 </footer>
 
