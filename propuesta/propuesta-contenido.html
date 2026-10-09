@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contenido y campañas — Propuesta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ──────────────────────────────────────────────────────────────
+   Propuesta de contenido y campañas · Greentex (pacas)
+   Fecha: 2026-10-09 · Revisión 1
+   NO reintroducir: emojis · transition:all · colores fuera de
+   :root · quitar estados de foco o reduced-motion.
+   La sección «Inversión» lleva NUESTRO precio a 786. El margen de
+   reventa lo ponen ellas: no se sugiere aquí.
+   NO ofrecer página web (fuera de alcance, 8 oct).
+   ────────────────────────────────────────────────────────────── */
+
+:root{
+  --brand-50:#ecfdf5;  --brand-100:#d3f3e4; --brand-200:#a7e7c9;
+  --brand-300:#6dd4a8; --brand-400:#34c48a; --brand-500:#1aa46d;
+  --brand-600:#15855a; --brand-700:#116343; --brand-800:#0d5138;
+  --brand-900:#08301f;
+
+  --primary-gradient: linear-gradient(135deg, #0d5138 0%, #15855a 50%, #34c48a 100%);
+  --deep-gradient:    linear-gradient(135deg, #0d5138 0%, #116343 100%);
+
+  --red-50:#fef2f2; --red-200:#fecaca; --red-600:#dc2626; --red-700:#b91c1c;
+  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-700:#b45309;
+
+  --slate-50:#f8fafc;  --slate-100:#f1f5f9; --slate-200:#e2e8f0;
+  --slate-300:#cbd5e1; --slate-400:#94a3b8; --slate-500:#64748b;
+  --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
+
+  --ink:#07231a; --ink-soft:#0e3728;
+
+  --white-a80: rgba(255,255,255,.82);
+  --white-a10: rgba(255,255,255,.10);
+  --white-a18: rgba(255,255,255,.18);
+  --brand-a08: rgba(17,99,67,.08);
+  --brand-a14: rgba(17,99,67,.14);
+  --brand-a24: rgba(17,99,67,.24);
+  --shadow-sm: 0 2px 8px rgba(17,99,67,.07);
+  --shadow-md: 0 8px 24px rgba(17,99,67,.10);
+  --shadow-lg: 0 18px 48px rgba(17,99,67,.16);
+  --mask-solid: #000;
+
+  --bg-color: var(--slate-50);
+  --surface: #ffffff;
+  --text-dark: var(--slate-900);
+  --text-gray: var(--slate-500);
+  --text-light: #ffffff;
+  --border: var(--slate-200);
+
+  --r-sm: 8px; --r-md: 16px; --r-lg: 32px;
+  --font-title: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg-color); color:var(--text-dark);
+  font-family:var(--font-body); font-size:16px; line-height:1.6; overflow-x:hidden;
+}
+h1,h2,h3{font-family:var(--font-title); line-height:1.18; margin:0}
+p{margin:0}
+.wrap{max-width:920px; margin:0 auto; padding:0 16px}
+
+/* Glifos CSS — sin emojis */
+.gl{display:inline-block; width:1em; height:1em; flex:0 0 auto; position:relative; vertical-align:-.125em}
+.gl::before{content:""; position:absolute; inset:0; background:currentColor}
+.gl-check::before{clip-path:polygon(43% 73%, 88% 19%, 97% 29%, 45% 92%, 4% 55%, 13% 44%)}
+.gl-cross::before{clip-path:polygon(18% 6%, 50% 38%, 82% 6%, 94% 18%, 62% 50%, 94% 82%, 82% 94%, 50% 62%, 18% 94%, 6% 82%, 38% 50%, 6% 18%)}
+.gl-dash::before{clip-path:polygon(12% 44%, 88% 44%, 88% 56%, 12% 56%)}
+.gl-bolt::before{clip-path:polygon(60% 2%, 20% 55%, 45% 55%, 36% 98%, 82% 42%, 55% 42%)}
+.gl-spark::before{clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%)}
+.gl-alert::before{clip-path:polygon(50% 4%, 98% 92%, 2% 92%)}
+.gl-alert::after{content:""; position:absolute; left:46%; top:38%; width:8%; height:34%; background:var(--surface); border-radius:2px}
+.gl-clock::before{
+  border-radius:50%;
+  -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+          mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+}
+.gl-clock::after{
+  content:""; position:absolute; left:47%; top:24%; width:6%; height:30%;
+  background:currentColor; border-radius:2px; box-shadow:.22em .26em 0 -.005em currentColor;
+}
+.gl-chart::before{clip-path:polygon(4% 62%, 28% 62%, 28% 96%, 4% 96%, 4% 62%)}
+.gl-chart::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(38% 32%, 62% 32%, 62% 96%, 38% 96%, 38% 32%, 72% 8%, 96% 8%, 96% 96%, 72% 96%, 72% 8%);
+}
+.gl-text::before{clip-path:polygon(8% 10%, 92% 10%, 92% 22%, 8% 22%, 8% 10%, 8% 44%, 92% 44%, 92% 56%, 8% 56%, 8% 44%, 8% 78%, 64% 78%, 64% 90%, 8% 90%)}
+
+/* Encabezado */
+.hero{background:var(--deep-gradient); color:var(--text-light); padding:46px 0 54px}
+.brand{
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--font-title); font-weight:800; letter-spacing:.12em;
+  font-size:.72rem; text-transform:uppercase; color:var(--white-a80);
+  border:1px solid var(--white-a18); border-radius:999px; padding:7px 15px;
+}
+.brand .dot{width:7px; height:7px; border-radius:50%; background:var(--brand-300)}
+.hero h1{font-size:clamp(1.6rem, 6vw, 2.6rem); font-weight:800; margin:20px 0 12px}
+.hero .sub{color:var(--white-a80); font-size:1rem; max-width:62ch}
+
+.hero-note{
+  margin-top:28px; background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-md); padding:20px; font-size:.95rem; color:var(--white-a80);
+}
+.hero-note strong{color:var(--text-light)}
+
+section{padding:48px 0}
+.eyebrow{
+  font-family:var(--font-title); font-weight:700; letter-spacing:.11em;
+  text-transform:uppercase; font-size:.7rem; color:var(--brand-600); margin-bottom:9px;
+}
+section h2{font-size:clamp(1.3rem, 4.6vw, 1.8rem); font-weight:700; margin-bottom:10px}
+.lede{color:var(--text-gray); max-width:66ch; margin-bottom:28px}
+
+.cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(258px, 1fr))}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:20px; box-shadow:var(--shadow-sm)}
+.card h3{font-size:1rem; font-weight:700; margin-bottom:8px; display:flex; align-items:flex-start; gap:9px}
+.card h3 .gl{color:var(--brand-500); margin-top:.2em}
+.card p{font-size:.91rem; color:var(--text-gray)}
+.card p + p{margin-top:8px}
+
+/* Bloque destacado */
+.pitch{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--brand-500); border-radius:var(--r-md); padding:22px; box-shadow:var(--shadow-sm); margin-bottom:14px}
+.pitch.strong{background:var(--brand-50); border-color:var(--brand-200); border-left-color:var(--brand-600)}
+.pitch h3{font-size:1.06rem; font-weight:700; margin-bottom:8px; display:flex; align-items:flex-start; gap:10px}
+.pitch h3 .gl{color:var(--brand-600); margin-top:.18em}
+.pitch p{font-size:.93rem; color:var(--text-gray)}
+.pitch p + p{margin-top:9px}
+.pitch .punch{margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:.9rem; color:var(--text-dark)}
+.pitch.strong .punch{border-top-color:var(--brand-200)}
+
+/* Tablas */
+.tabla{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse; width:100%; min-width:460px; font-size:.92rem}
+th,td{padding:12px 14px; text-align:left; border-bottom:1px solid var(--border)}
+th{background:var(--slate-50); font-family:var(--font-title); font-weight:700; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase; color:var(--text-gray)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.total td{background:var(--brand-50); font-weight:700; color:var(--brand-800)}
+.ahorro{color:var(--brand-700); font-weight:700}
+
+.nota{margin-top:14px; font-size:.86rem; color:var(--text-gray)}
+
+/* Lista de pasos */
+.pasos{display:grid; gap:12px; margin:0; padding:0; list-style:none}
+.pasos li{display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:16px 18px; box-shadow:var(--shadow-sm); font-size:.93rem}
+.pasos .n{
+  font-family:var(--font-title); font-weight:800; font-size:.8rem; color:var(--text-light);
+  background:var(--brand-600); border-radius:999px; width:24px; height:24px; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; margin-top:.1em;
+}
+
+footer{background:var(--ink); color:var(--white-a80); padding:28px 0; font-size:.85rem}
+footer strong{color:var(--text-light)}
+
+a{color:var(--brand-700)}
+a:focus-visible, [tabindex]:focus-visible{outline:3px solid var(--brand-400); outline-offset:3px; border-radius:4px}
+a:active{color:var(--brand-900)}
+[disabled]{opacity:.55; cursor:not-allowed}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important}
+}
+@media (max-width:560px){
+  section{padding:38px 0}
+  .hero-note{padding:17px}
+  th,td{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="brand"><span class="dot"></span>Propuesta</span>
+    <h1>Contenido y campañas para Greentex</h1>
+    <p class="sub">
+      Sembrar Facebook e Instagram desde cero, y dejar corriendo un ciclo de anuncios que
+      se ajusta solo con lo que el CRM va aprendiendo de cada venta.
+    </p>
+
+    <div class="hero-note">
+      <strong>Esto no reemplaza a un equipo de marketing.</strong> Hace algo distinto:
+      conecta los anuncios con el CRM que ya les estamos construyendo, para saber
+      <strong>qué anuncio trajo al comprador que de verdad pagó</strong> — no clics, no
+      mensajes: ventas cobradas.
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Dónde están hoy</p>
+    <h2>El menudeo va a abrir sin dónde mandar a la gente</h2>
+    <p class="lede">
+      El sistema de automatización ya está en marcha: el bot atiende, aparta la paca,
+      cobra y manda la guía. Pero atiende <em>a quien llega</em>. Hoy no hay de dónde
+      lleguen.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-cross"></span>No hay redes</h3>
+        <p>Facebook e Instagram arrancan desde cero. Sin una sola publicación, un anuncio
+        manda a la gente a un perfil vacío y la pierde ahí mismo.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-cross"></span>Nadie sabe qué trae una paca</h3>
+        <p>Es la pregunta que más frena una compra de primera vez, y la que menos se
+        contesta bien. Quien no sabe qué va a recibir, no compra.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Hay una base dormida</h3>
+        <p>Existen los contactos de los vendedores que ya trabajaban el negocio. Es la
+        gente más fácil de recuperar, y hoy no se le está hablando.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Qué proponemos</p>
+    <h2>Tres piezas, y sólo una es para siempre</h2>
+    <p class="lede">
+      La estructura sale de algo que ustedes plantearon y que nos parece correcto:
+      <strong>el contenido no tiene por qué ser indefinido</strong>. Se siembra una vez y
+      lo que sigue corriendo son las campañas.
+    </p>
+
+    <div class="pitch">
+      <h3><span class="gl gl-text"></span>Siembra de contenido · 2 meses</h3>
+      <p>
+        Facebook e Instagram de cero a perfiles con los que ya se puede anunciar.
+        Publicaciones, reels, historias y carruseles, sobre los tres temas que mueven este
+        negocio:
+      </p>
+      <p>
+        <strong>Qué trae una paca</strong> — lo que más se pregunta.
+        <strong>Qué esperar al recibirla</strong> — alinea la expectativa y baja las
+        quejas. <strong>Cómo se hace negocio con esto</strong> — el informativo, que es el
+        que convierte a un curioso en revendedor.
+      </p>
+      <p class="punch">
+        <strong>Se paga dos meses y se acaba.</strong> Al terminar, los perfiles quedan
+        con material suficiente para sostener los anuncios.
+      </p>
+    </div>
+
+    <div class="pitch strong">
+      <h3><span class="gl gl-chart"></span>Campañas · mes con mes</h3>
+      <p>
+        Propuesta de anuncios, diseño de las piezas, y el ciclo de revisión y ajuste.
+        Esto sí es permanente, porque una campaña que nadie ajusta se apaga sola.
+      </p>
+      <p class="punch">
+        Es el único cargo que sigue después del segundo mes.
+      </p>
+    </div>
+
+    <div class="pitch">
+      <h3><span class="gl gl-spark"></span>Despertar la base de vendedores</h3>
+      <p>
+        Los contactos de quienes ya vendían se suben al CRM, se limpian y se segmentan, y
+        se les arma su campaña de recuperación.
+      </p>
+      <p class="punch">
+        <strong>Es lo primero que se hace</strong>, y lo que puede dar venta más rápido:
+        es gente que ya conoce el producto.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">La diferencia</p>
+    <h2>Qué hace la IA que un equipo no alcanza</h2>
+    <p class="lede">
+      No es escribir publicaciones más rápido. Eso lo hace cualquiera. Son tres cosas de
+      volumen y de frecuencia, y una cuarta que depende de estar dentro del CRM.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-clock"></span>Se revisan todos los días</h3>
+        <p>Las campañas se leen a diario y el presupuesto se mueve hacia lo que está
+        funcionando. Hecho a mano, eso se revisa cada quincena — y quince días de un
+        anuncio malo son quince días pagados.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-bolt"></span>Alcanzan las variantes</h3>
+        <p>Meta optimiza si tiene entre qué escoger. El límite de un equipo es cuántas
+        piezas alcanza a diseñar en la semana; ése es justo el límite que se quita.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-check"></span>Se mide contra ventas, no contra clics</h3>
+        <p>Como el CRM es el mismo que estamos construyendo para el menudeo, cada anuncio
+        se puede seguir hasta el pago. Se sabe cuál trajo compradores y cuál sólo trajo
+        curiosos.</p>
+      </div>
+    </div>
+
+    <div class="pitch strong" style="margin-top:16px">
+      <h3><span class="gl gl-spark"></span>Esto último es lo que nadie más puede ofrecer</h3>
+      <p>
+        Un proveedor de redes entrega alcance, interacciones y clics, porque es lo único
+        que ve. Nosotros ya estamos dentro del sistema donde se aparta la paca, se manda
+        la liga y se cobra.
+      </p>
+      <p class="punch">
+        Por eso podemos decir <strong>cuánto costó cada venta real</strong>, y mover el
+        dinero del anuncio con ese dato en la mano.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Inversión</p>
+    <h2>Lo que cuesta</h2>
+    <p class="lede">
+      Dos conceptos de una sola vez y uno mensual. Las cifras están en pesos mexicanos y
+      no incluyen lo que se le paga a Meta por los anuncios, que va aparte y lo define el
+      presupuesto que quieran poner.
+    </p>
+
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Cuándo se paga</th>
+            <th class="num">Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Siembra de contenido</strong><br>Facebook e Instagram, 2 meses</td>
+            <td>2 meses, y se acaba</td>
+            <td class="num">$8,000 / mes</td>
+          </tr>
+          <tr>
+            <td><strong>Despertar la base de vendedores</strong><br>Carga, limpieza, segmentación y campaña</td>
+            <td>Una sola vez</td>
+            <td class="num">$5,000</td>
+          </tr>
+          <tr>
+            <td><strong>Campañas</strong><br>Propuesta, diseño, revisión y ajuste</td>
+            <td>Mes con mes</td>
+            <td class="num">$6,000 / mes</td>
+          </tr>
+          <tr class="total">
+            <td>Primer año, todo incluido</td>
+            <td>$7,750 al mes en promedio</td>
+            <td class="num">$93,000</td>
+          </tr>
+          <tr class="total">
+            <td>Del segundo año en adelante</td>
+            <td>Sólo el mensual de campañas</td>
+            <td class="num">$72,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      El primer año carga la siembra y el arranque de la base, que no se repiten. Por eso
+      el segundo año baja casi una cuarta parte.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Comparación</p>
+    <h2>Contra seguir pagando un mensual fijo</h2>
+    <p class="lede">
+      Un paquete de redes con campañas ronda los $10,000 al mes, y se paga igual el mes
+      uno que el mes treinta. Ésta es la diferencia de fondo: aquí el gasto grande se
+      termina.
+    </p>
+
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th class="num">Esta propuesta</th>
+            <th class="num">Un mensual de $10,000</th>
+            <th class="num">Diferencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Año 1</td>
+            <td class="num">$93,000</td>
+            <td class="num">$120,000</td>
+            <td class="num ahorro">$27,000</td>
+          </tr>
+          <tr>
+            <td>Año 2</td>
+            <td class="num">$72,000</td>
+            <td class="num">$120,000</td>
+            <td class="num ahorro">$48,000</td>
+          </tr>
+          <tr class="total">
+            <td>Los dos años</td>
+            <td class="num">$165,000</td>
+            <td class="num">$240,000</td>
+            <td class="num">$75,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      Y la comparación de precio es la menos importante: lo que no se compra en ningún
+      otro lado es saber qué anuncio produjo cada venta cobrada.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Cómo arranca</p>
+    <h2>Los primeros dos meses, en orden</h2>
+
+    <ol class="pasos">
+      <li><span class="n">1</span><span><strong>Semana 1 — la base.</strong> Se recibe el archivo de los vendedores, se sube al CRM, se limpia y se segmenta. Es lo que puede dar venta más rápido.</span></li>
+      <li><span class="n">2</span><span><strong>Semana 1 y 2 — la línea.</strong> Se define el tono, se arman las plantillas visuales y se aprueba el primer lote de publicaciones.</span></li>
+      <li><span class="n">3</span><span><strong>Semana 2 — las cuentas.</strong> Se abren o se ordenan Facebook e Instagram y se enlazan al administrador de anuncios.</span></li>
+      <li><span class="n">4</span><span><strong>Mes 1 y 2 — la siembra.</strong> Publicación constante sobre los tres temas, y la primera campaña a la base recuperada.</span></li>
+      <li><span class="n">5</span><span><strong>Desde el mes 2 — el ciclo.</strong> Los anuncios ya corren con datos propios: se revisan, se ajustan y se reparte el presupuesto hacia lo que vende.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Para arrancar</p>
+    <h2>Lo que necesitamos de ustedes</h2>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>El archivo de vendedores</h3>
+        <p>Como lo tengan: Excel, contactos exportados, lo que sea. De su tamaño depende
+        qué tanto da el primer mes.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Acceso a las redes</h3>
+        <p>Facebook e Instagram, y el administrador de negocios de Meta. Si no existen, se
+        abren.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Material de las pacas</h3>
+        <p>Fotos y video de pacas reales, aunque sean de celular. El contenido de «qué
+        trae una paca» se cae sin material verdadero.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>El presupuesto de anuncios</h3>
+        <p>Cuánto se le quiere poner a Meta al mes. Va aparte de esta propuesta y se puede
+        empezar chico e ir subiendo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Propuesta de contenido y campañas</strong> &middot; 9 de octubre de 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
