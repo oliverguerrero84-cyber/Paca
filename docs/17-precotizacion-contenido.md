@@ -34,6 +34,14 @@ razón:
 Brenda pasó los precios de su proveedor de marketing. Es el dato más valioso de la
 llamada: **no hay que adivinar un precio, hay que posicionarse contra éste.**
 
+> 🔴 **Son precios MAYORISTAS, no de cliente final.** Es lo que ese proveedor **le cobra
+> a 786**, para que ellas le suban lo que quieran y lo revendan — exactamente el trato
+> que queremos nosotros. O sea: **competimos contra él en el mismo lugar**, mayorista
+> contra mayorista, y su $10,000 no es un precio de venta: es el número a batir.
+>
+> Lo que 786 le cobra hoy a Greentex encima de eso **no lo sabemos y no es asunto
+> nuestro**.
+
 | Paquete del proveedor actual | Precio |
 |---|---:|
 | 2 redes · 8–12 posts al mes | $5,000 |
@@ -54,24 +62,37 @@ contra el que se compara lo nuestro.
 
 ## 3. Nuestro precio a 786
 
-La idea comercial es una sola: **el gasto grande es finito y el recurrente es más barato
-que lo que pagan hoy.**
+**A la par del mayorista de su proveedor.** Decisión de Oliver (9 oct), y es la correcta:
+si cobramos menos por algo que vale más, nos desmentimos solos.
 
 | Concepto | Nuestro precio | Forma | Contra qué compite |
 |---|---:|---|---|
-| **Siembra de contenido** · 2 meses | $8,000 / mes | pago único, 2 meses | sus $8,000 de 3 redes · 20 posts |
-| **Campañas**: propuesta, ajuste y optimización | $6,000 / mes | mensual, indefinido | sus $10,000 del paquete con Meta |
-| **Remarketing sobre la base de vendedores** | $5,000 | una sola vez | su proveedor no lo ofrece |
+| **Siembra de contenido** · 2 meses | $10,000 / mes | pago único, 2 meses | su paquete de contenido, $7,000–$8,000 |
+| **Campañas**: propuesta, ajuste y optimización | $10,000 / mes | mensual, indefinido | su paquete con campañas, $10,000 |
+| **Remarketing sobre la base de vendedores** | $5,000 | una sola vez | no lo ofrece |
 
 **Por qué cada uno:**
 
-- **Siembra a $8,000**: igual que su paquete más caro de sólo redes. No competimos por
-  precio en esta parte — competimos por volumen y por que **se acaba**. Cobrar menos aquí
-  abarata lo que más trabajo lleva.
-- **Campañas a $6,000**: 40% abajo de sus $10,000. Aquí sí hay que ganar por precio,
-  porque es el único cargo que queda para siempre y es el que decide la comparación.
-- **Remarketing a $5,000**: una sola vez. Es importar, limpiar y segmentar la base en
-  GHL, y armar la campaña. No tiene con qué compararse: su proveedor no tiene el CRM.
+- **Siembra a $10,000**: arriba de sus $8,000 de 3 redes con 20 posts, porque **arrancar
+  de cero no es lo mismo que mantener**: hay que abrir cuentas, definir la línea y
+  producir el primer lote sin nada previo de dónde agarrarse.
+- **Campañas a $10,000**: exactamente su mayorista. No competimos por precio — a precio
+  igual, decide lo que cada uno entrega (§4).
+- **Remarketing a $5,000**: importar, limpiar y segmentar la base en GHL y armar la
+  campaña. No tiene con qué compararse: su proveedor no tiene el CRM.
+
+### Los dos errores que hubo que corregir, para que nadie los repita
+
+**Primero puse el mensual en $6,000** con una comparación tramposa: comparé **nuestras
+campañas solas** contra **su paquete completo**, que incluye el contenido. Sus propios
+precios dicen que por gestionar campañas cobran la diferencia entre paquetes —
+**$2,000 a $3,000**—, así que esos $6,000 nunca fueron un descuento. Y además
+contradecían el argumento: no se puede decir «esto vale más» y cobrar 40% menos.
+
+**Y antes de eso leí mal de quién eran los precios**: los tomé como lo que paga el
+cliente final, cuando son mayoristas (§2). Sobre ese error construí un argumento entero
+—«786 le suma su margen y el cliente acaba pagando lo mismo que hoy»— que era falso,
+porque el cliente hoy paga esos $10,000 **más** lo que 786 le haya subido.
 
 ## 4. Lo que hay que contestarle a su escepticismo
 
@@ -90,22 +111,26 @@ alcanza a hacer, y una que nadie más puede:
 > Si la propuesta se vende por el punto 3 y no por el precio, el proveedor actual no
 > tiene con qué responder. Si se vende por precio, lo iguala en una semana.
 
-## 5. La comparación, que es el argumento
+## 5. Las cuentas, sin maquillaje
 
-Contra el paquete de $10,000 al mes de su proveedor:
+Contra los $120,000 al año que 786 le paga hoy a su proveedor:
 
-| | Nosotros | Proveedor actual | Ahorro |
+| | Nosotros | Su proveedor | Diferencia |
 |---|---:|---:|---:|
-| **Año 1** | $93,000 | $120,000 | **$27,000** · 22% |
-| **Año 2 en adelante** | $72,000 | $120,000 | **$48,000** · 40% |
-| **Dos años** | $165,000 | $240,000 | **$75,000** |
+| **Año 1** | $145,000 | $120,000 | **+$25,000** |
+| **Año 2 en adelante** | $120,000 | $120,000 | **a la par** |
+| **Dos años** | $265,000 | $240,000 | **+$25,000** |
 
-El año 1 incluye la siembra ($16,000) y el remarketing ($5,000), que no se repiten. Sale
-a **$7,750 al mes promedio**, contra $10,000.
+**El primer año sale 21% más caro**, por la siembra ($20,000) y el arranque de la base
+($5,000), que no se repiten. Del segundo año queda exactamente a la par.
 
-**Lo que hay que decir en la llamada:** su proveedor cobra $10,000 al mes **para
-siempre**. Aquí el contenido se siembra una vez y después sólo queda el mensual de
-campañas.
+> **Esto hay que decirlo, no esconderlo.** Si la propuesta finge que sale más barata, lo
+> notan a la primera resta y se ve peor que si lo decimos nosotros. Lo que se dice es:
+> el año 1 trae una inversión de arranque que no se repite, y de ahí en adelante se paga
+> lo mismo que hoy por algo distinto.
+
+**Y por eso la venta no puede ser por precio.** A precio igual decide lo de §4, que es lo
+único que su proveedor no puede copiar: nosotros ya estamos dentro del CRM.
 
 ## 6. Qué entra en cada cosa
 
