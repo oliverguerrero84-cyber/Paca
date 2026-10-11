@@ -74,12 +74,12 @@ una sola vez.
 
 | | Qué lleva el mensual | Mensual |
 |---|---|---:|
-| **Esencial** | 2 redes · 8–12 piezas · campañas · atribución | **$8,000** |
-| **Completo** | 3 redes · 16–20 piezas · campañas · atribución | **$10,000** |
+| **Esencial** | 2 redes · **12 piezas** · campañas · atribución | **$8,000** |
+| **Completo** | 3 redes · **20 piezas** · campañas · atribución | **$10,000** |
 
 | | | |
 |---|---|---:|
-| **Arranque** | Abrir u ordenar FB e IG, línea gráfica y plantillas, los 2 meses de contenido intensivo, y cargar, limpiar y segmentar la base de vendedores con su campaña | **$15,000** una vez |
+| **Arranque** | Abrir u ordenar FB e IG, línea gráfica y plantillas, los 2 meses de contenido intensivo, la base de vendedores cargada y segmentada con su campaña, y **la conexión de Meta con el CRM** (píxel, API de Conversiones, captura del anuncio de origen) | **$15,000** una vez |
 
 ### De dónde sale cada precio — con sus números, no con los nuestros
 
@@ -95,6 +95,18 @@ paquete se compare ($10,000 − $7,000 y $10,000 − $8,000). Tomamos ese mismo 
 Esto es lo que hace que el precio no se discuta: no somos más baratos ni más caros, somos
 **consistentes con la lista que ellas ya pagan**. Y si alguien saca la calculadora, los dos
 números le salen.
+
+### Por qué 12 y 20, cerrados, y no un rango
+
+Oliver pidió cerrar las piezas en un número (11 oct). **Los números no son libres: los fija
+la derivación.** Si Completo se cobra sobre el tier de *3 redes · 20 piezas*, tiene que
+entregar 20; si entregara 16, estaríamos cobrando el precio de 20 por 16 y el argumento
+entero se vuelve un farol que cualquiera desarma con una resta. Lo mismo arriba: el tier de
+2 redes dice «8 a 12», así que Esencial cierra en **12**, el tope de su rango, no en el piso.
+
+Va en línea con nuestro propio discurso, además: si el argumento es que la IA quita el techo
+de cuántas piezas alcanza a diseñar un equipo, no podemos cerrar por debajo de lo que
+entrega un equipo humano. Son ~7 piezas por red al mes en Completo: es sostenible.
 
 ### Por qué el mensual sí lleva contenido
 
@@ -161,6 +173,30 @@ ya sabemos del negocio:
 - **Cómo se hace negocio con esto** — el informativo. Es el que convierte a un curioso en
   revendedor, y por eso es el que más importa para el menudeo.
 
+**La conexión de Meta con el CRM**, dentro del arranque. Es la pieza técnica que sostiene
+todo el argumento de §4.3, y hasta ahora la propuesta prometía el resultado sin decir cómo:
+
+- **Píxel de Meta** en el catálogo público.
+- **API de Conversiones (CAPI)**: el evento de **venta pagada** sale del CRM hacia Meta de
+  servidor a servidor, cuando la factura se marca pagada. Es lo que sobrevive a las
+  restricciones de privacidad del iPhone y a los bloqueadores, donde el píxel solo
+  sub-reporta.
+- **Captura del anuncio de origen** en la ficha del contacto. La carpeta `Atribución` ya
+  existe en Greentex (`canal_origen`, `utm_source`, `utm_medium`, `utm_campaign`,
+  `fecha_primer_contacto`, ver `docs/01-mapa-ghl.md` §4) y `LS01` ya los escribe. **Los UTM
+  no se capturan solos en GHL**, por eso esto es trabajo, no un interruptor.
+- **Deduplicación** entre píxel y CAPI, o Meta cuenta la misma venta dos veces.
+
+> **Esto es el `LS02` que la propuesta de automatización sacó del alcance a propósito.**
+> `docs/01-mapa-ghl.md` dice, textual: *«`LS02` (campañas Meta/TikTok)… se sacaron. Si más
+> adelante reactivan las redes… se cotizan aparte»*. Pues aparte es esto, y queda **dentro
+> de los $15,000**, no como un renglón extra. Conviene decirlo así si sale el tema: fuimos
+> consistentes entre las dos propuestas.
+>
+> ⚠️ **Depende de que el CRM esté vivo y el catálogo público publicado.** Si la
+> automatización se atrasa, esta parte del arranque se atrasa con ella. No es un riesgo de
+> costo, es de calendario, y hay que decirlo al cerrar fechas.
+
 **Mensual.** Campañas (propuesta, diseño, revisión diaria y ajuste) más contenido de
 mantenimiento. Es lo indefinido.
 
@@ -201,4 +237,5 @@ mantenimiento. Es lo indefinido.
 | Ajustar los precios del pliego, si hace falta | Oliver y Brenda |
 | Cuánto le suben antes de pasárselo a Greentex | **786, es suyo** |
 | Cuántas piezas exactamente en los dos meses del arranque | Al cerrar el alcance |
+| **Si la conexión Meta–CRM se sigue absorbiendo en los $15,000** cuando se detalle | Oliver. Hoy va incluida |
 | De qué tamaño es la base de vendedores | Brenda. Cambia el trabajo del arranque |
