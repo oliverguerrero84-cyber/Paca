@@ -4,6 +4,10 @@
 > tarda de 24 a 48 horas y **es el único plazo del proyecto que no controlamos**. Se
 > mandan a cola el mismo día que exista la WhatsApp Business Account (`A4`).
 >
+> **11 oct: el WhatsApp API del cliente ya está conectado y las plantillas todavía no se
+> crearon ni se mandaron.** Es lo primero que hay que hacer: van todas juntas, y la 3 cambió
+> (ahora lleva la liga de seguimiento).
+>
 > El tono sale del Global Prompt de `docs/01-mapa-ghl.md` §3: cercano y mexicano, sin
 > tecnicismos. Y la regla 2 aplica aquí también: **la calidad baja se llama Especial**,
 > nunca «económica».
@@ -74,24 +78,32 @@ Tu orden {{3}} pasa a preparación. En cuanto salga del almacén te mandamos el 
 
 ## 3 · Orden enviada con número de guía
 
-**Categoría: UTILITY** · La dispara `SP05` cuando Envia genera la guía.
+**Categoría: UTILITY** · La dispara `AP04` cuando depósito registra la guía en el
+formulario «Registrar Envío» (11 oct: la guía la saca depósito a mano en Paquete Express;
+antes la disparaba `SP05` con la guía de Envia).
 
 ```
 {{1}}, tu paca ya va en camino.
 
 Guía: {{2}}
 Paquetería: Paquete Express
-La recoges en: {{3}}
+Entrega: {{3}}
+Síguela aquí: {{4}}
 
-Te avisamos en cuanto llegue a la sucursal. Llévate una identificación.
+Si es a sucursal, te avisamos en cuanto llegue. Llévate una identificación.
 ```
 
 | Variable | Campo | Ejemplo |
 |---|---|---|
 | `{{1}}` | nombre del contacto | Laura |
-| `{{2}}` | `numero_guia` | 7712345678 |
-| `{{3}}` | `sucursal_ocurre` | Paquete Express Mérida Centro |
+| `{{2}}` | `opportunity.numero_guia` | 7712345678 |
+| `{{3}}` | `opportunity.sucursal_envio` o `opportunity.direccion_envio`, según `modalidad_envio` | Paquete Express Mérida Centro |
+| `{{4}}` | `opportunity.track_url` | https://www.paquetexpress.com.mx/rastreo/7712345678 |
 
+> **La liga va en el cuerpo, como variable de texto** — nunca en un botón de URL
+> dinámica (ver la nota al final). Hasta el 11 oct la plantilla mandaba el número de guía
+> pero no la liga, y la única que la llevaba (la 7) llegaba días después.
+>
 > **«Llévate una identificación»** evita el viaje perdido: con servicio a ocurre la
 > sucursal la pide y mucha gente no lo sabe.
 

@@ -221,8 +221,13 @@ def sp04(tk, loc, pit):
     ], None
 
 
-def sp05(tk, loc, pit):
-    """SP05 · Despacho — llama a `N4`, que genera la guía en Envia.
+def sp05_envia(tk, loc, pit):
+    """SP05 · Despacho, versión Envia (fase 2) — llama a `N4`, que genera la guía.
+
+    ⚠️ 11 oct: NO es lo que está vivo. El cliente decidió sacar la guía a mano en Paquete
+    Express y el SP05 de la cuenta quedó en línea recta (`scripts/sp05-despacho-manual.py`):
+    correo a los dueños → «Orden en Almacén». Esta versión se guarda para cuando llegue la
+    cuenta de Envia; correrla con --aplicar pisaría la manual.
 
     ⚠️ Al almacén **nunca** le va el monto. Regla dura, textual de Miguel.
     """
@@ -303,7 +308,7 @@ def ap03(tk, loc, pit):
     ], None
 
 
-ARMADORES = {"LS01": ls01, "SP02": sp02, "SP04": sp04, "SP05": sp05,
+ARMADORES = {"LS01": ls01, "SP02": sp02, "SP04": sp04, "SP05-ENVIA": sp05_envia,
              "AP01": ap01, "AP02": ap02, "AP03": ap03}
 
 

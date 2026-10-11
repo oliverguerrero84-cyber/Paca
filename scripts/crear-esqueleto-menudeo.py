@@ -4,7 +4,7 @@
 Levanta el esqueleto de GoHighLevel del menudeo: pipeline, campos y custom values.
 
 Es el eslabón 0.2b de docs/13-accesos.md, y sale tal cual de docs/01-mapa-ghl.md
-§1 (las 8 etapas), §4 (los 19 campos en 4 carpetas) y §5 (los 8 custom values).
+§1 (las 8 etapas), §4 (los campos por carpeta) y §5 (los custom values).
 
 Uso:
     export GHL_API_KEY='pit-...'
@@ -85,6 +85,24 @@ CARPETAS = [
         # Lo escribe N5: el último estado que le avisó a AP01. Sin esto avisa cada hora.
         ("estado_envio",       "Estado del envío",  "TEXT", None),
     ]),
+    # 11 oct: el cliente cambió el despacho. La guía ya no la genera N4: la saca
+    # depósito a mano en Paquete Express. Lo que el bot averigua ANTES (sucursal
+    # elegida, o domicilio geolocalizado y confirmado) tiene que quedar en el
+    # pedido, no en el contacto, para que depósito lo vea en la tarjeta.
+    # Los nombres visibles dicen "del pedido" a propósito: los gemelos de contacto
+    # (sucursal_ocurre, branch_code, servicio_envio) siguen existiendo y en el
+    # selector de la UI se ven iguales. Escoger el de contacto deja el If siempre
+    # en falso, sin un solo error — es la trampa de docs/16-guias-workflows.md §1.2.
+    # Los escribe N6 por la API; el bot no puede (sólo escribe campos de contacto).
+    ("Envío del pedido", "opportunity", [
+        ("modalidad_envio",    "Modalidad de envío del pedido",    "TEXT", None),
+        ("sucursal_envio",     "Sucursal del pedido",              "TEXT", None),
+        ("branch_code_envio",  "Código de sucursal del pedido",    "TEXT", None),
+        ("direccion_envio",    "Dirección de entrega del pedido",  "TEXT", None),
+        # "lat,lng" en un solo TEXT: nadie los compara, sólo se leen y se mandan.
+        ("geo_envio",          "Coordenadas de entrega (lat,lng)", "TEXT", None),
+        ("mapa_envio",         "Liga de mapa de entrega",          "TEXT", None),
+    ]),
     ("Atribución", "contact", [
         ("canal_origen",           "Canal de origen",        "TEXT", None),
         ("utm_source",             "UTM source",             "TEXT", None),
@@ -94,7 +112,7 @@ CARPETAS = [
     ]),
 ]
 
-# §5 — los 8 custom values. Sólo horas_apartado se puede llenar hoy; el resto
+# §5 — los custom values. Sólo horas_apartado se puede llenar hoy; el resto
 # depende de n8n (eslabón 0.3) y de datos que el cliente todavía no manda.
 # PENDIENTE a propósito: si un workflow lo usa antes de tiempo, falla ruidoso.
 # Una URL de relleno con forma de URL fallaría en silencio o pegaría en otro lado.
@@ -105,6 +123,9 @@ CUSTOM_VALUES = [
     ("url_n8n_buscar_sucursal",  PENDIENTE),
     ("url_n8n_generar_guia",     PENDIENTE),
     ("url_n8n_rastrear",         PENDIENTE),
+    # 11 oct, las dos acciones nuevas del bot para el envío del pedido
+    ("url_n8n_geocodificar_domicilio", PENDIENTE),
+    ("url_n8n_guardar_envio",          PENDIENTE),
     ("whatsapp_almacen",         PENDIENTE),
     ("email_duenos",             PENDIENTE),
     ("horas_apartado",           "24"),

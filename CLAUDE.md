@@ -25,6 +25,12 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
 - `scripts/armar-workflows.py` crea los workflows de GHL por la API interna, **en línea recta**.
   ⚠️ No correrlo con `--aplicar` sobre `SP02`, `SP05` ni `AP01`: reescribe el workflow entero y borra sus ramas.
+  ⚠️ **Hoy no arranca**: importa `wf_toolkit` desde `$GHL_KIT` y ese archivo no está en el kit local
+  (`Korvance/gohighlevel-cli`). Los scripts de abajo no lo necesitan: cargan `Interna` y `jwt_de` de este
+  mismo archivo y clonan nodos vivos en vez de usar helpers.
+- `scripts/sp05-despacho-manual.py` deja `SP05` en línea recta (correo a dueños → «Orden en Almacén»), sin `N4`.
+  `scripts/armar-ap04.py` crea `AP04` clonando nodos de `SP04`, `SP05`, `AP02` y `AP01`. Los dos tienen
+  `--dry-run`, guardan respaldo y se corren **una vez** (11 oct).
 - `scripts/ramas-sp02.py`, `ramas-sp05.py`, `ramas-ap01.py` y `aviso-pago-sin-pedido.py` les pusieron condiciones y avisos. Se corren **una vez**:
   verifican la forma de antes y guardan respaldo.
 
@@ -201,6 +207,17 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   se guarda sin error y el webhook sale vacío (le pasó a `SP05` el 1 oct).
 - **`N5` avisa una sola vez por estado** porque guarda el último en `opportunity.estado_envio`. Si
   alguien borra ese campo, `N5` se detiene con error; sin él, mandaría el mismo SMS cada hora.
+- **Un estatus de Envia que `N5` no reconoce es `desconocido`, nunca «en camino».** Hasta el 11 oct caía en
+  `en_transito`: el bot afirmaba que el paquete iba en camino sin saberlo y el pedido no se cerraba jamás.
+  Con la guía sacada a mano, que Envia no la reconozca es el caso que hay que esperar, no la excepción.
+- **Un nodo SMS o WhatsApp le escribe al contacto del workflow**, no a un número ajeno. No hay
+  forma de «mandarle un WhatsApp al almacén» desde un workflow; lo que depósito necesita va en el
+  correo a los dueños (`internal_notification`). El `whatsapp_almacen` de los custom values no
+  tiene hoy ningún nodo que lo use.
+- **`scripts/subir-n8n.py` no crea flujos, sólo actualiza los que ya existen por nombre.** Un
+  flujo nuevo (`N6`) se importa a mano la primera vez; después sí se sube con el script.
+- **`Interna.escribir()` deja el workflow en borrador** aunque estuviera publicado. Tocar `SP05`
+  por API lo apaga: hay que volver a publicarlo en la UI y comprobarlo.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
   contesta `pedido_en_curso`. Por eso el pedido tiene que cerrarse (`abandoned` al vencer,
   `won` al entregarse), o el cliente ya no puede volver a comprar.
@@ -232,7 +249,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/reporte-avance.html` | El reporte de avance que ve el cliente — mismo checklist que la propuesta |
 | `entregables/mapa-paca.html` | El mapa de desarrollo en 3 hojas — **interno**, no se comparte con el cliente |
-| `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos. `N5` cambió el 2 oct (no repite avisos y cierra el pedido entregado), sin probar |
+| `n8n/` | Los 6 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N5` probado antes del cambio a la oportunidad y cambiado el 2 oct, sin probar. **`N4` dormido desde el 11 oct** (la guía la saca depósito a mano). **`N6` nuevo el 11 oct**, sin importar todavía: geocodifica domicilios y guarda sucursal/domicilio en la oportunidad |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
 | `propuesta/propuesta-contenido.html` | Contenido y campañas, **en pesos** — la ve **786**, no el cliente |
@@ -265,6 +282,11 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 6. **Los datos de cada pedido viven en la oportunidad, no en el contacto** (28 sep).
    Apartado, Pago y Guía son campos de oportunidad; Envío y Atribución se quedan en el
    contacto porque el bot de Conversation AI sólo escribe ahí. Ver `docs/01-mapa-ghl.md` §4.
+7. **La guía la saca depósito a mano en Paquete Express** (cliente, 11 oct). `N4` queda dormido;
+   el bot sugiere sucursal o geocodifica el domicilio (Google Maps, key del cliente) y `N6` lo
+   guarda en la oportunidad; depósito registra la guía en el formulario «Registrar Envío» y `AP04`
+   mueve el pedido a «Enviado» y le manda la liga al cliente. **El rastreo y el cierre siguen
+   siendo de Envia** (`N5`, `AP01`). Ver `docs/06-logistica-envia.md` §6.
 
 > Dos afirmaciones de revisiones viejas eran **falsas** y están corregidas: que
 > Mercado Pago no era nativo, y que GHL no llevaba inventario. Si las encuentras

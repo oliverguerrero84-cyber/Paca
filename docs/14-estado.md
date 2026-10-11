@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 2 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 11 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -13,7 +13,54 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
-**Para retomar (quedó a medias el 2 oct, prueba de la rama «del que paga»):**
+**Lo que cambió el 11 oct (reunión con el cliente):**
+- **Stripe y el WhatsApp API del cliente ya están conectados.** Falta su cuenta de Envia.
+- **La guía ya no se genera sola.** Depósito la saca a mano en Paquete Express y pega la liga.
+  El bot sugiere sucursal o geocodifica el domicilio (Google Maps, key del cliente) y el cliente
+  confirma; eso se guarda **en la oportunidad**; al registrar la guía, el pedido se mueve y el
+  cliente recibe la liga por correo y WhatsApp. **`N4` queda dormido; `N5` y `AP01` siguen** —
+  el rastreo y el cierre son de Envia. Diseño completo en `docs/06-logistica-envia.md` §6.
+- **Las plantillas de WhatsApp no están creadas ni enviadas a Meta.** Es lo primero.
+
+**Hecho en el repo el 11 oct (sin credenciales en esta máquina: nada se escribió en la cuenta):**
+- 6 campos de oportunidad nuevos y 2 custom values en `scripts/crear-esqueleto-menudeo.py` (carpeta «Envío del pedido»).
+- `n8n/N6-envio-pedido.json`: `/geocodificar-domicilio` y `/guardar-envio` (23 nodos; 14 pruebas de lógica pasan).
+- `scripts/sp05-despacho-manual.py` (`SP05` → línea recta sin `N4`) y `scripts/armar-ap04.py` (`AP04` clonando
+  nodos vivos). Probados contra un mock de la API; `--dry-run` en los dos.
+- `armar-workflows.py`: `sp05` pasó a `sp05_envia` (clave `SP05-ENVIA`), para la fase 2.
+- Plantilla 3 con la liga de seguimiento (`{{4}}`). Docs al día: `01`, `06`, `15`, `n8n/README`, `CLAUDE.md`.
+- **`N5` corregido, sin subir ni probar:** un estatus que no reconoce ya es `desconocido`, no `en_transito`. Antes,
+  con una guía que Envia no conociera, el bot decía «tu paquete ya va en camino» y el cron nunca cerraba el pedido,
+  sin error. Con guías manuales ese caso deja de ser raro. También faltaba `returntosender` en el catálogo del bot.
+  `N5` acumula así dos cambios sin probar (2 oct y 11 oct): probarlo antes de tocarlo otra vez.
+
+**Para retomar, en orden:**
+0. **Credenciales y kit.** `C:\Users\germa\gohighlevel-cli\.env.greentex` y `C:\Users\germa\.n8n-korvance.env`
+   **no están en esta máquina**; y `wf_toolkit.py` no está en `Korvance/gohighlevel-cli`, así que
+   `armar-workflows.py` no arranca (los scripts nuevos no lo necesitan). Germán dice dónde viven.
+1. **Campos:** `python scripts/crear-esqueleto-menudeo.py --dry-run` debe decir 6 campos y 2 custom values
+   por crear; correrlo sin `--dry-run`; leer `GET /locations/{id}/customFields?model=opportunity` y
+   anotar aquí los 6 ids. Comprobar que quedaron dentro de la carpeta.
+2. **`N6`:** importarlo a mano en n8n (`subir-n8n.py` no crea flujos), credencial `GHL · PIT Greentex` en sus
+   3 nodos de GHL, pegar sus dos URLs en `url_n8n_geocodificar_domicilio` y `url_n8n_guardar_envio`.
+   Probar `/guardar-envio` con «Prueba Paca» y un `branch_code` de `N3`; verificar la oportunidad por API.
+   `GOOGLE_MAPS_KEY` en `Config geo` cuando el cliente la mande; hasta entonces el domicilio contesta `google_error`.
+3. **`SP05`:** `! python scripts/sp05-despacho-manual.py respaldos/sp05-2oct.json --dry-run`, luego sin `--dry-run`.
+   Queda en borrador: **publicarlo en la UI** y prenderle «Allow multiple opportunities».
+4. **`AP04`:** `! python scripts/armar-ap04.py respaldos/ap04 --dry-run`, luego sin `--dry-run`. Después Germán en la UI:
+   formulario «Registrar Envío» (teléfono del comprador, guía, liga con `http` obligatorio, paquetería, notas),
+   trigger *Form Submitted*, los 3 campos de oportunidad en «Mover a Enviado» con los tokens del formulario,
+   un nodo Email al cliente con `{{opportunity.track_url}}`, «Allow re-entry». Dejarlo en borrador hasta probar.
+5. **Bot:** las dos acciones nuevas y las reglas de orden (`docs/01-mapa-ghl.md` §3). El envío se pregunta
+   **después** de apartar.
+6. **Plantillas:** crear y mandar a Meta las 5 de WhatsApp (1, 2, 3, 4, 7) y la 6. Verificar si la cuenta ya
+   acepta `whatsapp_v2` (antes lo rechazaba por `pools: []`); si sí, cambiar los 8 `TEMPORAL · SMS`.
+7. **Pruebas de punta a punta**: `probar-n1.sh` → pago → `SP05` sin `N4` → formulario → `AP04` mueve a
+   «Enviado» y el correo llega con la liga → `N5`/`AP01` cuando exista Envia (y ahí probar que Envia rastrea
+   una guía que no generó: es el supuesto más caro).
+8. **Lo que quedó del 2 oct** sigue pendiente: la rama «del que paga» de `SP02`, abajo.
+
+**Para retomar la prueba del 2 oct (rama «del que paga» de `SP02`):**
 1. Pedido anterior de «Prueba Paca» cerrado como `won`; Allow re-entry ya prendido; **`SP05` en borrador a propósito** (si escala con `N4` apagado, `AP02` les manda correo a los dueños reales).
 2. `! bash scripts/probar-n1.sh` → crea el pedido y la factura 000008, y «Prueba Paca» debe **entrar a `SP02`** (antes no entraba por el re-entry).
 3. Germán: *Record payment* (cash) sobre la 000008 → `SP04` lo marca `pagado`.
@@ -153,6 +200,8 @@ de cada cosa.
 | **`AP01` terminado**: Inbound Webhook (URL en `N5`), *Find contact* por Contact ID y ramas por `estado` (sucursal → SMS; incidencia o cancelado → `escalar-humano`) | Germán / Claude | 2 oct |
 | **`N5` corregido**: avisaba a `AP01` cada hora y nunca cerraba el pedido entregado. Ahora guarda el último estado en `opportunity.estado_envio` (campo nuevo) y pasa el entregado a «Entregado» con status `won`. Subido a n8n, **sin probar** | Claude / 786 | 2 oct |
 | **Cambio de pasarela a Stripe**, por decisión del cliente. La liga la crea `N1` con la API de Invoices y se la devuelve al agente; `SP03` desaparece; la subcuenta va en MXN | Cliente / Germán | 25 sep |
+| **Stripe conectado en Greentex** (`B1`) y **WhatsApp API del cliente conectado** (`A4`) | Cliente / 786 | antes del 11 oct |
+| **Despacho manual diseñado y armado en el repo**: campos «Envío del pedido», `N6`, `SP05` manual, `AP04`, plantilla 3 con liga. **Nada escrito en la cuenta todavía** | Claude / 786 | 11 oct |
 
 > Los 23 campos del formulario de alta viven en **Korvance, la cuenta de trabajo de
 > Germán**, y ahí se quedan: son el formulario con el que se le piden los datos al
@@ -170,6 +219,10 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | — | **Borrar los 14 campos viejos del contacto** (Apartado, Pago y los 4 de la guía) una vez probado lo nuevo, para que nadie los llene por error | Germán, tras la prueba |
 | — | Prompt del bot: qué decir cuando `N1` contesta `pedido_en_curso` (terminar o cancelar el pedido actual antes de apartar otro) | 786 |
 | — | **`AP03`: `orden_id` desde el formulario** (cuando exista) | Germán / Claude |
+| — | **Despacho manual en la cuenta**: campos, `N6`, `SP05`, `AP04`, formulario «Registrar Envío», acciones del bot — §0 pasos 1-5 | Germán y Claude |
+| — | **Mandar las plantillas a Meta** (`A6`) — el WhatsApp ya está conectado | 786 |
+| — | **Pedirle al cliente la key de Google Maps** (geocoding del domicilio) | 786 |
+| — | **Localizar `wf_toolkit.py`** o portar sus 8 moldes desde `workflow_builder.py` | Germán |
 | `0.3` | `N1`, `N2` y `N3` reimportados y probados. Falta **reimportar `N4` y `N5`** con la versión de la oportunidad y asignarles credenciales | Germán |
 | — | **OXXO y SPEI en el checkout** (resto de la validación 4): se mira el día que el cliente conecte Stripe (`B1`) | Germán, tras `B1` |
 | — | **Limpiar lo de la prueba en Greentex**: los workflows `PRUEBA N1 - webhook apartar` y el de N3 (quedó como «New Workflow : 1790609975341»), las facturas de prueba, la oportunidad «Prueba Paca» y el producto `test 1` (SKU `PV-MUJ-BOU`, marcado como Digital) | 786 |
@@ -188,9 +241,10 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | **Descripciones** — faltan 6 de 30 | El agente no puede describir lo que no sabe |
 | **Piezas por paca** | De lo que más preguntan los compradores |
 | **Stock inicial** al menudeo | La carga de `availableQuantity` |
-| **Verificar el Meta Business Manager** y agregar a 786 como socio | `A1` y `A2`, el primer eslabón del carril más largo |
-| **Conectar su Stripe en Greentex** (`B1`), y activar OXXO y transferencia MX en su dashboard (`B2`) | Las validaciones 1, 2 y 4. Es lo único que hoy detiene el carril del cobro |
-| **Cuenta de Envia.com con saldo** | Las guías |
+| ~~Verificar el Meta Business Manager~~ — **hecho**: el WhatsApp API ya está conectado (11 oct) | — |
+| **Key de Google Maps** de su Google Cloud (Geocoding API) | El envío a domicilio: sin ella `N6` contesta `google_error` y el bot sólo puede ofrecer sucursal |
+| ~~Conectar su Stripe en Greentex~~ — **hecho** (11 oct). Falta activar OXXO y transferencia MX en su dashboard (`B2`) | La validación 4 |
+| **Cuenta de Envia.com con saldo** | Ya no las guías (son manuales): el **rastreo y el cierre** del pedido con `N5`. Sin ella nada cierra el pedido y el cliente no puede volver a comprar |
 
 Los primeros cinco se piden con el Excel que ya se les mandó.
 
