@@ -20,6 +20,8 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
   n8n viven **apagados**; prenderlos lo corre una persona con `!`, igual que escribir workflows.
 - **Para probar un workflow sin esperar horas**, las esperas se adelantan a mano en *Enrollment history*.
 - `scripts/crear-esqueleto-menudeo.py` crea pipeline, campos (de contacto y de oportunidad) y custom values.
+- `scripts/convertir-propuesta-usd.py` regenera la propuesta de contenido en dólares desde la de pesos.
+  Es idempotente y **aborta si el redondeo rompe la derivación del precio**. La de dólares no se edita a mano.
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
 - `scripts/armar-workflows.py` crea los workflows de GHL por la API interna, **en línea recta**.
   ⚠️ No correrlo con `--aplicar` sobre `SP02`, `SP05` ni `AP01`: reescribe el workflow entero y borra sus ramas.
@@ -85,6 +87,25 @@ contener:
 - datos de contacto de ningún tipo
 
 Todo eso vive en `docs/04-precotizacion.md` y ahí se queda.
+
+### Las propuestas de contenido son para 786, no para el cliente
+
+`propuesta/propuesta-contenido.html` y su gemela `-usd.html` **no son documentos del
+cliente**: las ve 786, y por eso sí llevan adentro los precios mayoristas del proveedor de
+marketing que Brenda nos compartió, y nuestros precios **antes** del margen de reventa. El
+margen lo ponen ellas y nunca se sugiere. Las dos lo dicen en el pie, para que nadie las
+reenvíe a Greentex por descuido.
+
+**Las dos van juntas.** La de dólares se genera de la de pesos al tipo de cambio de
+referencia de Banxico (**18.20**, 8 oct 2026), redondeando **hacia arriba al décimo**. Si se
+toca un precio, se toca en las dos y se vuelve a verificar que la derivación siga cerrando:
+cada mensual es el tier del proveedor **más su propio incremento por campañas**, y si el
+redondeo rompe esa suma, se rompe el argumento entero de la propuesta.
+
+> **Ojo con la moneda del benchmark.** Que la lista de Brenda esté en **pesos y al mes** es
+> un supuesto que **nunca se le confirmó**. Los precios de las dos propuestas están armados
+> sobre esa lista, así que si fueran dólares, las dos se caen. Ver
+> `docs/17-precotizacion-contenido.md` §2.
 
 ### Checklist del HTML
 
@@ -206,6 +227,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/09-conversacion.md` | Cómo se llegó a cada decisión — **no es fuente de verdad** |
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
 | `docs/15-plantillas.md` | Las 7 plantillas de mensaje, listas para mandar a Meta |
+| `docs/17-precotizacion-contenido.md` | Contenido y campañas: nuestro precio a 786 y de dónde sale — **interno** |
 | `docs/16-guias-workflows.md` | **Cómo se arma cada workflow**, en la UI y por la API interna: moldes de nodos, If y triggers, y lo que la cuenta acepta (§4) |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/reporte-avance.html` | El reporte de avance que ve el cliente — mismo checklist que la propuesta |
@@ -213,6 +235,8 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `n8n/` | Los 5 flujos de n8n como JSON importable. Probados en vivo en Greentex: `N1`, `N2` y `N3`; `N4` y `N5` probados antes del cambio a la oportunidad, falta repetirlos. `N5` cambió el 2 oct (no repite avisos y cierra el pedido entregado), sin probar |
 | `scripts/` | Herramientas internas. Leen credenciales del entorno, nunca de un archivo |
 | `propuesta/propuesta-paca.html` | La propuesta que ve el cliente |
+| `propuesta/propuesta-contenido.html` | Contenido y campañas, **en pesos** — la ve **786**, no el cliente |
+| `propuesta/propuesta-contenido-usd.html` | La misma, **en dólares**. Gemela de la anterior: si se toca un precio, se tocan las dos |
 | `data/catalogo.csv` | 30 SKUs: 17 de verano, 13 de invierno |
 
 ---

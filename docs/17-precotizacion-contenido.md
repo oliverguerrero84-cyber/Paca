@@ -123,6 +123,53 @@ razón: eso son los dos meses del arranque. El contenido del mensual es **manten
 son las piezas que los anuncios van necesitando, publicadas también en el perfil. Así se
 le da la razón por escrito sin dejar la cuenta abandonada.
 
+## 3bis. La versión en dólares
+
+Oliver la pidió el 11 oct. Vive en `propuesta/propuesta-contenido-usd.html`, **gemela** de
+la de pesos. Se genera con `scripts/convertir-propuesta-usd.py`, que verifica la aritmética antes de
+escribir nada.
+
+**Tipo de cambio: 18.20 pesos por dólar** — la referencia del Banco de México del 8 oct
+2026. Se eligió ésa y no el spot (andaba en 18.40, bancos a 18.75–18.88) porque es la
+oficial, citable y auditable, que es lo que un cliente puede verificar. Redondeo **hacia
+arriba al décimo**, como pidió Oliver.
+
+| | Pesos | Dólares |
+|---|---:|---:|
+| Esencial · mensual | $8,000 | **$440** |
+| Completo · mensual | $10,000 | **$550** |
+| Arranque · una vez | $15,000 | **$830** |
+
+| | Año 1 | Del año 2 | Dos años |
+|---|---:|---:|---:|
+| Lo que manejan hoy | $6,600 | $6,600 | $13,200 |
+| **Esencial** | $6,110 | $5,280 | $11,390 |
+| **Completo** | $7,430 | $6,600 | $14,030 |
+
+**El redondeo no es cosmético: puede romper la propuesta.** Toda la fuerza del documento es
+que cada mensual es el tier del proveedor **más su propio incremento**. Al convertir hay que
+derivar los dólares **desde los tiers ya convertidos**, no convertir nuestro precio por
+separado, o los dos caminos no dan lo mismo y cualquiera lo ve con una resta.
+
+```
+sus tiers convertidos:  2 redes $280 · 3 redes 8-12 $390 · 3 redes 20 $440 · con campañas $550
+su incremento:          550 - 440 = $110   ·   550 - 390 = $160
+Esencial  = 280 + 160 = $440   (= convertir nuestros $8,000  ✓)
+Completo  = 440 + 110 = $550   (= convertir nuestros $10,000 ✓)
+```
+
+A **18.20 cierra exacto por los dos caminos.** Probé 18.00, 18.20 y 18.40: las tres cierran.
+**A 18.50 se rompe** (Esencial da $450 derivado contra $440 directo). Si alguien cambia el
+tipo de cambio, **hay que volver a correr el script**, que aborta si la suma deja de cuadrar.
+Y los tres argumentos del documento siguen en pie: Completo a la par del año 2, el año 1
+arriba por exactamente el arranque, Esencial debajo los dos años.
+
+**Quién carga el riesgo de tipo de cambio.** Precio fijo en dólares con costos en pesos: si
+el peso se fortalece, cada dólar nos rinde menos y perdemos margen; si se debilita, ganamos.
+Hoy el peso viene cayendo cinco semanas seguidas, así que el viento va a favor — pero es
+viento, no plan. Si el contrato se va a un año o más, conviene pactar una revisión del tipo
+de cambio, o dejar el precio en pesos y que la conversión la haga quien factura.
+
 ## 4. Lo que hay que contestarle a su escepticismo
 
 **No decimos que reemplazamos a su equipo.** Decimos dos cosas que un equipo humano no

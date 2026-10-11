@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contenido y campañas — Propuesta en dólares</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ──────────────────────────────────────────────────────────────
+   Propuesta de contenido y campañas · Greentex (pacas)
+   Fecha: 2026-10-11 · Revisión 2 · EN DÓLARES
+   Gemela de propuesta-contenido.html (en pesos). Las cifras salen de
+   esa lista al tipo de cambio de referencia de Banxico del 8 de octubre de 2026
+   (18.20 pesos por dólar), redondeadas hacia arriba al décimo. Si se toca un precio,
+   se toca en la de PESOS y se regenera
+   esta con scripts/convertir-propuesta-usd.py — no a mano, se sobrescribe.
+   NO reintroducir: emojis · transition:all · colores fuera de
+   :root · quitar estados de foco o reduced-motion.
+   DOCUMENTO PARA 786 MARKETING — no es el del cliente: lleva
+   adentro los precios mayoristas de su proveedor actual.
+   La sección «Inversión» lleva NUESTRO precio a 786. El margen de
+   reventa lo ponen ellas: no se sugiere aquí.
+   NO ofrecer página web (fuera de alcance, 8 oct).
+   ────────────────────────────────────────────────────────────── */
+
+:root{
+  --brand-50:#ecfdf5;  --brand-100:#d3f3e4; --brand-200:#a7e7c9;
+  --brand-300:#6dd4a8; --brand-400:#34c48a; --brand-500:#1aa46d;
+  --brand-600:#15855a; --brand-700:#116343; --brand-800:#0d5138;
+  --brand-900:#08301f;
+
+  --primary-gradient: linear-gradient(135deg, #0d5138 0%, #15855a 50%, #34c48a 100%);
+  --deep-gradient:    linear-gradient(135deg, #0d5138 0%, #116343 100%);
+
+  --red-50:#fef2f2; --red-200:#fecaca; --red-600:#dc2626; --red-700:#b91c1c;
+  --amber-50:#fffbeb; --amber-200:#fde68a; --amber-700:#b45309;
+
+  --slate-50:#f8fafc;  --slate-100:#f1f5f9; --slate-200:#e2e8f0;
+  --slate-300:#cbd5e1; --slate-400:#94a3b8; --slate-500:#64748b;
+  --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
+
+  --ink:#07231a; --ink-soft:#0e3728;
+
+  --white-a80: rgba(255,255,255,.82);
+  --white-a10: rgba(255,255,255,.10);
+  --white-a18: rgba(255,255,255,.18);
+  --brand-a08: rgba(17,99,67,.08);
+  --brand-a14: rgba(17,99,67,.14);
+  --brand-a24: rgba(17,99,67,.24);
+  --shadow-sm: 0 2px 8px rgba(17,99,67,.07);
+  --shadow-md: 0 8px 24px rgba(17,99,67,.10);
+  --shadow-lg: 0 18px 48px rgba(17,99,67,.16);
+  --mask-solid: #000;
+
+  --bg-color: var(--slate-50);
+  --surface: #ffffff;
+  --text-dark: var(--slate-900);
+  --text-gray: var(--slate-500);
+  --text-light: #ffffff;
+  --border: var(--slate-200);
+
+  --r-sm: 8px; --r-md: 16px; --r-lg: 32px;
+  --font-title: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg-color); color:var(--text-dark);
+  font-family:var(--font-body); font-size:16px; line-height:1.6; overflow-x:hidden;
+}
+h1,h2,h3{font-family:var(--font-title); line-height:1.18; margin:0}
+p{margin:0}
+.wrap{max-width:920px; margin:0 auto; padding:0 16px}
+
+/* Glifos CSS — sin emojis */
+.gl{display:inline-block; width:1em; height:1em; flex:0 0 auto; position:relative; vertical-align:-.125em}
+.gl::before{content:""; position:absolute; inset:0; background:currentColor}
+.gl-check::before{clip-path:polygon(43% 73%, 88% 19%, 97% 29%, 45% 92%, 4% 55%, 13% 44%)}
+.gl-cross::before{clip-path:polygon(18% 6%, 50% 38%, 82% 6%, 94% 18%, 62% 50%, 94% 82%, 82% 94%, 50% 62%, 18% 94%, 6% 82%, 38% 50%, 6% 18%)}
+.gl-dash::before{clip-path:polygon(12% 44%, 88% 44%, 88% 56%, 12% 56%)}
+.gl-bolt::before{clip-path:polygon(60% 2%, 20% 55%, 45% 55%, 36% 98%, 82% 42%, 55% 42%)}
+.gl-spark::before{clip-path:polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 71%, 21% 94%, 32% 57%, 2% 35%, 39% 35%)}
+.gl-alert::before{clip-path:polygon(50% 4%, 98% 92%, 2% 92%)}
+.gl-alert::after{content:""; position:absolute; left:46%; top:38%; width:8%; height:34%; background:var(--surface); border-radius:2px}
+.gl-clock::before{
+  border-radius:50%;
+  -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+          mask:radial-gradient(circle at 50% 50%, transparent 0 34%, var(--mask-solid) 35%);
+}
+.gl-clock::after{
+  content:""; position:absolute; left:47%; top:24%; width:6%; height:30%;
+  background:currentColor; border-radius:2px; box-shadow:.22em .26em 0 -.005em currentColor;
+}
+.gl-chart::before{clip-path:polygon(4% 62%, 28% 62%, 28% 96%, 4% 96%, 4% 62%)}
+.gl-chart::after{
+  content:""; position:absolute; inset:0; background:currentColor;
+  clip-path:polygon(38% 32%, 62% 32%, 62% 96%, 38% 96%, 38% 32%, 72% 8%, 96% 8%, 96% 96%, 72% 96%, 72% 8%);
+}
+.gl-text::before{clip-path:polygon(8% 10%, 92% 10%, 92% 22%, 8% 22%, 8% 10%, 8% 44%, 92% 44%, 92% 56%, 8% 56%, 8% 44%, 8% 78%, 64% 78%, 64% 90%, 8% 90%)}
+
+/* Encabezado */
+.hero{background:var(--deep-gradient); color:var(--text-light); padding:46px 0 54px}
+.brand{
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--font-title); font-weight:800; letter-spacing:.12em;
+  font-size:.72rem; text-transform:uppercase; color:var(--white-a80);
+  border:1px solid var(--white-a18); border-radius:999px; padding:7px 15px;
+}
+.brand .dot{width:7px; height:7px; border-radius:50%; background:var(--brand-300)}
+.hero h1{font-size:clamp(1.6rem, 6vw, 2.6rem); font-weight:800; margin:20px 0 12px}
+.hero .sub{color:var(--white-a80); font-size:1rem; max-width:62ch}
+
+.hero-note{
+  margin-top:28px; background:var(--white-a10); border:1px solid var(--white-a18);
+  border-radius:var(--r-md); padding:20px; font-size:.95rem; color:var(--white-a80);
+}
+.hero-note strong{color:var(--text-light)}
+
+section{padding:48px 0}
+.eyebrow{
+  font-family:var(--font-title); font-weight:700; letter-spacing:.11em;
+  text-transform:uppercase; font-size:.7rem; color:var(--brand-600); margin-bottom:9px;
+}
+section h2{font-size:clamp(1.3rem, 4.6vw, 1.8rem); font-weight:700; margin-bottom:10px}
+.lede{color:var(--text-gray); max-width:66ch; margin-bottom:28px}
+
+.cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(258px, 1fr))}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:20px; box-shadow:var(--shadow-sm)}
+.card h3{font-size:1rem; font-weight:700; margin-bottom:8px; display:flex; align-items:flex-start; gap:9px}
+.card h3 .gl{color:var(--brand-500); margin-top:.2em}
+.card p{font-size:.91rem; color:var(--text-gray)}
+.card p + p{margin-top:8px}
+
+/* Bloque destacado */
+.pitch{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--brand-500); border-radius:var(--r-md); padding:22px; box-shadow:var(--shadow-sm); margin-bottom:14px}
+.pitch.strong{background:var(--brand-50); border-color:var(--brand-200); border-left-color:var(--brand-600)}
+.pitch h3{font-size:1.06rem; font-weight:700; margin-bottom:8px; display:flex; align-items:flex-start; gap:10px}
+.pitch h3 .gl{color:var(--brand-600); margin-top:.18em}
+.pitch p{font-size:.93rem; color:var(--text-gray)}
+.pitch p + p{margin-top:9px}
+.pitch .punch{margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:.9rem; color:var(--text-dark)}
+.pitch.strong .punch{border-top-color:var(--brand-200)}
+
+/* Tablas */
+.tabla{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse; width:100%; min-width:460px; font-size:.92rem}
+/* Las de precio son de 3 columnas y tienen que caber en un celular: la columna
+   que queda fuera de pantalla es justo la que se quiere que vean. */
+.tabla.precio table{min-width:0}
+.tabla.precio td:first-child, .tabla.precio th:first-child{padding-right:8px}
+.tabla.precio td.num, .tabla.precio th.num{padding-left:8px}
+th,td{padding:12px 14px; text-align:left; border-bottom:1px solid var(--border)}
+th{background:var(--slate-50); font-family:var(--font-title); font-weight:700; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase; color:var(--text-gray)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.total td{background:var(--brand-50); font-weight:700; color:var(--brand-800)}
+
+.nota{margin-top:14px; font-size:.86rem; color:var(--text-gray)}
+
+/* Lista de pasos */
+.pasos{display:grid; gap:12px; margin:0; padding:0; list-style:none}
+.pasos li{display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:16px 18px; box-shadow:var(--shadow-sm); font-size:.93rem}
+.pasos .n{
+  font-family:var(--font-title); font-weight:800; font-size:.8rem; color:var(--text-light);
+  background:var(--brand-600); border-radius:999px; width:24px; height:24px; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; margin-top:.1em;
+}
+
+footer{background:var(--ink); color:var(--white-a80); padding:28px 0; font-size:.85rem}
+footer strong{color:var(--text-light)}
+
+a{color:var(--brand-700)}
+a:focus-visible, [tabindex]:focus-visible{outline:3px solid var(--brand-400); outline-offset:3px; border-radius:4px}
+a:active{color:var(--brand-900)}
+[disabled]{opacity:.55; cursor:not-allowed}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important}
+}
+@media (max-width:560px){
+  section{padding:38px 0}
+  .hero-note{padding:17px}
+  th,td{padding:10px 12px}
+}
+/* A 320 px las de precio todavía se pasaban por unos 40 px: se aprieta el
+   relleno y se baja un punto la letra para que quepan enteras. */
+@media (max-width:390px){
+  .tabla.precio table{font-size:.86rem}
+  .tabla.precio th, .tabla.precio td{padding:10px 7px}
+  .tabla.precio td:first-child, .tabla.precio th:first-child{padding-right:5px}
+  .tabla.precio td.num, .tabla.precio th.num{padding-left:5px}
+  .tabla.precio th{font-size:.7rem; letter-spacing:.03em}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="brand"><span class="dot"></span>Propuesta</span>
+    <h1>Contenido y campañas para Greentex</h1>
+    <p class="sub">
+      Sembrar Facebook e Instagram desde cero, y dejar corriendo un ciclo de anuncios que
+      se ajusta solo con lo que el CRM va aprendiendo de cada venta.
+    </p>
+
+    <div class="hero-note">
+      <strong>Estos son nuestros precios para ustedes</strong>, antes de lo que ustedes le
+      sumen: cuánto le suben para pasárselo a Greentex lo deciden ustedes, y aquí no va
+      sugerido. Están armados con los números que nos compartieron, para quedar dentro del
+      rango que ya manejan — con algo encima que hoy nadie más les puede dar:
+      <strong>saber qué anuncio trajo al comprador que de verdad pagó</strong>. No clics, no
+      mensajes: ventas cobradas.
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Dónde están hoy</p>
+    <h2>El menudeo va a abrir sin dónde mandar a la gente</h2>
+    <p class="lede">
+      El sistema de automatización ya está en marcha: el bot atiende, aparta la paca,
+      cobra y manda la guía. Pero atiende <em>a quien llega</em>. Hoy no hay de dónde
+      lleguen.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-cross"></span>No hay redes</h3>
+        <p>Facebook e Instagram arrancan desde cero. Sin una sola publicación, un anuncio
+        manda a la gente a un perfil vacío y la pierde ahí mismo.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-cross"></span>Nadie sabe qué trae una paca</h3>
+        <p>Es la pregunta que más frena una compra de primera vez, y la que menos se
+        contesta bien. Quien no sabe qué va a recibir, no compra.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Hay una base dormida</h3>
+        <p>Existen los contactos de los vendedores que ya trabajaban el negocio. Es la
+        gente más fácil de recuperar, y hoy no se le está hablando.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Qué proponemos</p>
+    <h2>Un arranque, y luego un mensual</h2>
+    <p class="lede">
+      La estructura sale de algo que ustedes plantearon en la llamada y que nos parece
+      correcto: <strong>no tiene por qué pagarse producción de contenido para
+      siempre</strong>. Hay un empujón fuerte al principio, y después un mensual que
+      sostiene lo sembrado y mueve los anuncios.
+    </p>
+
+    <div class="pitch">
+      <h3><span class="gl gl-text"></span>El arranque &middot; una sola vez</h3>
+      <p>
+        Facebook e Instagram de cero a perfiles con los que ya se puede anunciar: se abren u
+        ordenan las cuentas, se define la línea gráfica y las plantillas, y se producen
+        <strong>dos meses de contenido intensivo</strong> sobre los tres temas que mueven
+        este negocio.
+      </p>
+      <p>
+        <strong>Qué trae una paca</strong> — lo que más se pregunta.
+        <strong>Qué esperar al recibirla</strong> — alinea la expectativa y baja las quejas.
+        <strong>Cómo se hace negocio con esto</strong> — el informativo, que es el que
+        convierte a un curioso en revendedor.
+      </p>
+      <p>
+        Aquí entra también la <strong>base de vendedores</strong> de la que nos habló Brenda:
+        los contactos de quienes ya vendían se suben al CRM, se limpian y se segmentan, y se
+        les arma su campaña de recuperación. <strong>Es lo primero que se hace</strong>,
+        porque es lo que puede dar venta en la primera semana.
+      </p>
+      <p>
+        Y aquí se hace <strong>la conexión entre Meta y el CRM</strong>, que es lo que
+        vuelve posible todo lo demás: píxel en el catálogo, <strong>API de
+        Conversiones</strong> para que la venta pagada le llegue a Meta desde el CRM, y la
+        captura del anuncio de origen en la ficha de cada contacto. Es trabajo de
+        instalación, no una función que se prenda — y sin ella la atribución a venta
+        cobrada simplemente no existe.
+      </p>
+      <p class="punch">
+        <strong>Se paga una vez y se acaba.</strong> Yera tenía razón en esto: la producción
+        pesada son dos meses, no una mensualidad eterna.
+      </p>
+    </div>
+
+    <div class="pitch strong">
+      <h3><span class="gl gl-chart"></span>El mensual &middot; mes con mes</h3>
+      <p>
+        Las campañas: propuesta de anuncios, diseño de las piezas, y el ciclo de revisión y
+        ajuste. Esto sí es permanente, porque una campaña que nadie ajusta se apaga sola.
+      </p>
+      <p>
+        Y lleva <strong>contenido de mantenimiento</strong>, para que el perfil no se quede
+        muerto cuando termine el arranque. No es un calendario editorial aparte: son las
+        piezas que los anuncios van necesitando, publicadas también en el perfil. Por eso un
+        solo mensual alcanza para las dos cosas.
+      </p>
+      <p class="punch">
+        Es el único cargo que sigue después del arranque.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">La diferencia</p>
+    <h2>Qué hace la IA que un equipo no alcanza</h2>
+    <p class="lede">
+      No es escribir publicaciones más rápido. Eso lo hace cualquiera. Son dos cosas de
+      volumen y de frecuencia, y una tercera que sólo se puede desde dentro del CRM.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-clock"></span>Se revisan todos los días</h3>
+        <p>Las campañas se leen a diario y el presupuesto se mueve hacia lo que está
+        funcionando. Hecho a mano, eso se revisa cada quincena — y quince días de un
+        anuncio malo son quince días pagados.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-bolt"></span>Alcanzan las variantes</h3>
+        <p>Meta optimiza si tiene entre qué escoger. El límite de un equipo es cuántas
+        piezas alcanza a diseñar en la semana; ése es justo el límite que se quita.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-check"></span>Se mide contra ventas, no contra clics</h3>
+        <p>Como el CRM es el mismo que estamos construyendo para el menudeo, cada anuncio
+        se puede seguir hasta el pago. Se sabe cuál trajo compradores y cuál sólo trajo
+        curiosos.</p>
+      </div>
+    </div>
+
+    <div class="pitch strong" style="margin-top:16px">
+      <h3><span class="gl gl-spark"></span>Esto último es lo que nadie más puede ofrecer</h3>
+      <p>
+        Un proveedor de redes entrega alcance, interacciones y clics, porque es lo único
+        que ve. Nosotros ya estamos dentro del sistema donde se aparta la paca, se manda
+        la liga y se cobra.
+      </p>
+      <p class="punch">
+        Por eso podemos decir <strong>cuánto costó cada venta real</strong>, y mover el
+        dinero del anuncio con ese dato en la mano.
+      </p>
+      <p class="punch">
+        Y no es una promesa en el aire: la conexión entre Meta y el CRM se instala en el
+        arranque, así que el dato existe desde el primer anuncio.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Inversión</p>
+    <h2>Lo que cuesta</h2>
+    <p class="lede">
+      Dos niveles, para que tengan margen de maniobra con el cliente. En dólares
+      americanos, y sin lo que se le paga a Meta por los anuncios: eso va aparte y lo define
+      el presupuesto que quieran poner.
+    </p>
+
+    <div class="tabla precio">
+      <table>
+        <thead>
+          <tr>
+            <th>Qué lleva el mensual</th>
+            <th class="num">Esencial</th>
+            <th class="num">Completo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Redes atendidas</strong></td>
+            <td class="num">2</td>
+            <td class="num">3</td>
+          </tr>
+          <tr>
+            <td><strong>Piezas al mes</strong><br>Contenido de mantenimiento y variantes de anuncio</td>
+            <td class="num">12</td>
+            <td class="num">20</td>
+          </tr>
+          <tr>
+            <td><strong>Campañas</strong><br>Propuesta, diseño, revisión diaria y ajuste</td>
+            <td class="num">Sí</td>
+            <td class="num">Sí</td>
+          </tr>
+          <tr>
+            <td><strong>Atribución a venta cobrada</strong><br>Qué anuncio trajo a quien pagó</td>
+            <td class="num">Sí</td>
+            <td class="num">Sí</td>
+          </tr>
+          <tr class="total">
+            <td>Mensual</td>
+            <td class="num">$440</td>
+            <td class="num">$550</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      La atribución va en los dos niveles. No es un extra que se cobre aparte: es la razón
+      de la propuesta.
+    </p>
+    <p class="nota">
+      <strong>Precio fijo en dólares.</strong> Equivale a nuestra lista en pesos al tipo de
+      cambio de referencia del Banco de México del 8 de octubre de 2026 —18.20 pesos por dólar—, redondeado hacia
+      arriba. Al ser precio fijo, no se recalcula cada mes.
+    </p>
+
+    <div class="pitch" style="margin-top:24px">
+      <h3><span class="gl gl-spark"></span>El arranque &middot; $830, una sola vez</h3>
+      <p>
+        Apertura u ordenamiento de Facebook e Instagram, línea gráfica y plantillas, los dos
+        meses de contenido intensivo, y la carga, limpieza y segmentación de la base de
+        vendedores con su campaña de recuperación.
+      </p>
+      <p>
+        Incluye también <strong>la conexión de Meta con el CRM</strong> — píxel, API de
+        Conversiones y captura del anuncio de origen —, que es lo que hace que la
+        atribución a venta cobrada funcione desde el primer anuncio.
+      </p>
+      <p class="punch">
+        No se repite. Se cubre al arrancar, y del tercer mes en adelante sólo queda el
+        mensual.
+      </p>
+    </div>
+
+    <div class="tabla precio" style="margin-top:24px">
+      <table>
+        <thead>
+          <tr>
+            <th>Cómo se acumula</th>
+            <th class="num">Año 1</th>
+            <th class="num">Del año 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lo que manejan hoy</strong><br>$550 al mes</td>
+            <td class="num">$6,600</td>
+            <td class="num">$6,600</td>
+          </tr>
+          <tr>
+            <td><strong>Esencial</strong><br>$440 al mes, más el arranque</td>
+            <td class="num">$6,110</td>
+            <td class="num">$5,280</td>
+          </tr>
+          <tr class="total">
+            <td>Completo<br>$550 al mes, más el arranque</td>
+            <td class="num">$7,430</td>
+            <td class="num">$6,600</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      <strong>Completo queda a la par del año 2 en adelante</strong>, entregando lo mismo más
+      la atribución. El año 1 sale $830 arriba, que es exactamente el arranque y no se
+      repite. Esencial queda por debajo los dos años, con 2 redes en lugar de 3.
+      Sumados dos años: <strong>$14,030</strong> Completo y <strong>$11,390</strong>
+      Esencial, contra los <strong>$13,200</strong> de hoy.
+    </p>
+    <p class="nota">
+      No lleva página web — quedó fuera a propósito. Y el <strong>catálogo público</strong>
+      que ya va dentro del paquete Completo de automatización no se vuelve a cobrar aquí: es
+      el mismo, y los anuncios lo pueden usar como destino.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Comparación</p>
+    <h2>Armado con los números que ya manejan</h2>
+    <p class="lede">
+      No pusimos un precio y después buscamos cómo justificarlo. Tomamos la lista que nos
+      compartieron y sumamos sus propias partes. Por eso los dos mensuales caen exacto donde
+      caen. Los montos de su lista van convertidos al mismo tipo de cambio (18.20 pesos por dólar), para
+      que la comparación sea de manzanas con manzanas.
+    </p>
+
+    <div class="tabla precio">
+      <table>
+        <thead>
+          <tr>
+            <th>De dónde sale cada mensual</th>
+            <th class="num">Esencial</th>
+            <th class="num">Completo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Su paquete de redes</strong><br>2 redes con 8–12 piezas &middot; 3 redes con 20 piezas</td>
+            <td class="num">$280</td>
+            <td class="num">$440</td>
+          </tr>
+          <tr>
+            <td><strong>Su incremento por llevar campañas</strong><br>Lo que su lista cobra de más por el paquete con Meta</td>
+            <td class="num">+$160</td>
+            <td class="num">+$110</td>
+          </tr>
+          <tr>
+            <td><strong>Atribución a venta cobrada</strong><br>No está en su lista: necesita el CRM</td>
+            <td class="num">sin cargo</td>
+            <td class="num">sin cargo</td>
+          </tr>
+          <tr class="total">
+            <td>Nuestro mensual</td>
+            <td class="num">$440</td>
+            <td class="num">$550</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      Su lista cobra entre $110 y $160 de más por llevar las campañas, según con qué
+      paquete se compare; tomamos ese mismo incremento. Así, <strong>Completo es el mismo
+      $550 de su paquete con campañas</strong> y Esencial es su paquete de 2 redes con el
+      incremento encima. No estamos cobrando de menos ni de más: el precio es su propia
+      lista, sumada. Lo que se agrega va sin cargo. Y donde su lista dice «8 a 12 piezas»,
+      nosotros cerramos en <strong>12</strong>: número fijo, no rango.
+    </p>
+
+    <div class="pitch strong" style="margin-top:24px">
+      <h3><span class="gl gl-alert"></span>Y lo decimos antes de que lo resten: el año 1 sale más</h3>
+      <p>
+        Completo pide $830 arriba el primer año. Es el arranque: abrir las cuentas,
+        definir la línea y producir dos meses de contenido desde cero. Trabajo que no se
+        vuelve a hacer. Del segundo año en adelante queda a la par, dólar por dólar.
+      </p>
+      <p class="punch">
+        Y si hace falta entrar más abajo, <strong>Esencial está debajo de lo que pagan hoy
+        desde el primer año</strong>, con 2 redes en lugar de 3 y la misma atribución.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Cómo arranca</p>
+    <h2>Los primeros dos meses, en orden</h2>
+
+    <ol class="pasos">
+      <li><span class="n">1</span><span><strong>Semana 1 — la base.</strong> Se recibe el archivo de los vendedores, se sube al CRM, se limpia y se segmenta. Es lo que puede dar venta más rápido.</span></li>
+      <li><span class="n">2</span><span><strong>Semana 1 y 2 — la línea.</strong> Se define el tono, se arman las plantillas visuales y se aprueba el primer lote de publicaciones.</span></li>
+      <li><span class="n">3</span><span><strong>Semana 2 — las cuentas.</strong> Se abren o se ordenan Facebook e Instagram y se enlazan al administrador de anuncios.</span></li>
+      <li><span class="n">4</span><span><strong>Semana 2 y 3 — la conexión.</strong> Píxel en el catálogo, API de Conversiones entre el CRM y Meta, y la captura del anuncio de origen en cada contacto. Desde aquí, cada venta pagada se puede rastrear hasta el anuncio que la trajo.</span></li>
+      <li><span class="n">5</span><span><strong>Mes 1 y 2 — el contenido intensivo.</strong> Publicación constante sobre los tres temas, y la primera campaña a la base recuperada. Aquí se agota el arranque.</span></li>
+      <li><span class="n">6</span><span><strong>Desde el mes 3 — sólo el mensual.</strong> Los anuncios ya corren con datos propios: se revisan, se ajustan y se reparte el presupuesto hacia lo que vende, produciendo las piezas que haga falta.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Para arrancar</p>
+    <h2>Lo que necesitamos de ustedes</h2>
+
+    <div class="cards">
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>El archivo de vendedores</h3>
+        <p>Como lo tengan: Excel, contactos exportados, lo que sea. De su tamaño depende
+        qué tanto da el primer mes.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Acceso a las redes y a Meta</h3>
+        <p>Facebook e Instagram, y el administrador de negocios de Meta <strong>con permiso
+        de administrador</strong>: hace falta para el píxel y la API de Conversiones. Si no
+        existen, se abren.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>Material de las pacas</h3>
+        <p>Fotos y video de pacas reales, aunque sean de celular. El contenido de «qué
+        trae una paca» se cae sin material verdadero.</p>
+      </div>
+      <div class="card">
+        <h3><span class="gl gl-dash"></span>El presupuesto de anuncios</h3>
+        <p>Cuánto se le quiere poner a Meta al mes. Va aparte de esta propuesta y se puede
+        empezar chico e ir subiendo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Propuesta de contenido y campañas</strong> &middot; 11 de octubre de 2026 &middot; 786 Marketing</p>
+    <p style="margin-top:9px">Documento para <strong>786 Marketing</strong>. No es el documento del cliente: lleva precios de su proveedor actual, y los nuestros antes de su margen.</p>
+    <p style="margin-top:9px">Cifras en <strong>dólares americanos</strong>, al tipo de cambio de referencia de Banxico del 8 de octubre de 2026: 18.20 pesos por dólar. La versión en pesos es el documento gemelo.</p>
+  </div>
+</footer>
+
+</body>
+</html>
