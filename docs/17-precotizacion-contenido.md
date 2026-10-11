@@ -81,6 +81,30 @@ una sola vez.
 |---|---|---:|
 | **Arranque** | Abrir u ordenar FB e IG, línea gráfica y plantillas, los 2 meses de contenido intensivo, la base de vendedores cargada y segmentada con su campaña, y **la conexión de Meta con el CRM** (píxel, API de Conversiones, captura del anuncio de origen) | **$15,000** una vez |
 
+### Cómo se paga
+
+Oliver pidió especificarlo (11 oct), porque el documento no lo decía y se podía leer de
+tres maneras.
+
+| | Qué se cobra |
+|---|---|
+| **Al firmar / mes 1** | El **arranque completo** más el **primer mensual**. Esencial $23,000 (USD $1,270) · Completo $25,000 (USD $1,380) |
+| **Mes 2 en adelante** | **Sólo el mensual.** Esencial $8,000 (USD $440) · Completo $10,000 (USD $550) |
+
+**El arranque no se prorratea ni se reparte**: va una sola vez, por adelantado, y es lo
+único por adelantado. El mensual corre desde el mes 1 porque desde el mes 1 hay campañas
+corriendo — la de recuperación de la base arranca en la semana 1.
+
+> **Lo que NO se eligió, y por qué.** Se consideró partir el arranque en dos pagos (uno por
+> cada mes de contenido intensivo) para suavizar el primer cobro. Queda como alternativa de
+> una línea si 786 lo pide: la suma del año no cambia. Se dejó fuera porque en dólares la
+> mitad de $830 es $415 y rompe el redondeo al décimo, y porque un solo número por
+> adelantado es más difícil de malentender — que era justo el problema.
+>
+> También se descartó que el mensual empezara en el mes 3: dejaría dos meses de gestión de
+> campañas dentro de los $15,000, que ya está apretado, y además volvería **falso** el
+> argumento de que el año 1 sale arriba (bajaría a $115,000, por debajo de sus $120,000).
+
 ### De dónde sale cada precio — con sus números, no con los nuestros
 
 ```
@@ -140,6 +164,16 @@ arriba al décimo**, como pidió Oliver.
 | Completo · mensual | $10,000 | **$550** |
 | Arranque · una vez | $15,000 | **$830** |
 
+Y el primer cobro de cada nivel, que es lo que **sí** aparece en el documento:
+
+| | Pesos | Dólares |
+|---|---:|---:|
+| Primer cobro Esencial · arranque + mes 1 | $23,000 | **$1,270** |
+| Primer cobro Completo · arranque + mes 1 | $25,000 | **$1,380** |
+
+El acumulado por año, **que ya no va al documento** (§5) pero se sigue usando para
+comprobar los argumentos:
+
 | | Año 1 | Del año 2 | Dos años |
 |---|---:|---:|---:|
 | Lo que manejan hoy | $6,600 | $6,600 | $13,200 |
@@ -187,7 +221,13 @@ alcanza a hacer, y una que nadie más puede:
 > Si la propuesta se vende por el punto 3 y no por el precio, el proveedor actual no
 > tiene con qué responder. Si se vende por precio, lo iguala en una semana.
 
-## 5. Las cuentas, sin maquillaje
+## 5. Las cuentas, sin maquillaje — **sólo aquí**
+
+> **Esta tabla salió del documento el 11 oct**, por instrucción de Oliver: *«creo que causa
+> confusión y es innecesario»*. Tenía razón — nueve cifras para sostener una frase que se
+> entiende sola. **Se queda aquí** porque es como se comprueba que los tres argumentos que
+> sí quedaron escritos sean ciertos, y `scripts/convertir-propuesta-usd.py` los verifica en
+> cada corrida. No volver a meterla a la propuesta.
 
 | | Año 1 | Del año 2 | Dos años |
 |---|---:|---:|---:|

@@ -37,6 +37,9 @@ ac = {}
 for nom, mes in (("Esencial", ESE), ("Completo", COM)):
     ac[nom] = (ARR + mes*12, mes*12, ARR + mes*12*2)
 ac["Proveedor"] = (TCAMP*12, TCAMP*12, TCAMP*12*2)
+# El acumulado ya NO se muestra en el documento (Oliver, 11 oct: confundia).
+# Se sigue calculando aqui porque es como se comprueban los tres argumentos
+# que si quedaron escritos. No borrar.
 for nom, (a1, a2, dos) in ac.items():
     print(f"  {nom:10} ano1 ${a1:,}  del ano2 ${a2:,}  dos anos ${dos:,}")
 
@@ -48,12 +51,15 @@ print("\n✓ los tres argumentos del documento se sostienen en dolares")
 
 # ── mapa MXN -> USD, token por token ─────────────────────────────────
 MAPA = {
-    "$5,000": f"${T2}",        "$8,000": f"${ESE}",      "$10,000": f"${COM}",
-    "$3,000": f"${INC_ESE}",   "$2,000": f"${INC_COM}",  "$15,000": f"${ARR}",
-    "$111,000": f"${ac['Esencial'][0]:,}", "$96,000":  f"${ac['Esencial'][1]:,}",
-    "$207,000": f"${ac['Esencial'][2]:,}", "$135,000": f"${ac['Completo'][0]:,}",
-    "$120,000": f"${ac['Proveedor'][0]:,}", "$255,000": f"${ac['Completo'][2]:,}",
-    "$240,000": f"${ac['Proveedor'][2]:,}",
+    "$5,000":  f"${T2}",        # su tier de 2 redes
+    "$8,000":  f"${ESE}",       # nuestro Esencial, y tambien su tier de 3 redes x 20
+    "$10,000": f"${COM}",       # nuestro Completo, y tambien su paquete con campanas
+    "$3,000":  f"${INC_ESE}",   # su incremento por campanas, columna Esencial
+    "$2,000":  f"${INC_COM}",   # su incremento por campanas, columna Completo
+    "$15,000": f"${ARR}",       # el arranque
+    # el primer cobro: arranque + el mensual del nivel, juntos
+    "$25,000": f"${ARR + COM:,}",
+    "$23,000": f"${ARR + ESE:,}",
 }
 s = open("propuesta/propuesta-contenido.html", encoding="utf-8").read()
 sin_mapa = {t for t in re.findall(r"\$[\d,]*\d", s)} - set(MAPA)
@@ -97,7 +103,7 @@ cambios = [
       compartieron y sumamos sus propias partes. Por eso los dos mensuales caen exacto donde
       caen. Los montos de su lista van convertidos al mismo tipo de cambio ({TCTXT}), para
       que la comparación sea de manzanas con manzanas."""),
- ("adelante queda a la par, peso por peso.", "adelante queda a la par, dólar por dólar."),
+ ("peso por peso.", "dólar por dólar."),   # ancla corta: aguanta saltos de línea
  ("&middot; 9 de octubre de 2026 &middot; 786 Marketing</p>",
   "&middot; 11 de octubre de 2026 &middot; 786 Marketing</p>"),
  ("""y los nuestros antes de su margen.</p>""",
