@@ -215,7 +215,8 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   correo a los dueños (`internal_notification`). El `whatsapp_almacen` de los custom values no
   tiene hoy ningún nodo que lo use.
 - **`scripts/subir-n8n.py` no crea flujos, sólo actualiza los que ya existen por nombre.** Un
-  flujo nuevo (`N6`) se importa a mano la primera vez; después sí se sube con el script.
+  flujo nuevo se crea la primera vez con `scripts/crear-n8n.py` (queda apagado y toma la credencial de
+  `N1`); después sí se sube con `subir-n8n.py`. Así se creó `N6` el 12 oct; `scripts/probar-n6.sh` lo prueba.
 - **`Interna.escribir()` deja el workflow en borrador** aunque estuviera publicado. Tocar `SP05`
   por API lo apaga: hay que volver a publicarlo en la UI y comprobarlo.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
