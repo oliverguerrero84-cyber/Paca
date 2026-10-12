@@ -78,11 +78,14 @@
    formulario con el teléfono ya puesto (`?phone={{contact.phone}}` en el correo de `SP05`) u otra llave. **Sin decidir.**
    **Segunda prueba (teléfono idéntico): el formulario sí dio con «Prueba Paca»** y escribió `numero_guia` y `track_url`
    en el contacto, pero `AP04` se fue por «Opportunity Not Found» (22:44:57 UTC, visto en *Execution logs*).
-   ⚠️ **No sirve como resultado: el pedido de prueba `oTU7HQMUZAcJCncvaDDm` ya no existe** (404 por API; la cuenta
-   volvió a 3 oportunidades). A las 22:42 UTC estaba abierto en «Orden en Almacén»; el contacto duplicado también
-   se borró en esos minutos. **No se sabe qué lo borró** ni si `AP04` falló por eso o porque su *Find opportunity*
-   no lo encuentra. La rama «Found» de `AP04` sigue **sin probar**. La pieza de «test 1» de ese pedido quedó
-   descontada del stock (queda 1). Repetir desde `probar-n1.sh`.
+   No contó como resultado: Germán había borrado a mano el pedido de prueba `oTU7HQMUZAcJCncvaDDm` al limpiar el
+   duplicado, así que de verdad no había pedido. Su pieza de «test 1» quedó descontada.
+   ✅ **Tercera prueba, de punta a punta, pasó el 12 oct:** `probar-n1.sh` → pedido `OqqPjg0jXHEX6VXENibF` (con
+   `expira_texto` escrito) → *Record payment* sobre la 000009 → `SP04` → `SP05` → «Orden en Almacén» → formulario con
+   el teléfono idéntico → `AP04` lo movió a **«Enviado — Guía Generada»** con `numero_guia`, `track_url` y
+   `fecha_envio = 12/10/2026` en la oportunidad (leído por API). Falta confirmar a ojo que llegaron el SMS y el correo
+   al cliente. Ese pedido **quedó abierto en «Enviado»**: sin Envia nada lo cierra, y mientras siga abierto `N1`
+   contesta `pedido_en_curso` a «Prueba Paca». El stock de «test 1» quedó en **0**.
    No se hizo: los campos `paqueteria` y `notas` (no existen como custom fields; la paquetería va fija en el correo),
    ni la validación de que la liga empiece con `http` (el campo de texto del formulario no valida formato: sólo
    quedó el placeholder `https://...`).
