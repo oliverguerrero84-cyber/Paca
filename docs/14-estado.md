@@ -76,7 +76,13 @@
    (`lQXiZZOzXCceYuBa2v6R`); el pedido no se movió. En México pasa igual con `+52` contra `+521` de WhatsApp.
    El teléfono tecleado a mano no sirve para encontrar al cliente: hay que mandarle a depósito la liga del
    formulario con el teléfono ya puesto (`?phone={{contact.phone}}` en el correo de `SP05`) u otra llave. **Sin decidir.**
-   Falta repetir la prueba con el teléfono idéntico al del contacto, y borrar el duplicado.
+   **Segunda prueba (teléfono idéntico): el formulario sí dio con «Prueba Paca»** y escribió `numero_guia` y `track_url`
+   en el contacto, pero `AP04` se fue por «Opportunity Not Found» (22:44:57 UTC, visto en *Execution logs*).
+   ⚠️ **No sirve como resultado: el pedido de prueba `oTU7HQMUZAcJCncvaDDm` ya no existe** (404 por API; la cuenta
+   volvió a 3 oportunidades). A las 22:42 UTC estaba abierto en «Orden en Almacén»; el contacto duplicado también
+   se borró en esos minutos. **No se sabe qué lo borró** ni si `AP04` falló por eso o porque su *Find opportunity*
+   no lo encuentra. La rama «Found» de `AP04` sigue **sin probar**. La pieza de «test 1» de ese pedido quedó
+   descontada del stock (queda 1). Repetir desde `probar-n1.sh`.
    No se hizo: los campos `paqueteria` y `notas` (no existen como custom fields; la paquetería va fija en el correo),
    ni la validación de que la liga empiece con `http` (el campo de texto del formulario no valida formato: sólo
    quedó el placeholder `https://...`).
