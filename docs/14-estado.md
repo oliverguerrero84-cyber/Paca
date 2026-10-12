@@ -68,8 +68,15 @@
    - Nodo Email al cliente después del SMS, con el texto de la plantilla 3 y `{{opportunity.track_url}}`.
    - «Allow re-entry» prendido. `SP05` ya está publicado, con «Allow multiple opportunities» (verificado por API).
 
-   **Falta el trigger** *Form Submitted* → «Registrar Envío»: lo pone Germán (el clasificador no deja a Claude;
-   crearlo puede publicar el workflow). **Y probarlo** con el pedido de prueba abierto.
+   Trigger *Form Submitted* → «Registrar Envío» puesto por Germán y `AP04` **publicado** el 12 oct (verificado por API).
+   **Probado hasta `SP05`:** *Record payment* (cash) sobre la 000008 → `SP04` marcó `pagado` → el `SP05` nuevo movió
+   el pedido `oTU7HQMUZAcJCncvaDDm` a «Orden en Almacén». Falta confirmar a ojo que el correo a los dueños llegó sin monto.
+   ⚠️ **Primera prueba del formulario: falló como se temía.** El contacto tenía `+54…` y en el formulario se escribió
+   `+549…` (mismo número, con el 9 de celular): GHL **no lo reconoció y creó un contacto duplicado**
+   (`lQXiZZOzXCceYuBa2v6R`); el pedido no se movió. En México pasa igual con `+52` contra `+521` de WhatsApp.
+   El teléfono tecleado a mano no sirve para encontrar al cliente: hay que mandarle a depósito la liga del
+   formulario con el teléfono ya puesto (`?phone={{contact.phone}}` en el correo de `SP05`) u otra llave. **Sin decidir.**
+   Falta repetir la prueba con el teléfono idéntico al del contacto, y borrar el duplicado.
    No se hizo: los campos `paqueteria` y `notas` (no existen como custom fields; la paquetería va fija en el correo),
    ni la validación de que la liga empiece con `http` (el campo de texto del formulario no valida formato: sólo
    quedó el placeholder `https://...`).
