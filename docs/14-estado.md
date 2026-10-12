@@ -22,7 +22,7 @@
   el rastreo y el cierre son de Envia. Diseño completo en `docs/06-logistica-envia.md` §6.
 - **Las plantillas de WhatsApp no están creadas ni enviadas a Meta.** Es lo primero.
 
-**Hecho en el repo el 11 oct (sin credenciales en esta máquina: nada se escribió en la cuenta):**
+**Hecho en el repo el 11 oct (sin credenciales en aquella máquina; en la cuenta sólo están los campos, desde el 12 oct):**
 - 6 campos de oportunidad nuevos y 2 custom values en `scripts/crear-esqueleto-menudeo.py` (carpeta «Envío del pedido»).
 - `n8n/N6-envio-pedido.json`: `/geocodificar-domicilio` y `/guardar-envio` (23 nodos; 14 pruebas de lógica pasan).
 - `scripts/sp05-despacho-manual.py` (`SP05` → línea recta sin `N4`) y `scripts/armar-ap04.py` (`AP04` clonando
@@ -35,16 +35,27 @@
   `N5` acumula así dos cambios sin probar (2 oct y 11 oct): probarlo antes de tocarlo otra vez.
 
 **Para retomar, en orden:**
-0. **Credenciales y kit.** `C:\Users\germa\gohighlevel-cli\.env.greentex` y `C:\Users\germa\.n8n-korvance.env`
-   **no están en esta máquina**; y `wf_toolkit.py` no está en `Korvance/gohighlevel-cli`, así que
-   `armar-workflows.py` no arranca (los scripts nuevos no lo necesitan). Germán dice dónde viven.
-1. **Campos:** `python scripts/crear-esqueleto-menudeo.py --dry-run` debe decir 6 campos y 2 custom values
-   por crear; correrlo sin `--dry-run`; leer `GET /locations/{id}/customFields?model=opportunity` y
-   anotar aquí los 6 ids. Comprobar que quedaron dentro de la carpeta.
-2. **`N6`:** importarlo a mano en n8n (`subir-n8n.py` no crea flujos), credencial `GHL · PIT Greentex` en sus
-   3 nodos de GHL, pegar sus dos URLs en `url_n8n_geocodificar_domicilio` y `url_n8n_guardar_envio`.
-   Probar `/guardar-envio` con «Prueba Paca» y un `branch_code` de `N3`; verificar la oportunidad por API.
-   `GOOGLE_MAPS_KEY` en `Config geo` cuando el cliente la mande; hasta entonces el domicilio contesta `google_error`.
+0. **Credenciales y kit.** En la máquina principal de Germán sí están `C:\Users\germa\gohighlevel-cli\.env.greentex`
+   y `C:\Users\germa\.n8n-korvance.env` (comprobado el 12 oct). **`wf_toolkit.py` sigue sin aparecer**, así que
+   `armar-workflows.py` no arranca (los scripts nuevos no lo necesitan).
+1. ~~**Campos**~~ — **hecho el 12 oct**, leído de vuelta por API. Carpeta «Envío del pedido» `L2hCxxdm9cUZgZxuDXem`,
+   los 6 campos adentro:
+   `modalidad_envio` `HCmKK5xb9PQAp3uWtBAb` · `sucursal_envio` `twEnbLmE242NUux1xrhG` ·
+   `branch_code_envio` `YeoGOyXYwvP6DFvQM0oO` · `direccion_envio` `1NexUppj9ZPc9uSU8A6W` ·
+   `geo_envio` `AfWhyAFqwCosP9zlXkIF` · `mapa_envio` `c9Q8GONeyncQuiaveZ2s`.
+   Custom values, los dos en `PENDIENTE` hasta el paso 2: `url_n8n_geocodificar_domicilio` `TGieqlwyVGERnHZZuMOl`,
+   `url_n8n_guardar_envio` `X8WXhrrK7WjceWIpoVWw`.
+2. ~~**`N6`**~~ — **creado y probado a sucursal el 12 oct.** Id `7Q8UyEgDhxIkVdSy`, apagado, creado con
+   `scripts/crear-n8n.py` (toma la credencial de `N1`). Sus dos URLs ya están en los custom values, en `/webhook/`
+   y no en `/webhook-test/`. `bash scripts/probar-n1.sh` y luego `bash scripts/probar-n6.sh`: la oportunidad
+   `oTU7HQMUZAcJCncvaDDm` quedó con `modalidad_envio`, `branch_code_envio` y `sucursal_envio`, y el contacto con
+   `branch_code` y `sucursal_ocurre`; leído por API. Se probó con valores inventados (`PRUEBA01`), no con una sucursal de `N3`.
+   **Falta:** `/geocodificar-domicilio` y la modalidad `domicilio`, que esperan la `GOOGLE_MAPS_KEY` del cliente en
+   `Config geo`; hasta entonces contesta `google_error`.
+   **Quedó abierto el pedido de prueba `oTU7HQMUZAcJCncvaDDm`** (vence el 13 oct 22:18 UTC, `SP02` corriendo sobre él,
+   1 pieza de «test 1» apartada): sirve para probar `SP05` y `AP04`, o hay que dejar que venza.
+   **`N1` subido el 12 oct** con `subir-n8n.py`: el vivo ya es idéntico al del repo y escribe `expira_texto` en la
+   oportunidad. Se subió **después** del pedido de prueba, así que ese pedido no lo trae: falta verlo escrito en un pedido nuevo.
 3. **`SP05`:** `! python scripts/sp05-despacho-manual.py respaldos/sp05-2oct.json --dry-run`, luego sin `--dry-run`.
    Queda en borrador: **publicarlo en la UI** y prenderle «Allow multiple opportunities».
 4. **`AP04`:** `! python scripts/armar-ap04.py respaldos/ap04 --dry-run`, luego sin `--dry-run`. Después Germán en la UI:
