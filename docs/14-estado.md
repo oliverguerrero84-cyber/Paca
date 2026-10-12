@@ -56,9 +56,10 @@
    1 pieza de «test 1» apartada): sirve para probar `SP05` y `AP04`, o hay que dejar que venza.
    **`N1` subido el 12 oct** con `subir-n8n.py`: el vivo ya es idéntico al del repo y escribe `expira_texto` en la
    oportunidad. Se subió **después** del pedido de prueba, así que ese pedido no lo trae: falta verlo escrito en un pedido nuevo.
-3. **`SP05`:** `! python scripts/sp05-despacho-manual.py respaldos/sp05-2oct.json --dry-run`, luego sin `--dry-run`.
-   Queda en borrador: **publicarlo en la UI** y prenderle «Allow multiple opportunities».
-4. **`AP04`:** `! python scripts/armar-ap04.py respaldos/ap04 --dry-run`, luego sin `--dry-run`. Después Germán en la UI:
+3. **`SP05`:** escrito el 12 oct en línea recta (correo a los dueños → «Orden en Almacén»), respaldo en
+   `respaldos/sp05-12oct.json` (fuera del repo). ⚠️ **Está en borrador: mientras no se publique, un pedido pagado
+   no llega al almacén.** Falta **publicarlo en la UI** y prenderle «Allow multiple opportunities».
+4. **`AP04`:** creado el 12 oct, en borrador, 6 nodos, id `ea04b88d-067f-4ca8-b394-0b33dd2d429e`. Falta en la UI:
    formulario «Registrar Envío» (teléfono del comprador, guía, liga con `http` obligatorio, paquetería, notas),
    trigger *Form Submitted*, los 3 campos de oportunidad en «Mover a Enviado» con los tokens del formulario,
    un nodo Email al cliente con `{{opportunity.track_url}}`, «Allow re-entry». Dejarlo en borrador hasta probar.
