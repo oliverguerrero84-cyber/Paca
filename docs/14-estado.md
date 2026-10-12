@@ -59,10 +59,20 @@
 3. **`SP05`:** escrito el 12 oct en línea recta (correo a los dueños → «Orden en Almacén»), respaldo en
    `respaldos/sp05-12oct.json` (fuera del repo). ⚠️ **Está en borrador: mientras no se publique, un pedido pagado
    no llega al almacén.** Falta **publicarlo en la UI** y prenderle «Allow multiple opportunities».
-4. **`AP04`:** creado el 12 oct, en borrador, 6 nodos, id `ea04b88d-067f-4ca8-b394-0b33dd2d429e`. Falta en la UI:
-   formulario «Registrar Envío» (teléfono del comprador, guía, liga con `http` obligatorio, paquetería, notas),
-   trigger *Form Submitted*, los 3 campos de oportunidad en «Mover a Enviado» con los tokens del formulario,
-   un nodo Email al cliente con `{{opportunity.track_url}}`, «Allow re-entry». Dejarlo en borrador hasta probar.
+4. **`AP04`:** creado el 12 oct, en borrador, 6 nodos, id `ea04b88d-067f-4ca8-b394-0b33dd2d429e`. Hecho en la UI
+   el 12 oct y leído de vuelta por API (7 nodos, `allowMultiple: true`, sigue en borrador):
+   - Formulario **«Registrar Envío»** (`ryIAg05iv7thaPDXUq24`): teléfono del comprador, `contact.numero_guia` y
+     `contact.track_url`, los tres obligatorios. El formulario escribe en el **contacto** y `AP04` lo copia a la oportunidad.
+   - «Mover a Enviado» escribe en la oportunidad `numero_guia` ← `{{contact.numero_guia}}`, `track_url` ←
+     `{{contact.track_url}}` y `fecha_envio` ← `{{right_now.little_endian_date}}`.
+   - Nodo Email al cliente después del SMS, con el texto de la plantilla 3 y `{{opportunity.track_url}}`.
+   - «Allow re-entry» prendido. `SP05` ya está publicado, con «Allow multiple opportunities» (verificado por API).
+
+   **Falta el trigger** *Form Submitted* → «Registrar Envío»: lo pone Germán (el clasificador no deja a Claude;
+   crearlo puede publicar el workflow). **Y probarlo** con el pedido de prueba abierto.
+   No se hizo: los campos `paqueteria` y `notas` (no existen como custom fields; la paquetería va fija en el correo),
+   ni la validación de que la liga empiece con `http` (el campo de texto del formulario no valida formato: sólo
+   quedó el placeholder `https://...`).
 5. **Bot:** las dos acciones nuevas y las reglas de orden (`docs/01-mapa-ghl.md` §3). El envío se pregunta
    **después** de apartar.
 6. **Plantillas:** crear y mandar a Meta las 5 de WhatsApp (1, 2, 3, 4, 7) y la 6. Verificar si la cuenta ya
