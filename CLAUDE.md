@@ -295,6 +295,24 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 
 ---
 
+## Quién es quién
+
+Se escribió **«Yera»** durante toda una sesión y el nombre estuvo mal en una propuesta que
+iba dirigida a ella. Para que no se repita:
+
+| | |
+|---|---|
+| **Oliver** y **Germán** | Nosotros |
+| **Brenda** y **Jhera** | **786 Marketing**, que nos refirió el proyecto y revende al cliente |
+| **Pamela**, **Miguel** y **Mauricio Hernández** | El cliente — Greentex |
+
+> Ojo al buscar y reemplazar «Jhera»: el catálogo tiene **«playera»** en 15 lugares
+> (`data/catalogo.csv`, `data/plantilla-stock.csv`, `docs/03-catalogo-productos.md`). Un
+> reemplazo que ignore mayúsculas la convierte en «plajhera» y rompe la fuente de la
+> Knowledge Base. Se busca `\bYera\b`, con mayúscula y límites de palabra.
+
+---
+
 ## Cómo se escribe aquí
 
 Los documentos y la propuesta están en **español de México**, dirigidos a gente que no

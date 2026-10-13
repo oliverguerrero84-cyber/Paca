@@ -2,7 +2,7 @@
 
 Documentación de alcance y propuesta de **786 Marketing** para el proyecto de
 **pacas de ropa americana** (cliente: Pamela y Miguel — McAllen TX, almacén en
-Nuevo Laredo, Tamaulipas). Proyecto referido por Yera.
+Nuevo Laredo, Tamaulipas). Proyecto referido por Jhera.
 
 > **Estado: propuesta definitiva** (18 sep 2026). Los precios están cerrados. Lo
 > que sigue pendiente son los datos del cliente (`docs/05-preguntas-cliente.md`),

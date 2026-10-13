@@ -109,7 +109,7 @@ Todo esto entra sin fricción. Es aproximadamente el 70% del proyecto.
 
 ## 5. Lo que NO es nativo — la lista que define el alcance real
 
-Esta es la sección que Yera necesita para no prometer de más.
+Esta es la sección que Jhera necesita para no prometer de más.
 
 ### 5.1 · Apartar sin cobrar — eso sí que no existe en GHL
 

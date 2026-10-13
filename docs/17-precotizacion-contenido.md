@@ -11,7 +11,7 @@
 
 ## 1. De dónde salió esto
 
-Llamada con **Yera y Brenda** (8 oct 2026). Quieren que además de la automatización les
+Llamada con **Jhera y Brenda** (8 oct 2026). Quieren que además de la automatización les
 llevemos **contenido y campañas** para Greentex, para revendérselo.
 
 **Están escépticas y hay que tomárselo en serio: ya tienen equipo de marketing.** El
@@ -21,7 +21,7 @@ baje el precio. Tiene que ser algo que su equipo no pueda hacer (§4).
 **Dos cosas que dijeron ellas y que conviene respetar**, porque son suyas y además tienen
 razón:
 
-- **Yera:** contenido indefinido sale caro y no se justifica. Mejor **dos meses** para
+- **Jhera:** contenido indefinido sale caro y no se justifica. Mejor **dos meses** para
   arrancar Facebook e Instagram desde cero. Lo que sí es indefinido son las **campañas**.
 - **Brenda:** existe una **base de datos de los vendedores** que ya trabajaban el
   negocio. Se exporta a GHL y se le hace remarketing, en vez de empezar de cero.
@@ -174,7 +174,7 @@ Es el cambio de fondo respecto del primer borrador, y hay dos razones:
 2. **Operativa.** Si el contenido se corta en el mes 3, el perfil se queda muerto y los
    anuncios se degradan — mandan gente a una cuenta sin actividad.
 
-**No contradice a Yera.** Ella objetó pagar **producción pesada** para siempre, y tiene
+**No contradice a Jhera.** Ella objetó pagar **producción pesada** para siempre, y tiene
 razón: eso son los dos meses del arranque. El contenido del mensual es **mantenimiento**:
 son las piezas que los anuncios van necesitando, publicadas también en el perfil. Así se
 le da la razón por escrito sin dejar la cuenta abandonada.
