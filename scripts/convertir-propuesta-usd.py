@@ -21,21 +21,23 @@ def usd(mxn):                       # hacia arriba, al decimo
 T2, T3a, T3b, TCAMP = usd(5000), usd(7000), usd(8000), usd(10000)
 INC_ESE, INC_COM = TCAMP - T3a, TCAMP - T3b      # su incremento por campanas
 ESE, COM = T2 + INC_ESE, T3b + INC_COM           # derivados de SU lista
-ARR = usd(15000)
+ARR  = usd(15000)
+BASE = usd(7000)    # la reactivacion de la base, concepto aparte desde el 13 oct
 
 print(f"tipo de cambio {TC}  ·  redondeo hacia arriba al decimo\n")
 print(f"  sus tiers:   2 redes ${T2}   3 redes 8-12 ${T3a}   3 redes 20 ${T3b}   con campanas ${TCAMP}")
 print(f"  su incremento por campanas: ${INC_COM} a ${INC_ESE}")
 print(f"  Esencial = {T2} + {INC_ESE} = ${ESE}      Completo = {T3b} + {INC_COM} = ${COM}")
-print(f"  arranque ${ARR}\n")
+print(f"  arranque ${ARR}   ·   despertar la base ${BASE}\n")
 
 # la derivacion tiene que coincidir con convertir nuestro precio directo
 assert ESE == usd(8000),  f"Esencial no cuadra: derivado {ESE} vs directo {usd(8000)}"
 assert COM == usd(10000), f"Completo no cuadra: derivado {COM} vs directo {usd(10000)}"
 
 ac = {}
+# La mensualidad empieza en el MES 3 (Brenda, 13 oct): el ano 1 lleva 10, no 12.
 for nom, mes in (("Esencial", ESE), ("Completo", COM)):
-    ac[nom] = (ARR + mes*12, mes*12, ARR + mes*12*2)
+    ac[nom] = (ARR + mes*10, mes*12, ARR + mes*10 + mes*12)
 ac["Proveedor"] = (TCAMP*12, TCAMP*12, TCAMP*12*2)
 # El acumulado ya NO se muestra en el documento (Oliver, 11 oct: confundia).
 # Se sigue calculando aqui porque es como se comprueban los tres argumentos
@@ -45,8 +47,15 @@ for nom, (a1, a2, dos) in ac.items():
 
 # los tres argumentos del documento, verificados
 assert ac["Completo"][1] == ac["Proveedor"][1], "Completo ya no queda a la par del ano 2"
-assert ac["Completo"][0] - ac["Proveedor"][0] == ARR, "la diferencia del ano 1 ya no es el arranque"
-assert ac["Esencial"][0] < ac["Proveedor"][0], "Esencial ya no queda debajo el ano 1"
+assert ac["Completo"][0] < ac["Proveedor"][0], "Completo deberia quedar debajo el ano 1"
+assert ac["Esencial"][0] < ac["Proveedor"][0], "Esencial deberia quedar debajo el ano 1"
+# El documento dice dos cosas con el MISMO token "$2,000": el incremento que su
+# lista cobra por campanas, y cuanto queda Esencial por debajo del mensual que
+# pagan hoy. Si al convertir dejaran de ser el mismo numero, una de las dos
+# frases quedaria mintiendo en dolares.
+assert TCAMP - ESE == INC_COM, (
+    f"'Esencial queda X por debajo' ({TCAMP-ESE}) ya no es el mismo numero que "
+    f"el incremento por campanas ({INC_COM}): revisar las dos frases")
 print("\n✓ los tres argumentos del documento se sostienen en dolares")
 
 # ── mapa MXN -> USD, token por token ─────────────────────────────────
@@ -57,9 +66,7 @@ MAPA = {
     "$3,000":  f"${INC_ESE}",   # su incremento por campanas, columna Esencial
     "$2,000":  f"${INC_COM}",   # su incremento por campanas, columna Completo
     "$15,000": f"${ARR}",       # el arranque
-    # el primer cobro: arranque + el mensual del nivel, juntos
-    "$25,000": f"${ARR + COM:,}",
-    "$23,000": f"${ARR + ESE:,}",
+    "$7,000":  f"${BASE}",      # despertar la base, aparte y opcional
 }
 s = open("propuesta/propuesta-contenido.html", encoding="utf-8").read()
 sin_mapa = {t for t in re.findall(r"\$[\d,]*\d", s)} - set(MAPA)
@@ -103,7 +110,6 @@ cambios = [
       compartieron y sumamos sus propias partes. Por eso los dos mensuales caen exacto donde
       caen. Los montos de su lista van convertidos al mismo tipo de cambio ({TCTXT}), para
       que la comparación sea de manzanas con manzanas."""),
- ("peso por peso.", "dólar por dólar."),   # ancla corta: aguanta saltos de línea
  ("&middot; 9 de octubre de 2026 &middot; 786 Marketing</p>",
   "&middot; 11 de octubre de 2026 &middot; 786 Marketing</p>"),
  ("""y los nuestros antes de su margen.</p>""",

@@ -77,9 +77,40 @@ una sola vez.
 | **Esencial** | 2 redes · **12 piezas** · campañas · atribución | **$8,000** |
 | **Completo** | 3 redes · **20 piezas** · campañas · atribución | **$10,000** |
 
+**Las dos mensualidades empiezan en el mes 3.** Los meses 1 y 2 los cubre la implementación.
+
 | | | |
 |---|---|---:|
-| **Arranque** | Abrir u ordenar FB e IG, línea gráfica y plantillas, los 2 meses de contenido intensivo, la base de vendedores cargada y segmentada con su campaña, y **la conexión de Meta con el CRM** (píxel, API de Conversiones, captura del anuncio de origen) | **$15,000** una vez |
+| **Implementación** | Abrir u ordenar FB e IG, línea gráfica y plantillas, **40 piezas** (20 al mes en los meses 1 y 2), y **la conexión de Meta con el CRM** (píxel, API de Conversiones, captura del anuncio de origen) | **$15,000** una vez |
+| **Despertar la base** | Recibir, limpiar, segmentar, secuencia de reactivación, audiencia personalizada y público similar en Meta, y medición contra venta cobrada | **$7,000** una vez, opcional |
+
+### Las 40 piezas, y por qué ese número
+
+Oliver pidió cerrarlo (13 oct). **20 al mes, 40 en total**, repartidas en 3 redes. No es
+libre: tiene que ser **al menos 20**, porque es el ritmo del mensual Completo, y sería
+absurdo que la siembra entregara menos de lo que el cliente va a recibir después.
+
+> **Está por debajo de su tarifa de contenido, y conviene saberlo.** Su proveedor cobra
+> $8,000 al mes por 20 piezas en 3 redes; dos meses son **$16,000** sólo de contenido, y
+> nosotros pedimos $15,000 por eso **más** las cuentas, la línea gráfica y la conexión con
+> el CRM. Es una inversión de arranque deliberada: absorbemos parte del montaje porque lo
+> que sigue es recurrente. **Con los $7,000 de la base, el montaje total queda en $22,000**
+> y la cuenta ya respira. Si alguna vez hay que recortar, se recorta aquí — pero nunca por
+> debajo de 20 al mes.
+
+### Por qué la base se separó
+
+Era parte del arranque hasta el 13 oct. Oliver: *«creo que ya le estamos dando mucho valor
+para dos meses con esa sola implementación»*. Tiene razón, y separarla arregla dos cosas a
+la vez: la implementación deja de estar regalada, y **la base se vuelve vendible sola** —
+es el único concepto que puede dar venta en la semana 1, antes de que exista una
+publicación.
+
+**$7,000** no deriva de nada: su proveedor no lo ofrece, así que no hay con qué compararlo.
+Sale del trabajo real —limpiar, deduplicar, normalizar teléfonos, segmentar, escribir y
+montar la secuencia, subir la audiencia y medir— y de que tenía que ser visiblemente menor
+que la implementación. **Asume una base de hasta unos 5,000 contactos**; si resulta mucho
+mayor, se revisa antes de arrancar. De qué tamaño es sigue sin saberse (§9).
 
 ### Cómo se paga
 
@@ -88,22 +119,23 @@ tres maneras.
 
 | | Qué se cobra |
 |---|---|
-| **Al firmar / mes 1** | El **arranque completo** más el **primer mensual**. Esencial $23,000 (USD $1,270) · Completo $25,000 (USD $1,380) |
-| **Mes 2 en adelante** | **Sólo el mensual.** Esencial $8,000 (USD $440) · Completo $10,000 (USD $550) |
+| **Al firmar** | La implementación, $15,000 (USD $830). Y si toman la base, $7,000 (USD $390) más |
+| **Meses 1 y 2** | **Nada.** Los cubre la implementación |
+| **Desde el mes 3** | **Sólo la mensualidad.** Esencial $8,000 (USD $440) · Completo $10,000 (USD $550) |
 
-**El arranque no se prorratea ni se reparte**: va una sola vez, por adelantado, y es lo
-único por adelantado. El mensual corre desde el mes 1 porque desde el mes 1 hay campañas
-corriendo — la de recuperación de la base arranca en la semana 1.
+**Esto es lo que Brenda pidió** (13 oct): rechazó que se cobrara implementación y primera
+mensualidad juntas, y recordó que en propuestas anteriores la implementación ya incluía los
+dos meses de contenido orgánico, con la mensualidad arrancando hasta el tercero. Es lo
+correcto y además es más fácil de vender.
 
-> **Lo que NO se eligió, y por qué.** Se consideró partir el arranque en dos pagos (uno por
-> cada mes de contenido intensivo) para suavizar el primer cobro. Queda como alternativa de
-> una línea si 786 lo pide: la suma del año no cambia. Se dejó fuera porque en dólares la
-> mitad de $830 es $415 y rompe el redondeo al décimo, y porque un solo número por
-> adelantado es más difícil de malentender — que era justo el problema.
+> ⚠️ **Esto tiró un argumento del documento, y hubo que quitarlo.** Con la mensualidad desde
+> el mes 3, el año 1 **ya no sale más caro** que su proveedor: baja a $115,000 en Completo
+> (o $122,000 con la base) contra sus $120,000. La sección «el año 1 sale más» era honesta
+> antes y habría quedado **mintiendo** ahora, así que se reemplazó por la estructura de pago,
+> que es lo que de verdad importa. **No volver a meter el argumento viejo.**
 >
-> También se descartó que el mensual empezara en el mes 3: dejaría dos meses de gestión de
-> campañas dentro de los $15,000, que ya está apretado, y además volvería **falso** el
-> argumento de que el año 1 sale arriba (bajaría a $115,000, por debajo de sus $120,000).
+> Y cuidado con la tentación de vender esto por precio: el año 1 queda prácticamente donde
+> ya están, y del año 2 a la par. Sigue decidiendo lo de §4, no el número.
 
 ### De dónde sale cada precio — con sus números, no con los nuestros
 
@@ -160,25 +192,29 @@ arriba al décimo**, como pidió Oliver.
 
 | | Pesos | Dólares |
 |---|---:|---:|
-| Esencial · mensual | $8,000 | **$440** |
-| Completo · mensual | $10,000 | **$550** |
-| Arranque · una vez | $15,000 | **$830** |
-
-Y el primer cobro de cada nivel, que es lo que **sí** aparece en el documento:
-
-| | Pesos | Dólares |
-|---|---:|---:|
-| Primer cobro Esencial · arranque + mes 1 | $23,000 | **$1,270** |
-| Primer cobro Completo · arranque + mes 1 | $25,000 | **$1,380** |
+| Esencial · mensual, desde el mes 3 | $8,000 | **$440** |
+| Completo · mensual, desde el mes 3 | $10,000 | **$550** |
+| Implementación · una vez | $15,000 | **$830** |
+| Despertar la base · una vez | $7,000 | **$390** |
 
 El acumulado por año, **que ya no va al documento** (§5) pero se sigue usando para
-comprobar los argumentos:
+comprobar los argumentos. Año 1 = implementación más **10** mensualidades, no 12, porque
+el mensual empieza en el mes 3:
 
-| | Año 1 | Del año 2 | Dos años |
-|---|---:|---:|---:|
-| Lo que manejan hoy | $6,600 | $6,600 | $13,200 |
-| **Esencial** | $6,110 | $5,280 | $11,390 |
-| **Completo** | $7,430 | $6,600 | $14,030 |
+| | Año 1 | Del año 2 |
+|---|---:|---:|
+| Lo que manejan hoy | $6,600 | $6,600 |
+| **Esencial** | $5,230 | $5,280 |
+| **Completo** | $6,330 | $6,600 |
+
+Con la base ($390) encima: Esencial **$5,620** y Completo **$6,720** el primer año.
+
+> **Un invariante que el script vigila.** El documento usa el **mismo token `$2,000`** para
+> dos frases distintas: el incremento que su lista cobra por campañas, y cuánto queda
+> Esencial por debajo del mensual que pagan hoy. En pesos coinciden ($10,000−$8,000 en los
+> dos casos) y en dólares también ($110). Si alguien mueve un precio y dejan de coincidir,
+> una de las dos frases quedaría mintiendo en dólares. `convertir-propuesta-usd.py` aborta
+> si eso pasa.
 
 **El redondeo no es cosmético: puede romper la propuesta.** Toda la fuerza del documento es
 que cada mensual es el tier del proveedor **más su propio incremento**. Al convertir hay que
@@ -229,20 +265,23 @@ alcanza a hacer, y una que nadie más puede:
 > sí quedaron escritos sean ciertos, y `scripts/convertir-propuesta-usd.py` los verifica en
 > cada corrida. No volver a meterla a la propuesta.
 
-| | Año 1 | Del año 2 | Dos años |
+Año 1 = implementación más **10** mensualidades, porque el mensual empieza en el mes 3.
+
+| | Año 1 | Año 1 con la base | Del año 2 |
 |---|---:|---:|---:|
-| Lo que manejan hoy ($10,000/mes) | $120,000 | $120,000 | $240,000 |
-| **Esencial** | $111,000 | $96,000 | $207,000 |
-| **Completo** | $135,000 | $120,000 | $255,000 |
+| Lo que manejan hoy ($10,000/mes) | $120,000 | $120,000 | $120,000 |
+| **Esencial** | $95,000 | $102,000 | $96,000 |
+| **Completo** | $115,000 | $122,000 | $120,000 |
 
-- **Completo**: año 1 **+$15,000** (+12.5%), que es exactamente el arranque; **del año 2
-  queda a la par, peso por peso**, entregando lo mismo más la atribución.
-- **Esencial**: **por debajo los dos años** (−7.5% el año 1, −20% después), con 2 redes en
-  lugar de 3. Es la salida si el cliente respinga, sin que 786 toque su margen.
+- **Completo**: el año 1 queda **por debajo** sin la base y apenas **+$2,000** con ella; del
+  año 2 **a la par, peso por peso**, entregando lo mismo más la atribución.
+- **Esencial**: por debajo en los dos años, con 2 redes en lugar de 3. Es la salida si el
+  cliente respinga, sin que 786 toque su margen.
 
-> **Que el año 1 salga más caro hay que decirlo, no esconderlo.** Si la propuesta finge que
-> sale más barata, lo notan a la primera resta y se ve peor que si lo decimos nosotros. La
-> propuesta lo dice con todas sus letras, en la sección de comparación.
+> **Cuidado con vender esto por precio.** Desde que la mensualidad arranca en el mes 3
+> (Brenda, 13 oct), el año 1 dejó de salir más caro — y es tentador usarlo como argumento.
+> No conviene: a precio parecido, lo que decide es §4, y es lo único que su proveedor no
+> puede copiar. Si se vende por precio, lo iguala en una semana.
 
 **El pliego de dos niveles es, además, la mejor forma de presentárselo a una revendedora:**
 les da dos puntos de precio en lugar de uno. Si el cliente empuja, bajan de nivel en vez de
@@ -250,17 +289,16 @@ bajar su propio margen.
 
 ## 6. Qué entra en cada cosa
 
-**Arranque · una sola vez.** Apertura u ordenamiento de Facebook e Instagram, línea gráfica
-y plantillas, dos meses de contenido intensivo, y la base de vendedores cargada, limpia,
-segmentada y con su campaña de recuperación armada. Los temas del contenido salen de lo que
-ya sabemos del negocio:
+**Implementación · una sola vez.** Apertura u ordenamiento de Facebook e Instagram, línea
+gráfica y plantillas, y **40 piezas** (20 al mes en los meses 1 y 2). Los temas salen de lo
+que ya sabemos del negocio:
 
 - **Qué trae una paca** — el contenido que más se pide y el que nadie publica bien.
 - **Qué esperar al recibirla** — baja la devolución y la queja, porque alinea expectativa.
 - **Cómo se hace negocio con esto** — el informativo. Es el que convierte a un curioso en
   revendedor, y por eso es el que más importa para el menudeo.
 
-**La conexión de Meta con el CRM**, dentro del arranque. Es la pieza técnica que sostiene
+**La conexión de Meta con el CRM**, dentro de la implementación. Es la pieza técnica que sostiene
 todo el argumento de §4.3, y hasta ahora la propuesta prometía el resultado sin decir cómo:
 
 - **Píxel de Meta** en el catálogo público.
@@ -284,8 +322,28 @@ todo el argumento de §4.3, y hasta ahora la propuesta prometía el resultado si
 > automatización se atrasa, esta parte del arranque se atrasa con ella. No es un riesgo de
 > costo, es de calendario, y hay que decirlo al cerrar fechas.
 
-**Mensual.** Campañas (propuesta, diseño, revisión diaria y ajuste) más contenido de
-mantenimiento. Es lo indefinido.
+**Despertar la base · aparte, una sola vez.** Los seis pasos que el documento ya detalla en
+su propio apartado:
+
+1. **Se recibe como esté** — Excel, contactos del teléfono, lista de WhatsApp.
+2. **Se limpia** — duplicados fuera, teléfonos a formato internacional, los inservibles
+   aparte. Una base sucia quema el número de WhatsApp, y eso sí tiene costo real.
+3. **Se segmenta en el CRM** — por recencia, por volumen y por zona.
+4. **La secuencia** — varios toques, no uno. Quien responde pasa al bot y entra al mismo
+   flujo que aparta, cobra y manda guía: no queda en una hoja aparte.
+5. **Audiencia para Meta** — la base limpia sube como audiencia personalizada y de ahí sale
+   el público similar. **Esto es lo que un proveedor de redes no puede hacer**, porque la
+   base vive en el CRM.
+6. **Se mide** contra venta cobrada, igual que todo lo demás.
+
+**Mensual · desde el mes 3.** Campañas a público nuevo (propuesta, diseño, revisión diaria y
+ajuste) más contenido de mantenimiento. Es lo indefinido.
+
+> **Por qué las campañas a público nuevo arrancan en el mes 3 y no antes.** Para entonces ya
+> hay 40 piezas que sostengan el anuncio y el píxel lleva dos meses juntando datos. Y los
+> primeros dos meses el dinero de anuncios rinde más en la base recuperada, que es gente que
+> ya compró. No es una excusa para no cobrar el mensual: es el orden correcto, y de paso
+> encaja con que la implementación cubra esos dos meses.
 
 ## 7. Lo que NO lleva
 
@@ -323,6 +381,6 @@ mantenimiento. Es lo indefinido.
 | **Confirmar que el benchmark es en pesos y al mes** (§2) | Oliver con Brenda |
 | Ajustar los precios del pliego, si hace falta | Oliver y Brenda |
 | Cuánto le suben antes de pasárselo a Greentex | **786, es suyo** |
-| Cuántas piezas exactamente en los dos meses del arranque | Al cerrar el alcance |
+| ~~Cuántas piezas en los dos meses~~ | **Cerrado el 13 oct: 20 al mes, 40 en total** |
 | **Si la conexión Meta–CRM se sigue absorbiendo en los $15,000** cuando se detalle | Oliver. Hoy va incluida |
-| De qué tamaño es la base de vendedores | Brenda. Cambia el trabajo del arranque |
+| **De qué tamaño es la base de vendedores** | Brenda. Los $7,000 asumen hasta ~5,000 contactos; arriba de eso se revisa |
