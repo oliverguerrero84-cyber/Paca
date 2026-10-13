@@ -184,3 +184,41 @@ README de n8n como pendiente.
 
 Lo único que sigue pendiente es del lado del cliente: **su cuenta de producción con
 saldo** y los datos exactos del almacén de Nuevo Laredo.
+
+## 6. Despacho manual — el cambio del 11 de octubre
+
+En la reunión de octubre el cliente cambió el carril: **la guía ya no se genera sola.**
+Depósito la saca a mano en el mostrador de Paquete Express y pega la liga de seguimiento.
+Lo que sigue automatizado es lo de antes y lo de después:
+
+1. **El bot averigua a dónde va el paquete.** A sucursal: pide el código postal, `N3`
+   devuelve las 3 más cercanas y el cliente elige. A domicilio: el cliente dicta la
+   dirección, `N6` la geocodifica con Google Maps y el bot le manda la liga del mapa para
+   que confirme con un sí explícito. Lo elegido lo guarda `N6` **en la oportunidad**
+   (carpeta «Envío del pedido»), para que depósito lo vea en la tarjeta.
+2. **Al confirmarse el pago**, `SP05` manda a los dueños un correo con todo lo que
+   depósito necesita —modalidad, sucursal o domicilio, liga del mapa, cantidad— y mueve
+   el pedido a «Orden en Almacén». **Sin el monto**, como siempre.
+3. **Cuando sale la guía**, depósito llena el formulario «Registrar Envío» (teléfono del
+   comprador, número de guía, liga). `AP04` encuentra el pedido en almacén, escribe
+   `numero_guia`, `track_url` y `fecha_envio`, lo mueve a «Enviado — Guía Generada» y le
+   avisa al cliente por correo y WhatsApp con la liga.
+4. **El rastreo y el cierre siguen siendo de Envia**: `N5` lee los pedidos en «Enviado»,
+   consulta la guía y cierra el entregado como `won`; `AP01` avisa cuando llega a sucursal.
+
+Lo que **se apaga** es `N4` (generar guía y programar recolección). Queda en el repo,
+dormido, con `SP05-ENVIA` en `scripts/armar-workflows.py` como su versión de fase 2.
+
+### Dos supuestos que hay que probar el día que exista la cuenta de Envia
+
+- **Que Envia rastree una guía que no generó.** `POST /ship/generaltrack/` recibe sólo
+  números de guía, sin paquetería, y la guía va a salir del mostrador de Paquete Express.
+  Si no la reconoce, se cae el cierre automático: habría que mover «Entregado / Cerrado» a
+  mano o agregarle esa acción al formulario. Es el supuesto más caro del cambio.
+- **Mientras no haya cuenta de Envia, nada cierra el pedido**, y con un pedido abierto
+  `N1` contesta `pedido_en_curso`. Interino: los dueños arrastran la tarjeta a «Entregado /
+  Cerrado».
+
+El domicilio depende de una **key de Google Maps de la cuenta del cliente** (decidido el
+11 oct); hasta que la mande, el carril de sucursal funciona igual y el de domicilio queda
+armado pero apagado.

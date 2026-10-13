@@ -1,4 +1,4 @@
-# Los 5 flujos de n8n
+# Los 6 flujos de n8n
 
 > **Probados contra Greentex el 28 sep:** `N1`, `N2` y `N3` en vivo; `N4` y `N5`, antes de
 > pasar los datos a la oportunidad (falta repetirlos). Los cinco están importados en el n8n
@@ -9,8 +9,9 @@
 | `N1-apartar` | Webhook `POST /apartar` | Lee el stock del SKU; si alcanza, descuenta y arranca el reloj |
 | `N2-liberar-vencidos` | Cron 15 min | Devuelve el stock de los apartados vencidos |
 | `N3-buscar-sucursal` | Webhook `POST /buscar-sucursal` | Código postal → las 3 sucursales más cercanas, con `branch_code` |
-| `N4-generar-guia` | Webhook `POST /generar-guia` | Genera la guía y programa la recolección |
-| `N5-rastrear` | Cron 1 h | Empuja el estatus de vuelta a GHL |
+| `N4-generar-guia` | Webhook `POST /generar-guia` | **Dormido desde el 11 oct**: la guía la saca depósito a mano. Genera la guía y programa la recolección; vuelve cuando haya cuenta de Envia |
+| `N5-rastrear` | Cron 1 h | Empuja el estatus de vuelta a GHL. Desde el 11 oct, lo que no reconoce es `desconocido` (antes `en_transito`) |
+| `N6-envio-pedido` | Webhooks `POST /geocodificar-domicilio` y `POST /guardar-envio` | Geocodifica un domicilio con Google Maps para que el cliente lo confirme, y guarda la sucursal o el domicilio elegido **en la oportunidad** (11 oct). Lo llama el bot |
 
 ## Antes de importar
 
@@ -127,6 +128,11 @@ que contesta `estatus`, `estatus_texto`, `entrega_estimada` y `track_url` en el 
 turno. Su URL va en el custom value `url_n8n_rastrear`.
 
 ## Orden de importación
+
+`N6` es nuevo (11 oct) y **`subir-n8n.py` no crea flujos, sólo actualiza**: la primera vez se
+importa a mano desde el editor, se le asigna la credencial `GHL · PIT Greentex` a sus tres nodos
+de GHL, y se pegan sus dos URLs en los custom values `url_n8n_geocodificar_domicilio` y
+`url_n8n_guardar_envio`. `GOOGLE_MAPS_KEY` va en su nodo `Config geo` cuando el cliente la mande.
 
 Da igual: no dependen entre sí. Pero para probar conviene `N3` primero —es el único
 que no escribe nada— y luego `N1`.

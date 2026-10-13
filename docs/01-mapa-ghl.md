@@ -43,7 +43,7 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 
 ## 2. Workflows
 
-### Completo — 8 workflows
+### Completo — 9 workflows
 
 | Código | Nombre | Trigger | Nodos |
 |---|---|---|---:|
@@ -51,10 +51,11 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 | `SP01` | Handoff al agente + control bot on/off | Customer Replied / Tag Added | 8 |
 | `SP02` | Apartado 24 h + recordatorios + aviso de vencido | Pipeline Stage Changed → Liga de Pago Enviada | 12 |
 | `SP04` | Pago confirmado → nº de orden | **Goal Event `Payment Received`** | 10 |
-| `SP05` | Despacho: guía Envia + PDF al almacén + correo a dueños | Opportunity Stage Changed → Pagado | 12 |
+| `SP05` | Despacho **manual** (11 oct): correo a los dueños con el destino → «Orden en Almacén». La versión Envia queda como fase 2 | Opportunity Stage Changed → Pagado | 2 |
 | `AP01` | Rastreo: avisos hasta "llegó a tu sucursal" | Inbound Webhook (n8n `N5`) | 10 |
 | `AP02` | Escalamiento a humano | Tag Added `escalar-humano` | 8 |
 | `AP03` | Registro manual de pago por transferencia | Form Submitted (form interno) | 7 |
+| `AP04` | Envío despachado: guía y liga del formulario → «Enviado — Guía Generada» + aviso al cliente | Form Submitted «Registrar Envío» | 6 |
 
 **Qué cambió respecto a la revisión 3:**
 - `SP04` ya no necesita Inbound Webhook: la factura es un pago de GHL, cobre con la
@@ -65,6 +66,9 @@ El pipeline de post-venta y recompra se retiró del alcance en los dos paquetes.
 - `SP05` genera la guía en vez de esperar a que el almacén la capture.
 - `AP01` deja de ser un formulario y pasa a ser rastreo automático.
 - `AP03` es nuevo: el registro manual de transferencias a su banco.
+- **11 oct:** `SP05` ya **no** genera la guía. El cliente la saca a mano en Paquete Express y
+  depósito la registra con el formulario «Registrar Envío» → `AP04`, que es el que mueve a
+  «Enviado» y le manda la liga al cliente. `N4` queda dormido. Ver `docs/06-logistica-envia.md` §6.
 
 ### Esencial — 5 workflows
 
@@ -281,7 +285,7 @@ Guarda en el contacto: `temporada`, `categoria`, `calidad`, `sku_elegido`,
 `cantidad`, `codigo_postal`, `sucursal_elegida` (ver §4 y las gotchas de los campos
 gemelos).
 
-### Las tres acciones Custom API
+### Las cinco acciones Custom API
 
 Todas `POST`, JSON, **10 s de timeout**, sin reintento. Los campos de entrada se
 recogen con esquema JSON (pestaña *AI - JSON Schema*); `contactId` va siempre.
@@ -291,6 +295,8 @@ recogen con esquema JSON (pestaña *AI - JSON Schema*); `contactId` va siempre.
 | **Apartar paca y liga de pago** | `N1` · `url_n8n_crear_apartado` | `sku`, `cantidad`, `contactId` | `ok`, `articulo`, `expira_texto`, `liga_pago` |
 | **Sucursal por código postal** | `N3` · `url_n8n_buscar_sucursal` | `codigo_postal`, `contactId` | `sucursales` (2-3 opciones con nombre y dirección) |
 | **Rastrear envío** | `N5` · `url_n8n_rastrear` | `contactId` | `estatus`, `estatus_texto` |
+| **Confirmar domicilio** (11 oct) | `N6` · `url_n8n_geocodificar_domicilio` | `direccion`, `contactId` | `ok`, `direccion_normalizada`, `mapa`, `lat`, `lng` |
+| **Guardar envío del pedido** (11 oct) | `N6` · `url_n8n_guardar_envio` | `modalidad`, `sucursal`, `branch_code`, `direccion`, `lat`, `lng`, `mapa`, `contactId` | `ok`, `destino` |
 
 **Apartar paca y liga de pago**
 - *When:* «Cuando el cliente ya dijo qué paca quiere y cuántas, ya eligió sucursal, y
@@ -311,6 +317,24 @@ recogen con esquema JSON (pestaña *AI - JSON Schema*); `contactId` va siempre.
   una guía.»
 - *What to say:* «Dile `estatus_texto` tal cual. Si no hay guía todavía, dile que su
   pedido está en preparación.»
+
+**Confirmar domicilio** (11 oct)
+- *When:* «Cuando el cliente quiere envío a domicilio y ya dictó su dirección completa, con
+  número. Nunca des por buena una dirección sin confirmarla.»
+- *What to say:* «Si `ok` es true, mándale `direccion_normalizada` y la liga `mapa` y pregúntale
+  si es correcto. Si `motivo` es `direccion_ambigua` o `direccion_no_encontrada`, dile que no
+  la ubicaste bien y pídele calle, número, colonia y código postal. Máximo dos intentos;
+  después, pon la etiqueta `escalar-humano`.»
+
+**Guardar envío del pedido** (11 oct)
+- *When:* «Cuando el cliente ya tiene su paca apartada (ya llamaste a «Apartar paca») y
+  eligió sucursal de la lista, o confirmó con un sí la liga del mapa de su domicilio.»
+- *What to say:* «No digas nada del sistema. Si `ok` es false con `sin_pedido_abierto`, es
+  que todavía no apartó: vuelve a ofrecerle apartar. Con `faltan_datos`, pídele lo que falte.»
+
+> **El envío se guarda DESPUÉS de apartar, nunca antes.** `guardar-envio` escribe en la
+> oportunidad del pedido, y esa oportunidad la crea `N1` al apartar. El orden del prompt es:
+> paca → apartar → ¿sucursal o domicilio? → elegir / confirmar → guardar.
 
 > `N1` aparta, crea la factura y **dispara el Inbound Webhook** con el que arranca
 > `SP02`. El bot no marca tags ni etapas para eso.
@@ -388,6 +412,13 @@ de sucursal que devuelve `N3` y exige `N4`) · `numero_guia` · `etiqueta_pdf` �
 (los tres los escribe `N4`) · `fecha_envio`. Los cuatro nuevos se crearon el 25 sep con
 `scripts/crear-esqueleto-menudeo.py`; la subcuenta tiene ahora 25 campos
 
+**Carpeta `Envío del pedido`** (oportunidad, 11 oct): `modalidad_envio` (`sucursal` /
+`domicilio`) · `sucursal_envio` · `branch_code_envio` · `direccion_envio` · `geo_envio`
+(`lat,lng`) · `mapa_envio` (liga de Google Maps). **Los escribe `N6`**, porque el bot sólo
+escribe campos de contacto, y son del pedido para que depósito los vea en la tarjeta. Sus
+nombres visibles dicen «del pedido» a propósito: los gemelos de contacto (`sucursal_ocurre`,
+`branch_code`, `servicio_envio`) siguen existiendo y en el selector se ven iguales.
+
 **Carpeta `Atribución`:** `canal_origen` · `utm_source` · `utm_medium` ·
 `utm_campaign` · `fecha_primer_contacto`
 
@@ -407,7 +438,8 @@ que para las dos que ya lo decían.
 ## 5. Custom values
 
 `url_n8n_crear_apartado` · `url_n8n_buscar_sucursal` · `url_n8n_generar_guia` ·
-`url_n8n_rastrear` · `whatsapp_almacen` · `email_duenos` · `horas_apartado`
+`url_n8n_rastrear` · `url_n8n_geocodificar_domicilio` · `url_n8n_guardar_envio` (los dos
+de `N6`, 11 oct) · `whatsapp_almacen` · `email_duenos` · `horas_apartado`
 
 Las tres primeras ya apuntan al n8n de Germán (25 sep), **en modo prueba**: son URLs
 `webhook-test/…`, que sólo responden mientras el flujo está escuchando en el editor.
@@ -433,8 +465,10 @@ apunta al webhook de `N5` (25 sep).
 |---|---|---|
 | `Registrar Pago Manual` | Los dueños | **teléfono del comprador** (con él GHL da con su contacto y su oportunidad), `monto`, `fecha`, `referencia` — para transferencias a su banco, fuera de Stripe. Lo procesa `AP03` |
 | `Ajuste Manual de Stock` | Los dueños (opcional) | `sku`, `nuevo_disponible`, `motivo` |
+| `Registrar Envío` (11 oct) | Depósito | **teléfono del comprador** (dedupe → contacto → `AP04` busca su pedido en «Orden en Almacén»), `numero_guia`, `track_url` (obligatoria, tiene que empezar con `http`), `paqueteria` (Paquete Express), `notas`. Lo procesa `AP04` |
 
-> El formulario de captura de guía **desapareció**: Envia genera la guía sola.
+> El formulario de captura de guía desapareció el 25 sep porque Envia la generaba sola, y
+> **volvió el 11 oct como «Registrar Envío»**: el cliente decidió sacar la guía a mano.
 
 ## 7. Plantillas de mensaje
 

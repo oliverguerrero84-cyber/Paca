@@ -1,0 +1,732 @@
+{
+  "name": "N6 · Envío del pedido",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "geocodificar-domicilio",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook · geocodificar-domicilio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        -140
+      ],
+      "webhookId": "geocodificar-domicilio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-google_maps_key",
+              "name": "GOOGLE_MAPS_KEY",
+              "value": "PENDIENTE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-pais",
+              "name": "PAIS",
+              "value": "MX",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "name": "Config geo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        -140
+      ],
+      "notes": "La key es del Google Cloud del cliente (decidido el 11 oct). PENDIENTE a proposito: una key de relleno da REQUEST_DENIED y parece un problema de la direccion.\nLa instancia bloquea $env, por eso la configuracion vive en este nodo.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $json.body || {};\nconst p = { ...b, ...(b.customData || {}) };\n// La accion Custom API del bot manda los campos planos; el Webhook de un\n// workflow de GHL los manda dentro de body.customData. Se aceptan las dos.\nconst direccion = String(p.direccion || p.direccion_envio || '').trim().replace(/\\s+/g, ' ');\nconst contactId = p.contactId || p.contact_id || null;\n// Una direccion sin numero no se puede geocodificar con precision de entrega:\n// Google devolveria el centro de la colonia como si fuera la casa.\nreturn [{ json: { direccion, contactId, valida: direccion.length >= 10 && /\\d/.test(direccion) } }];"
+      },
+      "name": "Leer la dirección",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.valida }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Dirección usable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://maps.googleapis.com/maps/api/geocode/json?address={{ encodeURIComponent($json.direccion) }}&components=country:{{ $('Config geo').first().json.PAIS }}&language=es&key={{ $('Config geo').first().json.GOOGLE_MAPS_KEY }}",
+        "options": {}
+      },
+      "name": "Google · geocode",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        -240
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Sin credencial: la key va en la URL. onError continuo para que un 5xx de Google conteste con motivo y no deje al bot sin respuesta a los 10 s.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const g = $json || {};\nconst d = $('Leer la dirección').first().json;\nconst st = g.status;\nif (st === 'ZERO_RESULTS') return [{ json: { ok: false, motivo: 'direccion_no_encontrada', direccion: d.direccion } }];\nif (st !== 'OK' || !(g.results || []).length)\n  return [{ json: { ok: false, motivo: 'google_error', detalle: g.error_message || st || 'sin respuesta' } }];\n\nconst r = g.results[0];\nconst loc = (r.geometry || {}).location || {};\nconst tipo = (r.geometry || {}).location_type || '';\nconst exacta = tipo === 'ROOFTOP' || tipo === 'RANGE_INTERPOLATED';\nconst salida = { direccion_normalizada: r.formatted_address || d.direccion,\n  lat: loc.lat ?? null, lng: loc.lng ?? null,\n  mapa: (loc.lat != null && loc.lng != null) ? 'https://maps.google.com/?q=' + loc.lat + ',' + loc.lng : null,\n  confianza: exacta ? 'exacta' : 'aproximada', contactId: d.contactId };\n\n// partial_match o APPROXIMATE = Google adivino. Se devuelve el candidato pero con\n// ok:false, para que el bot vuelva a preguntar en vez de dar por buena una\n// coordenada que cae a dos cuadras. El dato va igual: sirve para repreguntar.\nif (r.partial_match === true || tipo === 'APPROXIMATE')\n  return [{ json: { ok: false, motivo: 'direccion_ambigua', ...salida } }];\nreturn [{ json: { ok: true, ...salida } }];"
+      },
+      "name": "Traducir el geocode",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Geocodificó?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, direccion_normalizada: $json.direccion_normalizada, lat: $json.lat, lng: $json.lng, mapa: $json.mapa, confianza: $json.confianza }) }}",
+        "options": {}
+      },
+      "name": "Responder domicilio",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: $json.motivo, direccion_normalizada: $json.direccion_normalizada || null, mapa: $json.mapa || null }) }}",
+        "options": {}
+      },
+      "name": "Responder geocode fallido",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: 'direccion_incompleta' }) }}",
+        "options": {}
+      },
+      "name": "Responder dirección incompleta",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guardar-envio",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook · guardar-envio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        300
+      ],
+      "webhookId": "guardar-envio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-ghl_location_id",
+              "name": "GHL_LOCATION_ID",
+              "value": "c9jj5uu1WZOIkwi6Vfj5",
+              "type": "string"
+            },
+            {
+              "id": "cfg-ghl_pipeline_id",
+              "name": "GHL_PIPELINE_ID",
+              "value": "80QTHEK406nT2KJhQ6TZ",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "name": "Config guardar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $json.body || {};\nconst p = { ...b, ...(b.customData || {}) };\nconst modalidad = String(p.modalidad || p.modalidad_envio || '').trim().toLowerCase();\nconst num = (v) => (v === '' || v === null || v === undefined) ? null : Number(v);\nconst e = { contactId: p.contactId || p.contact_id || null,\n  modalidad,\n  sucursal:    String(p.sucursal    || p.sucursal_envio    || '').trim(),\n  branch_code: String(p.branch_code || p.branch_code_envio || '').trim(),\n  direccion:   String(p.direccion   || p.direccion_envio   || '').trim(),\n  lat: num(p.lat), lng: num(p.lng),\n  mapa: String(p.mapa || p.mapa_envio || '').trim() };\n\nconst faltan = [];\nif (!e.contactId) faltan.push('contactId');\nif (modalidad === 'sucursal') {\n  if (!e.branch_code) faltan.push('branch_code');\n  if (!e.sucursal) faltan.push('sucursal');\n} else if (modalidad === 'domicilio') {\n  // Se exigen lat/lng a proposito: obligan a que el domicilio haya pasado por\n  // /geocodificar-domicilio y por el si del cliente antes de guardarse.\n  if (!e.direccion) faltan.push('direccion');\n  if (e.lat === null || e.lng === null || Number.isNaN(e.lat) || Number.isNaN(e.lng)) faltan.push('lat/lng');\n} else {\n  faltan.push('modalidad (sucursal | domicilio)');\n}\nif (!e.mapa && e.lat !== null && e.lng !== null) e.mapa = 'https://maps.google.com/?q=' + e.lat + ',' + e.lng;\nreturn [{ json: { ...e, faltan, completo: faltan.length === 0 } }];"
+      },
+      "name": "Leer el envío",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.completo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Datos completos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/opportunities/search?location_id={{ $('Config guardar').first().json.GHL_LOCATION_ID }}&pipeline_id={{ $('Config guardar').first().json.GHL_PIPELINE_ID }}&contact_id={{ $('Leer el envío').first().json.contactId }}&status=open&limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GHL · pedidos del contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/locations/{{ $('Config guardar').first().json.GHL_LOCATION_ID }}/customFields?model=all",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GHL · campos de la cuenta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        920,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "notes": "model=all en una sola llamada: hacen falta los ids de oportunidad y los de contacto. Sin el parametro, GHL lista solo los de contacto.\nLos custom fields no vienen con su clave usable: hay que traducir fieldKey -> id y escribir por id. Buscar por fieldKey devuelve null siempre.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Un solo pedido abierto por cliente, por diseno (N1 contesta pedido_en_curso si\n// ya hay otro). Aun asi se ordena y se toma el mas reciente, como hace N5.\nconst ops = ($('GHL · pedidos del contacto').first().json.opportunities || []).slice()\n  .sort((a, b) => String(b.createdAt || b.updatedAt || '').localeCompare(String(a.createdAt || a.updatedAt || '')));\nconst o = ops[0] || null;\nconst e = $('Leer el envío').first().json;\nreturn [{ json: { ...e, opportunityId: o ? o.id : null, sin_pedido: !o } }];"
+      },
+      "name": "Pedido abierto del contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.sin_pedido }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Hay pedido abierto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Pedido abierto del contacto').first().json.opportunityId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((() => {\n  const e = $('Pedido abierto del contacto').first().json;\n  const ids = {};\n  for (const f of $('GHL · campos de la cuenta').first().json.customFields || []) {\n    const k = String(f.fieldKey || '');\n    if (k.startsWith('opportunity.')) ids[k.slice(12)] = f.id;\n  }\n  const esSuc = e.modalidad === 'sucursal';\n  const datos = { modalidad_envio: e.modalidad,\n    sucursal_envio:    esSuc ? e.sucursal : '',\n    branch_code_envio: esSuc ? e.branch_code : '',\n    direccion_envio:   esSuc ? '' : e.direccion,\n    geo_envio:         esSuc ? '' : (e.lat + ',' + e.lng),\n    mapa_envio:        e.mapa || '' };\n  return { customFields: Object.entries(datos).map(([k, v]) => {\n    if (!ids[k]) throw new Error('Falta el campo de oportunidad ' + k);\n    return { id: ids[k], field_value: String(v) };\n  }) };\n})()) }}"
+      },
+      "name": "GHL · guardar el envío en el pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1580,
+        100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Pedido abierto del contacto').first().json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((() => {\n  const e = $('Pedido abierto del contacto').first().json;\n  const ids = {};\n  for (const f of $('GHL · campos de la cuenta').first().json.customFields || []) {\n    const k = String(f.fieldKey || '');\n    if (k.startsWith('contact.')) ids[k.slice(8)] = f.id;\n  }\n  const esSuc = e.modalidad === 'sucursal';\n  const datos = { branch_code: esSuc ? e.branch_code : '',\n    sucursal_ocurre: esSuc ? e.sucursal : '',\n    servicio_envio: esSuc ? 'ground_do' : 'ground' };\n  return { customFields: Object.entries(datos).filter(([k]) => ids[k])\n    .map(([k, v]) => ({ id: ids[k], field_value: String(v) })) };\n})()) }}"
+      },
+      "name": "GHL · copiar al contacto para N4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR",
+          "name": "GHL · PIT Greentex"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Copia de cortesia para cuando N4 despierte: SP05 en su version Envia le manda contact.branch_code y contact.servicio_envio. Hoy el bot ya los escribe.\nonError continuo a proposito: el dato que importa es el del pedido, y la forma del PUT de custom fields de contacto no esta verificada contra la cuenta.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify((() => { const e = $('Pedido abierto del contacto').first().json; return { ok: true, opportunityId: e.opportunityId, modalidad: e.modalidad, destino: e.modalidad === 'sucursal' ? e.sucursal : e.direccion }; })()) }}",
+        "options": {}
+      },
+      "name": "Responder envío guardado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2020,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: 'sin_pedido_abierto' }) }}",
+        "options": {}
+      },
+      "name": "Responder sin pedido abierto",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1580,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, motivo: 'faltan_datos', faltan: $json.faltan }) }}",
+        "options": {}
+      },
+      "name": "Responder faltan datos",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook · geocodificar-domicilio": {
+      "main": [
+        [
+          {
+            "node": "Config geo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config geo": {
+      "main": [
+        [
+          {
+            "node": "Leer la dirección",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer la dirección": {
+      "main": [
+        [
+          {
+            "node": "¿Dirección usable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Dirección usable?": {
+      "main": [
+        [
+          {
+            "node": "Google · geocode",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder dirección incompleta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google · geocode": {
+      "main": [
+        [
+          {
+            "node": "Traducir el geocode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traducir el geocode": {
+      "main": [
+        [
+          {
+            "node": "¿Geocodificó?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Geocodificó?": {
+      "main": [
+        [
+          {
+            "node": "Responder domicilio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder geocode fallido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook · guardar-envio": {
+      "main": [
+        [
+          {
+            "node": "Config guardar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config guardar": {
+      "main": [
+        [
+          {
+            "node": "Leer el envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer el envío": {
+      "main": [
+        [
+          {
+            "node": "¿Datos completos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos completos?": {
+      "main": [
+        [
+          {
+            "node": "GHL · pedidos del contacto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder faltan datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · pedidos del contacto": {
+      "main": [
+        [
+          {
+            "node": "GHL · campos de la cuenta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · campos de la cuenta": {
+      "main": [
+        [
+          {
+            "node": "Pedido abierto del contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedido abierto del contacto": {
+      "main": [
+        [
+          {
+            "node": "¿Hay pedido abierto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay pedido abierto?": {
+      "main": [
+        [
+          {
+            "node": "GHL · guardar el envío en el pedido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder sin pedido abierto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · guardar el envío en el pedido": {
+      "main": [
+        [
+          {
+            "node": "GHL · copiar al contacto para N4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL · copiar al contacto para N4": {
+      "main": [
+        [
+          {
+            "node": "Responder envío guardado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
