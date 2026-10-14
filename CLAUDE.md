@@ -246,6 +246,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/12-alta-subcuenta.md` | Los campos para dar de alta la subcuenta del cliente en GHL |
 | `docs/15-plantillas.md` | Las 7 plantillas de mensaje, listas para mandar a Meta |
 | `docs/17-precotizacion-contenido.md` | Contenido y campañas: nuestro precio a 786 y de dónde sale — **interno** |
+| `docs/18-arquitectura-asistentes.md` | **Cómo se reparte el trabajo entre bots y workflows**, adaptado de la plantilla de GALK: la IA detecta, los workflows ejecutan |
 | `docs/16-guias-workflows.md` | **Cómo se arma cada workflow**, en la UI y por la API interna: moldes de nodos, If y triggers, y lo que la cuenta acepta (§4) |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/reporte-avance.html` | El reporte de avance que ve el cliente — mismo checklist que la propuesta |
