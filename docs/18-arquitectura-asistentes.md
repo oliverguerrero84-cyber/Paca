@@ -39,8 +39,8 @@ segundos después. **Eso hay que traerlo.**
 | De la plantilla | Aquí |
 |---|---|
 | «La IA detecta, los workflows ejecutan» | **Tal cual.** Es el cambio de fondo |
-| Respaldo determinístico por palabras clave | **Tal cual**, adaptado a las 3 dimensiones de la paca |
-| Campos gemelos `(bot)` + normalizadores | **Tal cual.** Ya lo sufrimos como trampa; pasa a ser patrón |
+| Respaldo determinístico por palabras clave | **Tal cual**, pero en **un** workflow generado, no tres. Ver §5bis |
+| Campos gemelos `(bot)` + normalizadores | **No aplica.** Ver §5bis |
 | La ficha la manda un workflow, no el bot | **Tal cual**, y resuelve qué hacer con los 25 videos de Pamela |
 | Marcador `ficha-enviada` + guarda contra reenvío | **Tal cual** |
 | El conmutador (cambia de producto → limpia y reenvía) | **Tal cual** |
@@ -143,11 +143,46 @@ treinta ramas generadas son un `for`.
    sus ramas con cuidado porque *«Supervisión de Melamina» contiene «Melamina»* y gana la
    primera que coincide. Nosotros comparamos contra **`PV-MUJ-BOU`**, que no colisiona con
    nada. Es una ventaja que ellos no tenían, y conviene no desperdiciarla usando el nombre.
-2. **El respaldo por palabras clave es por dimensión, no por SKU.** Treinta listas de
-   palabras clave es absurdo; pero «verano / invierno», «mujer / hombre / niño / corsé /
-   chamarra / …» y «boutique / premium / especial» son **tres listas cortas** que, cruzadas,
-   identifican el SKU. Y el filtro de GHL **compara palabras completas**: nada de raíces
-   («melamin» no dispara nunca), hay que poner las variantes y los errores de tipeo reales.
+2. **El respaldo también se genera, y del mismo catálogo.** Ver §5bis.
+
+---
+
+## 5bis. Dos correcciones al construir — 14 oct
+
+Al medir el catálogo antes de escribir el primer script salieron dos cosas que **desmienten
+lo que este mismo documento proponía** un par de horas antes. Quedan corregidas aquí, y la
+versión de arriba ya no es la que se va a construir.
+
+### El respaldo no puede ser «por dimensión»
+
+Decía: tres workflows (temporada / categoría / calidad) y un cuarto que compone el SKU. **No
+sirve.** Medido sobre `data/catalogo.csv`:
+
+| | SKUs |
+|---|---:|
+| Se identifican con **la pura categoría** (disfraz, suéter navideño, hospital, casa, vestido, playera) | **6** |
+| Necesitan **dos** dimensiones (corsé y chamarra piden calidad; mixta pide temporada) | **6** |
+| Necesitan **las tres** | **18** |
+
+Componer el grid de 18 con condiciones de GHL es un árbol inmanejable. Y no hace falta: ésos
+son justo los casos donde el cliente va y viene con el bot, y si ahí falla una acción **el
+cliente vuelve a contestar y se corrige solo**. Donde el respaldo sí salva la venta es en el
+mensaje suelto —«quiero una de disfraces»— que espera ficha y nunca la recibe.
+
+**Queda como un solo workflow, `RP-SKU`, generado desde el catálogo**, que baja sólo el nivel
+que cada rama necesita: categoría → temporada (si hay dos) → calidad (si hay varias). Lo
+genera `scripts/armar-rp-sku.py`, que **se niega a escribir** si una palabra clave está en dos
+categorías o si una categoría del catálogo se quedó sin palabras.
+
+### Se caen los gemelos `(bot)` y sus normalizadores
+
+GALK los necesita porque **sus campos son desplegables** y los bots de Conversation AI no
+pueden escribir desplegables. Aquí nada aguas abajo necesita un desplegable: `sku_elegido` es
+`TEXT` y es lo único que dispara. Copiar el gemelo sería copiar la solución de un problema que
+no tenemos — cuatro campos y cuatro workflows que no le sirven a nadie.
+
+Los cuatro campos de interés (`sku_elegido`, `temporada_interes`, `categoria_interes`,
+`calidad_interes`) van **TEXT y directos**, ya en `scripts/crear-esqueleto-menudeo.py`.
 
 ---
 
@@ -204,14 +239,20 @@ publicar a mano.
 
 | # | Qué | Notas |
 |---|---|---|
-| 1 | **Campos gemelos `(bot)`** para temporada, categoría, calidad y SKU | `crear-esqueleto-menudeo.py` ya crea campos; se le agregan |
-| 2 | **Normalizadores** `WF-NORM-*`: vuelcan el gemelo al desplegable real | Reingreso activo |
-| 3 | **BOT-00 · Recepción**, en la UI | Prompt corto, ~500 palabras, con prohibiciones |
-| 4 | **`SP06` ficha**, generado desde `data/catalogo.csv` | Una rama por SKU, condición por clave |
-| 5 | **`RP01…` respaldo por palabras clave** | Tres listas por dimensión, palabras completas |
+| 1 | ~~Campos gemelos~~ → **4 campos de interés, TEXT** | **Hecho** (14 oct), en `crear-esqueleto-menudeo.py` |
+| 2 | ~~Normalizadores~~ | **Se cayeron.** Ver §5bis |
+| 3 | **`RP-SKU`** · respaldo generado del catálogo | **Generador hecho** (`scripts/armar-rp-sku.py`); falta el molde del nodo |
+| 4 | **BOT-00 · Recepción**, en la UI | Prompt corto, ~500 palabras, con prohibiciones |
+| 5 | **`SP06` ficha**, generado desde `data/catalogo.csv` | Una rama por SKU, condición por clave |
 | 6 | **BOT-01 · Pedido**, con las 5 acciones Custom API | Las que ya están especificadas en §3 del mapa |
 | 7 | **`RP-RESCATE`**: recibió ficha, no apartó en 2 h → avisa | El hueco que hoy no tenemos |
 | 8 | **Auditar y publicar uno por uno desde la UI** | «Publicar por API es ruleta» |
+
+> **Lo que frena el paso 3.** El árbol está correcto y verificado, pero falta el **molde**:
+> un nodo `update_contact_field` con un `If` encima no existe todavía en la cuenta para
+> clonarlo. Hay que armar **una** rama a mano en la UI, leerla por API y clonar esa forma —
+> como se hizo con `AP04`. Inventar el nodo es justo lo que `docs/16-guias-workflows.md`
+> dice que no se haga: se guarda, se ve bien y no ejecuta.
 
 **Bloqueante antes del paso 4:** el catálogo necesita **precios**, que están en el Excel que
 Pamela todavía no llena. Sin precio no hay ficha completa ni liga de pago.

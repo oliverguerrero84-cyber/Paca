@@ -20,6 +20,10 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
   n8n viven **apagados**; prenderlos lo corre una persona con `!`, igual que escribir workflows.
 - **Para probar un workflow sin esperar horas**, las esperas se adelantan a mano en *Enrollment history*.
 - `scripts/crear-esqueleto-menudeo.py` crea pipeline, campos (de contacto y de oportunidad) y custom values.
+- `scripts/armar-rp-sku.py` genera el árbol del respaldo de detección desde `data/catalogo.csv`.
+  Con `--dry-run` imprime las 30 hojas y **se niega a escribir** si una palabra clave está en dos
+  categorías o si una categoría quedó sin palabras. Las listas de palabras son **provisionales**:
+  se corrigen con conversaciones reales, no se inventan.
 - `scripts/convertir-propuesta-usd.py` regenera la propuesta de contenido en dólares desde la de pesos.
   Es idempotente y **aborta si el redondeo rompe la derivación del precio**. La de dólares no se edita a mano.
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.

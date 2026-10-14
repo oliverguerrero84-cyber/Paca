@@ -103,6 +103,24 @@ CARPETAS = [
         ("geo_envio",          "Coordenadas de entrega (lat,lng)", "TEXT", None),
         ("mapa_envio",         "Liga de mapa de entrega",          "TEXT", None),
     ]),
+    # 14 oct: la capa de deteccion (docs/18-arquitectura-asistentes.md). Van en el
+    # CONTACTO porque son interes, no pedido, y porque Conversation AI solo escribe
+    # ahi. sku_elegido es el campo que dispara la ficha: lo escribe el bot, y si la
+    # accion no ejecuta ese turno lo escribe RP-SKU por palabras clave.
+    #
+    # Todos TEXT, sin desplegables y sin gemelos "(bot)". La plantilla de GALK usa
+    # gemelos porque sus campos SI son desplegables y los bots no pueden escribirlos;
+    # aqui nada aguas abajo necesita un desplegable, asi que el gemelo y su
+    # normalizador serian dos piezas que no sirven a nadie.
+    ("Interés", "contact", [
+        # El unico que dispara. Vale la clave, no el nombre: PV-MUJ-BOU.
+        ("sku_elegido",        "SKU de interés",        "TEXT", None),
+        # Lo que el bot va juntando en la conversacion. Contact Info solo llena
+        # vacios, asi que esto guarda el avance parcial sin pisarse.
+        ("temporada_interes",  "Temporada de interés",  "TEXT", None),
+        ("categoria_interes",  "Categoría de interés",  "TEXT", None),
+        ("calidad_interes",    "Calidad de interés",    "TEXT", None),
+    ]),
     ("Atribución", "contact", [
         ("canal_origen",           "Canal de origen",        "TEXT", None),
         ("utm_source",             "UTM source",             "TEXT", None),
