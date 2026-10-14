@@ -8,8 +8,8 @@ PV-HOM-ESP,Verano,Hombre,Especial,HOMBRE VERANO ESPECIAL,"CH, M, G, XL",Hombre a
 PV-NIN-BOU,Verano,Niño,Boutique,NIÑO VERANO BOUTIQUE,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
 PV-NIN-PRE,Verano,Niño,Premium,NIÑO VERANO PREMIUM,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
 PV-NIN-ESP,Verano,Niño,Especial,NIÑO VERANO ESPECIAL,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
-PV-COR-BOU,Verano,Corsé,Boutique,CORSE VERANO BOUTIQUE,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
-PV-COR-PRE,Verano,Corsé,Premium,CORSE VERANO PREMIUM,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
+PV-COR-BOU,Verano,Corsé,Boutique,CORSE VERANO BOUTIQUE,PENDIENTE,Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,PENDIENTE
+PV-COR-PRE,Verano,Corsé,Premium,CORSE VERANO PREMIUM,PENDIENTE,Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,PENDIENTE
 PV-PLA-EST,Verano,Playera,Estándar,PLAYERA COMERCIAL,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
 PV-VES-EST,Verano,Vestido de fiesta,Estándar,VESTIDO DE FIESTA,"CH, M, G, XL",Mujer adulta,Vestidos de fiesta — calidad estándar (unicalidad),100,45,PENDIENTE
 PV-HOS-EST,Verano,Ropa de hospital,Estándar,ROPA DE HOSPITAL,"CH, M, G, XL",Adulto,"Scrubs: a veces juego completo (playera y pantalón), a veces sólo playera o sólo pantalón",100,45,PENDIENTE
@@ -25,7 +25,7 @@ PI-HOM-ESP,Invierno,Hombre,Especial,HOMBRE INVIERNO ESPECIAL,"CH, M, G, XL",Homb
 PI-NIN-BOU,Invierno,Niño,Boutique,NIÑO INVIERNO BOUTIQUE,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
 PI-NIN-PRE,Invierno,Niño,Premium,NIÑO INVIERNO PREMIUM,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
 PI-NIN-ESP,Invierno,Niño,Especial,NIÑO INVIERNO ESPECIAL,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
-PI-CHA-BOU,Invierno,Chamarra,Boutique,CHAMARRA BOUTIQUE,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
-PI-CHA-PRE,Invierno,Chamarra,Premium,CHAMARRA PREMIUM,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
+PI-CHA-BOU,Invierno,Chamarra,Boutique,CHAMARRA BOUTIQUE,PENDIENTE,Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,PENDIENTE
+PI-CHA-PRE,Invierno,Chamarra,Premium,CHAMARRA PREMIUM,PENDIENTE,Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,PENDIENTE
 PI-MIX-PLU,Invierno,Mixta Plus,Estándar,MIXTA INVIERNO PLUS,"1X, 2X, 3X",Mujer y hombre (mixto),Ropa de frío en tallas extra,100,45,PENDIENTE
-PI-SUE-NAV,Invierno,Suéter navideño,Estándar,SUÉTER NAVIDEÑO,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
+PI-SUE-NAV,Invierno,Suéter navideño,Estándar,SUÉTER NAVIDEÑO,PENDIENTE,Mujer y hombre (mixto),"Suéteres tejidos con motivos navideños: Santa, renos, muñecos de nieve, llamas y grecas nórdicas, muchos con aplicaciones. Rojo, verde, blanco y negro",100,45,PENDIENTE

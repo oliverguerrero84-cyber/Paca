@@ -281,7 +281,7 @@ Números y desgloses en `04-precotizacion.md`.
 | 3 | Dos clientes apartando la última paca a la vez | n8n serializado; ruta de escape a Supabase documentada |
 | 4 | Los dueños ajustan `availableQuantity` a mano mientras hay apartados vivos | n8n es dueño único del contador; el ajuste manual es para reponer, no para corregir apartados |
 | 5 | OXXO y SPEI dependen de que el checkout de GHL con Stripe los muestre | Validación 4. Plan B: tarjeta por la liga y transferencia manual con `AP03` |
-| 6 | 6 de los 30 SKUs no están descritos en ningún transcript (2 corsé, playera comercial, 2 chamarra, suéter navideño) | El agente no puede describir lo que no sabe — pedir la descripción |
+| 6 | **Queda 1**: playera comercial, sin transcript y sin video. Los otros 5 (2 corsé, 2 chamarra, suéter navideño) se describieron el 14 oct con los videos del Drive. **Las tallas siguen pendientes en los 6** | Pedir a Pamela el video de playera comercial y las tallas de los 6 |
 | 7 | **No hay fotos de producto.** La landing y las fichas del bot no se pueden montar sin ellas | Pregunta bloqueante #2. **No están cotizadas**: las produce el cliente |
 | 8 | **El almacén nunca debe ver dinero.** Miguel fue explícito: *"ellos no tienen por qué enterarse"* | El aviso al almacén lleva sólo nombre, cantidad, destino y CP. Regla dura del diseño |
 | 9 | Piden **fotos y videos** de producto, no sólo fotos | Sube el peso del pendiente de material. Sigue sin cotizarse: lo entrega el cliente |

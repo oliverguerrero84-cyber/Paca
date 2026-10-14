@@ -369,9 +369,11 @@ Se carga desde `data/catalogo.csv`: 30 SKUs con temporada, categoría, calidad,
 tallas, público, contenido y peso. Más las preguntas frecuentes del transcript 3:
 *"¿qué es lo que mayormente preguntan los clientes? De tallas, calidades, qué tanto viene"*.
 
-> ⚠️ 5 SKUs (corsé ×2, playera comercial, chamarra ×2, suéter navideño) **no están
-> descritos en ningún transcript**. El agente no puede describir lo que no sabe.
-> Pregunta #3 en `05-preguntas-cliente.md`.
+> ⚠️ **Queda uno sin describir: `PV-PLA-EST` playera comercial.** Eran 6 —corsé ×2,
+> playera comercial, chamarra ×2 y suéter navideño—; los otros 5 se describieron el 14
+> de octubre viendo los videos del Drive (ver `03-catalogo-productos.md`). Playera
+> comercial no tiene transcript ni video, así que el agente sigue sin poder describirla.
+> **Y las tallas siguen pendientes en los 6**: no se leen en el video.
 
 ---
 

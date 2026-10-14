@@ -35,7 +35,7 @@ suéter navideño y las mixtas plus.
 | `PV-MUJ-BOU/PRE/ESP` | Mujer verano ×3 calidades | CH, M, G, XL | Shorts, faldas, pantalones, blusas (manga corta, tres cuartos, tirantes), vestidos |
 | `PV-HOM-BOU/PRE/ESP` | Hombre verano ×3 calidades | CH, M, G, XL | Shorts, pantalones, camisas con y sin mangas, camisas de vestir, deportivo |
 | `PV-NIN-BOU/PRE/ESP` | Niño verano ×3 calidades | 0 a 16 años | Mamelucos, enterizos, blusitas, shorts, pantalones. Niño y niña en la misma paca |
-| `PV-COR-BOU/PRE` | Corsé verano ×2 calidades | ⚠️ pendiente | ⚠️ No descrito en ningún transcript |
+| `PV-COR-BOU/PRE` | Corsé verano ×2 calidades | ⚠️ pendiente | Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines. **Sólo mujer adulta** |
 | `PV-PLA-EST` | Playera comercial | ⚠️ pendiente | ⚠️ No descrito |
 | `PV-VES-EST` | Vestido de fiesta | CH, M, G, XL | Sólo mujer adulta. Calidad estándar |
 | `PV-HOS-EST` | Ropa de hospital | CH, M, G, XL | Scrubs, sólo adultos. A veces juego completo, a veces sólo playera o sólo pantalón |
@@ -50,9 +50,9 @@ suéter navideño y las mixtas plus.
 | `PI-MUJ-BOU/PRE/ESP` | Mujer invierno ×3 calidades | CH, M, G, XL | Calcetines, mallas, medias, suéteres, sudaderas, manga larga, mezclilla, pantalón de vestir |
 | `PI-HOM-BOU/PRE/ESP` | Hombre invierno ×3 calidades | CH, M, G, XL | Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas |
 | `PI-NIN-BOU/PRE/ESP` | Niño invierno ×3 calidades | 0 a 16 años | Ropa de frío, niño y niña en la misma paca |
-| `PI-CHA-BOU/PRE` | Chamarra ×2 calidades | ⚠️ pendiente | ⚠️ No descrito |
+| `PI-CHA-BOU/PRE` | Chamarra ×2 calidades | ⚠️ pendiente | Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados. Mujer y hombre |
 | `PI-MIX-PLU` | Mixta invierno plus | 1X, 2X, 3X | Mujer y hombre juntos |
-| `PI-SUE-NAV` | Suéter navideño | ⚠️ pendiente | ⚠️ No descrito |
+| `PI-SUE-NAV` | Suéter navideño | ⚠️ pendiente | Suéteres tejidos con motivos navideños: Santa, renos, muñecos de nieve, llamas y grecas nórdicas, muchos con aplicaciones. Rojo, verde, blanco y negro. Mujer y hombre |
 
 ---
 
@@ -70,6 +70,30 @@ varía** — y es la pregunta que más hacen los clientes. Del transcript 4:
 
 Rango conocido de verano: **~185 a 225 piezas**. Invierno: menos, sin cifra.
 El cliente ya se ofreció a mandar los estándares por SKU — hay que pedírselos.
+### De dónde salieron estas descripciones
+
+Las de **corsé, chamarra y suéter navideño** se escribieron el 14 de octubre **viendo los
+videos que Pamela subió al Drive** el 10–12 de octubre, no de un transcript. Nadie las
+había descrito en ninguna de las cuatro llamadas.
+
+> **«Corsé» no son corsés.** Es la paca de **ropa interior y de dormir de mujer** —
+> brasieres, pantaletas, bodies, camisones, pijamas. El nombre engaña y el bot tiene que
+> saberlo, o va a contestar mal la pregunta más obvia de ese SKU.
+
+**Las tallas siguen pendientes en los cinco.** Las etiquetas no se alcanzan a leer en el
+video, y ponerle una talla inventada es peor que dejarla vacía: el bot la diría como
+cierta. Es una pregunta corta para Pamela.
+
+**`PV-PLA-EST` Playera comercial sigue sin nada**: no se describió en ninguna llamada y
+tampoco tiene video. Es el único de los 30 que el bot no puede describir de ninguna forma.
+
+### Videos: 25 de los 30 SKUs
+
+Faltan cinco en el Drive, y conviene pedirlos juntos: **Niño verano premium**, **Niño
+verano especial**, **Playera comercial**, **Hombre invierno boutique** y **Mixta invierno
+plus**. De todos ellos, Playera comercial es el urgente, porque es el único que además no
+tiene descripción.
+
 En `data/catalogo.csv` la columna `piezas_aprox` está marcada `PENDIENTE` en las 30 filas.
 
 Mientras no llegue ese dato, el agente debe responder con un rango y aclarar que
