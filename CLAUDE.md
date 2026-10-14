@@ -223,6 +223,30 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
   `N1`); después sí se sube con `subir-n8n.py`. Así se creó `N6` el 12 oct; `scripts/probar-n6.sh` lo prueba.
 - **`Interna.escribir()` deja el workflow en borrador** aunque estuviera publicado. Tocar `SP05`
   por API lo apaga: hay que volver a publicarlo en la UI y comprobarlo.
+- **La ejecución de acciones de Conversation AI es intermitente.** El bot lee bien, contesta
+  bien, y la acción que escribe el campo **no corre ese turno**. Sin error. Por eso ningún dato
+  crítico puede depender sólo del bot: va con respaldo determinístico
+  (`docs/18-arquitectura-asistentes.md` §1). Lo documentó 786 con tráfico real en otro cliente.
+- **`Contact Info` sólo llena campos vacíos, no sobrescribe y no deduce.** Sólo extrae lo que
+  la persona dijo con todas sus letras. Lo que no se dice —un dato que siempre es el mismo— lo
+  tiene que deducir un workflow, no el bot.
+- **Una acción de bot puede dejar de ejecutar sola**, con la configuración intacta. Ni
+  re-guardarla ni recrearla lo arregla: lo que la destraba es **reordenar las acciones**
+  (arrastrar la muerta al primer lugar), porque obliga a GHL a reconstruir la lista.
+- **Los campos de texto de las acciones admiten 500 caracteres** (Transfer Bot: 10 a 500). Si
+  se pasa, GHL rechaza el guardado **sin decir por qué**. El prompt no tiene ese límite. Todo
+  texto que se entregue para pegar va con su conteo.
+- **Publicar un workflow por API es ruleta**: el PUT contesta «publicado», la UI lo lista en
+  **Borrador** y no enrola a nadie. Se construye por API y se publica **siempre con el toggle
+  de la UI**; la verdad está en la lista de workflows y en el historial de inscripciones.
+- **Un trigger editado por API puede no compilar.** Se lee bien por API y nunca dispara. Hay
+  que abrir el workflow y pulsar **«Guardar trigger»** antes de publicar.
+- **El bucket de triggers es asíncrono**: borrar y crear triggers en ráfaga deja estados
+  inconsistentes. 10 a 25 s entre operaciones de trigger.
+- **Una Knowledge Base subida no es una KB asociada.** Son dos pasos; y para cambiarla se
+  reemplaza el archivo, no se duplica.
+- **Un prompt largo desobedece.** Unas 500 palabras con prohibiciones claras rinden más que
+  1.200. Si un bot necesita más, es que son dos bots.
 - **Un solo pedido abierto por cliente a la vez**, por diseño: si tiene uno sin cerrar, `N1`
   contesta `pedido_en_curso`. Por eso el pedido tiene que cerrarse (`abandoned` al vencer,
   `won` al entregarse), o el cliente ya no puede volver a comprar.

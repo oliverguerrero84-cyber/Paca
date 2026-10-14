@@ -26,13 +26,42 @@ subrayó: *"luego piden, oye, video, quieren ver un video a través del WhatsApp
 **Sin ellos no hay tienda** ni fichas que el bot pueda mandar. **Bloquea el
 Completo, no el Esencial.** **No están cotizados**: la producción la hace el cliente.
 
+> **Estado al 14 oct: llegaron 25 de los 30 videos.** Pamela los subió al Drive entre el 10 y
+> el 12 de octubre, en dos carpetas (`CALOR` y `FRIO`), etiquetado cada uno con una cartulina
+> — así que el mapeo video↔SKU es confiable y ninguno sobra.
+>
+> **Faltan cinco:** `PV-NIN-PRE` Niño Verano Premium · `PV-NIN-ESP` Niño Verano Especial ·
+> **`PV-PLA-EST` Playera Comercial** · `PI-HOM-BOU` Hombre Invierno Boutique ·
+> `PI-MIX-PLU` Mixta Invierno Plus.
+>
+> **De fotos no ha llegado ninguna.**
+
 ### 3. Descripciones de los artículos
 Qué trae cada paca y para quién es, en texto listo para publicar. Sirve para dos
 cosas: la landing y la Knowledge Base del agente.
 
-Seis de los treinta **no están descritos en ningún transcript** y el agente no
-puede describir lo que no sabe: `CORSE VERANO BOUTIQUE`, `CORSE VERANO PREMIUM`,
-`PLAYERA COMERCIAL`, `CHAMARRA BOUTIQUE`, `CHAMARRA PREMIUM` y `SUÉTER NAVIDEÑO`.
+Eran seis los que **no estaban descritos en ningún transcript**. **El 14 de octubre se
+describieron cinco viendo los videos de Pamela** —corsé ×2, chamarra ×2 y suéter navideño—,
+así que ya no hay que pedírselas. Están en `data/catalogo.csv` y en `docs/03`.
+
+> **Lo que salió de verlos, y el bot tenía que saberlo: «corsé» no son corsés.** Es la paca de
+> **ropa interior y de dormir de mujer** — brasieres, pantaletas, bodies, camisones, pijamas.
+> El nombre engaña y es la pregunta más obvia de ese SKU. **Conviene confirmárselo a Pamela**,
+> porque lo dedujimos del video, no nos lo dijo nadie.
+
+**Queda uno: `PV-PLA-EST` PLAYERA COMERCIAL.** No se describió en ninguna llamada y tampoco
+tiene video. Es el único de los 30 que el agente no puede describir de ninguna forma, así que
+es la petición urgente.
+
+### 3bis. Las tallas de seis pacas
+
+`CORSE VERANO BOUTIQUE`, `CORSE VERANO PREMIUM`, `CHAMARRA BOUTIQUE`, `CHAMARRA PREMIUM`,
+`SUÉTER NAVIDEÑO` y `PLAYERA COMERCIAL` siguen sin tallas: **las etiquetas no se alcanzan a
+leer en el video**, y ponerle una inventada es peor que dejarla vacía porque el bot la diría
+como cierta.
+
+Con el rango basta — «CH, M, G y XL», «surtidas», «0 a 16 años» o «1X, 2X, 3X». Puede venir en
+la columna de tallas del Excel que se le mandó el 14 oct.
 
 ### 4. Precio de venta por SKU en menudeo
 No aparece en ninguna de las cuatro llamadas ni en el PDF. **Es el dato que más

@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-> **Corte: 11 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
+> **Corte: 14 de octubre de 2026.** En qué va todo. Los demás documentos dicen qué
 > se va a hacer y en qué orden; éste dice **qué está hecho y qué no**.
 >
 > Cuando algo se termine, se mueve de una tabla a otra aquí mismo. Si este documento
@@ -12,6 +12,37 @@
 ## 0. Continuar desde aquí
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
+
+**Lo que pasó el 14 oct (sesión de Oliver, sin tocar la cuenta de GHL):**
+- **Llegaron los videos.** Pamela subió al Drive **25 de los 30**, etiquetados uno por uno con
+  una cartulina, así que el mapeo video↔SKU es confiable. Faltan cinco: *Niño Verano Premium*,
+  *Niño Verano Especial*, **Playera Comercial**, *Hombre Invierno Boutique* y *Mixta Invierno Plus*.
+- **Cinco SKUs mudos quedaron descritos** viéndolos: corsé ×2, chamarra ×2 y suéter navideño.
+  Ya están en `data/catalogo.csv` y en `docs/03`. **Hallazgo que el bot tenía que saber: «corsé»
+  no son corsés** — es la paca de ropa interior y de dormir de mujer. El nombre engaña.
+  **Queda uno sin nada: `PV-PLA-EST` playera comercial**, sin transcript y sin video.
+- **Las tallas siguen pendientes en esos 6.** No se leen las etiquetas en el video, y ponerle
+  una talla inventada es peor que dejarla vacía: el bot la diría como cierta.
+- **Arquitectura de asistentes**, en `docs/18-arquitectura-asistentes.md`, adaptada de una
+  plantilla que 786 trajo de otro cliente (GALK). El principio que cambia nuestro diseño:
+  **la IA detecta, los workflows ejecutan** — porque la ejecución de acciones de Conversation
+  AI en GHL **es intermitente**, y hoy el bot depende de cinco.
+- **Capa de detección construida en el repo** (nada escrito en la cuenta): 4 campos de interés
+  en `crear-esqueleto-menudeo.py` y `scripts/armar-rp-sku.py`, que genera el árbol del respaldo
+  desde el catálogo — 12 ramas, 30 hojas, y se niega a escribir si una palabra clave está en dos
+  categorías.
+
+- **El Excel del catálogo salió hoy** y Pamela está por regresarlo contestado. Cuando llegue
+  entran **precios, piezas por paca y stock inicial**, que es lo que hoy bloquea la ficha del
+  bot y la liga de pago. Al cargarlo, revisar también la columna de **tallas**: ahí puede venir
+  lo de los 6 SKUs sin resolver.
+
+**El siguiente paso es de Germán, en la UI, y son cinco minutos:**
+> Armar **a mano una sola rama** de ejemplo: un nodo *Update Contact Field* con un *If* encima,
+> en un workflow nuevo cualquiera. Guardarla, leerla por API y pasarme el JSON. Es el **molde**
+> que le falta a `armar-rp-sku.py` para escribir las 30 hojas solo. Sin molde no se escribe:
+> un nodo inventado se guarda, se ve bien en la interfaz y después no ejecuta — es el mismo
+> error que costó la vuelta del 1 oct.
 
 **Lo que cambió el 11 oct (reunión con el cliente):**
 - **Stripe y el WhatsApp API del cliente ya están conectados.** Falta su cuenta de Envia.
@@ -195,9 +226,12 @@ de cada cosa.
 | Alcance, arquitectura y las decisiones de diseño | Claude / 786 | 14 – 19 sep |
 | **Propuesta cerrada, aceptada y cobrada** — Completo, USD 4,497 + 637 al mes | Claude / 786 | 18 – 22 sep |
 | Paquete de traspaso para trabajar el repo desde otra cuenta | Claude / 786 | 19 sep |
-| **Excel del catálogo mandado al cliente** para que capture precio, piezas y stock | Claude / 786 | 22 sep |
+| **Excel del catálogo preparado** para que el cliente capture precio, piezas y stock. La entrega del 22 sep nunca constó (ver §4); **se le mandó a Pamela el 14 oct** | Claude / 786 | 22 sep · entregado 14 oct |
 | Mensaje de arranque al cliente con todo lo que hay que pedirle | Claude / 786 | 22 sep |
 | **Los 23 campos del formulario de alta**, en la carpeta «Alta de subcuenta» | Claude / 786 | 23 sep |
+| **5 SKUs mudos descritos** con los videos del Drive (corsé ×2, chamarra ×2, suéter navideño). «Corsé» resultó ser ropa interior y de dormir de mujer | Claude / 786 | 14 oct |
+| **Arquitectura de asistentes** adaptada de la plantilla de GALK — `docs/18`. Dos bots, ficha por workflow, respaldo determinístico | Claude / 786 | 14 oct |
+| **Capa de detección en el repo**: 4 campos de interés y `armar-rp-sku.py` (12 ramas, 30 hojas). Falta el molde del nodo para escribirla en la cuenta | Claude / 786 | 14 oct |
 | Cronograma de las 4 semanas al go-live | Germán | 23 sep |
 | **La cadena de altas y accesos**, ordenada por dependencias | Germán | 23 sep |
 | Mapa de desarrollo en una página para el equipo | Germán | 23 sep |
@@ -275,8 +309,9 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | Qué | Bloquea |
 |---|---|
 | **Precios de venta por SKU** | Sin esto el bot no cotiza ni genera liga. Es lo que más falta |
-| **Fotos y videos** de los 30 artículos | El catálogo que el agente manda por WhatsApp |
-| **Descripciones** — faltan 6 de 30 | El agente no puede describir lo que no sabe |
+| **Videos: llegaron 25 de 30** (Drive, 10–12 oct). Faltan *Niño Verano Premium*, *Niño Verano Especial*, **Playera Comercial**, *Hombre Invierno Boutique* y *Mixta Invierno Plus*. **Fotos: ninguna** | El catálogo que el agente manda por WhatsApp |
+| ~~Descripciones — faltan 6~~ **Falta 1: `PV-PLA-EST` playera comercial**, sin transcript y sin video. Los otros 5 se describieron el 14 oct viendo los videos | Es el único de los 30 que el agente no puede describir de ninguna forma |
+| **Tallas de 6 SKUs** (corsé ×2, chamarra ×2, suéter navideño, playera comercial) | No se leen en el video. Inventarlas es peor: el bot las diría como ciertas |
 | **Piezas por paca** | De lo que más preguntan los compradores |
 | **Stock inicial** al menudeo | La carga de `availableQuantity` |
 | ~~Verificar el Meta Business Manager~~ — **hecho**: el WhatsApp API ya está conectado (11 oct) | — |
@@ -284,7 +319,17 @@ Lo de hoy primero; después, los eslabones raíz de `docs/13-accesos.md` §2.
 | ~~Conectar su Stripe en Greentex~~ — **hecho** (11 oct). Falta activar OXXO y transferencia MX en su dashboard (`B2`) | La validación 4 |
 | **Cuenta de Envia.com con saldo** | Ya no las guías (son manuales): el **rastreo y el cierre** del pedido con `N5`. Sin ella nada cierra el pedido y el cliente no puede volver a comprar |
 
-Los primeros cinco se piden con el Excel que ya se les mandó.
+Los primeros cuatro se piden con `entregables/catalogo-menudeo-para-llenar.xlsx`.
+
+> ✅ **Se le mandó a Pamela el 14 oct y está por regresarlo contestado.** Cuando llegue, se
+> cargan precios, piezas y stock, y con eso se desbloquea casi todo lo de arriba.
+>
+> **De dónde salió la confusión, para que no se repita:** el Excel se generó el 22 sep y el
+> repo lo daba por entregado en cuatro lugares, pero **ninguno registraba cómo, por quién ni
+> por qué medio** — la fecha anotada era la de generación. Nadie lo recordaba y la copia del
+> repo seguía intacta. `docs/11-cronograma.md` §7 le ponía límite el **5 de octubre**, así que
+> fueron nueve días de atraso sobre algo que quizá nunca salió. **Anotar siempre el medio y la
+> fecha real de entrega**, no la de creación del archivo.
 
 ### Espera a que exista algo nuestro
 
