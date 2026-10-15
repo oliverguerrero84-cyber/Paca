@@ -35,7 +35,7 @@
 #   python scripts/armar-sp06.py --fichas                     el texto de las 30 fichas
 #   GHL_KIT=… python scripts/armar-sp06.py --construir        arma los nodos con el kit y valida el grafo,
 #                                                             sin credenciales ni red
-#   python scripts/armar-sp06.py --aplicar <carpeta-respaldo> [--reescribir]
+#   python scripts/armar-sp06.py --aplicar <carpeta-respaldo> [--reescribir] [--env-file <ruta>]
 #       escribe SP06 en BORRADOR y SIN trigger. Necesita en el entorno GHL_KIT, GHL_API_KEY,
 #       GHL_LOCATION_ID, GHL_FIREBASE_REFRESH_TOKEN, SP06_WA_PHONE (el id del número de
 #       WhatsApp, el `from_phone_number` de un nodo WhatsApp hecho en la UI) y SP06_BOT_PEDIDO
@@ -308,7 +308,23 @@ def aplicar(tk, filas, ramas):
     print("  3. Publicar con el toggle de la UI. Por API es ruleta.")
 
 
+def cargar_env_file():
+    """--env-file <ruta>: lee KEY=VALOR de un archivo fuera del repo. Lo que ya esté en el
+    entorno manda. Así las credenciales no pasan por la línea de comandos."""
+    if "--env-file" not in sys.argv:
+        return
+    i = sys.argv.index("--env-file")
+    ruta = pathlib.Path(sys.argv[i + 1])
+    del sys.argv[i:i + 2]
+    for linea in ruta.read_text(encoding="utf-8").splitlines():
+        linea = linea.strip()
+        if linea and not linea.startswith("#") and "=" in linea:
+            k, v = linea.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
+
 def main():
+    cargar_env_file()
     with open(CATALOGO, encoding="utf-8") as f:
         filas = list(csv.DictReader(f))
     videos = cargar_videos()
