@@ -68,8 +68,10 @@ varía** — y es la pregunta que más hacen los clientes. Del transcript 4:
 > y en una trajo 225. […] O en una trajo 185. Así va variando. **Te puedo sacar los
 > estándares.**"
 
-Rango conocido de verano: **~185 a 225 piezas**. Invierno: menos, sin cifra.
-El cliente ya se ofreció a mandar los estándares por SKU — hay que pedírselos.
+Rango conocido de verano: **~185 a 225 piezas**. Invierno: menos.
+**Los estándares por SKU llegaron el 15 oct** en el Excel del catálogo (`piezas_aprox` de
+`data/catalogo.csv`): van de 40 (suéter navideño) a 300 (niño verano y corsé). Son un
+promedio, no una garantía: al cliente se le dice siempre en rango.
 ### De dónde salieron estas descripciones
 
 Las de **corsé, chamarra y suéter navideño** se escribieron el 14 de octubre **viendo los
@@ -80,12 +82,11 @@ había descrito en ninguna de las cuatro llamadas.
 > brasieres, pantaletas, bodies, camisones, pijamas. El nombre engaña y el bot tiene que
 > saberlo, o va a contestar mal la pregunta más obvia de ese SKU.
 
-**Las tallas siguen pendientes en los cinco.** Las etiquetas no se alcanzan a leer en el
-video, y ponerle una talla inventada es peor que dejarla vacía: el bot la diría como
-cierta. Es una pregunta corta para Pamela.
+**Las tallas de los cinco, y de la playera, llegaron el 15 oct** en el Excel del catálogo:
+corsé, chamarra y suéter navideño van de CH a 1X; la playera, de CH a XL.
 
-**`PV-PLA-EST` Playera comercial sigue sin nada**: no se describió en ninguna llamada y
-tampoco tiene video. Es el único de los 30 que el bot no puede describir de ninguna forma.
+**`PV-PLA-EST` Playera comercial sigue sin descripción** (ya tiene precio y tallas): no se
+describió en ninguna llamada y tampoco tiene video. Es el único de los 30 que el bot no puede describir de ninguna forma.
 
 ### Videos: 25 de los 30 SKUs
 
@@ -94,10 +95,12 @@ verano especial**, **Playera comercial**, **Hombre invierno boutique** y **Mixta
 plus**. De todos ellos, Playera comercial es el urgente, porque es el único que además no
 tiene descripción.
 
-En `data/catalogo.csv` la columna `piezas_aprox` está marcada `PENDIENTE` en las 30 filas.
+**Precio y piezas, cargados el 15 oct.** `data/catalogo.csv` trae ya `precio_mxn` y
+`piezas_aprox` en las 30 filas, del Excel que Pamela regresó lleno. El stock **no** va en el
+CSV: vive en los productos de GHL (133 pacas cargadas el 15 oct).
 
-Mientras no llegue ese dato, el agente debe responder con un rango y aclarar que
-varía por paca, nunca con una cifra inventada.
+Aunque ya hay cifra, el agente responde con un rango y aclara que varía por paca: la
+cantidad de piezas nunca se promete exacta.
 
 ---
 

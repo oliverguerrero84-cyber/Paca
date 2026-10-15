@@ -13,6 +13,17 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
+**Lo que pasó el 15 oct (sesión de Oliver, sin tocar la cuenta de GHL):**
+- **Llegó el Excel del catálogo lleno**: 30 de 30 con precio, piezas por paca y stock. Precio y piezas ya están en
+  `data/catalogo.csv` (`precio_mxn`, `piezas_aprox`); también las tallas que faltaban (corsé, chamarra, suéter, playera).
+  El stock no va en el CSV: ya está en los productos de GHL. Sigue sin descripción `PV-PLA-EST`.
+- **`SP06` · Ficha de la paca, diseñado** a partir del `SP05` de GALK (`build_sp05_v2.py`): `docs/20-sp06-ficha.md` y
+  `scripts/armar-sp06.py`, que genera las 30 ramas del catálogo y **sólo imprime** (`--dry-run`, `--fichas`).
+  El cliente ve 3 o 4 mensajes (apertura → video → precio → «¿cuántas te aparto?») y se activa BOT-01.
+- **Cambio frente a GALK:** la guarda es un campo nuevo, `ficha_sku`, y no sólo el tag, porque `BOT01` vacía `sku_elegido`.
+- **Falta, para escribirlo:** el molde de una rama hecha a mano en la UI (el mismo que espera `RP-SKU`), BOT-00 y BOT-01
+  creados, los videos comprimidos a menos de 16 MB y subidos, el campo `ficha_sku` y que Pamela apruebe los textos.
+
 **Lo que pasó el 15 oct (sesión de Germán sobre la cuenta de GHL; detalle en `docs/19-bot-acciones-ghl.md`):**
 - **El bot dispara workflows con «Trigger a workflow».** `PRUEBA N1` pasó a **`BOT01 · Apartar paca`** (5 nodos,
   lee `sku_elegido`/`cantidad_elegida` del contacto y los vacía) y se **probó de punta a punta**: N1 respondió,

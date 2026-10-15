@@ -24,6 +24,8 @@ que siguen pendientes. Al cerrar la sesión, **deja §0 al día** para el siguie
   Con `--dry-run` imprime las 30 hojas y **se niega a escribir** si una palabra clave está en dos
   categorías o si una categoría quedó sin palabras. Las listas de palabras son **provisionales**:
   se corrigen con conversaciones reales, no se inventan.
+- `scripts/armar-sp06.py` genera el árbol de `SP06` (ficha de la paca) desde `data/catalogo.csv`: 30 ramas.
+  Con `--fichas` imprime el texto de cada una para que lo apruebe Pamela. **Todavía no escribe**: espera el molde.
 - `scripts/convertir-propuesta-usd.py` regenera la propuesta de contenido en dólares desde la de pesos.
   Es idempotente y **aborta si el redondeo rompe la derivación del precio**. La de dólares no se edita a mano.
 - `scripts/probar-factura.py` y `scripts/probar-envia.py` prueban la API de facturas y la de Envia.
@@ -275,6 +277,7 @@ Ninguna de éstas da error. Se guardan, se ven bien y después no funcionan:
 | `docs/15-plantillas.md` | Las 7 plantillas de mensaje, listas para mandar a Meta |
 | `docs/17-precotizacion-contenido.md` | Contenido y campañas: nuestro precio a 786 y de dónde sale — **interno** |
 | `docs/18-arquitectura-asistentes.md` | **Cómo se reparte el trabajo entre bots y workflows**, adaptado de la plantilla de GALK: la IA detecta, los workflows ejecutan |
+| `docs/20-sp06-ficha.md` | **El árbol de `SP06` · Ficha de la paca**, adaptado del `SP05` de GALK. Lo genera `scripts/armar-sp06.py` (hoy sólo imprime) |
 | `docs/16-guias-workflows.md` | **Cómo se arma cada workflow**, en la UI y por la API interna: moldes de nodos, If y triggers, y lo que la cuenta acepta (§4) |
 | `entregables/catalogo-menudeo-para-llenar.xlsx` | El Excel que se le mandó al cliente para capturar precio, piezas y stock de los 30 SKUs |
 | `entregables/reporte-avance.html` | El reporte de avance que ve el cliente — mismo checklist que la propuesta |

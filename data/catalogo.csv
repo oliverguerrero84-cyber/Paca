@@ -1,31 +1,31 @@
-sku,temporada,categoria,calidad,nombre_display,tallas,publico,contenido_resumen,peso_lb,peso_kg,piezas_aprox
-PV-MUJ-BOU,Verano,Mujer,Boutique,MUJER VERANO BOUTIQUE,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,PENDIENTE
-PV-MUJ-PRE,Verano,Mujer,Premium,MUJER VERANO PREMIUM,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,PENDIENTE
-PV-MUJ-ESP,Verano,Mujer,Especial,MUJER VERANO ESPECIAL,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,PENDIENTE
-PV-HOM-BOU,Verano,Hombre,Boutique,HOMBRE VERANO BOUTIQUE,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,PENDIENTE
-PV-HOM-PRE,Verano,Hombre,Premium,HOMBRE VERANO PREMIUM,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,PENDIENTE
-PV-HOM-ESP,Verano,Hombre,Especial,HOMBRE VERANO ESPECIAL,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,PENDIENTE
-PV-NIN-BOU,Verano,Niño,Boutique,NIÑO VERANO BOUTIQUE,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
-PV-NIN-PRE,Verano,Niño,Premium,NIÑO VERANO PREMIUM,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
-PV-NIN-ESP,Verano,Niño,Especial,NIÑO VERANO ESPECIAL,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,PENDIENTE
-PV-COR-BOU,Verano,Corsé,Boutique,CORSE VERANO BOUTIQUE,PENDIENTE,Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,PENDIENTE
-PV-COR-PRE,Verano,Corsé,Premium,CORSE VERANO PREMIUM,PENDIENTE,Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,PENDIENTE
-PV-PLA-EST,Verano,Playera,Estándar,PLAYERA COMERCIAL,PENDIENTE,PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,PENDIENTE
-PV-VES-EST,Verano,Vestido de fiesta,Estándar,VESTIDO DE FIESTA,"CH, M, G, XL",Mujer adulta,Vestidos de fiesta — calidad estándar (unicalidad),100,45,PENDIENTE
-PV-HOS-EST,Verano,Ropa de hospital,Estándar,ROPA DE HOSPITAL,"CH, M, G, XL",Adulto,"Scrubs: a veces juego completo (playera y pantalón), a veces sólo playera o sólo pantalón",100,45,PENDIENTE
-PV-CAS-EST,Verano,Ropa de casa,Estándar,ROPA DE CASA,N/A,Hogar,"Sábanas, cortinas, cortinas de baño, a veces cojines para sillones",100,45,PENDIENTE
-PV-MIX-PLU,Verano,Mixta Plus,Estándar,MIXTA VERANO PLUS,"1X, 2X, 3X",Mujer y hombre (mixto),Ropa de calor en tallas extra,100,45,PENDIENTE
-PV-DIS-EST,Verano,Disfraz,Estándar,DISFRAZ,Revueltas,Niño y adulto (mixto),Puros disfraces — calidad estándar (unicalidad),100,45,PENDIENTE
-PI-MUJ-BOU,Invierno,Mujer,Boutique,MUJER INVIERNO BOUTIQUE,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,PENDIENTE
-PI-MUJ-PRE,Invierno,Mujer,Premium,MUJER INVIERNO PREMIUM,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,PENDIENTE
-PI-MUJ-ESP,Invierno,Mujer,Especial,MUJER INVIERNO ESPECIAL,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,PENDIENTE
-PI-HOM-BOU,Invierno,Hombre,Boutique,HOMBRE INVIERNO BOUTIQUE,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,PENDIENTE
-PI-HOM-PRE,Invierno,Hombre,Premium,HOMBRE INVIERNO PREMIUM,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,PENDIENTE
-PI-HOM-ESP,Invierno,Hombre,Especial,HOMBRE INVIERNO ESPECIAL,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,PENDIENTE
-PI-NIN-BOU,Invierno,Niño,Boutique,NIÑO INVIERNO BOUTIQUE,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
-PI-NIN-PRE,Invierno,Niño,Premium,NIÑO INVIERNO PREMIUM,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
-PI-NIN-ESP,Invierno,Niño,Especial,NIÑO INVIERNO ESPECIAL,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,PENDIENTE
-PI-CHA-BOU,Invierno,Chamarra,Boutique,CHAMARRA BOUTIQUE,PENDIENTE,Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,PENDIENTE
-PI-CHA-PRE,Invierno,Chamarra,Premium,CHAMARRA PREMIUM,PENDIENTE,Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,PENDIENTE
-PI-MIX-PLU,Invierno,Mixta Plus,Estándar,MIXTA INVIERNO PLUS,"1X, 2X, 3X",Mujer y hombre (mixto),Ropa de frío en tallas extra,100,45,PENDIENTE
-PI-SUE-NAV,Invierno,Suéter navideño,Estándar,SUÉTER NAVIDEÑO,PENDIENTE,Mujer y hombre (mixto),"Suéteres tejidos con motivos navideños: Santa, renos, muñecos de nieve, llamas y grecas nórdicas, muchos con aplicaciones. Rojo, verde, blanco y negro",100,45,PENDIENTE
+sku,temporada,categoria,calidad,nombre_display,tallas,publico,contenido_resumen,peso_lb,peso_kg,piezas_aprox,precio_mxn
+PV-MUJ-BOU,Verano,Mujer,Boutique,MUJER VERANO BOUTIQUE,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,220,8900
+PV-MUJ-PRE,Verano,Mujer,Premium,MUJER VERANO PREMIUM,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,220,6600
+PV-MUJ-ESP,Verano,Mujer,Especial,MUJER VERANO ESPECIAL,"CH, M, G, XL",Mujer adulta,"Shorts, faldas, pantalones, blusas (manga corta/tres cuartos/tirantes), vestidos",100,45,220,4300
+PV-HOM-BOU,Verano,Hombre,Boutique,HOMBRE VERANO BOUTIQUE,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,190,10900
+PV-HOM-PRE,Verano,Hombre,Premium,HOMBRE VERANO PREMIUM,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,190,8600
+PV-HOM-ESP,Verano,Hombre,Especial,HOMBRE VERANO ESPECIAL,"CH, M, G, XL",Hombre adulto,"Shorts, pantalones, camisas sin mangas y con mangas, camisas de vestir, deportivo",100,45,190,6300
+PV-NIN-BOU,Verano,Niño,Boutique,NIÑO VERANO BOUTIQUE,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,300,10900
+PV-NIN-PRE,Verano,Niño,Premium,NIÑO VERANO PREMIUM,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,300,8600
+PV-NIN-ESP,Verano,Niño,Especial,NIÑO VERANO ESPECIAL,0 a 16 años,Niño y niña (mixto),"Mamelucos, enterizos, blusitas, shorts, pantalones — ropa de calor",100,45,300,6300
+PV-COR-BOU,Verano,Corsé,Boutique,CORSE VERANO BOUTIQUE,"CH, M, G, XL, 1X",Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,300,7900
+PV-COR-PRE,Verano,Corsé,Premium,CORSE VERANO PREMIUM,"CH, M, G, XL, 1X",Mujer adulta,"Brasieres, bralettes, pantaletas, bodies, camisones, batas, pijamas de dos piezas, shorts de satín y calcetines",100,45,300,5600
+PV-PLA-EST,Verano,Playera,Estándar,PLAYERA COMERCIAL,"CH, M, G, XL",PENDIENTE,PENDIENTE — no descrito en transcripts,100,45,220,4900
+PV-VES-EST,Verano,Vestido de fiesta,Estándar,VESTIDO DE FIESTA,"CH, M, G, XL",Mujer adulta,Vestidos de fiesta — calidad estándar (unicalidad),100,45,60,7900
+PV-HOS-EST,Verano,Ropa de hospital,Estándar,ROPA DE HOSPITAL,"CH, M, G, XL",Adulto,"Scrubs: a veces juego completo (playera y pantalón), a veces sólo playera o sólo pantalón",100,45,190,7900
+PV-CAS-EST,Verano,Ropa de casa,Estándar,ROPA DE CASA,N/A,Hogar,"Sábanas, cortinas, cortinas de baño, a veces cojines para sillones",100,45,60,4900
+PV-MIX-PLU,Verano,Mixta Plus,Estándar,MIXTA VERANO PLUS,"1X, 2X, 3X",Mujer y hombre (mixto),Ropa de calor en tallas extra,100,45,140,4900
+PV-DIS-EST,Verano,Disfraz,Estándar,DISFRAZ,Revueltas,Niño y adulto (mixto),Puros disfraces — calidad estándar (unicalidad),100,45,150,4900
+PI-MUJ-BOU,Invierno,Mujer,Boutique,MUJER INVIERNO BOUTIQUE,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,180,7900
+PI-MUJ-PRE,Invierno,Mujer,Premium,MUJER INVIERNO PREMIUM,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,180,5600
+PI-MUJ-ESP,Invierno,Mujer,Especial,MUJER INVIERNO ESPECIAL,"CH, M, G, XL",Mujer adulta,"Calcetines, mallas, medias, suéteres, sudaderas, blusas de manga larga, pantalones de mezclilla y de vestir",100,45,180,3300
+PI-HOM-BOU,Invierno,Hombre,Boutique,HOMBRE INVIERNO BOUTIQUE,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,130,9900
+PI-HOM-PRE,Invierno,Hombre,Premium,HOMBRE INVIERNO PREMIUM,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,130,7600
+PI-HOM-ESP,Invierno,Hombre,Especial,HOMBRE INVIERNO ESPECIAL,"CH, M, G, XL",Hombre adulto,"Gorritos, calcetas, pantalones largos, pants, suéteres, sudaderas",100,45,130,5300
+PI-NIN-BOU,Invierno,Niño,Boutique,NIÑO INVIERNO BOUTIQUE,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,240,9900
+PI-NIN-PRE,Invierno,Niño,Premium,NIÑO INVIERNO PREMIUM,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,240,7600
+PI-NIN-ESP,Invierno,Niño,Especial,NIÑO INVIERNO ESPECIAL,0 a 16 años,Niño y niña (mixto),Ropa de frío para niños,100,45,240,5300
+PI-CHA-BOU,Invierno,Chamarra,Boutique,CHAMARRA BOUTIQUE,"CH, M, G, XL, 1X",Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,45,7900
+PI-CHA-PRE,Invierno,Chamarra,Premium,CHAMARRA PREMIUM,"CH, M, G, XL, 1X",Mujer y hombre (mixto),"Chamarras acolchadas con y sin gorro, rompevientos, de mezclilla, de piel sintética, abrigos de vestir y chalecos acolchados",100,45,45,5600
+PI-MIX-PLU,Invierno,Mixta Plus,Estándar,MIXTA INVIERNO PLUS,"1X, 2X, 3X",Mujer y hombre (mixto),Ropa de frío en tallas extra,100,45,120,3900
+PI-SUE-NAV,Invierno,Suéter navideño,Estándar,SUÉTER NAVIDEÑO,"CH, M, G, XL, 1X",Mujer y hombre (mixto),"Suéteres tejidos con motivos navideños: Santa, renos, muñecos de nieve, llamas y grecas nórdicas, muchos con aplicaciones. Rojo, verde, blanco y negro",100,45,40,5900

@@ -243,7 +243,7 @@ publicar a mano.
 | 2 | ~~Normalizadores~~ | **Se cayeron.** Ver §5bis |
 | 3 | **`RP-SKU`** · respaldo generado del catálogo | **Generador hecho** (`scripts/armar-rp-sku.py`); falta el molde del nodo |
 | 4 | **BOT-00 · Recepción**, en la UI | Prompt corto, ~500 palabras, con prohibiciones |
-| 5 | **`SP06` ficha**, generado desde `data/catalogo.csv` | Una rama por SKU, condición por clave |
+| 5 | **`SP06` ficha**, generado desde `data/catalogo.csv` | **Diseño y generador hechos** (15 oct): `docs/20-sp06-ficha.md`, `scripts/armar-sp06.py`. Falta el molde |
 | 6 | **BOT-01 · Pedido**, con las 5 acciones Custom API | Las que ya están especificadas en §3 del mapa |
 | 7 | **`RP-RESCATE`**: recibió ficha, no apartó en 2 h → avisa | El hueco que hoy no tenemos |
 | 8 | **Auditar y publicar uno por uno desde la UI** | «Publicar por API es ruleta» |
@@ -254,8 +254,8 @@ publicar a mano.
 > como se hizo con `AP04`. Inventar el nodo es justo lo que `docs/16-guias-workflows.md`
 > dice que no se haga: se guarda, se ve bien y no ejecuta.
 
-**Bloqueante antes del paso 4:** el catálogo necesita **precios**, que están en el Excel que
-Pamela todavía no llena. Sin precio no hay ficha completa ni liga de pago.
+~~**Bloqueante antes del paso 4:** precios~~ — **llegaron el 15 oct** en el Excel del catálogo y ya
+están en `data/catalogo.csv` (`precio_mxn`, `piezas_aprox`).
 
 ---
 
@@ -265,6 +265,6 @@ Pamela todavía no llena. Sin precio no hay ficha completa ni liga de pago.
 |---|---|
 | Confirmar la renumeración (`SP06` ficha, `RP*` respaldos) para no pisar lo vivo | Oliver y Germán |
 | Si el bot de postventa/rastreo entra ahora o después | Oliver |
-| Cuántos mensajes lleva la ficha de cada paca (GALK usa 6 a 8) | Al definir el contenido |
+| ~~Cuántos mensajes lleva la ficha~~ — 3 o 4 que ve el cliente (GALK manda de 3 a 7, no «6 a 8»). Ver `docs/20-sp06-ficha.md` | Hecho, 15 oct |
 | Si el video va en la ficha o se manda sólo a quien lo pide | Oliver. Pesan 12–50 MB |
 | Las listas de palabras clave reales | **Se sacan de conversaciones de verdad**, no se inventan |
