@@ -9,8 +9,8 @@
 > **Se llama `SP06` y no `SP05`** porque `SP05` ya es nuestra orden al almacén, que está
 > publicada (`docs/18-arquitectura-asistentes.md` §4).
 >
-> El generador es `scripts/armar-sp06.py`. **Hoy sólo imprime el árbol**: escribir en la
-> cuenta necesita el molde del §5.
+> El generador es `scripts/armar-sp06.py`: arma el workflow con las formas de nodo del kit y
+> lo escribe en borrador (§5).
 
 ---
 
@@ -134,37 +134,48 @@ el 15 oct a **H.264, 720p y menos de 14 MB** con `ffmpeg`. Las cuatro pacas que 
 tienen video mandan su ficha sin él: Niño Verano Premium, Playera Comercial, Hombre Invierno
 Boutique y Mixta Invierno Plus.
 
-## 5. El molde: qué es y cómo se arma
+## 5. Cómo se escribe en la cuenta
 
-**El problema.** Para escribir las 30 ramas por API, el script tiene que mandarle a GHL cada
-nodo con el formato **exacto** que usa GHL por dentro. Ese formato no está documentado. Si
-se inventa, GHL lo guarda sin error, se ve bien en la pantalla y **después no ejecuta**. Ya
-nos pasó el 1 oct.
+**El problema del molde.** Para escribir por API, cada nodo tiene que ir con el formato
+**exacto** que GHL usa por dentro. Si se inventa, GHL lo guarda sin error, se ve bien y
+**después no ejecuta** (pasó el 1 oct). Por eso la regla es clonar nodos hechos en la UI.
 
-**La solución, la misma de GALK.** Se arma **una sola rama a mano** en la interfaz, con un
-nodo de cada tipo. Esa rama es el **molde**. Se lee por API y el script copia esa forma 30
-veces, cambiando sólo el texto, el video y la clave. Así, cada nodo que escribe el script es
-idéntico a uno que la propia interfaz de GHL creó. `build_sp05_v2.py` hace lo mismo: clona
-la pausa del bot de `SP06` y la activación de `LS01`.
+**Lo resolvió el kit (15 oct).** `ghl-kit-2.5.1` trae `wf_toolkit.py`, con la forma
+**validada en producción** (GALK) de casi todos los nodos de la rama: WhatsApp de texto,
+pausar y activar el bot, espera, actualizar y vaciar campo, tag y el If con varias ramas.
+`scripts/armar-sp06.py` arma el workflow entero con esas formas:
 
-**Cómo armarlo (lo hace Germán, unos 10 minutos):**
+```
+GHL_KIT=<ruta al kit> python scripts/armar-sp06.py --construir
+→ 438 nodos (114 if_else, 84 whatsapp_v2, 78 wait, 57 update_contact_field,
+  54 update_conversation_ai_status, 27 add_contact_tag, 24 whatsapp_media)
+✓ grafo válido (wf_toolkit.validar_grafo)
+```
 
-1. Workflow nuevo, **`MOLDE · SP06`**. **Sin trigger**: así nunca se publica ni corre.
-2. *If/Else*: «`sku_elegido` es `PV-MUJ-BOU`».
-3. Dentro de la rama «sí», en este orden:
-   1. **Conversation AI** → poner el bot en inactivo (la pausa).
-   2. **WhatsApp** de texto: «prueba 1».
-   3. **Wait** de 3 segundos.
-   4. **WhatsApp** con video, adjuntando `PV-MUJ-BOU.mp4` de los comprimidos. Así también
-      se prueba que la cuenta lo acepta.
-   5. **Update contact field**: `ficha_sku` = `PV-MUJ-BOU`.
-   6. **Update contact field**: vaciar `sku_elegido`, igual que ya lo hace `AC01`.
-   7. **Add tag**: `ficha-enviada`.
-   8. **Conversation AI** → activar un bot (cualquiera, el que haya).
-4. Guardar, **no publicar**, y leerlo por API. El JSON va a `data/moldes/sp06.json`: no
-   trae credenciales, sólo la forma de los nodos.
+**Lo que sigue sin probar, y se prueba antes de publicar:**
 
-**El mismo molde destraba `RP-SKU`**, que espera justo un If con un *Update contact field*.
+1. **WhatsApp con video.** El kit validó imagen y PDF con esa misma forma; `video` es la
+   apuesta. Si no ejecuta, Germán arma **un** nodo de WhatsApp con video en la UI, se lee y
+   se corrige la forma.
+2. **El If anidado** («ya vio esta ficha») colgado de cada rama: sigue la regla del kit,
+   pero GALK no lo usó.
+3. **El tamaño.** Un If de 32 ramas y 438 nodos; GALK tenía 9 ramas. Si el editor no lo
+   aguanta, se parte en dos workflows: verano e invierno.
+
+**Pasos, en orden:**
+
+1. `python scripts/crear-esqueleto-menudeo.py` crea el campo `ficha_sku`.
+2. `python scripts/subir-videos-sp06.py <carpeta-con-los-mp4>` sube los 26 videos al media
+   store y escribe `data/videos-sp06.json` (URL, nombre y peso; sin credenciales).
+3. Crear `BOT-00 · Recepción` en la UI y anotar dos ids: el del bot `BOT-01 · Pedido` y el
+   del número de WhatsApp (`from_phone_number` de cualquier nodo WhatsApp hecho en la UI).
+   Van al entorno como `SP06_BOT_PEDIDO` y `SP06_WA_PHONE`.
+4. `python scripts/armar-sp06.py --aplicar <carpeta-respaldo>` escribe `SP06` en
+   **borrador y sin trigger**, con «Allow re-entry» prendido.
+5. En la UI: trigger *Contact Changed* → `sku_elegido`, «Guardar trigger», probar con un
+   contacto de prueba (*Add to workflow*) y **publicar con el toggle**.
+
+Los pasos 1, 2 y 4 escriben en la cuenta: los corre Germán con `!`, con sus credenciales.
 
 ## 6. Los nombres
 

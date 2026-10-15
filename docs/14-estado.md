@@ -26,8 +26,11 @@
 - **Nombres:** bots `BOT-00 · Recepción` (nuevo) y `BOT-01 · Pedido` (el de Germán, recortado); el workflow
   `BOT01 · Apartar paca` pasa a `AC01 · Apartar paca`. Prompts en el Cortex (`agente/prompt-bot-0*.md`).
 - **26 videos comprimidos** a H.264 720p, todos bajo 16 MB (los originales son HEVC de 12–50 MB). Faltan 4 en el Drive.
-- **Falta, para escribirlo:** el molde `MOLDE · SP06` armado a mano en la UI (`docs/20-sp06-ficha.md` §5; el mismo
-  destraba `RP-SKU`), crear BOT-00, subir los videos al media store, el campo `ficha_sku` y que Pamela apruebe los textos.
+- **Ya no hace falta el molde a mano:** el kit (`ghl-kit-2.5.1`, con `wf_toolkit.py`) trae las formas validadas.
+  `armar-sp06.py --construir` arma 438 nodos y el grafo valida. Sin probar: el WhatsApp con **video** y el If anidado.
+- **Siguiente (Germán, con `!`):** los 5 pasos de `docs/20-sp06-ficha.md` §5 — campo `ficha_sku`, subir videos,
+  crear BOT-00 y anotar los ids del bot de pedido y del número de WhatsApp, `--aplicar`, trigger y prueba en la UI.
+  Antes de publicar, que Pamela apruebe los textos.
 
 **Lo que pasó el 15 oct (sesión de Germán sobre la cuenta de GHL; detalle en `docs/19-bot-acciones-ghl.md`):**
 - **El bot dispara workflows con «Trigger a workflow».** `PRUEBA N1` pasó a **`BOT01 · Apartar paca`** (5 nodos,

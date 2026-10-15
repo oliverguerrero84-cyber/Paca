@@ -120,6 +120,9 @@ CARPETAS = [
         ("temporada_interes",  "Temporada de interés",  "TEXT", None),
         ("categoria_interes",  "Categoría de interés",  "TEXT", None),
         ("calidad_interes",    "Calidad de interés",    "TEXT", None),
+        # 15 oct: la clave de la ultima ficha que recibio. SP06 la escribe y vacia
+        # sku_elegido, para que el bot pueda volver a escribirlo (docs/20 §3).
+        ("ficha_sku",          "Ficha enviada (clave)", "TEXT", None),
     ]),
     ("Atribución", "contact", [
         ("canal_origen",           "Canal de origen",        "TEXT", None),
