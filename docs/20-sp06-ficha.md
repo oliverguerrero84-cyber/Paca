@@ -177,6 +177,17 @@ GHL_KIT=<ruta al kit> python scripts/armar-sp06.py --construir
 
 Los pasos 1, 2 y 4 escriben en la cuenta: los corre Germán con `!`, con sus credenciales.
 
+**Hecho el 15 oct (sesión de Oliver):**
+- Paso 1: campo `ficha_sku` creado (`kMAgZh3gket966NXI5fY`), en la carpeta de `sku_elegido`. Leído de vuelta.
+  Sólo ése: los otros tres de interés del esqueleto siguen sin crear porque nadie los usa.
+- Paso 2: los 26 videos subidos al media store; `data/videos-sp06.json` tiene sus URLs (servidas: 200, `video/mp4`).
+- Paso 3: ids encontrados por API, sin tocar la UI:
+  - `SP06_WA_PHONE` = `1249676184905074` (+1 956-820-2011, Cloud API, TIER_250), de
+    `GET backend/phone-system/whatsapp/location/{loc}/phone-numbers`.
+  - `SP06_BOT_PEDIDO` = `VYk3iHgASTUXZplxGuJ9`: el bot **«Pacas»** de Germán (apagado, 1 acción), que pasa a
+    `BOT-01 · Pedido`. De `GET /conversation-ai/agents/search` (versión `2021-04-15`).
+- **Falta el paso 4:** el clasificador de Claude Code bloquea la escritura del workflow; la corre una persona con `!`.
+
 ## 6. Los nombres
 
 En la subcuenta van a convivir bots y workflows con prefijos parecidos. Para que no se
