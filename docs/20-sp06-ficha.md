@@ -186,7 +186,10 @@ Los pasos 1, 2 y 4 escriben en la cuenta: los corre Germán con `!`, con sus cre
     `GET backend/phone-system/whatsapp/location/{loc}/phone-numbers`.
   - `SP06_BOT_PEDIDO` = `VYk3iHgASTUXZplxGuJ9`: el bot **«Pacas»** de Germán (apagado, 1 acción), que pasa a
     `BOT-01 · Pedido`. De `GET /conversation-ai/agents/search` (versión `2021-04-15`).
-- **Falta el paso 4:** el clasificador de Claude Code bloquea la escritura del workflow; la corre una persona con `!`.
+- **Paso 4 hecho:** `SP06 · Ficha de la paca` creado (`76e40d3c-bdce-478e-82e7-737ca57a8ff8`), en **borrador, sin
+  trigger**, `allowMultiple: true`. Leído de vuelta: 438 de 438 nodos, el video, el número de WhatsApp y el bot
+  destino como se mandaron. Se corrió con el modo de permisos manual y aprobación de Oliver.
+- **Falta el paso 5**, en la UI: trigger, prueba con un contacto y publicar.
 
 ## 6. Los nombres
 

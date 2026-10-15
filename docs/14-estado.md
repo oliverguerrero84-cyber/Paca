@@ -28,7 +28,8 @@
 - **26 videos comprimidos** a H.264 720p, todos bajo 16 MB (los originales son HEVC de 12–50 MB). Faltan 4 en el Drive.
 - **Ya no hace falta el molde a mano:** el kit (`ghl-kit-2.5.1`, con `wf_toolkit.py`) trae las formas validadas.
   `armar-sp06.py --construir` arma 438 nodos y el grafo valida. Sin probar: el WhatsApp con **video** y el If anidado.
-- **Siguiente (Germán, con `!`):** los 5 pasos de `docs/20-sp06-ficha.md` §5 — campo `ficha_sku`, subir videos,
+- **`SP06` ya está en la cuenta** (15 oct, borrador, sin trigger, 438 nodos, `76e40d3c-…`), con `ficha_sku` y los 26 videos.
+- **Siguiente:** el paso 5 de `docs/20-sp06-ficha.md` §5 (trigger, prueba con contacto, publicar). Antes, los 5 pasos de `docs/20-sp06-ficha.md` §5 — campo `ficha_sku`, subir videos,
   crear BOT-00 y anotar los ids del bot de pedido y del número de WhatsApp, `--aplicar`, trigger y prueba en la UI.
   Antes de publicar, que Pamela apruebe los textos.
 
