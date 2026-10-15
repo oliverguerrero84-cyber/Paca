@@ -21,8 +21,13 @@
   `scripts/armar-sp06.py`, que genera las 30 ramas del catálogo y **sólo imprime** (`--dry-run`, `--fichas`).
   El cliente ve 3 o 4 mensajes (apertura → video → precio → «¿cuántas te aparto?») y se activa BOT-01.
 - **Cambio frente a GALK:** la guarda es un campo nuevo, `ficha_sku`, y no sólo el tag, porque `BOT01` vacía `sku_elegido`.
-- **Falta, para escribirlo:** el molde de una rama hecha a mano en la UI (el mismo que espera `RP-SKU`), BOT-00 y BOT-01
-  creados, los videos comprimidos a menos de 16 MB y subidos, el campo `ficha_sku` y que Pamela apruebe los textos.
+- **Decidido (Oliver):** piezas como número aproximado, no rango; sin firma; las 3 pacas en 0 avisan «por ahora no hay».
+- **`SP06` vacía `sku_elegido` al terminar** (Contact Info sólo llena vacíos), y `RP-SKU` sale si ya hay `ficha-enviada`.
+- **Nombres:** bots `BOT-00 · Recepción` (nuevo) y `BOT-01 · Pedido` (el de Germán, recortado); el workflow
+  `BOT01 · Apartar paca` pasa a `AC01 · Apartar paca`. Prompts en el Cortex (`agente/prompt-bot-0*.md`).
+- **26 videos comprimidos** a H.264 720p, todos bajo 16 MB (los originales son HEVC de 12–50 MB). Faltan 4 en el Drive.
+- **Falta, para escribirlo:** el molde `MOLDE · SP06` armado a mano en la UI (`docs/20-sp06-ficha.md` §5; el mismo
+  destraba `RP-SKU`), crear BOT-00, subir los videos al media store, el campo `ficha_sku` y que Pamela apruebe los textos.
 
 **Lo que pasó el 15 oct (sesión de Germán sobre la cuenta de GHL; detalle en `docs/19-bot-acciones-ghl.md`):**
 - **El bot dispara workflows con «Trigger a workflow».** `PRUEBA N1` pasó a **`BOT01 · Apartar paca`** (5 nodos,

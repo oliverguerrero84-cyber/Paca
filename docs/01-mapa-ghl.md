@@ -351,7 +351,7 @@ dispara `SP02`.
 1. **Nunca inventar stock, precios ni cantidad de piezas.** Siempre leerlos de la KB o de la API. Si el dato no está, decirlo.
 2. **Nunca decir "económica"** para la calidad baja. Se llama **Especial**. Regla explícita del cliente.
 3. **Cualquier señal de mayoreo → escalar a humano** de inmediato. El mayoreo está fuera del sistema.
-4. Las piezas por paca **varían**: responder con rango y aclararlo, nunca con cifra exacta.
+4. Las piezas por paca **varían**: dar el número aproximado del catálogo («aprox. 220») y aclarar que varía; nunca prometerlo exacto. (Antes decía «con rango»; cambió el 15 oct, `docs/20-sp06-ficha.md`.)
 5. Todas las pacas pesan **100 lb / 45 kg**. Ese dato sí es fijo.
 6. Tono: cercano y mexicano, sin tecnicismos.
 7. **No hay devoluciones.** Política explícita del cliente: *"tratamos que la venta

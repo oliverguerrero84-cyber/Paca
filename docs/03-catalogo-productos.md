@@ -71,7 +71,7 @@ varía** — y es la pregunta que más hacen los clientes. Del transcript 4:
 Rango conocido de verano: **~185 a 225 piezas**. Invierno: menos.
 **Los estándares por SKU llegaron el 15 oct** en el Excel del catálogo (`piezas_aprox` de
 `data/catalogo.csv`): van de 40 (suéter navideño) a 300 (niño verano y corsé). Son un
-promedio, no una garantía: al cliente se le dice siempre en rango.
+promedio, no una garantía: al cliente se le dice como aproximado y que varía.
 ### De dónde salieron estas descripciones
 
 Las de **corsé, chamarra y suéter navideño** se escribieron el 14 de octubre **viendo los
@@ -99,7 +99,7 @@ tiene descripción.
 `piezas_aprox` en las 30 filas, del Excel que Pamela regresó lleno. El stock **no** va en el
 CSV: vive en los productos de GHL (133 pacas cargadas el 15 oct).
 
-Aunque ya hay cifra, el agente responde con un rango y aclara que varía por paca: la
+El agente da la cifra como aproximada («aprox. 220») y aclara que varía por paca: la
 cantidad de piezas nunca se promete exacta.
 
 ---

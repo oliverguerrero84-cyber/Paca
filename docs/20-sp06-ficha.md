@@ -39,31 +39,42 @@
 | 9 ramas a mano en `RAMAS` | **30 ramas generadas** de `data/catalogo.csv` | Treinta a mano no se mantienen; generadas son un `for` |
 | Condición «Curso **contiene** melamina»; el orden de las ramas importa | Condición contra la **clave** (`PV-MUJ-BOU`) | Ninguna clave contiene a otra (el script lo valida), así que el orden no importa |
 | 3 bots especialistas, uno por familia | **Un solo destino: BOT-01 · Pedido** | Las 30 pacas terminan en la misma conversación (`docs/18` §3) |
-| 4 imágenes o un PDF | **Un video** por paca | Es lo que mandó Pamela: 25 de los 30 |
+| 4 imágenes o un PDF | **Un video** por paca | Es lo que mandó Pamela: 26 de los 30 |
 | Texto del cliente, transcrito tal cual | **Plantilla nuestra con los datos del catálogo** | Greentex no mandó textos. **Pamela tiene que aprobarlos** |
-| Guarda por tag `ficha-enviada` | Guarda por **`ficha_sku`** (campo nuevo) | Ver §3: el tag solo no aguanta que `BOT01` vacíe `sku_elegido` |
-| La pregunta final pide sede o modalidad | **Pide cuántas pacas** | Es lo único que le falta a `BOT01` para apartar (`cantidad_elegida`) |
+| Guarda por tag `ficha-enviada` | Guarda por **`ficha_sku`** (campo nuevo) | Ver §3: el tag solo no aguanta que el cliente vuelva por otra paca |
+| La pregunta final pide sede o modalidad | **Pide cuántas pacas** | Es lo único que le falta a `AC01 · Apartar paca` (`cantidad_elegida`) |
 
 ## 3. Disparador, guarda y cambio de paca
 
 **Disparador:** *Contact Changed* → `sku_elegido`. Puede escribirlo BOT-00 o el respaldo
-`RP-SKU`: el workflow no sabe ni le importa quién fue. Si el bot ya lo escribió y `RP-SKU`
-escribe el mismo valor, el campo no cambia y no se dispara dos veces.
+`RP-SKU`: el workflow no sabe ni le importa quién fue.
 
-**Por qué la guarda no es sólo el tag, como en GALK.** `BOT01 · Apartar paca` **vacía**
-`sku_elegido` al terminar (`docs/19-bot-acciones-ghl.md`). Con la guarda de GALK pasan dos
-cosas:
+**La guarda tiene dos pisos:**
 
-1. Vaciar el campo también es un cambio y dispara `SP06`. Se resuelve igual que en GALK:
-   **si `sku_elegido` está vacío, sale.**
-2. Si el cliente vuelve otro día por otra paca, el tag `ficha-enviada` sigue puesto y la
-   guarda **lo bloquea para siempre**. GALK lo resuelve con un conmutador que quita el tag.
-   Aquí no hace falta: cada rama pregunta **«¿`ficha_sku` es este SKU?»**. Si sí, ya vio
-   esa ficha y sale. Si no, la manda y escribe `ficha_sku`.
+1. **Si `sku_elegido` está vacío, sale.** Vaciar un campo también cuenta como cambio y
+   dispara el workflow.
+2. **Cada rama pregunta «¿`ficha_sku` es este SKU?».** Si sí, el cliente ya vio esa ficha y
+   sale. Si no, la manda y escribe `ficha_sku`.
 
-Así, **el cambio de paca sale solo**: el cliente pide otra, el bot escribe el SKU nuevo y
-llega la ficha nueva. No hacen falta el conmutador ni `WF-SWITCH`. El tag `ficha-enviada` se
-queda, pero sólo como señal para `RP-RESCATE`.
+**Al terminar, la rama vacía `sku_elegido`.** Es lo que hace que todo lo demás funcione,
+por una regla de GHL: *Contact Info* del bot **sólo llena campos vacíos**. Si el campo se
+quedara lleno:
+
+- el bot no podría escribir otra paca cuando el cliente cambia de opinión;
+- tampoco podría escribir la clave al confirmar el pedido, que es lo que lee
+  `AC01 · Apartar paca` (`docs/19-bot-acciones-ghl.md`).
+
+La memoria de qué ficha vio queda en `ficha_sku`.
+
+Con eso, **el cambio de paca sale solo**: el cliente pide otra, el bot escribe el SKU nuevo y
+llega la ficha nueva. No hacen falta el conmutador ni `WF-SWITCH` de GALK. Y cuando BOT-01
+vuelve a escribir la misma clave para apartar, `SP06` arranca, ve que `ficha_sku` ya es ése y
+sale sin reenviar nada.
+
+> **`RP-SKU` actúa sólo antes de la primera ficha:** sale si el contacto ya tiene la
+> etiqueta `ficha-enviada`. Si no, una palabra suelta en mitad del pedido («y de mujer
+> también tienen?») le mandaría al cliente una ficha que no pidió. El cambio de paca ya
+> dentro del pedido lo hace el bot, que entiende el contexto.
 
 > Hace falta **un campo nuevo en el contacto, `ficha_sku` (TEXT)**. Se agrega en
 > `scripts/crear-esqueleto-menudeo.py` junto con los otros cuatro de interés.
@@ -73,24 +84,27 @@ queda, pero sólo como señal para `RP-RESCATE`.
 | # | Nodo | Lo ve el cliente | Contenido |
 |---|---|---|---|
 | — | If `ficha_sku` es este SKU | | Si sí, sale |
-| 1 | Conversation AI status | | Pausa a BOT-00 para que no interrumpa |
+| 1 | Conversation AI status | | Pausa al bot que esté hablando, para que no interrumpa |
 | 2 | WhatsApp texto | **sí** | **Apertura:** pide el nombre, presenta la paca (temporada, calidad, para quién, qué trae, tallas) |
 | 3 | Wait 3 s + WhatsApp media | **sí** | **Video** de la paca, si ya está subido |
-| 4 | Wait 3 s + WhatsApp texto | **sí** | **Precio y condiciones:** precio por paca, 100 lb, piezas **en rango**, sin piezas sueltas, apartado de 24 h |
+| 4 | Wait 3 s + WhatsApp texto | **sí** | **Precio y condiciones:** precio por paca, 100 lb, piezas **aproximadas**, sin piezas sueltas, apartado de 24 h |
 | 5 | Wait 3 s + WhatsApp texto | **sí** | **Pregunta final:** «¿Cuántas pacas de *Mujer Verano Boutique* te aparto?» |
 | 6 | Update contact field | | `ficha_sku` = este SKU |
-| 7 | Add tag | | `ficha-enviada` |
-| 8 | Conversation AI status | | Activa BOT-01 · Pedido |
+| 7 | Update contact field | | Vacía `sku_elegido` |
+| 8 | Add tag | | `ficha-enviada` |
+| 9 | Conversation AI status | | Activa BOT-01 · Pedido |
 
 **4 mensajes con video, 3 sin video.** Las dos cuentas caen en el rango de GALK.
 
-Lo que **no** va en la ficha, a propósito: «no hay devoluciones». La regla 7 lo pide antes
-de mandar la liga, y eso es en el resumen del pedido de BOT-01, no aquí. Ponerlo antes de
-que el cliente diga cuántas quiere sólo frena la venta.
+Lo que **no** va en la ficha, a propósito:
+- **«No hay devoluciones».** La regla 7 lo pide antes de mandar la liga, y eso ya lo hace
+  BOT-01 con la política de venta. Decirlo antes de que el cliente diga cuántas quiere sólo
+  frena la venta.
+- **Una firma.** Decidido el 15 oct: por ahora sin firma.
 
-**El video y el límite de WhatsApp.** WhatsApp **no acepta videos de más de 16 MB**, y los
-de Pamela pesan de 12 a 50 MB. Hay que comprimirlos antes de subirlos al media store (con
-`ffmpeg` a 720p alcanza). El script se niega a armar una rama con un video más pesado.
+**Las piezas van como número aproximado** («aprox. 220 piezas; puede variar un poco»), sale
+directo de `piezas_aprox`. Decidido el 15 oct. Sigue cumpliendo la regla 4: no se promete la
+cifra exacta.
 
 Un ejemplo completo, tal como sale de `python scripts/armar-sp06.py --fichas`:
 
@@ -107,42 +121,74 @@ Te comparto el video para que veas cómo viene 👇
 [2] (video)
 
 [3] 💰 *$8,900 MXN* por paca.
-📦 Pesa 100 lb (45 kg) y trae entre 200 y 240 piezas; varía de una paca a otra.
+📦 Pesa 100 lb (45 kg) y trae aprox. 220 piezas; puede variar un poco de una paca a otra.
 Se vende la paca completa, no piezas sueltas. Al apartarla te la guardamos 24 horas
 mientras pagas.
 
 [4] ¿Cuántas pacas de Mujer Verano Boutique te aparto? 😊
 ```
 
-## 5. Lo que falta para escribirlo en la cuenta
+**Los videos.** WhatsApp no acepta videos de más de 16 MB y los originales de Pamela pesan
+de 12 a 50 MB; además vienen en HEVC, que WhatsApp tampoco reproduce bien. Se convirtieron
+el 15 oct a **H.264, 720p y menos de 14 MB** con `ffmpeg`. Las cuatro pacas que todavía no
+tienen video mandan su ficha sin él: Niño Verano Premium, Playera Comercial, Hombre Invierno
+Boutique y Mixta Invierno Plus.
 
-1. **El molde.** Germán arma **a mano en la UI una sola rama completa**, en un workflow
-   nuevo cualquiera:
-   - If sobre `sku_elegido`;
-   - *Conversation AI status* para pausar un bot;
-   - WhatsApp de texto;
-   - *Wait* de 3 s;
-   - WhatsApp con un video;
-   - *Update contact field*;
-   - *Add tag*;
-   - *Conversation AI status* para activar un bot.
+## 5. El molde: qué es y cómo se arma
 
-   Se guarda, se lee por API y se clona esa forma. **El mismo molde destraba `RP-SKU`**, que
-   espera el If con un *Update contact field*.
-2. **BOT-00 y BOT-01 tienen que existir en la UI.** El nodo de activar necesita el id del
-   bot. Hoy hay un solo bot.
-3. **Los videos, comprimidos y subidos al media store.** Faltan 5 en el Drive: Niño Verano
-   Premium, Niño Verano Especial, Playera Comercial, Hombre Invierno Boutique y Mixta
-   Invierno Plus. Mientras falten, su ficha sale sin video.
-4. **Que Pamela apruebe los textos.** Se le manda la salida de `--fichas`.
-5. **El campo `ficha_sku`** (§3).
+**El problema.** Para escribir las 30 ramas por API, el script tiene que mandarle a GHL cada
+nodo con el formato **exacto** que usa GHL por dentro. Ese formato no está documentado. Si
+se inventa, GHL lo guarda sin error, se ve bien en la pantalla y **después no ejecuta**. Ya
+nos pasó el 1 oct.
 
-## 6. Decisiones abiertas
+**La solución, la misma de GALK.** Se arma **una sola rama a mano** en la interfaz, con un
+nodo de cada tipo. Esa rama es el **molde**. Se lee por API y el script copia esa forma 30
+veces, cambiando sólo el texto, el video y la clave. Así, cada nodo que escribe el script es
+idéntico a uno que la propia interfaz de GHL creó. `build_sp05_v2.py` hace lo mismo: clona
+la pausa del bot de `SP06` y la activación de `LS01`.
 
-| Qué | Propuesta | Quién |
+**Cómo armarlo (lo hace Germán, unos 10 minutos):**
+
+1. Workflow nuevo, **`MOLDE · SP06`**. **Sin trigger**: así nunca se publica ni corre.
+2. *If/Else*: «`sku_elegido` es `PV-MUJ-BOU`».
+3. Dentro de la rama «sí», en este orden:
+   1. **Conversation AI** → poner el bot en inactivo (la pausa).
+   2. **WhatsApp** de texto: «prueba 1».
+   3. **Wait** de 3 segundos.
+   4. **WhatsApp** con video, adjuntando `PV-MUJ-BOU.mp4` de los comprimidos. Así también
+      se prueba que la cuenta lo acepta.
+   5. **Update contact field**: `ficha_sku` = `PV-MUJ-BOU`.
+   6. **Update contact field**: vaciar `sku_elegido`, igual que ya lo hace `AC01`.
+   7. **Add tag**: `ficha-enviada`.
+   8. **Conversation AI** → activar un bot (cualquiera, el que haya).
+4. Guardar, **no publicar**, y leerlo por API. El JSON va a `data/moldes/sp06.json`: no
+   trae credenciales, sólo la forma de los nodos.
+
+**El mismo molde destraba `RP-SKU`**, que espera justo un If con un *Update contact field*.
+
+## 6. Los nombres
+
+En la subcuenta van a convivir bots y workflows con prefijos parecidos. Para que no se
+confundan:
+
+| Pieza | Nombre | Qué es |
 |---|---|---|
-| Las 3 pacas en 0 por decisión del cliente (`PV-PLA-EST`, `PV-HOS-EST`, `PI-CHA-BOU`) | Su rama no manda ficha: avisa «por ahora no hay», vacía `sku_elegido` y deja a BOT-00 encendido para ofrecer otra. Si vuelven a tener stock, se quitan de `NO_DISPONIBLES` y se regenera | Oliver / cliente |
-| Una paca que se agota **en vivo** | No la resuelve `SP06`: el workflow no ve el stock. La detecta `N1` al apartar (`agotado`) y BOT-01 ofrece otra | — (ya cubierto) |
-| Rango de piezas | ±10 % del promedio del Excel, redondeado a 10 (a 5 si son menos de 100): 220 → «entre 200 y 240» | Oliver |
-| Emojis y quién firma | Pocos emojis, sin persona inventada. GALK firma como «Valeria»; aquí no hay nombre definido | Oliver / Pamela |
-| El video en la ficha o sólo a quien lo pida | **En la ficha**, comprimido. Es lo que más vende y para eso lo filmó Pamela | Oliver |
+| Bot de Conversation AI | **`BOT-00 · Recepción`** | Nuevo. Averigua qué paca y escribe `sku_elegido` |
+| Bot de Conversation AI | **`BOT-01 · Pedido`** | **El bot que ya armó Germán**, recortado: de la ficha al envío |
+| Workflow | **`SP06 · Ficha de la paca`** | Este documento |
+| Workflow | **`RP-SKU · Respaldo de detección`** | `scripts/armar-rp-sku.py` |
+| Workflow | **`RP-RESCATE`** | Recibió la ficha y no apartó |
+| Workflows de las acciones del bot | **`AC01 · Apartar paca`** … **`AC05 · Rastrear envío`** | Lo que el bot dispara con *Trigger a workflow*. **`BOT01 · Apartar paca` pasa a `AC01`**: con «BOT01» se confunde con el bot BOT-01 |
+
+Los prompts de los dos bots viven en el Cortex: `empresa/clientes/greentex-clothing/agente/`.
+
+## 7. Decisiones
+
+| Qué | Decisión | Cuándo |
+|---|---|---|
+| Las 3 pacas en 0 por decisión del cliente (`PV-PLA-EST`, `PV-HOS-EST`, `PI-CHA-BOU`) | Su rama no manda ficha: avisa «por ahora no hay», vacía `sku_elegido` y deja al bot encendido para ofrecer otra. Si vuelven a tener stock, se quitan de `NO_DISPONIBLES` y se regenera | 15 oct, Oliver |
+| Una paca que se agota **en vivo** | No la resuelve `SP06`: el workflow no ve el stock. La detecta `N1` al apartar (`agotado`) y BOT-01 ofrece otra | Ya cubierto |
+| Piezas | Número aproximado, no rango | 15 oct, Oliver |
+| Firma | Sin firma por ahora | 15 oct, Oliver |
+| El video en la ficha | Sí, comprimido | 15 oct |
+| Los textos de las fichas | **Falta que Pamela los apruebe** | Pendiente |

@@ -11,8 +11,14 @@
 #         → If ficha_sku es este SKU → sale        (ya vio esta ficha: no se reenvía)
 #         → Pausar BOT-00
 #         → Apertura → [3 s] → Video → [3 s] → Precio y condiciones → [3 s] → Pregunta final
-#         → ficha_sku = este SKU · tag ficha-enviada
+#         → ficha_sku = este SKU · vaciar sku_elegido · tag ficha-enviada
 #         → Activar BOT-01 · Pedido
+#
+# POR QUÉ SE VACÍA sku_elegido. «Contact Info» del bot sólo llena campos vacíos. Si el campo
+# se queda lleno, el bot no puede escribir otra paca cuando el cliente cambia de opinión, ni
+# la clave al confirmar el pedido (que es lo que lee `BOT01 · Apartar paca`). La memoria de
+# qué ficha ya vio queda en ficha_sku. Vaciarlo vuelve a disparar el workflow, y la guarda
+# de «vacío» lo saca sin hacer nada.
 #
 # ESTRUCTURA FIJA, COMO GALK. Lo que el cliente ve son 3 o 4 mensajes (3 si la paca todavía
 # no tiene video). Lo demás es interno: la pausa del bot, las esperas, el campo, el tag y la
@@ -62,12 +68,6 @@ def nombre_bonito(r):
     return t.replace("Corse", "Corsé")
 
 
-def rango_piezas(n):
-    """La cifra del Excel es un promedio; al cliente se le da en rango (regla 4 del prompt)."""
-    paso = 10 if n >= 100 else 5
-    bajo = round(n * 0.9 / paso) * paso
-    alto = round(n * 1.1 / paso) * paso
-    return bajo, alto
 
 
 def ficha(r):
@@ -83,11 +83,10 @@ def ficha(r):
         f"Es ropa americana para {r['publico'].lower()}. Trae: {contenido}.\n"
         f"Tallas: {r['tallas']}.{cierre}"
     )
-    bajo, alto = rango_piezas(int(r["piezas_aprox"]))
     precio = (
         f"💰 *${int(r['precio_mxn']):,} MXN* por paca.\n"
-        f"📦 Pesa {r['peso_lb']} lb ({r['peso_kg']} kg) y trae entre {bajo} y {alto} piezas; "
-        f"varía de una paca a otra.\n"
+        f"📦 Pesa {r['peso_lb']} lb ({r['peso_kg']} kg) y trae aprox. {r['piezas_aprox']} piezas; "
+        f"puede variar un poco de una paca a otra.\n"
         f"Se vende la paca completa, no piezas sueltas. Al apartarla te la guardamos 24 horas "
         f"mientras pagas."
     )
@@ -109,8 +108,8 @@ def nodos_internos(r):
     """Lo que el cliente no ve, para el conteo del resumen."""
     if r["sku"] in NO_DISPONIBLES:
         return ["If ficha_sku", "Vaciar sku_elegido"]
-    return ["If ficha_sku", "Pausar BOT-00", "ficha_sku = SKU", "tag ficha-enviada",
-            "Activar BOT-01"]
+    return ["If ficha_sku", "Pausar bot", "ficha_sku = SKU", "Vaciar sku_elegido",
+            "tag ficha-enviada", "Activar BOT-01"]
 
 
 def validar(filas, ramas):

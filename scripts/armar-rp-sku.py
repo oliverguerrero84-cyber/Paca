@@ -11,6 +11,9 @@
 #   [Trigger: Customer Replied + «el mensaje contiene alguna de» + WhatsApp]  ← lo conecta Germán
 #     → Wait 30 s                        le damos su turno al bot, que entiende mejor
 #     → If sku_elegido está vacío        si el bot ya escribió, aquí se sale
+#       y sin tag ficha-enviada          sólo antes de la primera ficha: SP06 vacía sku_elegido
+#                                        al terminar, y sin esto una palabra suelta a mitad
+#                                        del pedido mandaría otra ficha (docs/20-sp06-ficha.md §3)
 #         └─ árbol: categoría → (temporada) → (calidad) → escribe sku_elegido
 #
 # LA FORMA DEL ÁRBOL SALE DEL CATÁLOGO, NO DE UNA SUPOSICIÓN. Medido el 14 oct sobre
@@ -162,7 +165,7 @@ def imprimir(ramas, filas):
     total_hojas = sum(len(r["hojas"]) for r in ramas)
     print(f"{NOMBRE}\n{'=' * 70}")
     print(f"Trigger:  Customer Replied + «contiene alguna de» + canal WhatsApp")
-    print(f"Espera:   {ESPERA_SEG} s   ·   Guarda: sale si {CAMPO} ya tiene valor")
+    print(f"Espera:   {ESPERA_SEG} s   ·   Guarda: sale si {CAMPO} ya tiene valor o hay tag ficha-enviada")
     print(f"Ramas:    {len(ramas)} categorías · {total_hojas} hojas · {len(filas)} SKUs en el catálogo\n")
     for r in sorted(ramas, key=lambda x: -len(x["hojas"])):
         preg = r.get("pregunta")
