@@ -13,6 +13,15 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
+**Lo que pasó el 15 oct (sesión de Germán sobre la cuenta de GHL; detalle en `docs/19-bot-acciones-ghl.md`):**
+- **El bot dispara workflows con «Trigger a workflow».** `PRUEBA N1` pasó a **`BOT01 · Apartar paca`** (5 nodos,
+  lee `sku_elegido`/`cantidad_elegida` del contacto y los vacía) y se **probó de punta a punta**: N1 respondió,
+  quedó liga y vencimiento y el stock bajó. `url_n8n_crear_apartado` = `https://devn8n.korvance.com/webhook/apartar`
+  (el host `devwebhookn8n` que muestra n8n no enruta: revisar `WEBHOOK_URL`).
+- **Inventario cargado:** 8 SKUs renombrados al estándar de este repo y **133 pacas** de la hoja del cliente
+  (`PV-PLA-EST`, `PV-HOS-EST`, `PI-CHA-BOU` en 0 por decisión suya). Quedó una factura de $9,900 de la prueba.
+- **Siguiente:** corregir `PRUEBA N3` y `N5`; construir confirmar domicilio, guardar envío y devolver sucursales.
+
 **Lo que pasó el 14 oct (sesión de Oliver, sin tocar la cuenta de GHL):**
 - **Llegaron los videos.** Pamela subió al Drive **25 de los 30**, etiquetados uno por uno con
   una cartulina, así que el mapeo video↔SKU es confiable. Faltan cinco: *Niño Verano Premium*,
