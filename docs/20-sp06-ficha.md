@@ -189,7 +189,14 @@ Los pasos 1, 2 y 4 escriben en la cuenta: los corre Germán con `!`, con sus cre
 - **Paso 4 hecho:** `SP06 · Ficha de la paca` creado (`76e40d3c-bdce-478e-82e7-737ca57a8ff8`), en **borrador, sin
   trigger**, `allowMultiple: true`. Leído de vuelta: 438 de 438 nodos, el video, el número de WhatsApp y el bot
   destino como se mandaron. Se corrió con el modo de permisos manual y aprobación de Oliver.
-- **Falta el paso 5**, en la UI: trigger, prueba con un contacto y publicar.
+- **Paso 5, 16 oct:** trigger *Contact Changed* → «SKU elegido» puesto y publicado. Prueba con «Oliver pruebas»
+  (`mYCfS5pytOf4w2eMS4oP`) por *Test Workflow*: quedaron `ficha_sku = PV-MUJ-BOU`, `sku_elegido` vacío y el tag
+  `ficha-enviada`; los 4 mensajes (apertura, **video**, precio, pregunta) se intentaron en orden, cada 4–8 s. Fallaron
+  por la **ventana de 24 h** («more than 24 hours have passed since the customer last replied»): el contacto nunca le
+  escribió al número. Con un cliente real no pasa. Además, la cuenta sigue restringida por Meta (`docs/14` §0).
+  - **El filtro de etiqueta en *Contact Changed* no sirve para probar:** se guarda como «se agregó la etiqueta»
+    (`add-index-of-true`), así que exige que la etiqueta y el SKU cambien en el mismo evento. Nunca dispara. Se quita.
+  - **Falta ver:** que el bot quede activo en la conversación (no se lee por API) y que el video llegue de verdad.
 
 ## 6. Los nombres
 
