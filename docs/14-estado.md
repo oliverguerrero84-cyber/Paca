@@ -13,6 +13,14 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
+**⚠️ 16 oct: la cuenta de WhatsApp está RESTRINGIDA por Meta.** El panel dice «Cuenta restringida: antes de que puedas
+empezar a enviar mensajes, LeadConnector tendrá que verificar tu empresa». Ningún mensaje sale (ficha, bot ni plantillas).
+La API no lo refleja: el número `1249676184905074` (+1 956-820-2011, «Distribuidora MM») sale `CONNECTED`, `TIER_250`,
+calidad `NONE`. **Lo destraba:** la verificación de la empresa en Meta Business Suite → Centro de seguridad, hecha por un
+admin del portafolio del cliente con documentos de la LLC. Confirmar antes con Pamela a qué nombre legal se verifica:
+el número dice «Distribuidora MM» y la entidad es Greentex Clothing LLC. Si Meta aprueba y el aviso sigue, ticket a GHL.
+Mientras: `SP06` se puede probar sin WhatsApp (ramas, campos, tag y bot); el video queda para después.
+
 **Lo que pasó el 15 oct (sesión de Oliver, sin tocar la cuenta de GHL):**
 - **Llegó el Excel del catálogo lleno**: 30 de 30 con precio, piezas por paca y stock. Precio y piezas ya están en
   `data/catalogo.csv` (`precio_mxn`, `piezas_aprox`); también las tallas que faltaban (corsé, chamarra, suéter, playera).
