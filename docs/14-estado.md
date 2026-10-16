@@ -13,6 +13,12 @@
 
 > **Si te dicen «continuemos», esto es lo que sigue.** Se actualiza al cerrar cada sesión.
 
+**16 oct: `BOT-00 · Recepción` creado por API, APAGADO** (`FqdQ90RU87euD7MM9aiC`): prompt del Cortex, la KB de «Pacas» y
+dos acciones, «Guardar la paca» (escribe «SKU elegido») y «Escalar a una persona» (`AP02`). Leído de vuelta. **Falta:**
+decidir quién lo activa en el primer contacto (un nodo en `LS01` o el bot por defecto del canal), porque «Pacas» está en
+*auto-pilot* y dos bots activos se pelean el primer turno; y pasarlo a *auto-pilot* cuando Meta libere WhatsApp.
+El prompt de «Pacas» quedó pegado con el comentario `<!-- Antes de pegar… -->` adentro: hay que quitarlo.
+
 **⚠️ 16 oct: la cuenta de WhatsApp está RESTRINGIDA por Meta.** El panel dice «Cuenta restringida: antes de que puedas
 empezar a enviar mensajes, LeadConnector tendrá que verificar tu empresa». Ningún mensaje sale (ficha, bot ni plantillas).
 La API no lo refleja: el número `1249676184905074` (+1 956-820-2011, «Distribuidora MM») sale `CONNECTED`, `TIER_250`,
