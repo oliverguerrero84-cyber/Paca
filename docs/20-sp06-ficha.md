@@ -205,7 +205,7 @@ confundan:
 
 | Pieza | Nombre | Qué es |
 |---|---|---|
-| Bot de Conversation AI | **`BOT-00 · Recepción`** | Nuevo. Averigua qué paca y escribe `sku_elegido` |
+| Bot de Conversation AI | **`BOT-00 Recepcion`** (la UI no acepta «·») | Nuevo. Averigua qué paca y escribe `sku_elegido` |
 | Bot de Conversation AI | **`BOT-01 · Pedido`** | **El bot que ya armó Germán**, recortado: de la ficha al envío |
 | Workflow | **`SP06 · Ficha de la paca`** | Este documento |
 | Workflow | **`RP-SKU · Respaldo de detección`** | `scripts/armar-rp-sku.py` |

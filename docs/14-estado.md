@@ -17,7 +17,14 @@
 dos acciones, «Guardar la paca» (escribe «SKU elegido») y «Escalar a una persona» (`AP02`). Leído de vuelta. **Falta:**
 decidir quién lo activa en el primer contacto (un nodo en `LS01` o el bot por defecto del canal), porque «Pacas» está en
 *auto-pilot* y dos bots activos se pelean el primer turno; y pasarlo a *auto-pilot* cuando Meta libere WhatsApp.
-El prompt de «Pacas» quedó pegado con el comentario `<!-- Antes de pegar… -->` adentro: hay que quitarlo.
+~~El prompt de «Pacas» traía el comentario `<!-- Antes de pegar… -->`~~ — **quitado el 16 oct por API** (sólo `fullPrompt`,
+9,020 → 8,434 car.; modo, acciones y KB leídos iguales).
+**Quién contesta, decidido el 16 oct: filtros de etiqueta en el canal de WhatsApp de cada bot**, no un nodo en `LS01`
+(`LS01` quedó intacto). Es una regla fija del canal, no depende de que corra un workflow. En prueba:
+`BOT-00 Recepcion` → tiene `prueba-paca`, no tiene `ficha-enviada` OR `escalar-humano`; «Pacas» → tiene `prueba-paca` AND
+`ficha-enviada`, no tiene `escalar-humano`. **En producción** se quita `prueba-paca` de los dos. Los dos en *auto-pilot*.
+El bot se renombró a **`BOT-00 Recepcion`**: la UI no acepta «·» en el nombre (la API sí).
+⚠️ «Pacas» también contesta el **Live chat** a todos los contactos.
 
 **⚠️ 16 oct: la cuenta de WhatsApp está RESTRINGIDA por Meta.** El panel dice «Cuenta restringida: antes de que puedas
 empezar a enviar mensajes, LeadConnector tendrá que verificar tu empresa». Ningún mensaje sale (ficha, bot ni plantillas).
